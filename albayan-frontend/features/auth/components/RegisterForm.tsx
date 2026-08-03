@@ -1,11 +1,20 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { Mail, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import {
+  Field,
+  FieldContent,
+  FieldError,
+  FieldLabel,
+  FieldSeparator,
+} from "@/components/ui/field";
+import { Spinner } from "@/components/ui/spinner";
 import { useRegister } from "../hooks/useRegister";
 import { GoogleLoginButton } from "./GoogleLoginButton";
+import { PasswordInput } from "./PasswordInput";
 
 export function RegisterForm() {
   const [form, setForm] = useState({
@@ -27,83 +36,87 @@ export function RegisterForm() {
   }
 
   const errorMessage = (error as { message?: string })?.message;
-  const fieldErrors = (error as { errors?: Record<string, string[]> })
-    ?.errors;
+  const fieldErrors = (error as { errors?: Record<string, string[]> })?.errors;
+
+  function fieldError(field: string) {
+    return { message: fieldErrors?.[field]?.[0] };
+  }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4" dir="rtl">
-      <div className="flex flex-col gap-2">
-        <Label htmlFor="name">الاسم</Label>
-        <Input
-          id="name"
-          value={form.name}
-          onChange={(e) => handleChange("name", e.target.value)}
-          required
-        />
-        {fieldErrors?.name && (
-          <p className="text-sm text-destructive">{fieldErrors.name[0]}</p>
-        )}
-      </div>
+    <form onSubmit={handleSubmit} className="flex flex-col gap-5" dir="rtl">
+      <Field>
+        <FieldLabel htmlFor="name">الاسم</FieldLabel>
+        <FieldContent>
+          <div className="relative">
+            <User className="pointer-events-none absolute start-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              id="name"
+              value={form.name}
+              onChange={(e) => handleChange("name", e.target.value)}
+              required
+              className="h-11 ps-9"
+            />
+          </div>
+          <FieldError errors={[fieldError("name")]} />
+        </FieldContent>
+      </Field>
 
-      <div className="flex flex-col gap-2">
-        <Label htmlFor="email">البريد الإلكتروني</Label>
-        <Input
-          id="email"
-          type="email"
-          value={form.email}
-          onChange={(e) => handleChange("email", e.target.value)}
-          required
-          autoComplete="email"
-        />
-        {fieldErrors?.email && (
-          <p className="text-sm text-destructive">{fieldErrors.email[0]}</p>
-        )}
-      </div>
+      <Field>
+        <FieldLabel htmlFor="email">البريد الإلكتروني</FieldLabel>
+        <FieldContent>
+          <div className="relative">
+            <Mail className="pointer-events-none absolute start-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              id="email"
+              type="email"
+              value={form.email}
+              onChange={(e) => handleChange("email", e.target.value)}
+              required
+              autoComplete="email"
+              className="h-11 ps-9"
+            />
+          </div>
+          <FieldError errors={[fieldError("email")]} />
+        </FieldContent>
+      </Field>
 
-      <div className="flex flex-col gap-2">
-        <Label htmlFor="password">كلمة السر</Label>
-        <Input
-          id="password"
-          type="password"
-          value={form.password}
-          onChange={(e) => handleChange("password", e.target.value)}
-          required
-          autoComplete="new-password"
-        />
-        {fieldErrors?.password && (
-          <p className="text-sm text-destructive">
-            {fieldErrors.password[0]}
-          </p>
-        )}
-      </div>
+      <Field>
+        <FieldLabel htmlFor="password">كلمة السر</FieldLabel>
+        <FieldContent>
+          <PasswordInput
+            id="password"
+            value={form.password}
+            onChange={(e) => handleChange("password", e.target.value)}
+            required
+            autoComplete="new-password"
+            className="h-11"
+          />
+          <FieldError errors={[fieldError("password")]} />
+        </FieldContent>
+      </Field>
 
-      <div className="flex flex-col gap-2">
-        <Label htmlFor="password_confirmation">تأكيد كلمة السر</Label>
-        <Input
-          id="password_confirmation"
-          type="password"
-          value={form.password_confirmation}
-          onChange={(e) =>
-            handleChange("password_confirmation", e.target.value)
-          }
-          required
-          autoComplete="new-password"
-        />
-      </div>
+      <Field>
+        <FieldLabel htmlFor="password_confirmation">تأكيد كلمة السر</FieldLabel>
+        <FieldContent>
+          <PasswordInput
+            id="password_confirmation"
+            value={form.password_confirmation}
+            onChange={(e) => handleChange("password_confirmation", e.target.value)}
+            required
+            autoComplete="new-password"
+            className="h-11"
+          />
+        </FieldContent>
+      </Field>
 
-      {errorMessage && !fieldErrors && (
-        <p className="text-sm text-destructive" role="alert">
-          {errorMessage}
-        </p>
-      )}
+      {errorMessage && !fieldErrors && <FieldError errors={[{ message: errorMessage }]} />}
 
-      <Button type="submit" disabled={isPending} className="w-full">
+      <Button type="submit" disabled={isPending} className="h-11 w-full text-base">
+        {isPending && <Spinner />}
         {isPending ? "جارٍ إنشاء الحساب..." : "إنشاء حساب"}
       </Button>
 
-      <div className="relative my-2 text-center text-sm text-muted-foreground">
-        <span className="bg-background px-2">أو</span>
-      </div>
+      <FieldSeparator>أو</FieldSeparator>
 
       <GoogleLoginButton />
     </form>

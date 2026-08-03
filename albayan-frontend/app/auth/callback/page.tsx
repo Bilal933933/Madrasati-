@@ -2,6 +2,8 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { AuthShell } from "@/features/auth/components/AuthShell";
+import { Spinner } from "@/components/ui/spinner";
 import { useAuthStore } from "@/features/auth/store/authStore";
 
 export default function AuthCallbackPage() {
@@ -16,8 +18,10 @@ export default function AuthCallbackPage() {
   }, [isInitialized, user, router]);
 
   return (
-    <main className="flex flex-1 items-center justify-center">
-      <p className="text-muted-foreground">جارٍ التحقق من الحساب...</p>
-    </main>
+    <AuthShell title="جارٍ تسجيل الدخول" description="نستكمل المصادقة عبر جوجل...">
+      <div className="flex items-center justify-center py-4">
+        <Spinner className="size-8 text-primary" />
+      </div>
+    </AuthShell>
   );
 }

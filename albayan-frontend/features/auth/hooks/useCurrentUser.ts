@@ -19,7 +19,7 @@ export function useCurrentUser() {
   });
 
   useEffect(() => {
-    if (query.isSuccess) {
+    if (query.isSuccess && query.data?.name) {
       setUser(query.data);
       setInitialized(true);
     }

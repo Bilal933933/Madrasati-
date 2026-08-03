@@ -1,11 +1,21 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import Link from "next/link";
+import { Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import {
+  Field,
+  FieldContent,
+  FieldError,
+  FieldLabel,
+  FieldSeparator,
+} from "@/components/ui/field";
+import { Spinner } from "@/components/ui/spinner";
 import { useLogin } from "../hooks/useLogin";
 import { GoogleLoginButton } from "./GoogleLoginButton";
+import { PasswordInput } from "./PasswordInput";
 
 export function LoginForm() {
   const [email, setEmail] = useState("");
@@ -20,44 +30,54 @@ export function LoginForm() {
   const errorMessage = (error as { message?: string })?.message;
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4" dir="rtl">
-      <div className="flex flex-col gap-2">
-        <Label htmlFor="email">البريد الإلكتروني</Label>
-        <Input
-          id="email"
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          autoComplete="email"
-        />
-      </div>
+    <form onSubmit={handleSubmit} className="flex flex-col gap-5" dir="rtl">
+      <Field>
+        <FieldLabel htmlFor="email">البريد الإلكتروني</FieldLabel>
+        <FieldContent>
+          <div className="relative">
+            <Mail className="pointer-events-none absolute start-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              autoComplete="email"
+              className="h-11 ps-9"
+            />
+          </div>
+        </FieldContent>
+      </Field>
 
-      <div className="flex flex-col gap-2">
-        <Label htmlFor="password">كلمة السر</Label>
-        <Input
-          id="password"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          autoComplete="current-password"
-        />
-      </div>
+      <Field>
+        <div className="flex items-center justify-between gap-2">
+          <FieldLabel htmlFor="password">كلمة السر</FieldLabel>
+          <Link
+            href="/forgot-password"
+            className="text-xs font-medium text-primary hover:underline"
+          >
+            نسيت كلمة السر؟
+          </Link>
+        </div>
+        <FieldContent>
+          <PasswordInput
+            id="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            autoComplete="current-password"
+            className="h-11"
+          />
+          <FieldError errors={[{ message: errorMessage }]} />
+        </FieldContent>
+      </Field>
 
-      {errorMessage && (
-        <p className="text-sm text-destructive" role="alert">
-          {errorMessage}
-        </p>
-      )}
-
-      <Button type="submit" disabled={isPending} className="w-full">
+      <Button type="submit" disabled={isPending} className="h-11 w-full text-base">
+        {isPending && <Spinner />}
         {isPending ? "جارٍ تسجيل الدخول..." : "تسجيل الدخول"}
       </Button>
 
-      <div className="relative my-2 text-center text-sm text-muted-foreground">
-        <span className="bg-background px-2">أو</span>
-      </div>
+      <FieldSeparator>أو</FieldSeparator>
 
       <GoogleLoginButton />
     </form>

@@ -3,9 +3,15 @@
 import { useState, type FormEvent } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import {
+  Field,
+  FieldContent,
+  FieldError,
+  FieldLabel,
+} from "@/components/ui/field";
+import { Spinner } from "@/components/ui/spinner";
 import { useResetPassword } from "../hooks/usePasswordReset";
+import { PasswordInput } from "./PasswordInput";
 
 /**
  * يُستخدم في صفحة يفتحها المستخدم من رابط البريد الإلكتروني
@@ -40,45 +46,48 @@ export function ResetPasswordForm() {
 
   if (!token || !email) {
     return (
-      <p className="text-sm text-destructive" dir="rtl">
+      <p
+        className="rounded-lg border border-destructive/20 bg-destructive/10 px-3 py-2 text-sm text-destructive"
+        dir="rtl"
+      >
         رابط إعادة التعيين غير صالح أو منتهي الصلاحية.
       </p>
     );
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4" dir="rtl">
-      <div className="flex flex-col gap-2">
-        <Label htmlFor="password">كلمة السر الجديدة</Label>
-        <Input
-          id="password"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          autoComplete="new-password"
-        />
-      </div>
+    <form onSubmit={handleSubmit} className="flex flex-col gap-5" dir="rtl">
+      <Field>
+        <FieldLabel htmlFor="password">كلمة السر الجديدة</FieldLabel>
+        <FieldContent>
+          <PasswordInput
+            id="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            autoComplete="new-password"
+            className="h-11"
+          />
+        </FieldContent>
+      </Field>
 
-      <div className="flex flex-col gap-2">
-        <Label htmlFor="password_confirmation">تأكيد كلمة السر</Label>
-        <Input
-          id="password_confirmation"
-          type="password"
-          value={passwordConfirmation}
-          onChange={(e) => setPasswordConfirmation(e.target.value)}
-          required
-          autoComplete="new-password"
-        />
-      </div>
+      <Field>
+        <FieldLabel htmlFor="password_confirmation">تأكيد كلمة السر</FieldLabel>
+        <FieldContent>
+          <PasswordInput
+            id="password_confirmation"
+            value={passwordConfirmation}
+            onChange={(e) => setPasswordConfirmation(e.target.value)}
+            required
+            autoComplete="new-password"
+            className="h-11"
+          />
+          <FieldError errors={[{ message: errorMessage }]} />
+        </FieldContent>
+      </Field>
 
-      {errorMessage && (
-        <p className="text-sm text-destructive" role="alert">
-          {errorMessage}
-        </p>
-      )}
-
-      <Button type="submit" disabled={isPending} className="w-full">
+      <Button type="submit" disabled={isPending} className="h-11 w-full text-base">
+        {isPending && <Spinner />}
         {isPending ? "جارٍ الحفظ..." : "تغيير كلمة السر"}
       </Button>
     </form>

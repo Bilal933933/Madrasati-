@@ -66,9 +66,21 @@ export async function apiClient<T>(
   if (!response.ok) {
     const errorBody = await response.json().catch(() => null);
 
+    const message =
+      errorBody?.message ??
+      "حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى.";
+
+    // جمع أخطاء الحقول في رسالة واحدة واضحة، مثل: "اسم المرحلة مطلوب، صيغة الرابط غير صحيحة."
+    const fieldErrors = errorBody?.errors
+      ? Object.values(errorBody.errors as Record<string, string[]>)
+          .flat()
+          .filter(Boolean)
+          .join("، ")
+      : "";
+
     throw {
       status: response.status,
-      message: errorBody?.message ?? "حدث خطأ غير متوقع.",
+      message: fieldErrors || message,
       errors: errorBody?.errors ?? null,
     };
   }

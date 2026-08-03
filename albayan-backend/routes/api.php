@@ -1,7 +1,5 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-
 /*
 |--------------------------------------------------------------------------
 | مُجمِّع مسارات الـ Domains
@@ -11,3 +9,5 @@ use Illuminate\Support\Facades\Route;
 */
 
 require base_path('app/Domains/Auth/routes.php');
+require base_path('app/Domains/Curriculum/routes.php');
+require base_path('app/Domains/Lesson/routes.php');

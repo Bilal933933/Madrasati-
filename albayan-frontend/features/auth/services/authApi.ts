@@ -33,7 +33,12 @@ export const authApi = {
       withCsrf: true,
     }),
 
-  getCurrentUser: () => apiClient<AuthUser>("/api/user", { method: "GET" }),
+  getCurrentUser: async () => {
+    const res = await apiClient<{ data: AuthUser }>("/api/user", {
+      method: "GET",
+    });
+    return res.data;
+  },
 
   forgotPassword: (payload: ForgotPasswordPayload) =>
     apiClient<ApiMessageResponse>("/api/forgot-password", {

@@ -1,0 +1,136 @@
+"use client";
+
+import { Pencil, School, Trash2 } from "lucide-react";
+import { RowActions } from "@/components/shared/row-actions";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty";
+import { Skeleton } from "@/components/ui/skeleton";
+import type { Grade } from "@/features/grades/types/grade.types";
+import type { Stage } from "@/features/stages/types/stage.types";
+
+type GradesTableProps = {
+  grades: Grade[];
+  stages: Stage[];
+  isLoading: boolean;
+  onEdit: (grade: Grade) => void;
+  onDelete: (grade: Grade) => void;
+};
+
+function PublishedBadge({ published }: { published: boolean | null }) {
+  const isPublished = published === true;
+
+  return (
+    <span
+      data-slot="badge"
+      className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
+        isPublished
+          ? "bg-primary/10 text-primary"
+          : "bg-muted text-muted-foreground"
+      }`}
+    >
+      {isPublished ? "منشور" : "غير منشور"}
+    </span>
+  );
+}
+
+export function GradesTable({ grades, stages, isLoading, onEdit, onDelete }: GradesTableProps) {
+  if (isLoading) {
+    return (
+      <div className="flex flex-col gap-3">
+        <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-10 w-full" />
+      </div>
+    );
+  }
+
+  if (grades.length === 0) {
+    return (
+      <Empty className="py-16">
+        <EmptyHeader>
+          <EmptyMedia variant="icon">
+            <School />
+          </EmptyMedia>
+          <EmptyTitle>لا توجد صفوف هنا</EmptyTitle>
+        </EmptyHeader>
+        <EmptyContent>
+          <EmptyDescription>
+            لم يُعثر على صفوف ضمن هذا النطاق. أضف صفًا جديدًا أو غيّر فلتر المرحلة.
+          </EmptyDescription>
+        </EmptyContent>
+      </Empty>
+    );
+  }
+
+  const stageName = (stageId: number) =>
+    stages.find((s) => s.id === stageId)?.name ?? `#${stageId}`;
+
+  return (
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead>الاسم</TableHead>
+          <TableHead>المرحلة</TableHead>
+          <TableHead>الرابط (Slug)</TableHead>
+          <TableHead>الترتيب</TableHead>
+          <TableHead>الحالة</TableHead>
+          <TableHead className="text-end">إجراءات</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {grades.map((grade) => (
+          <TableRow key={grade.id}>
+            <TableCell>
+              <div className="flex items-center gap-2">
+                <span
+                  className="flex size-6 shrink-0 items-center justify-center rounded-md text-xs font-medium text-primary-foreground"
+                  style={{ backgroundColor: grade.color ?? "var(--primary)" }}
+                >
+                  {grade.icon ?? grade.name.charAt(0)}
+                </span>
+                <span className="font-medium">{grade.name}</span>
+              </div>
+            </TableCell>
+            <TableCell className="text-muted-foreground">{stageName(grade.stage_id)}</TableCell>
+            <TableCell className="font-mono text-xs text-muted-foreground">
+              {grade.slug}
+            </TableCell>
+            <TableCell>{grade.sort_order ?? "-"}</TableCell>
+            <TableCell>
+              <PublishedBadge published={grade.is_published} />
+            </TableCell>
+            <TableCell>
+              <div className="flex justify-end">
+                <RowActions
+                  ariaLabel={`إجراءات ${grade.name}`}
+                  items={[
+                    {
+                      key: "edit",
+                      label: "تعديل",
+                      icon: <Pencil />,
+                      onSelect: () => onEdit(grade),
+                    },
+                    {
+                      key: "delete",
+                      label: "حذف",
+                      icon: <Trash2 />,
+                      destructive: true,
+                      onSelect: () => onDelete(grade),
+                    },
+                  ]}
+                />
+              </div>
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  );
+}

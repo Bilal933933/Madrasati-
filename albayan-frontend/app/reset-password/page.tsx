@@ -1,15 +1,22 @@
+import Link from "next/link";
 import { Suspense } from "react";
+import { AuthShell } from "@/features/auth/components/AuthShell";
 import { ResetPasswordForm } from "@/features/auth/components/ResetPasswordForm";
 
 export default function ResetPasswordPage() {
   return (
-    <main className="mx-auto flex w-full max-w-sm flex-1 flex-col justify-center p-4">
-      <h1 className="mb-6 text-center text-2xl font-bold">
-        إعادة تعيين كلمة السر
-      </h1>
+    <AuthShell
+      title="إعادة تعيين كلمة السر"
+      description="أدخل كلمة السر الجديدة"
+      footer={
+        <Link href="/login" className="font-semibold text-primary hover:underline">
+          العودة لتسجيل الدخول
+        </Link>
+      }
+    >
       <Suspense>
         <ResetPasswordForm />
       </Suspense>
-    </main>
+    </AuthShell>
   );
 }

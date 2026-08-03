@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Providers } from "./providers";
+import { ThemeProvider } from "@/components/shared/theme-provider";
+import { DirectionProvider } from "@/components/ui/direction";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -27,10 +29,20 @@ export default function RootLayout({
     <html
       lang="ar"
       dir="rtl"
+      suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <Providers>{children}</Providers>
+        <DirectionProvider dir="rtl">
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <Providers>{children}</Providers>
+          </ThemeProvider>
+        </DirectionProvider>
       </body>
     </html>
   );
