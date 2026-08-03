@@ -15,7 +15,13 @@ import { useStages } from "@/features/stages/hooks/useStages";
 import type { Section } from "@/features/sections/types/section.types";
 
 export default function AdminSectionsPage() {
-  const { data: sectionsData, isLoading } = useSections();
+  const [subjectFilter, setSubjectFilter] = useState<string>("all");
+  const [appliedSubjectFilter, setAppliedSubjectFilter] = useState<string>("all");
+  const { data: sectionsData, isLoading } = useSections(
+    appliedSubjectFilter === "all"
+      ? undefined
+      : { subjectId: Number(appliedSubjectFilter) }
+  );
   const { data: subjectsData, isLoading: subjectsLoading } = useSubjects();
   const { data: gradesData, isLoading: gradesLoading } = useGrades();
   const { data: stagesData, isLoading: stagesLoading } = useStages();
@@ -25,15 +31,9 @@ export default function AdminSectionsPage() {
   const grades = gradesData?.data ?? [];
   const stages = stagesData?.data ?? [];
 
-  const [subjectFilter, setSubjectFilter] = useState<string>("all");
   const [formOpen, setFormOpen] = useState(false);
   const [editingSection, setEditingSection] = useState<Section | null>(null);
   const [deletingSection, setDeletingSection] = useState<Section | null>(null);
-
-  const filteredSections =
-    subjectFilter === "all"
-      ? sections
-      : sections.filter((s) => s.subject_id === Number(subjectFilter));
 
   function openCreate() {
     setEditingSection(null);
@@ -70,6 +70,9 @@ export default function AdminSectionsPage() {
               </NativeSelectOption>
             ))}
           </NativeSelect>
+          <Button variant="outline" onClick={() => setAppliedSubjectFilter(subjectFilter)}>
+            تطبيق
+          </Button>
           <Button onClick={openCreate}>
             <Plus />
             إضافة وحدة
@@ -80,7 +83,7 @@ export default function AdminSectionsPage() {
       <Card>
         <CardContent className="p-0 pt-4">
           <SectionsTable
-            sections={filteredSections}
+            sections={sections}
             subjects={subjects}
             grades={grades}
             stages={stages}
@@ -96,7 +99,7 @@ export default function AdminSectionsPage() {
         onOpenChange={setFormOpen}
         section={editingSection}
         subjects={subjects}
-        defaultSubjectId={subjectFilter === "all" ? undefined : Number(subjectFilter)}
+        defaultSubjectId={appliedSubjectFilter === "all" ? undefined : Number(appliedSubjectFilter)}
       />
 
       <DeleteDialog

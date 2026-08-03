@@ -7,6 +7,7 @@ use App\Domains\Curriculum\Models\Grade;
 use App\Domains\Curriculum\Models\Section;
 use App\Domains\Curriculum\Models\Stage;
 use App\Domains\Curriculum\Models\Subject;
+use App\Support\ImageService;
 use App\Support\Slugger;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -16,11 +17,18 @@ use Illuminate\Database\Eloquent\Collection;
  */
 class CurriculumService
 {
+    public function __construct(private readonly ImageService $imageService) {}
+
     /* ---------------------------------- Stages ---------------------------------- */
 
     public function stages(): Collection
     {
         return Stage::query()->orderBy('sort_order')->get();
+    }
+
+    public function nextStageOrder(): int
+    {
+        return (Stage::query()->max('sort_order') ?? 0) + 1;
     }
 
     public function publishedStages(): Collection
@@ -72,6 +80,11 @@ class CurriculumService
         }
 
         $stage = Stage::findOrFail($id);
+
+        if (($data['image'] ?? null) !== $stage->image) {
+            $this->imageService->delete($stage->image);
+        }
+
         $stage->update($data);
 
         return $stage;
@@ -79,14 +92,26 @@ class CurriculumService
 
     public function deleteStage(int $id): void
     {
-        Stage::findOrFail($id)->delete();
+        $stage = Stage::findOrFail($id);
+
+        $this->imageService->delete($stage->image);
+
+        $stage->delete();
     }
 
     /* ---------------------------------- Grades ---------------------------------- */
 
-    public function grades(): Collection
+    public function grades(?int $stageId = null): Collection
     {
-        return Grade::query()->orderBy('sort_order')->get();
+        return Grade::query()
+            ->when($stageId, fn ($q) => $q->where('stage_id', $stageId))
+            ->orderBy('sort_order')
+            ->get();
+    }
+
+    public function nextGradeOrder(int $stageId): int
+    {
+        return (Grade::query()->where('stage_id', $stageId)->max('sort_order') ?? 0) + 1;
     }
 
     public function publishedGrades(): Collection
@@ -141,6 +166,11 @@ class CurriculumService
         }
 
         $grade = Grade::findOrFail($id);
+
+        if (($data['image'] ?? null) !== $grade->image) {
+            $this->imageService->delete($grade->image);
+        }
+
         $grade->update($data);
 
         return $grade;
@@ -148,14 +178,26 @@ class CurriculumService
 
     public function deleteGrade(int $id): void
     {
-        Grade::findOrFail($id)->delete();
+        $grade = Grade::findOrFail($id);
+
+        $this->imageService->delete($grade->image);
+
+        $grade->delete();
     }
 
     /* --------------------------------- Subjects --------------------------------- */
 
-    public function subjects(): Collection
+    public function subjects(?int $gradeId = null): Collection
     {
-        return Subject::query()->orderBy('sort_order')->get();
+        return Subject::query()
+            ->when($gradeId, fn ($q) => $q->where('grade_id', $gradeId))
+            ->orderBy('sort_order')
+            ->get();
+    }
+
+    public function nextSubjectOrder(int $gradeId): int
+    {
+        return (Subject::query()->where('grade_id', $gradeId)->max('sort_order') ?? 0) + 1;
     }
 
     public function publishedSubjects(): Collection
@@ -213,6 +255,11 @@ class CurriculumService
         }
 
         $subject = Subject::findOrFail($id);
+
+        if (($data['image'] ?? null) !== $subject->image) {
+            $this->imageService->delete($subject->image);
+        }
+
         $subject->update($data);
 
         return $subject;
@@ -220,14 +267,26 @@ class CurriculumService
 
     public function deleteSubject(int $id): void
     {
-        Subject::findOrFail($id)->delete();
+        $subject = Subject::findOrFail($id);
+
+        $this->imageService->delete($subject->image);
+
+        $subject->delete();
     }
 
     /* --------------------------------- Sections --------------------------------- */
 
-    public function sections(): Collection
+    public function sections(?int $subjectId = null): Collection
     {
-        return Section::query()->orderBy('sort_order')->get();
+        return Section::query()
+            ->when($subjectId, fn ($q) => $q->where('subject_id', $subjectId))
+            ->orderBy('sort_order')
+            ->get();
+    }
+
+    public function nextSectionOrder(int $subjectId): int
+    {
+        return (Section::query()->where('subject_id', $subjectId)->max('sort_order') ?? 0) + 1;
     }
 
     public function publishedSections(): Collection
@@ -288,6 +347,11 @@ class CurriculumService
         }
 
         $section = Section::findOrFail($id);
+
+        if (($data['image'] ?? null) !== $section->image) {
+            $this->imageService->delete($section->image);
+        }
+
         $section->update($data);
 
         return $section;
@@ -295,14 +359,26 @@ class CurriculumService
 
     public function deleteSection(int $id): void
     {
-        Section::findOrFail($id)->delete();
+        $section = Section::findOrFail($id);
+
+        $this->imageService->delete($section->image);
+
+        $section->delete();
     }
 
     /* ---------------------------------- Courses ---------------------------------- */
 
-    public function courses(): Collection
+    public function courses(?int $sectionId = null): Collection
     {
-        return Course::query()->orderBy('sort_order')->get();
+        return Course::query()
+            ->when($sectionId, fn ($q) => $q->where('section_id', $sectionId))
+            ->orderBy('sort_order')
+            ->get();
+    }
+
+    public function nextCourseOrder(int $sectionId): int
+    {
+        return (Course::query()->where('section_id', $sectionId)->max('sort_order') ?? 0) + 1;
     }
 
     public function publishedCourses(): Collection
@@ -363,6 +439,11 @@ class CurriculumService
         }
 
         $course = Course::findOrFail($id);
+
+        if (($data['image'] ?? null) !== $course->image) {
+            $this->imageService->delete($course->image);
+        }
+
         $course->update($data);
 
         return $course;
@@ -370,6 +451,10 @@ class CurriculumService
 
     public function deleteCourse(int $id): void
     {
-        Course::findOrFail($id)->delete();
+        $course = Course::findOrFail($id);
+
+        $this->imageService->delete($course->image);
+
+        $course->delete();
     }
 }

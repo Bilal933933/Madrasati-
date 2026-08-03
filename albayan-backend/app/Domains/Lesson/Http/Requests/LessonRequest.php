@@ -22,7 +22,7 @@ class LessonRequest extends FormRequest
             'image' => ['nullable', 'string', 'max:2048'],
             'icon' => ['nullable', 'string', 'max:100'],
             'color' => ['nullable', 'string', 'regex:/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/'],
-            'sort_order' => ['sometimes', 'integer', 'min:0'],
+            'sort_order' => ['sometimes', 'integer', 'min:0', Rule::unique('lessons', 'sort_order')->where(fn ($q) => $q->where('course_id', $this->input('course_id')))->ignore($this->route('lesson'))],
             'is_published' => ['sometimes', 'boolean'],
         ];
     }
@@ -48,6 +48,7 @@ class LessonRequest extends FormRequest
             'color.regex' => 'صيغة اللون غير صحيحة — استخدم HEX مثل #2563EB.',
             'sort_order.integer' => 'الترتيب يجب أن يكون رقمًا صحيحًا.',
             'sort_order.min' => 'الترتيب يجب أن يكون 0 أو أكثر.',
+            'sort_order.unique' => 'هذا الترتيب مستخدم مسبقًا في نفس المقرر. اختر ترتيبًا آخر.',
             'is_published.boolean' => 'قيمة النشر يجب أن تكون صحيحة أو خاطئة.',
         ];
     }

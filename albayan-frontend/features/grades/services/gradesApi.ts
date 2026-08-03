@@ -1,4 +1,5 @@
 import { apiClient } from "@/lib/apiClient";
+import { buildListQuery } from "@/lib/query";
 import type {
   GradeDeleteResponse,
   GradeListResponse,
@@ -6,11 +7,32 @@ import type {
   GradePayload,
 } from "../types/grade.types";
 
+export interface GradeListFilters {
+  stageId?: number;
+}
+
+export interface NextOrderResponse {
+  data: {
+    next_order: number;
+  };
+}
+
 export const gradesApi = {
-  listGrades: () =>
-    apiClient<GradeListResponse>("/api/admin/grades", {
-      method: "GET",
-    }),
+  listGrades: (filters?: GradeListFilters) =>
+    apiClient<GradeListResponse>(
+      "/api/admin/grades" + buildListQuery({ stage_id: filters?.stageId }),
+      {
+        method: "GET",
+      }
+    ),
+
+  nextOrder: (stageId: number) =>
+    apiClient<NextOrderResponse>(
+      "/api/admin/grades/next-order" + buildListQuery({ stage_id: stageId }),
+      {
+        method: "GET",
+      }
+    ),
 
   createGrade: (payload: GradePayload) =>
     apiClient<GradeMutationResponse>("/api/admin/grades", {

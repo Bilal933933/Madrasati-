@@ -5,6 +5,7 @@ use App\Domains\Curriculum\Http\Controllers\Admin\GradeController as AdminGradeC
 use App\Domains\Curriculum\Http\Controllers\Admin\SectionController as AdminSectionController;
 use App\Domains\Curriculum\Http\Controllers\Admin\StageController as AdminStageController;
 use App\Domains\Curriculum\Http\Controllers\Admin\SubjectController as AdminSubjectController;
+use App\Domains\Curriculum\Http\Controllers\Admin\UploadController;
 use App\Domains\Curriculum\Http\Controllers\CourseController;
 use App\Domains\Curriculum\Http\Controllers\GradeController;
 use App\Domains\Curriculum\Http\Controllers\SectionController;
@@ -21,6 +22,13 @@ use Illuminate\Support\Facades\Route;
 
 // مسارات إدارية — تتطلب تسجيل دخول + دور admin
 Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function () {
+    Route::get('stages/next-order', [AdminStageController::class, 'nextOrder']);
+    Route::get('grades/next-order', [AdminGradeController::class, 'nextOrder']);
+    Route::get('subjects/next-order', [AdminSubjectController::class, 'nextOrder']);
+    Route::get('sections/next-order', [AdminSectionController::class, 'nextOrder']);
+    Route::get('courses/next-order', [AdminCourseController::class, 'nextOrder']);
+    Route::post('uploads/image', [UploadController::class, 'store']);
+
     Route::apiResource('stages', AdminStageController::class);
     Route::apiResource('grades', AdminGradeController::class);
     Route::apiResource('subjects', AdminSubjectController::class);

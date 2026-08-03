@@ -2,6 +2,7 @@
 
 import { Pencil, PlayCircle, Trash2 } from "lucide-react";
 import { RowActions } from "@/components/shared/row-actions";
+import { EntityThumb } from "@/components/shared/entity-thumb";
 import {
   Table,
   TableBody,
@@ -122,12 +123,12 @@ export function LessonsTable({ lessons, courses, sections, subjects, grades, sta
           <TableRow key={lesson.id}>
             <TableCell>
               <div className="flex items-center gap-2">
-                <span
-                  className="flex size-6 shrink-0 items-center justify-center rounded-md text-xs font-medium text-primary-foreground"
-                  style={{ backgroundColor: lesson.color ?? "var(--primary)" }}
-                >
-                  {lesson.icon ?? lesson.title.charAt(0)}
-                </span>
+                <EntityThumb
+                  image={lesson.image}
+                  icon={lesson.icon}
+                  color={lesson.color}
+                  label={lesson.title}
+                />
                 <div className="flex flex-col">
                   <span className="font-medium">{lesson.title}</span>
                   {lesson.summary && (

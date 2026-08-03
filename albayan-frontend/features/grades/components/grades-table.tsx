@@ -2,6 +2,7 @@
 
 import { Pencil, School, Trash2 } from "lucide-react";
 import { RowActions } from "@/components/shared/row-actions";
+import { EntityThumb } from "@/components/shared/entity-thumb";
 import {
   Table,
   TableBody,
@@ -89,12 +90,12 @@ export function GradesTable({ grades, stages, isLoading, onEdit, onDelete }: Gra
           <TableRow key={grade.id}>
             <TableCell>
               <div className="flex items-center gap-2">
-                <span
-                  className="flex size-6 shrink-0 items-center justify-center rounded-md text-xs font-medium text-primary-foreground"
-                  style={{ backgroundColor: grade.color ?? "var(--primary)" }}
-                >
-                  {grade.icon ?? grade.name.charAt(0)}
-                </span>
+                <EntityThumb
+                  image={grade.image}
+                  icon={grade.icon}
+                  color={grade.color}
+                  label={grade.name}
+                />
                 <span className="font-medium">{grade.name}</span>
               </div>
             </TableCell>

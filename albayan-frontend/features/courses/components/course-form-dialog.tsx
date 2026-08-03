@@ -16,6 +16,8 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Spinner } from "@/components/ui/spinner";
+import { IconSelect } from "@/components/shared/icon-select";
+import { ImageUpload } from "@/components/shared/image-upload";
 import {
   Dialog,
   DialogContent,
@@ -24,7 +26,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useCreateCourse, useUpdateCourse } from "@/features/courses/hooks/useCourses";
+import { showApiError } from "@/lib/apiErrors";
+import { useCreateCourse, useUpdateCourse, useNextCourseOrder } from "@/features/courses/hooks/useCourses";
 import type { Course, CoursePayload } from "@/features/courses/types/course.types";
 import type { Section } from "@/features/sections/types/section.types";
 
@@ -86,7 +89,7 @@ function CourseForm({
     image: course?.image ?? "",
     icon: course?.icon ?? "",
     color: course?.color ?? "#2563EB",
-    sort_order: String(course?.sort_order ?? 0),
+    sort_order: course ? String(course.sort_order ?? 0) : "",
     is_published: course?.is_published ?? true,
   }));
   const [serverErrors, setServerErrors] = useState<Record<string, string[]> | null>(null);
@@ -96,6 +99,17 @@ function CourseForm({
   const isPending = createCourse.isPending || updateCourse.isPending;
 
   const isEdit = course !== null;
+  const sectionId = form.section_id ? Number(form.section_id) : undefined;
+  const nextOrder = useNextCourseOrder(!isEdit, sectionId);
+
+  const sortOrderValue =
+    form.sort_order !== ""
+      ? form.sort_order
+      : sectionId != null
+        ? nextOrder.data
+          ? String(nextOrder.data.data.next_order)
+          : ""
+        : "";
 
   function handleChange(field: keyof FormState, value: string | boolean) {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -123,7 +137,7 @@ function CourseForm({
       image: form.image.trim() || null,
       icon: form.icon.trim() || null,
       color: form.color.trim() || null,
-      sort_order: form.sort_order === "" ? null : Number(form.sort_order),
+      sort_order: form.sort_order === "" ? (nextOrder.data?.data.next_order ?? 0) : Number(form.sort_order),
       is_published: form.is_published,
     };
   }
@@ -135,6 +149,7 @@ function CourseForm({
     const payload = buildPayload();
     if (!payload) {
       setServerErrors({ section_id: ["يرجى اختيار الوحدة."] });
+      showApiError({ message: "يرجى اختيار الوحدة." });
       return;
     }
 
@@ -241,12 +256,10 @@ function CourseForm({
           <Field>
             <FieldLabel htmlFor="course-icon">الأيقونة</FieldLabel>
             <FieldContent>
-              <Input
+              <IconSelect
                 id="course-icon"
                 value={form.icon}
-                onChange={(e) => handleChange("icon", e.target.value)}
-                placeholder="book"
-                className="h-9"
+                onValueChange={(value) => handleChange("icon", value)}
               />
             </FieldContent>
           </Field>
@@ -275,15 +288,12 @@ function CourseForm({
         </div>
 
         <Field>
-          <FieldLabel htmlFor="course-image">رابط الصورة</FieldLabel>
+          <FieldLabel htmlFor="course-image">الصورة</FieldLabel>
           <FieldContent>
-            <Input
+            <ImageUpload
               id="course-image"
-              type="url"
               value={form.image}
-              onChange={(e) => handleChange("image", e.target.value)}
-              placeholder="https://example.com/image.png"
-              className="h-9"
+              onValueChange={(value) => handleChange("image", value)}
             />
             <FieldError errors={[fieldError("image")]} />
           </FieldContent>
@@ -296,7 +306,7 @@ function CourseForm({
               id="course-order"
               type="number"
               min={0}
-              value={form.sort_order}
+              value={sortOrderValue}
               onChange={(e) => handleChange("sort_order", e.target.value)}
               className="h-9"
             />

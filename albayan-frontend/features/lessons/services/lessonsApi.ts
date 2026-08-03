@@ -1,4 +1,5 @@
 import { apiClient } from "@/lib/apiClient";
+import { buildListQuery } from "@/lib/query";
 import type {
   LessonDeleteResponse,
   LessonListResponse,
@@ -6,11 +7,32 @@ import type {
   LessonPayload,
 } from "../types/lesson.types";
 
+export interface LessonListFilters {
+  courseId?: number;
+}
+
+export interface NextOrderResponse {
+  data: {
+    next_order: number;
+  };
+}
+
 export const lessonsApi = {
-  listLessons: () =>
-    apiClient<LessonListResponse>("/api/admin/lessons", {
-      method: "GET",
-    }),
+  listLessons: (filters?: LessonListFilters) =>
+    apiClient<LessonListResponse>(
+      "/api/admin/lessons" + buildListQuery({ course_id: filters?.courseId }),
+      {
+        method: "GET",
+      }
+    ),
+
+  nextOrder: (courseId: number) =>
+    apiClient<NextOrderResponse>(
+      "/api/admin/lessons/next-order" + buildListQuery({ course_id: courseId }),
+      {
+        method: "GET",
+      }
+    ),
 
   createLesson: (payload: LessonPayload) =>
     apiClient<LessonMutationResponse>("/api/admin/lessons", {

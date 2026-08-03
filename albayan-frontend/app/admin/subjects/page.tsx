@@ -14,7 +14,13 @@ import { useStages } from "@/features/stages/hooks/useStages";
 import type { Subject } from "@/features/subjects/types/subject.types";
 
 export default function AdminSubjectsPage() {
-  const { data: subjectsData, isLoading } = useSubjects();
+  const [gradeFilter, setGradeFilter] = useState<string>("all");
+  const [appliedGradeFilter, setAppliedGradeFilter] = useState<string>("all");
+  const { data: subjectsData, isLoading } = useSubjects(
+    appliedGradeFilter === "all"
+      ? undefined
+      : { gradeId: Number(appliedGradeFilter) }
+  );
   const { data: gradesData, isLoading: gradesLoading } = useGrades();
   const { data: stagesData, isLoading: stagesLoading } = useStages();
   const deleteSubject = useDeleteSubject();
@@ -22,15 +28,9 @@ export default function AdminSubjectsPage() {
   const grades = gradesData?.data ?? [];
   const stages = stagesData?.data ?? [];
 
-  const [gradeFilter, setGradeFilter] = useState<string>("all");
   const [formOpen, setFormOpen] = useState(false);
   const [editingSubject, setEditingSubject] = useState<Subject | null>(null);
   const [deletingSubject, setDeletingSubject] = useState<Subject | null>(null);
-
-  const filteredSubjects =
-    gradeFilter === "all"
-      ? subjects
-      : subjects.filter((s) => s.grade_id === Number(gradeFilter));
 
   function openCreate() {
     setEditingSubject(null);
@@ -67,6 +67,9 @@ export default function AdminSubjectsPage() {
               </NativeSelectOption>
             ))}
           </NativeSelect>
+          <Button variant="outline" onClick={() => setAppliedGradeFilter(gradeFilter)}>
+            تطبيق
+          </Button>
           <Button onClick={openCreate}>
             <Plus />
             إضافة مادة
@@ -77,7 +80,7 @@ export default function AdminSubjectsPage() {
       <Card>
         <CardContent className="p-0 pt-4">
           <SubjectsTable
-            subjects={filteredSubjects}
+            subjects={subjects}
             grades={grades}
             stages={stages}
             isLoading={isLoading || gradesLoading || stagesLoading}
@@ -92,7 +95,7 @@ export default function AdminSubjectsPage() {
         onOpenChange={setFormOpen}
         subject={editingSubject}
         grades={grades}
-        defaultGradeId={gradeFilter === "all" ? undefined : Number(gradeFilter)}
+        defaultGradeId={appliedGradeFilter === "all" ? undefined : Number(appliedGradeFilter)}
       />
 
       <DeleteDialog

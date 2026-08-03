@@ -16,6 +16,8 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Spinner } from "@/components/ui/spinner";
+import { IconSelect } from "@/components/shared/icon-select";
+import { ImageUpload } from "@/components/shared/image-upload";
 import {
   Dialog,
   DialogContent,
@@ -24,7 +26,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useCreateLesson, useUpdateLesson } from "@/features/lessons/hooks/useLessons";
+import { showApiError } from "@/lib/apiErrors";
+import { useCreateLesson, useUpdateLesson, useNextLessonOrder } from "@/features/lessons/hooks/useLessons";
 import type { Lesson, LessonPayload } from "@/features/lessons/types/lesson.types";
 import type { Course } from "@/features/courses/types/course.types";
 
@@ -86,7 +89,7 @@ function LessonForm({
     image: lesson?.image ?? "",
     icon: lesson?.icon ?? "",
     color: lesson?.color ?? "#2563EB",
-    sort_order: String(lesson?.sort_order ?? 0),
+    sort_order: lesson ? String(lesson.sort_order ?? 0) : "",
     is_published: lesson?.is_published ?? true,
   }));
   const [serverErrors, setServerErrors] = useState<Record<string, string[]> | null>(null);
@@ -96,6 +99,17 @@ function LessonForm({
   const isPending = createLesson.isPending || updateLesson.isPending;
 
   const isEdit = lesson !== null;
+  const courseId = form.course_id ? Number(form.course_id) : undefined;
+  const nextOrder = useNextLessonOrder(!isEdit, courseId);
+
+  const sortOrderValue =
+    form.sort_order !== ""
+      ? form.sort_order
+      : courseId != null
+        ? nextOrder.data
+          ? String(nextOrder.data.data.next_order)
+          : ""
+        : "";
 
   function handleChange(field: keyof FormState, value: string | boolean) {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -123,7 +137,7 @@ function LessonForm({
       image: form.image.trim() || null,
       icon: form.icon.trim() || null,
       color: form.color.trim() || null,
-      sort_order: form.sort_order === "" ? null : Number(form.sort_order),
+      sort_order: form.sort_order === "" ? (nextOrder.data?.data.next_order ?? 0) : Number(form.sort_order),
       is_published: form.is_published,
     };
   }
@@ -135,6 +149,7 @@ function LessonForm({
     const payload = buildPayload();
     if (!payload) {
       setServerErrors({ course_id: ["يرجى اختيار المقرر."] });
+      showApiError({ message: "يرجى اختيار المقرر." });
       return;
     }
 
@@ -241,12 +256,10 @@ function LessonForm({
           <Field>
             <FieldLabel htmlFor="lesson-icon">الأيقونة</FieldLabel>
             <FieldContent>
-              <Input
+              <IconSelect
                 id="lesson-icon"
                 value={form.icon}
-                onChange={(e) => handleChange("icon", e.target.value)}
-                placeholder="play"
-                className="h-9"
+                onValueChange={(value) => handleChange("icon", value)}
               />
             </FieldContent>
           </Field>
@@ -275,15 +288,12 @@ function LessonForm({
         </div>
 
         <Field>
-          <FieldLabel htmlFor="lesson-image">رابط الصورة</FieldLabel>
+          <FieldLabel htmlFor="lesson-image">الصورة</FieldLabel>
           <FieldContent>
-            <Input
+            <ImageUpload
               id="lesson-image"
-              type="url"
               value={form.image}
-              onChange={(e) => handleChange("image", e.target.value)}
-              placeholder="https://example.com/image.png"
-              className="h-9"
+              onValueChange={(value) => handleChange("image", value)}
             />
             <FieldError errors={[fieldError("image")]} />
           </FieldContent>
@@ -296,7 +306,7 @@ function LessonForm({
               id="lesson-order"
               type="number"
               min={0}
-              value={form.sort_order}
+              value={sortOrderValue}
               onChange={(e) => handleChange("sort_order", e.target.value)}
               className="h-9"
             />

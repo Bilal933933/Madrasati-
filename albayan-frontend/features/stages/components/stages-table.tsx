@@ -2,6 +2,7 @@
 
 import { Image as ImageIcon, Pencil, Trash2 } from "lucide-react";
 import { RowActions } from "@/components/shared/row-actions";
+import { EntityThumb } from "@/components/shared/entity-thumb";
 import {
   Table,
   TableBody,
@@ -83,12 +84,12 @@ export function StagesTable({ stages, isLoading, onEdit, onDelete }: StagesTable
           <TableRow key={stage.id}>
             <TableCell>
               <div className="flex items-center gap-2">
-                <span
-                  className="flex size-6 shrink-0 items-center justify-center rounded-md text-xs font-medium text-primary-foreground"
-                  style={{ backgroundColor: stage.color ?? "var(--primary)" }}
-                >
-                  {stage.icon ?? stage.name.charAt(0)}
-                </span>
+                <EntityThumb
+                  image={stage.image}
+                  icon={stage.icon}
+                  color={stage.color}
+                  label={stage.name}
+                />
                 <span className="font-medium">{stage.name}</span>
               </div>
             </TableCell>

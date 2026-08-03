@@ -6,14 +6,24 @@ use App\Domains\Curriculum\Http\Requests\CourseRequest;
 use App\Domains\Curriculum\Http\Resources\CourseResource;
 use App\Domains\Curriculum\Services\CurriculumService;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 
 class CourseController extends Controller
 {
     public function __construct(private readonly CurriculumService $curriculumService) {}
 
-    public function index()
+    public function index(Request $request)
     {
-        return CourseResource::collection($this->curriculumService->courses());
+        return CourseResource::collection(
+            $this->curriculumService->courses($request->integer('section_id'))
+        );
+    }
+
+    public function nextOrder(Request $request)
+    {
+        return response()->json([
+            'data' => ['next_order' => $this->curriculumService->nextCourseOrder($request->integer('section_id'))],
+        ]);
     }
 
     public function store(CourseRequest $request)

@@ -52,12 +52,15 @@ export async function apiClient<T>(
 
   const xsrfToken = readCookie("XSRF-TOKEN");
 
+  const isFormData =
+    typeof FormData !== "undefined" && options.body instanceof FormData;
+
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
     ...rest,
     credentials: "include",
     headers: {
-      "Content-Type": "application/json",
       Accept: "application/json",
+      ...(isFormData ? {} : { "Content-Type": "application/json" }),
       ...(xsrfToken ? { "X-XSRF-TOKEN": xsrfToken } : {}),
       ...headers,
     },

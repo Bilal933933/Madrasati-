@@ -1,4 +1,5 @@
 import { apiClient } from "@/lib/apiClient";
+import { buildListQuery } from "@/lib/query";
 import type {
   SubjectDeleteResponse,
   SubjectListResponse,
@@ -6,11 +7,32 @@ import type {
   SubjectPayload,
 } from "../types/subject.types";
 
+export interface SubjectListFilters {
+  gradeId?: number;
+}
+
+export interface NextOrderResponse {
+  data: {
+    next_order: number;
+  };
+}
+
 export const subjectsApi = {
-  listSubjects: () =>
-    apiClient<SubjectListResponse>("/api/admin/subjects", {
-      method: "GET",
-    }),
+  listSubjects: (filters?: SubjectListFilters) =>
+    apiClient<SubjectListResponse>(
+      "/api/admin/subjects" + buildListQuery({ grade_id: filters?.gradeId }),
+      {
+        method: "GET",
+      }
+    ),
+
+  nextOrder: (gradeId: number) =>
+    apiClient<NextOrderResponse>(
+      "/api/admin/subjects/next-order" + buildListQuery({ grade_id: gradeId }),
+      {
+        method: "GET",
+      }
+    ),
 
   createSubject: (payload: SubjectPayload) =>
     apiClient<SubjectMutationResponse>("/api/admin/subjects", {

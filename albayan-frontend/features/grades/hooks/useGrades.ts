@@ -1,17 +1,22 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { gradesApi } from "../services/gradesApi";
+import { getErrorMessage } from "@/lib/apiErrors";
+import { gradesApi, type GradeListFilters } from "../services/gradesApi";
 import type { GradePayload } from "../types/grade.types";
 
-export function useGrades() {
+export function useGrades(filters?: GradeListFilters) {
   return useQuery({
-    queryKey: ["grades"],
-    queryFn: gradesApi.listGrades,
+    queryKey: ["grades", filters ?? {}],
+    queryFn: () => gradesApi.listGrades(filters),
   });
 }
 
-function errorMessage(error: unknown): string {
-  return (error as { message?: string })?.message ?? "حدث خطأ غير متوقع.";
+export function useNextGradeOrder(enabled: boolean, stageId?: number) {
+  return useQuery({
+    queryKey: ["grades", "next-order", stageId],
+    queryFn: () => gradesApi.nextOrder(stageId ?? 0),
+    enabled: enabled && stageId != null && !Number.isNaN(stageId),
+  });
 }
 
 export function useCreateGrade() {
@@ -24,7 +29,7 @@ export function useCreateGrade() {
       queryClient.invalidateQueries({ queryKey: ["grades"] });
     },
     onError: (error) => {
-      toast.error(errorMessage(error));
+      toast.error(getErrorMessage(error));
     },
   });
 }
@@ -40,7 +45,7 @@ export function useUpdateGrade() {
       queryClient.invalidateQueries({ queryKey: ["grades"] });
     },
     onError: (error) => {
-      toast.error(errorMessage(error));
+      toast.error(getErrorMessage(error));
     },
   });
 }
@@ -55,7 +60,7 @@ export function useDeleteGrade() {
       queryClient.invalidateQueries({ queryKey: ["grades"] });
     },
     onError: (error) => {
-      toast.error(errorMessage(error));
+      toast.error(getErrorMessage(error));
     },
   });
 }

@@ -6,14 +6,24 @@ use App\Domains\Lesson\Http\Requests\LessonRequest;
 use App\Domains\Lesson\Http\Resources\LessonResource;
 use App\Domains\Lesson\Services\LessonService;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 
 class LessonController extends Controller
 {
     public function __construct(private readonly LessonService $lessonService) {}
 
-    public function index()
+    public function index(Request $request)
     {
-        return LessonResource::collection($this->lessonService->lessons());
+        return LessonResource::collection(
+            $this->lessonService->lessons($request->integer('course_id'))
+        );
+    }
+
+    public function nextOrder(Request $request)
+    {
+        return response()->json([
+            'data' => ['next_order' => $this->lessonService->nextLessonOrder($request->integer('course_id'))],
+        ]);
     }
 
     public function store(LessonRequest $request)

@@ -15,6 +15,8 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Spinner } from "@/components/ui/spinner";
+import { IconSelect } from "@/components/shared/icon-select";
+import { ImageUpload } from "@/components/shared/image-upload";
 import {
   Dialog,
   DialogContent,
@@ -23,7 +25,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useCreateGrade, useUpdateGrade } from "@/features/grades/hooks/useGrades";
+import { showApiError } from "@/lib/apiErrors";
+import { useCreateGrade, useUpdateGrade, useNextGradeOrder } from "@/features/grades/hooks/useGrades";
 import type { Grade, GradePayload } from "@/features/grades/types/grade.types";
 import type { Stage } from "@/features/stages/types/stage.types";
 
@@ -83,7 +86,7 @@ function GradeForm({
     image: grade?.image ?? "",
     icon: grade?.icon ?? "",
     color: grade?.color ?? "#2563EB",
-    sort_order: String(grade?.sort_order ?? 0),
+    sort_order: grade ? String(grade.sort_order ?? 0) : "",
     is_published: grade?.is_published ?? true,
   }));
   const [serverErrors, setServerErrors] = useState<Record<string, string[]> | null>(null);
@@ -93,6 +96,17 @@ function GradeForm({
   const isPending = createGrade.isPending || updateGrade.isPending;
 
   const isEdit = grade !== null;
+  const stageId = form.stage_id ? Number(form.stage_id) : undefined;
+  const nextOrder = useNextGradeOrder(!isEdit, stageId);
+
+  const sortOrderValue =
+    form.sort_order !== ""
+      ? form.sort_order
+      : stageId != null
+        ? nextOrder.data
+          ? String(nextOrder.data.data.next_order)
+          : ""
+        : "";
 
   function handleChange(field: keyof FormState, value: string | boolean) {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -119,7 +133,7 @@ function GradeForm({
       image: form.image.trim() || null,
       icon: form.icon.trim() || null,
       color: form.color.trim() || null,
-      sort_order: form.sort_order === "" ? null : Number(form.sort_order),
+      sort_order: form.sort_order === "" ? (nextOrder.data?.data.next_order ?? 0) : Number(form.sort_order),
       is_published: form.is_published,
     };
   }
@@ -131,6 +145,7 @@ function GradeForm({
     const payload = buildPayload();
     if (!payload) {
       setServerErrors({ stage_id: ["يرجى اختيار المرحلة."] });
+      showApiError({ message: "يرجى اختيار المرحلة." });
       return;
     }
 
@@ -224,12 +239,10 @@ function GradeForm({
           <Field>
             <FieldLabel htmlFor="grade-icon">الأيقونة</FieldLabel>
             <FieldContent>
-              <Input
+              <IconSelect
                 id="grade-icon"
                 value={form.icon}
-                onChange={(e) => handleChange("icon", e.target.value)}
-                placeholder="book"
-                className="h-9"
+                onValueChange={(value) => handleChange("icon", value)}
               />
             </FieldContent>
           </Field>
@@ -258,15 +271,12 @@ function GradeForm({
         </div>
 
         <Field>
-          <FieldLabel htmlFor="grade-image">رابط الصورة</FieldLabel>
+          <FieldLabel htmlFor="grade-image">الصورة</FieldLabel>
           <FieldContent>
-            <Input
+            <ImageUpload
               id="grade-image"
-              type="url"
               value={form.image}
-              onChange={(e) => handleChange("image", e.target.value)}
-              placeholder="https://example.com/image.png"
-              className="h-9"
+              onValueChange={(value) => handleChange("image", value)}
             />
             <FieldError errors={[fieldError("image")]} />
           </FieldContent>
@@ -279,7 +289,7 @@ function GradeForm({
               id="grade-order"
               type="number"
               min={0}
-              value={form.sort_order}
+              value={sortOrderValue}
               onChange={(e) => handleChange("sort_order", e.target.value)}
               className="h-9"
             />

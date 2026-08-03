@@ -6,9 +6,20 @@ import type {
   StagePayload,
 } from "../types/stage.types";
 
+export interface NextOrderResponse {
+  data: {
+    next_order: number;
+  };
+}
+
 export const stagesApi = {
   listStages: () =>
     apiClient<StageListResponse>("/api/admin/stages", {
+      method: "GET",
+    }),
+
+  nextOrder: () =>
+    apiClient<NextOrderResponse>("/api/admin/stages/next-order", {
       method: "GET",
     }),
 

@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Route;
 
 // مسارات إدارية — تتطلب تسجيل دخول + دور admin
 Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function () {
+    Route::get('lessons/next-order', [AdminLessonController::class, 'nextOrder']);
     Route::apiResource('lessons', AdminLessonController::class);
     Route::apiResource('paragraphs', AdminParagraphController::class);
 });

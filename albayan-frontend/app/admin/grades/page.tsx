@@ -13,19 +13,21 @@ import { useStages } from "@/features/stages/hooks/useStages";
 import type { Grade } from "@/features/grades/types/grade.types";
 
 export default function AdminGradesPage() {
-  const { data: gradesData, isLoading } = useGrades();
+  const [stageFilter, setStageFilter] = useState<string>("all");
+  const [appliedStageFilter, setAppliedStageFilter] = useState<string>("all");
+  const { data: gradesData, isLoading } = useGrades(
+    appliedStageFilter === "all"
+      ? undefined
+      : { stageId: Number(appliedStageFilter) }
+  );
   const { data: stagesData, isLoading: stagesLoading } = useStages();
   const deleteGrade = useDeleteGrade();
   const grades = gradesData?.data ?? [];
   const stages = stagesData?.data ?? [];
 
-  const [stageFilter, setStageFilter] = useState<string>("all");
   const [formOpen, setFormOpen] = useState(false);
   const [editingGrade, setEditingGrade] = useState<Grade | null>(null);
   const [deletingGrade, setDeletingGrade] = useState<Grade | null>(null);
-
-  const filteredGrades =
-    stageFilter === "all" ? grades : grades.filter((g) => g.stage_id === Number(stageFilter));
 
   function openCreate() {
     setEditingGrade(null);
@@ -62,6 +64,9 @@ export default function AdminGradesPage() {
               </NativeSelectOption>
             ))}
           </NativeSelect>
+          <Button variant="outline" onClick={() => setAppliedStageFilter(stageFilter)}>
+            تطبيق
+          </Button>
           <Button onClick={openCreate}>
             <Plus />
             إضافة صف
@@ -72,7 +77,7 @@ export default function AdminGradesPage() {
       <Card>
         <CardContent className="p-0 pt-4">
           <GradesTable
-            grades={filteredGrades}
+            grades={grades}
             stages={stages}
             isLoading={isLoading || stagesLoading}
             onEdit={openEdit}
@@ -86,7 +91,7 @@ export default function AdminGradesPage() {
         onOpenChange={setFormOpen}
         grade={editingGrade}
         stages={stages}
-        defaultStageId={stageFilter === "all" ? undefined : Number(stageFilter)}
+        defaultStageId={appliedStageFilter === "all" ? undefined : Number(appliedStageFilter)}
       />
 
       <DeleteDialog

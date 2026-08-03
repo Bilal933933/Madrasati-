@@ -11,6 +11,8 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Spinner } from "@/components/ui/spinner";
+import { IconSelect } from "@/components/shared/icon-select";
+import { ImageUpload } from "@/components/shared/image-upload";
 import {
   Dialog,
   DialogContent,
@@ -19,7 +21,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useCreateStage, useUpdateStage } from "@/features/stages/hooks/useStages";
+import { useCreateStage, useUpdateStage, useNextStageOrder } from "@/features/stages/hooks/useStages";
 import type { Stage, StagePayload } from "@/features/stages/types/stage.types";
 
 type StageFormDialogProps = {
@@ -34,7 +36,7 @@ const emptyForm = {
   image: "",
   icon: "",
   color: "#2563EB",
-  sort_order: "0",
+  sort_order: "",
   is_published: true,
 };
 
@@ -81,6 +83,14 @@ function StageForm({
   const isPending = createStage.isPending || updateStage.isPending;
 
   const isEdit = stage !== null;
+  const nextOrder = useNextStageOrder(!isEdit);
+
+  const sortOrderValue =
+    form.sort_order === ""
+      ? nextOrder.data
+        ? String(nextOrder.data.data.next_order)
+        : ""
+      : form.sort_order;
 
   function handleChange(field: keyof typeof emptyForm, value: string | boolean) {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -103,7 +113,7 @@ function StageForm({
       image: form.image.trim() || null,
       icon: form.icon.trim() || null,
       color: form.color.trim() || null,
-      sort_order: form.sort_order === "" ? null : Number(form.sort_order),
+      sort_order: form.sort_order === "" ? (nextOrder.data?.data.next_order ?? 0) : Number(form.sort_order),
       is_published: form.is_published,
     };
   }
@@ -181,12 +191,10 @@ function StageForm({
           <Field>
             <FieldLabel htmlFor="stage-icon">الأيقونة</FieldLabel>
             <FieldContent>
-              <Input
+              <IconSelect
                 id="stage-icon"
                 value={form.icon}
-                onChange={(e) => handleChange("icon", e.target.value)}
-                placeholder="school"
-                className="h-9"
+                onValueChange={(value) => handleChange("icon", value)}
               />
             </FieldContent>
           </Field>
@@ -215,15 +223,12 @@ function StageForm({
         </div>
 
         <Field>
-          <FieldLabel htmlFor="stage-image">رابط الصورة</FieldLabel>
+          <FieldLabel htmlFor="stage-image">الصورة</FieldLabel>
           <FieldContent>
-            <Input
+            <ImageUpload
               id="stage-image"
-              type="url"
               value={form.image}
-              onChange={(e) => handleChange("image", e.target.value)}
-              placeholder="https://example.com/image.png"
-              className="h-9"
+              onValueChange={(value) => handleChange("image", value)}
             />
             <FieldError errors={[fieldError("image")]} />
           </FieldContent>
@@ -236,7 +241,7 @@ function StageForm({
               id="stage-order"
               type="number"
               min={0}
-              value={form.sort_order}
+              value={sortOrderValue}
               onChange={(e) => handleChange("sort_order", e.target.value)}
               className="h-9"
             />

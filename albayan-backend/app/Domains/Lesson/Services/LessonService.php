@@ -4,21 +4,31 @@ namespace App\Domains\Lesson\Services;
 
 use App\Domains\Lesson\Models\Lesson;
 use App\Domains\Lesson\Models\Paragraph;
+use App\Support\ImageService;
 use App\Support\Slugger;
 use Illuminate\Database\Eloquent\Collection;
 
 /**
  * ظ…ظ†ط·ظ‚ ط¹ظ…ظ„ظٹط§طھ ط¯ظˆظ…ظٹظ† ط§ظ„ط¯ط±ط³ (Lesson).
- * ط¹ظ…ظ„ظٹط§طھ CRUD ط¨ط³ظٹط·ط© ط­ط§ظ„ظٹظ‹ط§ â€” ظ†ظ…ط· Service. ط³ظٹطھط­ظˆظ„ ط¨ط¹ط¶ظ‡ط§ ط¥ظ„ظ‰ Action
- * ظ„ط§ط­ظ‚ظ‹ط§ ط¹ظ†ط¯ ط¸ظ‡ظˆط± طھط¹ظ‚ظٹط¯ ط­ظ‚ظٹظ‚ظٹ (طھظ‚ظٹظٹظ…ط§طھطŒ ط§ط®طھط¨ط§ط±ط§طھطŒ طھطھط¨ط¹ طھظ‚ط¯ظ‘ظ…).
+ * ط¹ظ…ظ„ظٹط§طھ CRUD ط¨ط³ظٹط·ط© ظˆظ…طھط±ط§ط¨ط·ط© â€” ظ†ظ…ط· Service.
  */
 class LessonService
 {
+    public function __construct(private readonly ImageService $imageService) {}
+
     /* ---------------------------------- Lessons ---------------------------------- */
 
-    public function lessons(): Collection
+    public function lessons(?int $courseId = null): Collection
     {
-        return Lesson::query()->orderBy('sort_order')->get();
+        return Lesson::query()
+            ->when($courseId, fn ($q) => $q->where('course_id', $courseId))
+            ->orderBy('sort_order')
+            ->get();
+    }
+
+    public function nextLessonOrder(int $courseId): int
+    {
+        return (Lesson::query()->where('course_id', $courseId)->max('sort_order') ?? 0) + 1;
     }
 
     public function publishedLessons(): Collection
@@ -85,6 +95,11 @@ class LessonService
         }
 
         $lesson = Lesson::findOrFail($id);
+
+        if (($data['image'] ?? null) !== $lesson->image) {
+            $this->imageService->delete($lesson->image);
+        }
+
         $lesson->update($data);
 
         return $lesson;
@@ -92,7 +107,11 @@ class LessonService
 
     public function deleteLesson(int $id): void
     {
-        Lesson::findOrFail($id)->delete();
+        $lesson = Lesson::findOrFail($id);
+
+        $this->imageService->delete($lesson->image);
+
+        $lesson->delete();
     }
 
     /* ---------------------------------- Paragraphs ---------------------------------- */

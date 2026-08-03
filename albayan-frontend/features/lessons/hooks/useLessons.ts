@@ -1,17 +1,22 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { lessonsApi } from "../services/lessonsApi";
+import { getErrorMessage } from "@/lib/apiErrors";
+import { lessonsApi, type LessonListFilters } from "../services/lessonsApi";
 import type { LessonPayload } from "../types/lesson.types";
 
-export function useLessons() {
+export function useLessons(filters?: LessonListFilters) {
   return useQuery({
-    queryKey: ["lessons"],
-    queryFn: lessonsApi.listLessons,
+    queryKey: ["lessons", filters ?? {}],
+    queryFn: () => lessonsApi.listLessons(filters),
   });
 }
 
-function errorMessage(error: unknown): string {
-  return (error as { message?: string })?.message ?? "حدث خطأ غير متوقع.";
+export function useNextLessonOrder(enabled: boolean, courseId?: number) {
+  return useQuery({
+    queryKey: ["lessons", "next-order", courseId],
+    queryFn: () => lessonsApi.nextOrder(courseId ?? 0),
+    enabled: enabled && courseId != null && !Number.isNaN(courseId),
+  });
 }
 
 export function useCreateLesson() {
@@ -24,7 +29,7 @@ export function useCreateLesson() {
       queryClient.invalidateQueries({ queryKey: ["lessons"] });
     },
     onError: (error) => {
-      toast.error(errorMessage(error));
+      toast.error(getErrorMessage(error));
     },
   });
 }
@@ -40,7 +45,7 @@ export function useUpdateLesson() {
       queryClient.invalidateQueries({ queryKey: ["lessons"] });
     },
     onError: (error) => {
-      toast.error(errorMessage(error));
+      toast.error(getErrorMessage(error));
     },
   });
 }
@@ -55,7 +60,7 @@ export function useDeleteLesson() {
       queryClient.invalidateQueries({ queryKey: ["lessons"] });
     },
     onError: (error) => {
-      toast.error(errorMessage(error));
+      toast.error(getErrorMessage(error));
     },
   });
 }

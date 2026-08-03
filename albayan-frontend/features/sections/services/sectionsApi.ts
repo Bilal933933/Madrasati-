@@ -1,4 +1,5 @@
 import { apiClient } from "@/lib/apiClient";
+import { buildListQuery } from "@/lib/query";
 import type {
   SectionDeleteResponse,
   SectionListResponse,
@@ -6,11 +7,32 @@ import type {
   SectionPayload,
 } from "../types/section.types";
 
+export interface SectionListFilters {
+  subjectId?: number;
+}
+
+export interface NextOrderResponse {
+  data: {
+    next_order: number;
+  };
+}
+
 export const sectionsApi = {
-  listSections: () =>
-    apiClient<SectionListResponse>("/api/admin/sections", {
-      method: "GET",
-    }),
+  listSections: (filters?: SectionListFilters) =>
+    apiClient<SectionListResponse>(
+      "/api/admin/sections" + buildListQuery({ subject_id: filters?.subjectId }),
+      {
+        method: "GET",
+      }
+    ),
+
+  nextOrder: (subjectId: number) =>
+    apiClient<NextOrderResponse>(
+      "/api/admin/sections/next-order" + buildListQuery({ subject_id: subjectId }),
+      {
+        method: "GET",
+      }
+    ),
 
   createSection: (payload: SectionPayload) =>
     apiClient<SectionMutationResponse>("/api/admin/sections", {

@@ -1,17 +1,22 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { sectionsApi } from "../services/sectionsApi";
+import { getErrorMessage } from "@/lib/apiErrors";
+import { sectionsApi, type SectionListFilters } from "../services/sectionsApi";
 import type { SectionPayload } from "../types/section.types";
 
-export function useSections() {
+export function useSections(filters?: SectionListFilters) {
   return useQuery({
-    queryKey: ["sections"],
-    queryFn: sectionsApi.listSections,
+    queryKey: ["sections", filters ?? {}],
+    queryFn: () => sectionsApi.listSections(filters),
   });
 }
 
-function errorMessage(error: unknown): string {
-  return (error as { message?: string })?.message ?? "حدث خطأ غير متوقع.";
+export function useNextSectionOrder(enabled: boolean, subjectId?: number) {
+  return useQuery({
+    queryKey: ["sections", "next-order", subjectId],
+    queryFn: () => sectionsApi.nextOrder(subjectId ?? 0),
+    enabled: enabled && subjectId != null && !Number.isNaN(subjectId),
+  });
 }
 
 export function useCreateSection() {
@@ -24,7 +29,7 @@ export function useCreateSection() {
       queryClient.invalidateQueries({ queryKey: ["sections"] });
     },
     onError: (error) => {
-      toast.error(errorMessage(error));
+      toast.error(getErrorMessage(error));
     },
   });
 }
@@ -40,7 +45,7 @@ export function useUpdateSection() {
       queryClient.invalidateQueries({ queryKey: ["sections"] });
     },
     onError: (error) => {
-      toast.error(errorMessage(error));
+      toast.error(getErrorMessage(error));
     },
   });
 }
@@ -55,7 +60,7 @@ export function useDeleteSection() {
       queryClient.invalidateQueries({ queryKey: ["sections"] });
     },
     onError: (error) => {
-      toast.error(errorMessage(error));
+      toast.error(getErrorMessage(error));
     },
   });
 }

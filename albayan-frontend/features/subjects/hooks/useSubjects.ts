@@ -1,17 +1,22 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { subjectsApi } from "../services/subjectsApi";
+import { getErrorMessage } from "@/lib/apiErrors";
+import { subjectsApi, type SubjectListFilters } from "../services/subjectsApi";
 import type { SubjectPayload } from "../types/subject.types";
 
-export function useSubjects() {
+export function useSubjects(filters?: SubjectListFilters) {
   return useQuery({
-    queryKey: ["subjects"],
-    queryFn: subjectsApi.listSubjects,
+    queryKey: ["subjects", filters ?? {}],
+    queryFn: () => subjectsApi.listSubjects(filters),
   });
 }
 
-function errorMessage(error: unknown): string {
-  return (error as { message?: string })?.message ?? "حدث خطأ غير متوقع.";
+export function useNextSubjectOrder(enabled: boolean, gradeId?: number) {
+  return useQuery({
+    queryKey: ["subjects", "next-order", gradeId],
+    queryFn: () => subjectsApi.nextOrder(gradeId ?? 0),
+    enabled: enabled && gradeId != null && !Number.isNaN(gradeId),
+  });
 }
 
 export function useCreateSubject() {
@@ -24,7 +29,7 @@ export function useCreateSubject() {
       queryClient.invalidateQueries({ queryKey: ["subjects"] });
     },
     onError: (error) => {
-      toast.error(errorMessage(error));
+      toast.error(getErrorMessage(error));
     },
   });
 }
@@ -40,7 +45,7 @@ export function useUpdateSubject() {
       queryClient.invalidateQueries({ queryKey: ["subjects"] });
     },
     onError: (error) => {
-      toast.error(errorMessage(error));
+      toast.error(getErrorMessage(error));
     },
   });
 }
@@ -55,7 +60,7 @@ export function useDeleteSubject() {
       queryClient.invalidateQueries({ queryKey: ["subjects"] });
     },
     onError: (error) => {
-      toast.error(errorMessage(error));
+      toast.error(getErrorMessage(error));
     },
   });
 }

@@ -1,17 +1,22 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { coursesApi } from "../services/coursesApi";
+import { getErrorMessage } from "@/lib/apiErrors";
+import { coursesApi, type CourseListFilters } from "../services/coursesApi";
 import type { CoursePayload } from "../types/course.types";
 
-export function useCourses() {
+export function useCourses(filters?: CourseListFilters) {
   return useQuery({
-    queryKey: ["courses"],
-    queryFn: coursesApi.listCourses,
+    queryKey: ["courses", filters ?? {}],
+    queryFn: () => coursesApi.listCourses(filters),
   });
 }
 
-function errorMessage(error: unknown): string {
-  return (error as { message?: string })?.message ?? "حدث خطأ غير متوقع.";
+export function useNextCourseOrder(enabled: boolean, sectionId?: number) {
+  return useQuery({
+    queryKey: ["courses", "next-order", sectionId],
+    queryFn: () => coursesApi.nextOrder(sectionId ?? 0),
+    enabled: enabled && sectionId != null && !Number.isNaN(sectionId),
+  });
 }
 
 export function useCreateCourse() {
@@ -24,7 +29,7 @@ export function useCreateCourse() {
       queryClient.invalidateQueries({ queryKey: ["courses"] });
     },
     onError: (error) => {
-      toast.error(errorMessage(error));
+      toast.error(getErrorMessage(error));
     },
   });
 }
@@ -40,7 +45,7 @@ export function useUpdateCourse() {
       queryClient.invalidateQueries({ queryKey: ["courses"] });
     },
     onError: (error) => {
-      toast.error(errorMessage(error));
+      toast.error(getErrorMessage(error));
     },
   });
 }
@@ -55,7 +60,7 @@ export function useDeleteCourse() {
       queryClient.invalidateQueries({ queryKey: ["courses"] });
     },
     onError: (error) => {
-      toast.error(errorMessage(error));
+      toast.error(getErrorMessage(error));
     },
   });
 }

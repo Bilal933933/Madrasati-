@@ -16,6 +16,13 @@ class StageController extends Controller
         return StageResource::collection($this->curriculumService->stages());
     }
 
+    public function nextOrder()
+    {
+        return response()->json([
+            'data' => ['next_order' => $this->curriculumService->nextStageOrder()],
+        ]);
+    }
+
     public function store(StageRequest $request)
     {
         $stage = $this->curriculumService->createStage($request->validated());

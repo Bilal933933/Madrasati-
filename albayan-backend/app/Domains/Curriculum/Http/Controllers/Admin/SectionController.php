@@ -6,14 +6,24 @@ use App\Domains\Curriculum\Http\Requests\SectionRequest;
 use App\Domains\Curriculum\Http\Resources\SectionResource;
 use App\Domains\Curriculum\Services\CurriculumService;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 
 class SectionController extends Controller
 {
     public function __construct(private readonly CurriculumService $curriculumService) {}
 
-    public function index()
+    public function index(Request $request)
     {
-        return SectionResource::collection($this->curriculumService->sections());
+        return SectionResource::collection(
+            $this->curriculumService->sections($request->integer('subject_id'))
+        );
+    }
+
+    public function nextOrder(Request $request)
+    {
+        return response()->json([
+            'data' => ['next_order' => $this->curriculumService->nextSectionOrder($request->integer('subject_id'))],
+        ]);
     }
 
     public function store(SectionRequest $request)

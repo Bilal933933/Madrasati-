@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { getErrorMessage } from "@/lib/apiErrors";
 import { stagesApi } from "../services/stagesApi";
 import type { StagePayload } from "../types/stage.types";
 
@@ -10,8 +11,12 @@ export function useStages() {
   });
 }
 
-function errorMessage(error: unknown): string {
-  return (error as { message?: string })?.message ?? "حدث خطأ غير متوقع.";
+export function useNextStageOrder(enabled: boolean) {
+  return useQuery({
+    queryKey: ["stages", "next-order"],
+    queryFn: stagesApi.nextOrder,
+    enabled,
+  });
 }
 
 export function useCreateStage() {
@@ -24,7 +29,7 @@ export function useCreateStage() {
       queryClient.invalidateQueries({ queryKey: ["stages"] });
     },
     onError: (error) => {
-      toast.error(errorMessage(error));
+      toast.error(getErrorMessage(error));
     },
   });
 }
@@ -40,7 +45,7 @@ export function useUpdateStage() {
       queryClient.invalidateQueries({ queryKey: ["stages"] });
     },
     onError: (error) => {
-      toast.error(errorMessage(error));
+      toast.error(getErrorMessage(error));
     },
   });
 }
@@ -55,7 +60,7 @@ export function useDeleteStage() {
       queryClient.invalidateQueries({ queryKey: ["stages"] });
     },
     onError: (error) => {
-      toast.error(errorMessage(error));
+      toast.error(getErrorMessage(error));
     },
   });
 }

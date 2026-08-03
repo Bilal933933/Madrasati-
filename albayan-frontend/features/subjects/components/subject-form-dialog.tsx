@@ -15,6 +15,8 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Spinner } from "@/components/ui/spinner";
+import { IconSelect } from "@/components/shared/icon-select";
+import { ImageUpload } from "@/components/shared/image-upload";
 import {
   Dialog,
   DialogContent,
@@ -23,7 +25,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useCreateSubject, useUpdateSubject } from "@/features/subjects/hooks/useSubjects";
+import { showApiError } from "@/lib/apiErrors";
+import { useCreateSubject, useUpdateSubject, useNextSubjectOrder } from "@/features/subjects/hooks/useSubjects";
 import type { Subject, SubjectPayload } from "@/features/subjects/types/subject.types";
 import type { Grade } from "@/features/grades/types/grade.types";
 
@@ -83,7 +86,7 @@ function SubjectForm({
     image: subject?.image ?? "",
     icon: subject?.icon ?? "",
     color: subject?.color ?? "#2563EB",
-    sort_order: String(subject?.sort_order ?? 0),
+    sort_order: subject ? String(subject.sort_order ?? 0) : "",
     is_published: subject?.is_published ?? true,
   }));
   const [serverErrors, setServerErrors] = useState<Record<string, string[]> | null>(null);
@@ -93,6 +96,17 @@ function SubjectForm({
   const isPending = createSubject.isPending || updateSubject.isPending;
 
   const isEdit = subject !== null;
+  const gradeId = form.grade_id ? Number(form.grade_id) : undefined;
+  const nextOrder = useNextSubjectOrder(!isEdit, gradeId);
+
+  const sortOrderValue =
+    form.sort_order !== ""
+      ? form.sort_order
+      : gradeId != null
+        ? nextOrder.data
+          ? String(nextOrder.data.data.next_order)
+          : ""
+        : "";
 
   function handleChange(field: keyof FormState, value: string | boolean) {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -119,7 +133,7 @@ function SubjectForm({
       image: form.image.trim() || null,
       icon: form.icon.trim() || null,
       color: form.color.trim() || null,
-      sort_order: form.sort_order === "" ? null : Number(form.sort_order),
+      sort_order: form.sort_order === "" ? (nextOrder.data?.data.next_order ?? 0) : Number(form.sort_order),
       is_published: form.is_published,
     };
   }
@@ -131,6 +145,7 @@ function SubjectForm({
     const payload = buildPayload();
     if (!payload) {
       setServerErrors({ grade_id: ["يرجى اختيار الصف."] });
+      showApiError({ message: "يرجى اختيار الصف." });
       return;
     }
 
@@ -224,12 +239,10 @@ function SubjectForm({
           <Field>
             <FieldLabel htmlFor="subject-icon">الأيقونة</FieldLabel>
             <FieldContent>
-              <Input
+              <IconSelect
                 id="subject-icon"
                 value={form.icon}
-                onChange={(e) => handleChange("icon", e.target.value)}
-                placeholder="book"
-                className="h-9"
+                onValueChange={(value) => handleChange("icon", value)}
               />
             </FieldContent>
           </Field>
@@ -258,15 +271,12 @@ function SubjectForm({
         </div>
 
         <Field>
-          <FieldLabel htmlFor="subject-image">رابط الصورة</FieldLabel>
+          <FieldLabel htmlFor="subject-image">الصورة</FieldLabel>
           <FieldContent>
-            <Input
+            <ImageUpload
               id="subject-image"
-              type="url"
               value={form.image}
-              onChange={(e) => handleChange("image", e.target.value)}
-              placeholder="https://example.com/image.png"
-              className="h-9"
+              onValueChange={(value) => handleChange("image", value)}
             />
             <FieldError errors={[fieldError("image")]} />
           </FieldContent>
@@ -279,7 +289,7 @@ function SubjectForm({
               id="subject-order"
               type="number"
               min={0}
-              value={form.sort_order}
+              value={sortOrderValue}
               onChange={(e) => handleChange("sort_order", e.target.value)}
               className="h-9"
             />

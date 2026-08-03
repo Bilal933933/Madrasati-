@@ -6,14 +6,24 @@ use App\Domains\Curriculum\Http\Requests\SubjectRequest;
 use App\Domains\Curriculum\Http\Resources\SubjectResource;
 use App\Domains\Curriculum\Services\CurriculumService;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 
 class SubjectController extends Controller
 {
     public function __construct(private readonly CurriculumService $curriculumService) {}
 
-    public function index()
+    public function index(Request $request)
     {
-        return SubjectResource::collection($this->curriculumService->subjects());
+        return SubjectResource::collection(
+            $this->curriculumService->subjects($request->integer('grade_id'))
+        );
+    }
+
+    public function nextOrder(Request $request)
+    {
+        return response()->json([
+            'data' => ['next_order' => $this->curriculumService->nextSubjectOrder($request->integer('grade_id'))],
+        ]);
     }
 
     public function store(SubjectRequest $request)

@@ -15,6 +15,8 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Spinner } from "@/components/ui/spinner";
+import { IconSelect } from "@/components/shared/icon-select";
+import { ImageUpload } from "@/components/shared/image-upload";
 import {
   Dialog,
   DialogContent,
@@ -23,7 +25,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useCreateSection, useUpdateSection } from "@/features/sections/hooks/useSections";
+import { showApiError } from "@/lib/apiErrors";
+import { useCreateSection, useUpdateSection, useNextSectionOrder } from "@/features/sections/hooks/useSections";
 import type { Section, SectionPayload } from "@/features/sections/types/section.types";
 import type { Subject } from "@/features/subjects/types/subject.types";
 
@@ -83,7 +86,7 @@ function SectionForm({
     image: section?.image ?? "",
     icon: section?.icon ?? "",
     color: section?.color ?? "#2563EB",
-    sort_order: String(section?.sort_order ?? 0),
+    sort_order: section ? String(section.sort_order ?? 0) : "",
     is_published: section?.is_published ?? true,
   }));
   const [serverErrors, setServerErrors] = useState<Record<string, string[]> | null>(null);
@@ -93,6 +96,17 @@ function SectionForm({
   const isPending = createSection.isPending || updateSection.isPending;
 
   const isEdit = section !== null;
+  const subjectId = form.subject_id ? Number(form.subject_id) : undefined;
+  const nextOrder = useNextSectionOrder(!isEdit, subjectId);
+
+  const sortOrderValue =
+    form.sort_order !== ""
+      ? form.sort_order
+      : subjectId != null
+        ? nextOrder.data
+          ? String(nextOrder.data.data.next_order)
+          : ""
+        : "";
 
   function handleChange(field: keyof FormState, value: string | boolean) {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -119,7 +133,7 @@ function SectionForm({
       image: form.image.trim() || null,
       icon: form.icon.trim() || null,
       color: form.color.trim() || null,
-      sort_order: form.sort_order === "" ? null : Number(form.sort_order),
+      sort_order: form.sort_order === "" ? (nextOrder.data?.data.next_order ?? 0) : Number(form.sort_order),
       is_published: form.is_published,
     };
   }
@@ -131,6 +145,7 @@ function SectionForm({
     const payload = buildPayload();
     if (!payload) {
       setServerErrors({ subject_id: ["يرجى اختيار المادة."] });
+      showApiError({ message: "يرجى اختيار المادة." });
       return;
     }
 
@@ -224,12 +239,10 @@ function SectionForm({
           <Field>
             <FieldLabel htmlFor="section-icon">الأيقونة</FieldLabel>
             <FieldContent>
-              <Input
+              <IconSelect
                 id="section-icon"
                 value={form.icon}
-                onChange={(e) => handleChange("icon", e.target.value)}
-                placeholder="book"
-                className="h-9"
+                onValueChange={(value) => handleChange("icon", value)}
               />
             </FieldContent>
           </Field>
@@ -258,15 +271,12 @@ function SectionForm({
         </div>
 
         <Field>
-          <FieldLabel htmlFor="section-image">رابط الصورة</FieldLabel>
+          <FieldLabel htmlFor="section-image">الصورة</FieldLabel>
           <FieldContent>
-            <Input
+            <ImageUpload
               id="section-image"
-              type="url"
               value={form.image}
-              onChange={(e) => handleChange("image", e.target.value)}
-              placeholder="https://example.com/image.png"
-              className="h-9"
+              onValueChange={(value) => handleChange("image", value)}
             />
             <FieldError errors={[fieldError("image")]} />
           </FieldContent>
@@ -279,7 +289,7 @@ function SectionForm({
               id="section-order"
               type="number"
               min={0}
-              value={form.sort_order}
+              value={sortOrderValue}
               onChange={(e) => handleChange("sort_order", e.target.value)}
               className="h-9"
             />

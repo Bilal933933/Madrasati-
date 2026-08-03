@@ -2,6 +2,7 @@
 
 import { Pencil, Layers, Trash2 } from "lucide-react";
 import { RowActions } from "@/components/shared/row-actions";
+import { EntityThumb } from "@/components/shared/entity-thumb";
 import {
   Table,
   TableBody,
@@ -103,12 +104,12 @@ export function SectionsTable({ sections, subjects, grades, stages, isLoading, o
           <TableRow key={section.id}>
             <TableCell>
               <div className="flex items-center gap-2">
-                <span
-                  className="flex size-6 shrink-0 items-center justify-center rounded-md text-xs font-medium text-primary-foreground"
-                  style={{ backgroundColor: section.color ?? "var(--primary)" }}
-                >
-                  {section.icon ?? section.name.charAt(0)}
-                </span>
+                <EntityThumb
+                  image={section.image}
+                  icon={section.icon}
+                  color={section.color}
+                  label={section.name}
+                />
                 <span className="font-medium">{section.name}</span>
               </div>
             </TableCell>
