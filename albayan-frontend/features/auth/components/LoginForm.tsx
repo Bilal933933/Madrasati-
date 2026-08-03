@@ -35,7 +35,7 @@ export function LoginForm() {
         <FieldLabel htmlFor="email">البريد الإلكتروني</FieldLabel>
         <FieldContent>
           <div className="relative">
-            <Mail className="pointer-events-none absolute start-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+            <Mail className="pointer-events-none absolute end-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               id="email"
               type="email"
@@ -43,7 +43,7 @@ export function LoginForm() {
               onChange={(e) => setEmail(e.target.value)}
               required
               autoComplete="email"
-              className="h-11 ps-9"
+              className="h-11 pe-9"
             />
           </div>
         </FieldContent>

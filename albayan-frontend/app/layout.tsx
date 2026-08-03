@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, IBM_Plex_Sans_Arabic } from "next/font/google";
 import { Providers } from "./providers";
 import { ThemeProvider } from "@/components/shared/theme-provider";
 import { DirectionProvider } from "@/components/ui/direction";
+import { AdminFab } from "@/components/shared/admin-fab";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -13,6 +14,12 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+});
+
+const ibmPlexSansArabic = IBM_Plex_Sans_Arabic({
+  variable: "--font-ibm-plex-sans-arabic",
+  subsets: ["arabic"],
+  weight: ["300", "400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -30,7 +37,7 @@ export default function RootLayout({
       lang="ar"
       dir="rtl"
       suppressHydrationWarning
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${ibmPlexSansArabic.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         <DirectionProvider dir="rtl">
@@ -41,6 +48,7 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             <Providers>{children}</Providers>
+            <AdminFab />
           </ThemeProvider>
         </DirectionProvider>
       </body>

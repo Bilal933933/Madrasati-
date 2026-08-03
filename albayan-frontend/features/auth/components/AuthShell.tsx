@@ -32,7 +32,7 @@ export function AuthShell({ title, description, children, footer }: AuthShellPro
         <ThemeToggle />
       </div>
 
-      <main className="relative z-10 flex flex-1 flex-col items-center justify-center px-4 py-10 sm:px-6">
+      <main className="relative z-10 flex flex-1 flex-col items-center justify-center px-4 pb-16 pt-10 sm:px-6">
         <div className="w-full max-w-md">
           <div className="mb-8 flex flex-col items-center gap-3">
             <span className="flex size-12 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-lg shadow-primary/20">
