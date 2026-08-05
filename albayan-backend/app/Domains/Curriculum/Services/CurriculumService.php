@@ -246,13 +246,14 @@ class CurriculumService
 
     /* --------------------------------- Subjects --------------------------------- */
 
-    public function subjects(?int $gradeId = null, ?int $semesterId = null): Collection
+    public function subjects(?int $gradeId = null, ?int $semesterId = null, int $perPage = 20): LengthAwarePaginator
     {
         return Subject::query()
             ->when($gradeId, fn ($q) => $q->where('grade_id', $gradeId))
             ->when($semesterId, fn ($q) => $q->where('semester_id', $semesterId))
             ->orderBy('sort_order')
-            ->get();
+            ->paginate($perPage)
+            ->withQueryString();
     }
 
     public function nextSubjectOrder(int $gradeId): int

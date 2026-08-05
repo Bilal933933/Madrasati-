@@ -15,7 +15,11 @@ class SubjectController extends Controller
     public function index(Request $request)
     {
         return SubjectResource::collection(
-            $this->curriculumService->subjects($request->integer('grade_id'), $request->integer('semester_id'))
+            $this->curriculumService->subjects(
+                $request->integer('grade_id'),
+                $request->integer('semester_id'),
+                $request->integer('per_page', 20)
+            )
         );
     }
 

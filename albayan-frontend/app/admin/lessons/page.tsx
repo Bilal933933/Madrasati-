@@ -25,7 +25,7 @@ const ALL_RECORDS = 1000;
 export default function AdminLessonsPage() {
   const [page, setPage] = useState(1);
   const { data: coursesData, isLoading: coursesLoading } = useCourses({ perPage: ALL_RECORDS });
-  const { data: subjectsData, isLoading: subjectsLoading } = useSubjects();
+  const { data: subjectsData, isLoading: subjectsLoading } = useSubjects({ perPage: ALL_RECORDS });
   const { data: gradesData, isLoading: gradesLoading } = useGrades();
   const { data: stagesData, isLoading: stagesLoading } = useStages();
   const { data: semestersData } = useSemesters();

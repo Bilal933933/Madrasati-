@@ -1,3 +1,5 @@
+import type { PaginationMeta } from "@/types/pagination";
+
 export interface Subject {
   id: number;
   grade_id: number;
@@ -25,6 +27,7 @@ export interface SubjectPayload {
 
 export interface SubjectListResponse {
   data: Subject[];
+  meta: PaginationMeta;
 }
 
 export interface SubjectMutationResponse {

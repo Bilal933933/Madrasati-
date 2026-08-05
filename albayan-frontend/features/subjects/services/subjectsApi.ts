@@ -10,6 +10,8 @@ import type {
 export interface SubjectListFilters {
   gradeId?: number;
   semesterId?: number;
+  page?: number;
+  perPage?: number;
 }
 
 export interface NextOrderResponse {
@@ -21,7 +23,13 @@ export interface NextOrderResponse {
 export const subjectsApi = {
   listSubjects: (filters?: SubjectListFilters) =>
     apiClient<SubjectListResponse>(
-      "/api/admin/subjects" + buildListQuery({ grade_id: filters?.gradeId, semester_id: filters?.semesterId }),
+      "/api/admin/subjects" +
+        buildListQuery({
+          grade_id: filters?.gradeId,
+          semester_id: filters?.semesterId,
+          page: filters?.page,
+          per_page: filters?.perPage,
+        }),
       {
         method: "GET",
       }

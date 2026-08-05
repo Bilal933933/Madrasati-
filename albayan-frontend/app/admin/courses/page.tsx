@@ -19,10 +19,11 @@ import { useSemesters } from "@/features/semesters/hooks/useSemesters";
 import type { Course } from "@/features/courses/types/course.types";
 
 const PAGE_SIZE = 20;
+const ALL_RECORDS = 1000;
 
 export default function AdminCoursesPage() {
   const [page, setPage] = useState(1);
-  const { data: subjectsData, isLoading: subjectsLoading } = useSubjects();
+  const { data: subjectsData, isLoading: subjectsLoading } = useSubjects({ perPage: ALL_RECORDS });
   const { data: gradesData, isLoading: gradesLoading } = useGrades();
   const { data: stagesData, isLoading: stagesLoading } = useStages();
   const { data: semestersData } = useSemesters();
