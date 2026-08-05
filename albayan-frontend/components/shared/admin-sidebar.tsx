@@ -6,7 +6,9 @@ import {
   LayoutDashboard,
   Layers,
   BookOpen,
+  CalendarDays,
   Library,
+  BookMarked,
   FileText,
   GraduationCap,
 } from "lucide-react";
@@ -29,8 +31,9 @@ const NAV_ITEMS = [
   { href: "/admin", label: "لوحة التحكم", icon: LayoutDashboard },
   { href: "/admin/stages", label: "المراحل الدراسية", icon: Layers },
   { href: "/admin/grades", label: "الصفوف الدراسية", icon: BookOpen },
+  { href: "/admin/semesters", label: "الفصول الدراسية", icon: CalendarDays },
   { href: "/admin/subjects", label: "المواد الدراسية", icon: Library },
-  { href: "/admin/courses", label: "المقررات الدراسية", icon: GraduationCap },
+  { href: "/admin/courses", label: "الوحدات", icon: BookMarked },
   { href: "/admin/lessons", label: "الدروس", icon: FileText },
 ];
 
@@ -51,7 +54,9 @@ export function AdminSidebar() {
                 <div className="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
                   <GraduationCap className="size-4" />
                 </div>
-                <span className="font-semibold group-data-[collapsible=icon]:hidden">مدرستي — الإدارة</span>
+                <span className="font-semibold group-data-[collapsible=icon]:hidden">
+                  مدرستي — الإدارة
+                </span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>

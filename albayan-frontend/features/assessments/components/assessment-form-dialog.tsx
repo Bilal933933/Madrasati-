@@ -48,6 +48,7 @@ type AssessmentFormDialogProps = {
   onOpenChange: (open: boolean) => void;
   assessment: Assessment | null;
   lessonId: number;
+  lockType?: boolean;
 };
 
 type FormState = {
@@ -62,6 +63,7 @@ export function AssessmentFormDialog({
   onOpenChange,
   assessment,
   lessonId,
+  lockType = false,
 }: AssessmentFormDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -71,6 +73,7 @@ export function AssessmentFormDialog({
             key={assessment?.id ?? "create"}
             assessment={assessment}
             lessonId={lessonId}
+            lockType={lockType}
             onClose={() => onOpenChange(false)}
           />
         )}
@@ -82,10 +85,12 @@ export function AssessmentFormDialog({
 function AssessmentForm({
   assessment,
   lessonId,
+  lockType,
   onClose,
 }: {
   assessment: Assessment | null;
   lessonId: number;
+  lockType?: boolean;
   onClose: () => void;
 }) {
   const [form, setForm] = useState<FormState>(() => ({
@@ -168,27 +173,29 @@ function AssessmentForm({
       </DialogHeader>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4" dir="rtl">
-        <Field>
-          <FieldLabel htmlFor="assessment-type">نوع التقييم *</FieldLabel>
-          <FieldContent>
-            <Select
-              value={form.type}
-              onValueChange={(value) => handleChange("type", value)}
-            >
-              <SelectTrigger id="assessment-type" className="w-full">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {ASSESSMENT_TYPES.map((type) => (
-                  <SelectItem key={type.value} value={type.value}>
-                    {type.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <FieldError errors={[fieldError("type")]} />
-          </FieldContent>
-        </Field>
+        {!lockType && (
+          <Field>
+            <FieldLabel htmlFor="assessment-type">نوع التقييم *</FieldLabel>
+            <FieldContent>
+              <Select
+                value={form.type}
+                onValueChange={(value) => handleChange("type", value)}
+              >
+                <SelectTrigger id="assessment-type" className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {ASSESSMENT_TYPES.map((type) => (
+                    <SelectItem key={type.value} value={type.value}>
+                      {type.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FieldError errors={[fieldError("type")]} />
+            </FieldContent>
+          </Field>
+        )}
 
         {form.type === "formative" && (
           <Field>

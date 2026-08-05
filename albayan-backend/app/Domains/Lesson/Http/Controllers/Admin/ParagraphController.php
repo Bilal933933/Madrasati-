@@ -4,13 +4,13 @@ namespace App\Domains\Lesson\Http\Controllers\Admin;
 
 use App\Domains\Lesson\Http\Requests\ParagraphRequest;
 use App\Domains\Lesson\Http\Resources\ParagraphResource;
-use App\Domains\Lesson\Services\LessonService;
+use App\Domains\Lesson\Services\ParagraphService;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 class ParagraphController extends Controller
 {
-    public function __construct(private readonly LessonService $lessonService) {}
+    public function __construct(private readonly ParagraphService $paragraphService) {}
 
     /**
      * @response {
@@ -35,7 +35,7 @@ class ParagraphController extends Controller
     public function index(Request $request)
     {
         return ParagraphResource::collection(
-            $this->lessonService->paragraphs($request->integer('lesson_id'))
+            $this->paragraphService->paragraphs($request->integer('lesson_id'))
         );
     }
 
@@ -49,7 +49,7 @@ class ParagraphController extends Controller
     public function nextOrder(Request $request)
     {
         return response()->json([
-            'data' => ['next_order' => $this->lessonService->nextParagraphOrder($request->integer('lesson_id'))],
+            'data' => ['next_order' => $this->paragraphService->nextParagraphOrder($request->integer('lesson_id'))],
         ]);
     }
 
@@ -74,7 +74,7 @@ class ParagraphController extends Controller
      */
     public function store(ParagraphRequest $request)
     {
-        $paragraph = $this->lessonService->createParagraph($request->validated());
+        $paragraph = $this->paragraphService->createParagraph($request->validated());
 
         return response()->json([
             'data' => new ParagraphResource($paragraph),
@@ -102,7 +102,7 @@ class ParagraphController extends Controller
      */
     public function show(int $id)
     {
-        return new ParagraphResource($this->lessonService->findParagraph($id));
+        return new ParagraphResource($this->paragraphService->findParagraph($id));
     }
 
     /**
@@ -126,7 +126,7 @@ class ParagraphController extends Controller
      */
     public function update(ParagraphRequest $request, int $id)
     {
-        $paragraph = $this->lessonService->updateParagraph($id, $request->validated());
+        $paragraph = $this->paragraphService->updateParagraph($id, $request->validated());
 
         return response()->json([
             'data' => new ParagraphResource($paragraph),
@@ -141,7 +141,7 @@ class ParagraphController extends Controller
      */
     public function destroy(int $id)
     {
-        $this->lessonService->deleteParagraph($id);
+        $this->paragraphService->deleteParagraph($id);
 
         return response()->json([
             'message' => 'تم حذف الفقرة بنجاح.',

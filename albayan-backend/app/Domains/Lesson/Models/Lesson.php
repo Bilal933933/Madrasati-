@@ -2,6 +2,7 @@
 
 namespace App\Domains\Lesson\Models;
 
+use App\Domains\Assessment\Models\Assessment;
 use App\Domains\Curriculum\Models\Course;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -77,5 +78,15 @@ class Lesson extends Model
     public function paragraphs(): HasMany
     {
         return $this->hasMany(Paragraph::class);
+    }
+
+    public function assessments(): HasMany
+    {
+        return $this->hasMany(Assessment::class);
+    }
+
+    public function blocks(): HasMany
+    {
+        return $this->hasMany(LessonBlock::class)->orderBy('sort_order')->orderBy('id');
     }
 }

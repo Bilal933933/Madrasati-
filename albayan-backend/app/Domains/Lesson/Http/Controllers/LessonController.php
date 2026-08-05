@@ -2,7 +2,9 @@
 
 namespace App\Domains\Lesson\Http\Controllers;
 
+use App\Domains\Lesson\Http\Resources\LessonFlowResource;
 use App\Domains\Lesson\Http\Resources\LessonResource;
+use App\Domains\Lesson\Services\LessonFlowService;
 use App\Domains\Lesson\Services\LessonService;
 use App\Http\Controllers\Controller;
 
@@ -11,7 +13,10 @@ use App\Http\Controllers\Controller;
  */
 class LessonController extends Controller
 {
-    public function __construct(private readonly LessonService $lessonService) {}
+    public function __construct(
+        private readonly LessonService $lessonService,
+        private readonly LessonFlowService $lessonFlowService,
+    ) {}
 
     public function index()
     {
@@ -20,6 +25,8 @@ class LessonController extends Controller
 
     public function show(string $slug)
     {
-        return new LessonResource($this->lessonService->findPublishedLessonBySlug($slug));
+        $lesson = $this->lessonService->findPublishedLessonBySlug($slug);
+
+        return new LessonFlowResource($this->lessonFlowService->flow($lesson));
     }
 }

@@ -41,6 +41,7 @@ type LessonFormDialogProps = {
   lesson: Lesson | null;
   courses: Course[];
   defaultCourseId?: number;
+  onCreated?: (lesson: Lesson) => void;
 };
 
 type FormState = {
@@ -56,7 +57,7 @@ type FormState = {
   is_published: boolean;
 };
 
-export function LessonFormDialog({ open, onOpenChange, lesson, courses, defaultCourseId }: LessonFormDialogProps) {
+export function LessonFormDialog({ open, onOpenChange, lesson, courses, defaultCourseId, onCreated }: LessonFormDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
@@ -66,6 +67,7 @@ export function LessonFormDialog({ open, onOpenChange, lesson, courses, defaultC
             lesson={lesson}
             courses={courses}
             defaultCourseId={defaultCourseId}
+            onCreated={onCreated}
             onClose={() => onOpenChange(false)}
           />
         )}
@@ -78,11 +80,13 @@ function LessonForm({
   lesson,
   courses,
   defaultCourseId,
+  onCreated,
   onClose,
 }: {
   lesson: Lesson | null;
   courses: Course[];
   defaultCourseId?: number;
+  onCreated?: (lesson: Lesson) => void;
   onClose: () => void;
 }) {
   const initialCourseId = lesson ? String(lesson.course_id) : defaultCourseId ? String(defaultCourseId) : "";
@@ -173,7 +177,10 @@ function LessonForm({
       );
     } else {
       createLesson.mutate(payload, {
-        onSuccess,
+        onSuccess: (data) => {
+          onCreated?.(data.data);
+          onClose();
+        },
         onError: (error) =>
           setServerErrors((error as { errors?: Record<string, string[]> })?.errors ?? null),
       });

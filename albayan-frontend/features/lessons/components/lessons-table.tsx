@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { BookOpen, ClipboardList, Pencil, PlayCircle, Trash2 } from "lucide-react";
+import { GitBranch, Pencil, PlayCircle, Trash2 } from "lucide-react";
 import { RowActions } from "@/components/shared/row-actions";
 import { EntityThumb } from "@/components/shared/entity-thumb";
 import {
@@ -145,16 +145,10 @@ export function LessonsTable({ lessons, courses, subjects, grades, stages, isLoa
                   ariaLabel={`إجراءات ${lesson.title}`}
                   items={[
                     {
-                      key: "paragraphs",
-                      label: "الفقرات",
-                      icon: <BookOpen />,
-                      onSelect: () => router.push(`/admin/lessons/${lesson.id}/paragraphs`),
-                    },
-                    {
-                      key: "assessments",
-                      label: "التقييمات",
-                      icon: <ClipboardList />,
-                      onSelect: () => router.push(`/admin/lessons/${lesson.id}/assessments`),
+                      key: "builder",
+                      label: "محرر الرحلة",
+                      icon: <GitBranch />,
+                      onSelect: () => router.push(`/admin/lessons/${lesson.id}`),
                     },
                     {
                       key: "edit",

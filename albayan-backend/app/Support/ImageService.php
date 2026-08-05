@@ -15,12 +15,12 @@ class ImageService
     {
         $path = $file->store('images', 'public');
 
-        return '/storage/' . $path;
+        return '/storage/'.$path;
     }
 
     public function delete(?string $imagePath): void
     {
-        if (!$imagePath || !str_starts_with($imagePath, '/storage/')) {
+        if (! $imagePath || ! str_starts_with($imagePath, '/storage/')) {
             return;
         }
 

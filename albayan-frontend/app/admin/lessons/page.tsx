@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Plus } from "lucide-react";
 import { DeleteDialog } from "@/components/shared/delete-dialog";
 import { PageHeader } from "@/components/shared/page-header";
@@ -23,6 +24,7 @@ const PAGE_SIZE = 20;
 const ALL_RECORDS = 1000;
 
 export default function AdminLessonsPage() {
+  const router = useRouter();
   const [page, setPage] = useState(1);
   const { data: coursesData, isLoading: coursesLoading } = useCourses({ perPage: ALL_RECORDS });
   const { data: subjectsData, isLoading: subjectsLoading } = useSubjects({ perPage: ALL_RECORDS });
@@ -125,6 +127,10 @@ export default function AdminLessonsPage() {
         lesson={editingLesson}
         courses={courses}
         defaultCourseId={activeId(filter.values.course)}
+        onCreated={(created) => {
+          setFormOpen(false);
+          router.push(`/admin/lessons/${created.id}`);
+        }}
       />
 
       <DeleteDialog
