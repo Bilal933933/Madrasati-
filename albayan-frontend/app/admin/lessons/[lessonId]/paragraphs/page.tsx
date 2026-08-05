@@ -14,7 +14,7 @@ import {
   useParagraphs,
   useDeleteParagraph,
 } from "@/features/paragraphs/hooks/useParagraphs";
-import { useLessons } from "@/features/lessons/hooks/useLessons";
+import { useLesson } from "@/features/lessons/hooks/useLessons";
 import type { Paragraph } from "@/features/paragraphs/types/paragraph.types";
 
 export default function AdminLessonParagraphsPage() {
@@ -22,10 +22,10 @@ export default function AdminLessonParagraphsPage() {
   const lessonId = Number(params.lessonId);
 
   const { data: paragraphsData, isLoading } = useParagraphs({ lessonId });
-  const { data: lessonsData } = useLessons();
+  const { data: lessonData } = useLesson(lessonId);
   const deleteParagraph = useDeleteParagraph();
   const paragraphs = paragraphsData?.data ?? [];
-  const lesson = lessonsData?.data.find((l) => l.id === lessonId);
+  const lesson = lessonData?.data;
 
   const [formOpen, setFormOpen] = useState(false);
   const [editingParagraph, setEditingParagraph] = useState<Paragraph | null>(null);

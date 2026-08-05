@@ -51,7 +51,10 @@ class LessonController extends Controller
     public function index(Request $request)
     {
         return LessonResource::collection(
-            $this->lessonService->lessons($request->integer('course_id'))
+            $this->lessonService->lessons(
+                $request->only(['stage_id', 'grade_id', 'semester_id', 'subject_id', 'course_id']),
+                $request->integer('per_page', 20)
+            )
         );
     }
 

@@ -11,9 +11,12 @@ import {
 } from "@/components/ui/field";
 import { Spinner } from "@/components/ui/spinner";
 import {
-  NativeSelect,
-  NativeSelectOption,
-} from "@/components/ui/native-select";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Dialog,
   DialogContent,
@@ -168,19 +171,21 @@ function AssessmentForm({
         <Field>
           <FieldLabel htmlFor="assessment-type">نوع التقييم *</FieldLabel>
           <FieldContent>
-            <NativeSelect
-              id="assessment-type"
+            <Select
               value={form.type}
-              onChange={(e) => handleChange("type", e.target.value)}
-              className="w-full"
-              data-size="default"
+              onValueChange={(value) => handleChange("type", value)}
             >
-              {ASSESSMENT_TYPES.map((type) => (
-                <NativeSelectOption key={type.value} value={type.value}>
-                  {type.label}
-                </NativeSelectOption>
-              ))}
-            </NativeSelect>
+              <SelectTrigger id="assessment-type" className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {ASSESSMENT_TYPES.map((type) => (
+                  <SelectItem key={type.value} value={type.value}>
+                    {type.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
             <FieldError errors={[fieldError("type")]} />
           </FieldContent>
         </Field>
@@ -189,20 +194,24 @@ function AssessmentForm({
           <Field>
             <FieldLabel htmlFor="assessment-paragraph">الفقرة المرتبطة</FieldLabel>
             <FieldContent>
-              <NativeSelect
-                id="assessment-paragraph"
-                value={form.paragraph_id}
-                onChange={(e) => handleChange("paragraph_id", e.target.value)}
-                className="w-full"
-                data-size="default"
+              <Select
+                value={form.paragraph_id || "none"}
+                onValueChange={(value) =>
+                  handleChange("paragraph_id", value === "none" ? "" : value)
+                }
               >
-                <NativeSelectOption value="">بدون فقرة</NativeSelectOption>
-                {paragraphs.map((paragraph) => (
-                  <NativeSelectOption key={paragraph.id} value={String(paragraph.id)}>
-                    {paragraph.title}
-                  </NativeSelectOption>
-                ))}
-              </NativeSelect>
+                <SelectTrigger id="assessment-paragraph" className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">بدون فقرة</SelectItem>
+                  {paragraphs.map((paragraph) => (
+                    <SelectItem key={paragraph.id} value={String(paragraph.id)}>
+                      {paragraph.title}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               <p className="text-xs text-muted-foreground">
                 التكويني يظهر بعد فقرة معينة داخل الدرس.
               </p>

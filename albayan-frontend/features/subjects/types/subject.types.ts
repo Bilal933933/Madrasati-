@@ -1,6 +1,7 @@
 export interface Subject {
   id: number;
   grade_id: number;
+  semester_id: number | null;
   name: string;
   slug: string;
   image: string | null;
@@ -12,6 +13,7 @@ export interface Subject {
 
 export interface SubjectPayload {
   grade_id: number;
+  semester_id?: number | null;
   name: string;
   slug?: string | null;
   image?: string | null;

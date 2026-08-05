@@ -16,9 +16,12 @@ import {
 import { Button } from "@/components/ui/button";
 import { Toggle } from "@/components/ui/toggle";
 import {
-  NativeSelect,
-  NativeSelectOption,
-} from "@/components/ui/native-select";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 type RichTextEditorProps = {
   value: string;
@@ -75,25 +78,31 @@ export function RichTextEditor({
   return (
     <div className={`rich-editor ${className ?? ""}`}>
       <div className="flex flex-wrap items-center gap-1 border-b border-border p-1.5">
-        <NativeSelect
+        <Select
           value={headingLevel}
-          aria-label="نمط النص"
-          className="h-8 w-32"
-          onChange={(e) => {
+          onValueChange={(value) => {
             const el = editor.chain().focus();
-            if (e.target.value === "p") el.setParagraph().run();
+            if (value === "p") el.setParagraph().run();
             else
               el.toggleHeading({
-                level: Number(e.target.value.slice(1)) as 1 | 2 | 3,
+                level: Number(value.slice(1)) as 1 | 2 | 3,
               }).run();
           }}
         >
-          {HEADING_OPTIONS.map((option) => (
-            <NativeSelectOption key={option.value} value={option.value}>
-              {option.label}
-            </NativeSelectOption>
-          ))}
-        </NativeSelect>
+          <SelectTrigger
+            aria-label="نمط النص"
+            className="h-8 w-32"
+          >
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {HEADING_OPTIONS.map((option) => (
+              <SelectItem key={option.value} value={option.value}>
+                {option.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
 
         <span className="mx-1 h-5 w-px bg-border" aria-hidden="true" />
 

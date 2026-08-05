@@ -5,9 +5,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
-  NativeSelect,
-  NativeSelectOption,
-} from "@/components/ui/native-select";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Field,
   FieldContent,
@@ -29,17 +32,20 @@ import { showApiError } from "@/lib/apiErrors";
 import { useCreateSubject, useUpdateSubject, useNextSubjectOrder } from "@/features/subjects/hooks/useSubjects";
 import type { Subject, SubjectPayload } from "@/features/subjects/types/subject.types";
 import type { Grade } from "@/features/grades/types/grade.types";
+import type { Semester } from "@/features/semesters/types/semester.types";
 
 type SubjectFormDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   subject: Subject | null;
   grades: Grade[];
+  semesters: Semester[];
   defaultGradeId?: number;
 };
 
 type FormState = {
   grade_id: string;
+  semester_id: string;
   name: string;
   slug: string;
   image: string;
@@ -49,7 +55,7 @@ type FormState = {
   is_published: boolean;
 };
 
-export function SubjectFormDialog({ open, onOpenChange, subject, grades, defaultGradeId }: SubjectFormDialogProps) {
+export function SubjectFormDialog({ open, onOpenChange, subject, grades, semesters, defaultGradeId }: SubjectFormDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
@@ -58,6 +64,7 @@ export function SubjectFormDialog({ open, onOpenChange, subject, grades, default
             key={subject?.id ?? "create"}
             subject={subject}
             grades={grades}
+            semesters={semesters}
             defaultGradeId={defaultGradeId}
             onClose={() => onOpenChange(false)}
           />
@@ -70,17 +77,20 @@ export function SubjectFormDialog({ open, onOpenChange, subject, grades, default
 function SubjectForm({
   subject,
   grades,
+  semesters,
   defaultGradeId,
   onClose,
 }: {
   subject: Subject | null;
   grades: Grade[];
+  semesters: Semester[];
   defaultGradeId?: number;
   onClose: () => void;
 }) {
   const initialGradeId = subject ? String(subject.grade_id) : defaultGradeId ? String(defaultGradeId) : "";
   const [form, setForm] = useState<FormState>(() => ({
     grade_id: initialGradeId,
+    semester_id: subject?.semester_id ? String(subject.semester_id) : "",
     name: subject?.name ?? "",
     slug: subject?.slug ?? "",
     image: subject?.image ?? "",
@@ -98,6 +108,7 @@ function SubjectForm({
   const isEdit = subject !== null;
   const gradeId = form.grade_id ? Number(form.grade_id) : undefined;
   const nextOrder = useNextSubjectOrder(!isEdit, gradeId);
+  const gradeSemesters = semesters.filter((s) => s.grade_id === gradeId);
 
   const sortOrderValue =
     form.sort_order !== ""
@@ -128,6 +139,7 @@ function SubjectForm({
 
     return {
       grade_id: gradeId,
+      semester_id: form.semester_id ? Number(form.semester_id) : null,
       name: form.name.trim(),
       slug: form.slug.trim() || null,
       image: form.image.trim() || null,
@@ -184,23 +196,56 @@ function SubjectForm({
         <Field>
           <FieldLabel htmlFor="subject-grade">الصف *</FieldLabel>
           <FieldContent>
-            <NativeSelect
-              id="subject-grade"
+            <Select
               value={form.grade_id}
-              onChange={(e) => handleChange("grade_id", e.target.value)}
-              className="w-full"
-              data-size="default"
+              onValueChange={(value) => {
+                handleChange("grade_id", value);
+                handleChange("semester_id", "");
+              }}
             >
-              <NativeSelectOption value="" disabled>
-                اختر الصف...
-              </NativeSelectOption>
-              {grades.map((grade) => (
-                <NativeSelectOption key={grade.id} value={String(grade.id)}>
-                  {grade.name}
-                </NativeSelectOption>
-              ))}
-            </NativeSelect>
+              <SelectTrigger id="subject-grade" className="w-full">
+                <SelectValue placeholder="اختر الصف..." />
+              </SelectTrigger>
+              <SelectContent>
+                {grades.map((grade) => (
+                  <SelectItem key={grade.id} value={String(grade.id)}>
+                    {grade.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
             <FieldError errors={[fieldError("grade_id")]} />
+          </FieldContent>
+        </Field>
+
+        <Field>
+          <FieldLabel htmlFor="subject-semester">الفصل</FieldLabel>
+          <FieldContent>
+            <Select
+              value={form.semester_id || "none"}
+              onValueChange={(value) =>
+                handleChange("semester_id", value === "none" ? "" : value)
+              }
+            >
+              <SelectTrigger
+                id="subject-semester"
+                className="w-full"
+                disabled={!gradeId}
+              >
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">
+                  {gradeId ? "بدون فصل" : "اختر الصف أولًا..."}
+                </SelectItem>
+                {gradeSemesters.map((semester) => (
+                  <SelectItem key={semester.id} value={String(semester.id)}>
+                    {semester.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <FieldError errors={[fieldError("semester_id")]} />
           </FieldContent>
         </Field>
 

@@ -9,9 +9,7 @@ export function useCourses(filters?: CourseListFilters) {
     queryKey: ["courses", filters ?? {}],
     queryFn: () => coursesApi.listCourses(filters),
   });
-}
-
-export function useNextCourseOrder(enabled: boolean, subjectId?: number) {
+}export function useNextCourseOrder(enabled: boolean, subjectId?: number) {
   return useQuery({
     queryKey: ["courses", "next-order", subjectId],
     queryFn: () => coursesApi.nextOrder(subjectId ?? 0),

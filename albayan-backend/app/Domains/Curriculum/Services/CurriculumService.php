@@ -10,6 +10,7 @@ use App\Domains\Curriculum\Models\Subject;
 use App\Support\ImageService;
 use App\Support\Slugger;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 /**
  * ظ…ظ†ط·ظ‚ ط¹ظ…ظ„ظٹط§طھ ط¯ظˆظ…ظٹظ† ط§ظ„ظ…ظ†ظ‡ط¬ (Curriculum).
@@ -335,12 +336,19 @@ class CurriculumService
 
     /* ---------------------------------- Courses ---------------------------------- */
 
-    public function courses(?int $subjectId = null): Collection
+    /**
+     * قائمة المقررات مع ترقيم وفلترة تسلسلية عبر مستويات المنهج.
+     */
+    public function courses(array $filters = [], int $perPage = 20): LengthAwarePaginator
     {
         return Course::query()
-            ->when($subjectId, fn ($q) => $q->where('subject_id', $subjectId))
+            ->when(($filters['subject_id'] ?? null), fn ($q, $id) => $q->where('subject_id', $id))
+            ->when(($filters['semester_id'] ?? null), fn ($q, $id) => $q->whereHas('subject', fn ($q2) => $q2->where('semester_id', $id)))
+            ->when(($filters['grade_id'] ?? null), fn ($q, $id) => $q->whereHas('subject', fn ($q2) => $q2->where('grade_id', $id)))
+            ->when(($filters['stage_id'] ?? null), fn ($q, $id) => $q->whereHas('subject.grade', fn ($q2) => $q2->where('stage_id', $id)))
             ->orderBy('sort_order')
-            ->get();
+            ->paginate($perPage)
+            ->withQueryString();
     }
 
     public function nextCourseOrder(int $subjectId): int

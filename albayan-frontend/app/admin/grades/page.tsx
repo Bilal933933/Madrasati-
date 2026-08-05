@@ -4,9 +4,10 @@ import { useState } from "react";
 import { Plus } from "lucide-react";
 import { DeleteDialog } from "@/components/shared/delete-dialog";
 import { PageHeader } from "@/components/shared/page-header";
+import { CascadeFilter } from "@/components/shared/cascade-filter";
+import { useCascadeFilter, filterGrades, activeId } from "@/components/shared/use-cascade-filter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
 import { GradesTable } from "@/features/grades/components/grades-table";
 import { GradeFormDialog } from "@/features/grades/components/grade-form-dialog";
 import { useGrades, useDeleteGrade } from "@/features/grades/hooks/useGrades";
@@ -14,17 +15,14 @@ import { useStages } from "@/features/stages/hooks/useStages";
 import type { Grade } from "@/features/grades/types/grade.types";
 
 export default function AdminGradesPage() {
-  const [stageFilter, setStageFilter] = useState<string>("all");
-  const [appliedStageFilter, setAppliedStageFilter] = useState<string>("all");
-  const { data: gradesData, isLoading } = useGrades(
-    appliedStageFilter === "all"
-      ? undefined
-      : { stageId: Number(appliedStageFilter) }
-  );
+  const { data: gradesData, isLoading } = useGrades();
   const { data: stagesData, isLoading: stagesLoading } = useStages();
+  const filter = useCascadeFilter({ stages: stagesData?.data ?? [] });
   const deleteGrade = useDeleteGrade();
   const grades = gradesData?.data ?? [];
   const stages = stagesData?.data ?? [];
+
+  const filteredGrades = filterGrades(grades, filter.values);
 
   const [formOpen, setFormOpen] = useState(false);
   const [editingGrade, setEditingGrade] = useState<Grade | null>(null);
@@ -47,28 +45,7 @@ export default function AdminGradesPage() {
         description="إدارة الصفوف وتنظيمها ضمن المراحل."
         actions={
           <>
-            <NativeSelect
-              aria-label="تصفية حسب المرحلة"
-              value={stageFilter}
-              onChange={(e) => setStageFilter(e.target.value)}
-              className="w-full sm:w-52"
-            >
-              <NativeSelectOption value="all">
-                كل المراحل
-              </NativeSelectOption>
-              {stages.map((stage) => (
-                <NativeSelectOption key={stage.id} value={String(stage.id)}>
-                  {stage.name}
-                </NativeSelectOption>
-              ))}
-            </NativeSelect>
-            <Button
-              variant="outline"
-              onClick={() => setAppliedStageFilter(stageFilter)}
-              className="w-full sm:w-auto"
-            >
-              تطبيق
-            </Button>
+            <CascadeFilter filter={filter} levels={["stage"]} />
             <Button onClick={openCreate} className="w-full sm:w-auto">
               <Plus />
               إضافة صف
@@ -80,7 +57,7 @@ export default function AdminGradesPage() {
       <Card>
         <CardContent className="p-0 pt-4">
           <GradesTable
-            grades={grades}
+            grades={filteredGrades}
             stages={stages}
             isLoading={isLoading || stagesLoading}
             onEdit={openEdit}
@@ -94,7 +71,7 @@ export default function AdminGradesPage() {
         onOpenChange={setFormOpen}
         grade={editingGrade}
         stages={stages}
-        defaultStageId={appliedStageFilter === "all" ? undefined : Number(appliedStageFilter)}
+        defaultStageId={activeId(filter.values.stage)}
       />
 
       <DeleteDialog

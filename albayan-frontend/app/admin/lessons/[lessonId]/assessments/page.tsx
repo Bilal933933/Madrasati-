@@ -14,7 +14,7 @@ import {
   useAssessments,
   useDeleteAssessment,
 } from "@/features/assessments/hooks/useAssessments";
-import { useLessons } from "@/features/lessons/hooks/useLessons";
+import { useLesson } from "@/features/lessons/hooks/useLessons";
 import { useParagraphs } from "@/features/paragraphs/hooks/useParagraphs";
 import type { Assessment } from "@/features/assessments/types/assessment.types";
 
@@ -24,11 +24,11 @@ export default function AdminLessonAssessmentsPage() {
 
   const { data: assessmentsData, isLoading } = useAssessments({ lessonId });
   const { data: paragraphsData } = useParagraphs({ lessonId });
-  const { data: lessonsData } = useLessons();
+  const { data: lessonData } = useLesson(lessonId);
   const deleteAssessment = useDeleteAssessment();
   const assessments = assessmentsData?.data ?? [];
   const paragraphs = paragraphsData?.data ?? [];
-  const lesson = lessonsData?.data.find((l) => l.id === lessonId);
+  const lesson = lessonData?.data;
 
   const [formOpen, setFormOpen] = useState(false);
   const [editingAssessment, setEditingAssessment] = useState<Assessment | null>(null);

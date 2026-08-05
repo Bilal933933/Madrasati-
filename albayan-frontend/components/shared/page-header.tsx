@@ -13,7 +13,7 @@ type PageHeaderProps = {
  */
 export function PageHeader({ title, description, breadcrumb, actions }: PageHeaderProps) {
   return (
-    <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+    <div className="mb-8 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
       <div className="min-w-0">
         {breadcrumb && <div className="mb-2">{breadcrumb}</div>}
         <h1 className="text-2xl font-bold tracking-tight">{title}</h1>

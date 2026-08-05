@@ -6,9 +6,12 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
-  NativeSelect,
-  NativeSelectOption,
-} from "@/components/ui/native-select";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Field,
   FieldContent,
@@ -192,22 +195,21 @@ function LessonForm({
         <Field>
           <FieldLabel htmlFor="lesson-course">المقرر *</FieldLabel>
           <FieldContent>
-            <NativeSelect
-              id="lesson-course"
+            <Select
               value={form.course_id}
-              onChange={(e) => handleChange("course_id", e.target.value)}
-              className="w-full"
-              data-size="default"
+              onValueChange={(value) => handleChange("course_id", value)}
             >
-              <NativeSelectOption value="" disabled>
-                اختر المقرر...
-              </NativeSelectOption>
-              {courses.map((course) => (
-                <NativeSelectOption key={course.id} value={String(course.id)}>
-                  {course.name}
-                </NativeSelectOption>
-              ))}
-            </NativeSelect>
+              <SelectTrigger id="lesson-course" className="w-full">
+                <SelectValue placeholder="اختر المقرر..." />
+              </SelectTrigger>
+              <SelectContent>
+                {courses.map((course) => (
+                  <SelectItem key={course.id} value={String(course.id)}>
+                    {course.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
             <FieldError errors={[fieldError("course_id")]} />
           </FieldContent>
         </Field>

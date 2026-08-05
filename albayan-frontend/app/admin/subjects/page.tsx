@@ -4,30 +4,35 @@ import { useState } from "react";
 import { Plus } from "lucide-react";
 import { DeleteDialog } from "@/components/shared/delete-dialog";
 import { PageHeader } from "@/components/shared/page-header";
+import { CascadeFilter } from "@/components/shared/cascade-filter";
+import { useCascadeFilter, filterSubjects, activeId } from "@/components/shared/use-cascade-filter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
 import { SubjectsTable } from "@/features/subjects/components/subjects-table";
 import { SubjectFormDialog } from "@/features/subjects/components/subject-form-dialog";
 import { useSubjects, useDeleteSubject } from "@/features/subjects/hooks/useSubjects";
 import { useGrades } from "@/features/grades/hooks/useGrades";
 import { useStages } from "@/features/stages/hooks/useStages";
+import { useSemesters } from "@/features/semesters/hooks/useSemesters";
 import type { Subject } from "@/features/subjects/types/subject.types";
 
 export default function AdminSubjectsPage() {
-  const [gradeFilter, setGradeFilter] = useState<string>("all");
-  const [appliedGradeFilter, setAppliedGradeFilter] = useState<string>("all");
-  const { data: subjectsData, isLoading } = useSubjects(
-    appliedGradeFilter === "all"
-      ? undefined
-      : { gradeId: Number(appliedGradeFilter) }
-  );
+  const { data: subjectsData, isLoading } = useSubjects();
   const { data: gradesData, isLoading: gradesLoading } = useGrades();
   const { data: stagesData, isLoading: stagesLoading } = useStages();
+  const { data: semestersData } = useSemesters();
+  const filter = useCascadeFilter({
+    stages: stagesData?.data ?? [],
+    grades: gradesData?.data ?? [],
+    semesters: semestersData?.data ?? [],
+  });
   const deleteSubject = useDeleteSubject();
   const subjects = subjectsData?.data ?? [];
   const grades = gradesData?.data ?? [];
   const stages = stagesData?.data ?? [];
+  const semesters = semestersData?.data ?? [];
+
+  const filteredSubjects = filterSubjects(subjects, filter.values);
 
   const [formOpen, setFormOpen] = useState(false);
   const [editingSubject, setEditingSubject] = useState<Subject | null>(null);
@@ -44,34 +49,13 @@ export default function AdminSubjectsPage() {
   }
 
   return (
-    <div className="flex flex-1 flex-col px-4 py-8 sm:px-6">
+    <div className="flex flex-1 flex-col px-4 py-8 sm:px-6 lg:px-8">
       <PageHeader
         title="المواد الدراسية"
         description="إدارة المواد وتنظيمها ضمن الصفوف."
         actions={
           <>
-            <NativeSelect
-              aria-label="تصفية حسب الصف"
-              value={gradeFilter}
-              onChange={(e) => setGradeFilter(e.target.value)}
-              className="w-full sm:w-52"
-            >
-              <NativeSelectOption value="all">
-                كل الصفوف
-              </NativeSelectOption>
-              {grades.map((grade) => (
-                <NativeSelectOption key={grade.id} value={String(grade.id)}>
-                  {grade.name}
-                </NativeSelectOption>
-              ))}
-            </NativeSelect>
-            <Button
-              variant="outline"
-              onClick={() => setAppliedGradeFilter(gradeFilter)}
-              className="w-full sm:w-auto"
-            >
-              تطبيق
-            </Button>
+            <CascadeFilter filter={filter} levels={["stage", "grade", "semester"]} />
             <Button onClick={openCreate} className="w-full sm:w-auto">
               <Plus />
               إضافة مادة
@@ -83,9 +67,10 @@ export default function AdminSubjectsPage() {
       <Card>
         <CardContent className="p-0 pt-4">
           <SubjectsTable
-            subjects={subjects}
+            subjects={filteredSubjects}
             grades={grades}
             stages={stages}
+            semesters={semesters}
             isLoading={isLoading || gradesLoading || stagesLoading}
             onEdit={openEdit}
             onDelete={setDeletingSubject}
@@ -98,7 +83,8 @@ export default function AdminSubjectsPage() {
         onOpenChange={setFormOpen}
         subject={editingSubject}
         grades={grades}
-        defaultGradeId={appliedGradeFilter === "all" ? undefined : Number(appliedGradeFilter)}
+        semesters={semesters}
+        defaultGradeId={activeId(filter.values.grade)}
       />
 
       <DeleteDialog

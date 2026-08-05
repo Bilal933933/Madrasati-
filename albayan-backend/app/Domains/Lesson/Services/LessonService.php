@@ -8,6 +8,7 @@ use App\Support\HtmlSanitizerService;
 use App\Support\ImageService;
 use App\Support\Slugger;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 /**
  * ظ…ظ†ط·ظ‚ ط¹ظ…ظ„ظٹط§طھ ط¯ظˆظ…ظٹظ† ط§ظ„ط¯ط±ط³ (Lesson).
@@ -22,12 +23,20 @@ class LessonService
 
     /* ---------------------------------- Lessons ---------------------------------- */
 
-    public function lessons(?int $courseId = null): Collection
+    /**
+     * قائمة الدروس مع ترقيم وفلترة تسلسلية عبر كل مستويات المنهج.
+     */
+    public function lessons(array $filters = [], int $perPage = 20): LengthAwarePaginator
     {
         return Lesson::query()
-            ->when($courseId, fn ($q) => $q->where('course_id', $courseId))
+            ->when(($filters['course_id'] ?? null), fn ($q, $id) => $q->where('course_id', $id))
+            ->when(($filters['subject_id'] ?? null), fn ($q, $id) => $q->whereHas('course', fn ($q2) => $q2->where('subject_id', $id)))
+            ->when(($filters['semester_id'] ?? null), fn ($q, $id) => $q->whereHas('course.subject', fn ($q2) => $q2->where('semester_id', $id)))
+            ->when(($filters['grade_id'] ?? null), fn ($q, $id) => $q->whereHas('course.subject', fn ($q2) => $q2->where('grade_id', $id)))
+            ->when(($filters['stage_id'] ?? null), fn ($q, $id) => $q->whereHas('course.subject.grade', fn ($q2) => $q2->where('stage_id', $id)))
             ->orderBy('sort_order')
-            ->get();
+            ->paginate($perPage)
+            ->withQueryString();
     }
 
     public function nextLessonOrder(int $courseId): int

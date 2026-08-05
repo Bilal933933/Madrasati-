@@ -50,7 +50,10 @@ class CourseController extends Controller
     public function index(Request $request)
     {
         return CourseResource::collection(
-            $this->curriculumService->courses($request->integer('subject_id'))
+            $this->curriculumService->courses(
+                $request->only(['stage_id', 'grade_id', 'semester_id', 'subject_id']),
+                $request->integer('per_page', 20)
+            )
         );
     }
 

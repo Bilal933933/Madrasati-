@@ -1,3 +1,5 @@
+import type { PaginationMeta } from "@/types/pagination";
+
 export interface Lesson {
   id: number;
   course_id: number;
@@ -28,6 +30,11 @@ export interface LessonPayload {
 
 export interface LessonListResponse {
   data: Lesson[];
+  meta: PaginationMeta;
+}
+
+export interface LessonResponse {
+  data: Lesson;
 }
 
 export interface LessonMutationResponse {

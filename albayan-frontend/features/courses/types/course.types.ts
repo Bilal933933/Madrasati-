@@ -1,4 +1,5 @@
 import type { components } from "@/types/api.generated";
+import type { PaginationMeta } from "@/types/pagination";
 
 type SchemaCourse = components["schemas"]["CourseResource"];
 type SchemaCourseRequest = components["schemas"]["CourseRequest"];
@@ -35,6 +36,7 @@ export type CoursePayload = SchemaCourseRequest;
 
 export interface CourseListResponse {
   data: Course[];
+  meta: PaginationMeta;
 }
 
 export interface CourseMutationResponse {

@@ -100,29 +100,29 @@ export function LessonsTable({ lessons, courses, subjects, grades, stages, isLoa
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead>العنوان</TableHead>
+          <TableHead className="min-w-56">العنوان</TableHead>
           <TableHead className="hidden md:table-cell">المقرر</TableHead>
           <TableHead className="hidden md:table-cell">المادة</TableHead>
           <TableHead className="hidden md:table-cell">الصف</TableHead>
           <TableHead className="hidden md:table-cell">المرحلة</TableHead>
           <TableHead className="hidden md:table-cell">الترتيب</TableHead>
           <TableHead>الحالة</TableHead>
-          <TableHead className="text-end">إجراءات</TableHead>
+          <TableHead className="pe-2 text-end">إجراءات</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
         {lessons.map((lesson) => (
           <TableRow key={lesson.id}>
-            <TableCell>
-              <div className="flex items-center gap-2">
+            <TableCell className="min-w-56">
+              <div className="flex items-center gap-2.5">
                 <EntityThumb
                   image={lesson.image}
                   icon={lesson.icon}
                   color={lesson.color}
                   label={lesson.title}
                 />
-                <div className="flex flex-col">
-                  <span className="font-medium">{lesson.title}</span>
+                <div className="flex min-w-0 flex-col">
+                  <span className="min-w-0 truncate font-medium">{lesson.title}</span>
                   {lesson.summary && (
                     <span className="line-clamp-1 max-w-56 text-xs text-muted-foreground">
                       {lesson.summary}

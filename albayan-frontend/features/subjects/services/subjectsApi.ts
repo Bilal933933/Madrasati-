@@ -9,6 +9,7 @@ import type {
 
 export interface SubjectListFilters {
   gradeId?: number;
+  semesterId?: number;
 }
 
 export interface NextOrderResponse {
@@ -20,7 +21,7 @@ export interface NextOrderResponse {
 export const subjectsApi = {
   listSubjects: (filters?: SubjectListFilters) =>
     apiClient<SubjectListResponse>(
-      "/api/admin/subjects" + buildListQuery({ grade_id: filters?.gradeId }),
+      "/api/admin/subjects" + buildListQuery({ grade_id: filters?.gradeId, semester_id: filters?.semesterId }),
       {
         method: "GET",
       }

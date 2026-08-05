@@ -9,7 +9,12 @@ import type {
 } from "../types/course.types";
 
 export interface CourseListFilters {
+  stageId?: number;
+  gradeId?: number;
+  semesterId?: number;
   subjectId?: number;
+  page?: number;
+  perPage?: number;
 }
 
 /** استجابة next-order مأخوذة مباشرة من العملية المولّدة في types/api.generated.ts */
@@ -18,7 +23,15 @@ export type NextOrderResponse = operations["course.nextOrder"]["responses"][200]
 export const coursesApi = {
   listCourses: (filters?: CourseListFilters) =>
     apiClient<CourseListResponse>(
-      "/api/admin/courses" + buildListQuery({ subject_id: filters?.subjectId }),
+      "/api/admin/courses" +
+        buildListQuery({
+          stage_id: filters?.stageId,
+          grade_id: filters?.gradeId,
+          semester_id: filters?.semesterId,
+          subject_id: filters?.subjectId,
+          page: filters?.page,
+          per_page: filters?.perPage,
+        }),
       {
         method: "GET",
       }

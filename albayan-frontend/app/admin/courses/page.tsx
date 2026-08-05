@@ -4,30 +4,56 @@ import { useState } from "react";
 import { Plus } from "lucide-react";
 import { DeleteDialog } from "@/components/shared/delete-dialog";
 import { PageHeader } from "@/components/shared/page-header";
+import { DataTablePagination } from "@/components/shared/data-table-pagination";
+import { CascadeFilter } from "@/components/shared/cascade-filter";
+import { useCascadeFilter, activeId } from "@/components/shared/use-cascade-filter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
 import { CoursesTable } from "@/features/courses/components/courses-table";
 import { CourseFormDialog } from "@/features/courses/components/course-form-dialog";
 import { useCourses, useDeleteCourse } from "@/features/courses/hooks/useCourses";
 import { useSubjects } from "@/features/subjects/hooks/useSubjects";
 import { useGrades } from "@/features/grades/hooks/useGrades";
 import { useStages } from "@/features/stages/hooks/useStages";
+import { useSemesters } from "@/features/semesters/hooks/useSemesters";
 import type { Course } from "@/features/courses/types/course.types";
 
+const PAGE_SIZE = 20;
+
 export default function AdminCoursesPage() {
-  const [subjectFilter, setSubjectFilter] = useState<string>("all");
-  const [appliedSubjectFilter, setAppliedSubjectFilter] = useState<string>("all");
-  const { data: coursesData, isLoading } = useCourses(
-    appliedSubjectFilter === "all"
-      ? undefined
-      : { subjectId: Number(appliedSubjectFilter) }
-  );
+  const [page, setPage] = useState(1);
   const { data: subjectsData, isLoading: subjectsLoading } = useSubjects();
   const { data: gradesData, isLoading: gradesLoading } = useGrades();
   const { data: stagesData, isLoading: stagesLoading } = useStages();
+  const { data: semestersData } = useSemesters();
+  const filter = useCascadeFilter({
+    stages: stagesData?.data ?? [],
+    grades: gradesData?.data ?? [],
+    semesters: semestersData?.data ?? [],
+    subjects: subjectsData?.data ?? [],
+  });
+
+  const filterWithPageReset = {
+    ...filter,
+    setValue: (level: Parameters<typeof filter.setValue>[0], value: string) => {
+      filter.setValue(level, value);
+      setPage(1);
+    },
+  };
+
+  const { data: coursesData, isLoading } = useCourses({
+    stageId: activeId(filter.values.stage),
+    gradeId: activeId(filter.values.grade),
+    semesterId: activeId(filter.values.semester),
+    subjectId: activeId(filter.values.subject),
+    page,
+    perPage: PAGE_SIZE,
+  });
+
   const deleteCourse = useDeleteCourse();
   const courses = coursesData?.data ?? [];
+  const meta = coursesData?.meta;
+  const totalPages = meta?.last_page ?? 1;
   const subjects = subjectsData?.data ?? [];
   const grades = gradesData?.data ?? [];
   const stages = stagesData?.data ?? [];
@@ -47,34 +73,16 @@ export default function AdminCoursesPage() {
   }
 
   return (
-    <div className="flex flex-1 flex-col px-4 py-8 sm:px-6">
+    <div className="flex flex-1 flex-col px-4 py-8 sm:px-6 lg:px-8">
       <PageHeader
         title="المقررات الدراسية"
         description="إدارة المقررات وتنظيمها ضمن المواد."
         actions={
           <>
-            <NativeSelect
-              aria-label="تصفية حسب المادة"
-              value={subjectFilter}
-              onChange={(e) => setSubjectFilter(e.target.value)}
-              className="w-full sm:w-52"
-            >
-              <NativeSelectOption value="all">
-                كل المواد
-              </NativeSelectOption>
-              {subjects.map((subject) => (
-                <NativeSelectOption key={subject.id} value={String(subject.id)}>
-                  {subject.name}
-                </NativeSelectOption>
-              ))}
-            </NativeSelect>
-            <Button
-              variant="outline"
-              onClick={() => setAppliedSubjectFilter(subjectFilter)}
-              className="w-full sm:w-auto"
-            >
-              تطبيق
-            </Button>
+            <CascadeFilter
+              filter={filterWithPageReset}
+              levels={["stage", "grade", "semester", "subject"]}
+            />
             <Button onClick={openCreate} className="w-full sm:w-auto">
               <Plus />
               إضافة مقرر
@@ -95,6 +103,7 @@ export default function AdminCoursesPage() {
             onDelete={setDeletingCourse}
           />
         </CardContent>
+        <DataTablePagination page={page} totalPages={totalPages} onPageChange={setPage} />
       </Card>
 
       <CourseFormDialog
@@ -102,7 +111,7 @@ export default function AdminCoursesPage() {
         onOpenChange={setFormOpen}
         course={editingCourse}
         subjects={subjects}
-        defaultSubjectId={appliedSubjectFilter === "all" ? undefined : Number(appliedSubjectFilter)}
+        defaultSubjectId={activeId(filter.values.subject)}
       />
 
       <DeleteDialog

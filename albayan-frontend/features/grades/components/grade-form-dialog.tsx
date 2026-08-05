@@ -5,9 +5,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
-  NativeSelect,
-  NativeSelectOption,
-} from "@/components/ui/native-select";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Field,
   FieldContent,
@@ -184,22 +187,21 @@ function GradeForm({
         <Field>
           <FieldLabel htmlFor="grade-stage">المرحلة *</FieldLabel>
           <FieldContent>
-            <NativeSelect
-              id="grade-stage"
+            <Select
               value={form.stage_id}
-              onChange={(e) => handleChange("stage_id", e.target.value)}
-              className="w-full"
-              data-size="default"
+              onValueChange={(value) => handleChange("stage_id", value)}
             >
-              <NativeSelectOption value="" disabled>
-                اختر المرحلة...
-              </NativeSelectOption>
-              {stages.map((stage) => (
-                <NativeSelectOption key={stage.id} value={String(stage.id)}>
-                  {stage.name}
-                </NativeSelectOption>
-              ))}
-            </NativeSelect>
+              <SelectTrigger id="grade-stage" className="w-full">
+                <SelectValue placeholder="اختر المرحلة..." />
+              </SelectTrigger>
+              <SelectContent>
+                {stages.map((stage) => (
+                  <SelectItem key={stage.id} value={String(stage.id)}>
+                    {stage.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
             <FieldError errors={[fieldError("stage_id")]} />
           </FieldContent>
         </Field>

@@ -11,6 +11,14 @@ export function useLessons(filters?: LessonListFilters) {
   });
 }
 
+export function useLesson(id: number) {
+  return useQuery({
+    queryKey: ["lessons", { id }],
+    queryFn: () => lessonsApi.getLesson(id),
+    enabled: id > 0,
+  });
+}
+
 export function useNextLessonOrder(enabled: boolean, courseId?: number) {
   return useQuery({
     queryKey: ["lessons", "next-order", courseId],

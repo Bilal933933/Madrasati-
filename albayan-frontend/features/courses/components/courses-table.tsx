@@ -90,28 +90,28 @@ export function CoursesTable({ courses, subjects, grades, stages, isLoading, onE
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead>الاسم</TableHead>
+          <TableHead className="min-w-56">الاسم</TableHead>
           <TableHead className="hidden md:table-cell">المادة</TableHead>
           <TableHead className="hidden md:table-cell">الصف</TableHead>
           <TableHead className="hidden md:table-cell">المرحلة</TableHead>
           <TableHead className="hidden md:table-cell">الترتيب</TableHead>
           <TableHead>الحالة</TableHead>
-          <TableHead className="text-end">إجراءات</TableHead>
+          <TableHead className="pe-2 text-end">إجراءات</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
         {courses.map((course) => (
           <TableRow key={course.id}>
-            <TableCell>
-              <div className="flex items-center gap-2">
+            <TableCell className="min-w-56">
+              <div className="flex items-center gap-2.5">
                 <EntityThumb
                   image={course.image}
                   icon={course.icon}
                   color={course.color}
                   label={course.name}
                 />
-                <div className="flex flex-col">
-                  <span className="font-medium">{course.name}</span>
+                <div className="flex min-w-0 flex-col">
+                  <span className="min-w-0 truncate font-medium">{course.name}</span>
                   {course.description && (
                     <span className="line-clamp-1 max-w-56 text-xs text-muted-foreground">
                       {course.description}

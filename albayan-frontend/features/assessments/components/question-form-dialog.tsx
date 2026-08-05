@@ -16,9 +16,12 @@ import {
 } from "@/components/ui/field";
 import { Spinner } from "@/components/ui/spinner";
 import {
-  NativeSelect,
-  NativeSelectOption,
-} from "@/components/ui/native-select";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Dialog,
   DialogContent,
@@ -291,19 +294,21 @@ function QuestionForm({
         <Field>
           <FieldLabel htmlFor="question-type">نوع السؤال *</FieldLabel>
           <FieldContent>
-            <NativeSelect
-              id="question-type"
+            <Select
               value={form.type}
-              onChange={(e) => handleChange("type", e.target.value)}
-              className="w-full"
-              data-size="default"
+              onValueChange={(value) => handleChange("type", value)}
             >
-              {QUESTION_TYPES.map((type) => (
-                <NativeSelectOption key={type.value} value={type.value}>
-                  {type.label}
-                </NativeSelectOption>
-              ))}
-            </NativeSelect>
+              <SelectTrigger id="question-type" className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {QUESTION_TYPES.map((type) => (
+                  <SelectItem key={type.value} value={type.value}>
+                    {type.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
             <FieldError errors={[fieldError("type")]} />
           </FieldContent>
         </Field>

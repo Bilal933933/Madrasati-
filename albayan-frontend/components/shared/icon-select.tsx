@@ -112,7 +112,13 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export interface IconOption {
   name: string;
@@ -273,19 +279,22 @@ export function IconSelect({
       >
         {SelectedIcon ? createElement(SelectedIcon, { className: "size-4" }) : null}
       </span>
-      <NativeSelect
-        id={id}
-        value={value}
-        onChange={(e) => onValueChange(e.target.value)}
-        className={cn("w-full flex-1 [&_select]:h-9", className)}
+      <Select
+        value={value || "none"}
+        onValueChange={(v) => onValueChange(v === "none" ? "" : v)}
       >
-        <NativeSelectOption value="">{clearLabel}</NativeSelectOption>
-        {iconOptions.map((option) => (
-          <NativeSelectOption key={option.name} value={option.name}>
-            {option.name}
-          </NativeSelectOption>
-        ))}
-      </NativeSelect>
+        <SelectTrigger id={id} className={cn("h-9 w-full flex-1", className)}>
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="none">{clearLabel}</SelectItem>
+          {iconOptions.map((option) => (
+            <SelectItem key={option.name} value={option.name}>
+              {option.name}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
     </div>
   );
 }

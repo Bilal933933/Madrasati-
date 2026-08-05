@@ -17,6 +17,9 @@ app/Domains/{Auth,Curriculum,Lesson,Assessment}/
 └── routes.php         مسارات الدومين — تُستدعى عبر require من routes/api.php
 ```
 
+- **التسلسل التعليمي**: `Stage ← Grade ← Semester ← Subject ← Course ← Lesson ← Paragraph` + `Assessment (← Question ← Option)`.
+- `subjects.semester_id` **nullable** حاليًا لعدم كسر واجهة إدارة المواد الحالية — يُشدد لاحقًا مع إضافة واجهة الفصول في الفرونت.
+
 - **النمط المعتمد**: Controllers رقيقة تستدعي الـ Service، والـ Service يحتوي المنطق.
 - المساعدة العامة في `app/Support/` (`ImageService`, `Slugger`, `HtmlSanitizerService`, `YouTubeUrl`, `Rules/`).
 
