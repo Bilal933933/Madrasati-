@@ -12,6 +12,7 @@ class SubjectResource extends JsonResource
         return [
             'id' => $this->id,
             'grade_id' => $this->grade_id,
+            'semester_id' => $this->semester_id,
             'name' => $this->name,
             'slug' => $this->slug,
             'image' => $this->image,
@@ -19,7 +20,7 @@ class SubjectResource extends JsonResource
             'color' => $this->color,
             'sort_order' => $this->sort_order,
             'is_published' => $this->is_published,
-            'children' => SectionResource::collection($this->whenLoaded('sections')),
+            'children' => CourseResource::collection($this->whenLoaded('courses')),
         ];
     }
 }

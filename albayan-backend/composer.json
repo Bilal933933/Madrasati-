@@ -7,12 +7,15 @@
     "license": "MIT",
     "require": {
         "php": "^8.3",
+        "dedoc/scramble": "^0.13",
         "laravel/framework": "^13.8",
         "laravel/sanctum": "^4.3",
         "laravel/socialite": "^5.29",
-        "laravel/tinker": "^3.0"
+        "laravel/tinker": "^3.0",
+        "mews/purifier": "^3.4"
     },
     "require-dev": {
+        "barryvdh/laravel-ide-helper": "^3.7",
         "fakerphp/faker": "^1.23",
         "laravel/pail": "^1.2.5",
         "laravel/pao": "^1.0.6",
@@ -51,6 +54,7 @@
             "@php artisan config:clear --ansi @no_additional_args",
             "@php artisan test"
         ],
+        "api:export": "php artisan scramble:export --path=../albayan-frontend/openapi.json",
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi"

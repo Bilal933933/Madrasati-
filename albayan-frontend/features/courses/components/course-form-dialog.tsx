@@ -29,18 +29,18 @@ import {
 import { showApiError } from "@/lib/apiErrors";
 import { useCreateCourse, useUpdateCourse, useNextCourseOrder } from "@/features/courses/hooks/useCourses";
 import type { Course, CoursePayload } from "@/features/courses/types/course.types";
-import type { Section } from "@/features/sections/types/section.types";
+import type { Subject } from "@/features/subjects/types/subject.types";
 
 type CourseFormDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   course: Course | null;
-  sections: Section[];
-  defaultSectionId?: number;
+  subjects: Subject[];
+  defaultSubjectId?: number;
 };
 
 type FormState = {
-  section_id: string;
+  subject_id: string;
   name: string;
   slug: string;
   description: string;
@@ -51,7 +51,7 @@ type FormState = {
   is_published: boolean;
 };
 
-export function CourseFormDialog({ open, onOpenChange, course, sections, defaultSectionId }: CourseFormDialogProps) {
+export function CourseFormDialog({ open, onOpenChange, course, subjects, defaultSubjectId }: CourseFormDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
@@ -59,8 +59,8 @@ export function CourseFormDialog({ open, onOpenChange, course, sections, default
           <CourseForm
             key={course?.id ?? "create"}
             course={course}
-            sections={sections}
-            defaultSectionId={defaultSectionId}
+            subjects={subjects}
+            defaultSubjectId={defaultSubjectId}
             onClose={() => onOpenChange(false)}
           />
         )}
@@ -71,24 +71,24 @@ export function CourseFormDialog({ open, onOpenChange, course, sections, default
 
 function CourseForm({
   course,
-  sections,
-  defaultSectionId,
+  subjects,
+  defaultSubjectId,
   onClose,
 }: {
   course: Course | null;
-  sections: Section[];
-  defaultSectionId?: number;
+  subjects: Subject[];
+  defaultSubjectId?: number;
   onClose: () => void;
 }) {
-  const initialSectionId = course ? String(course.section_id) : defaultSectionId ? String(defaultSectionId) : "";
+  const initialSubjectId = course ? String(course.subject_id) : defaultSubjectId ? String(defaultSubjectId) : "";
   const [form, setForm] = useState<FormState>(() => ({
-    section_id: initialSectionId,
+    subject_id: initialSubjectId,
     name: course?.name ?? "",
     slug: course?.slug ?? "",
     description: course?.description ?? "",
     image: course?.image ?? "",
     icon: course?.icon ?? "",
-    color: course?.color ?? "#2563EB",
+    color: course?.color ?? "#B08B66",
     sort_order: course ? String(course.sort_order ?? 0) : "",
     is_published: course?.is_published ?? true,
   }));
@@ -99,13 +99,13 @@ function CourseForm({
   const isPending = createCourse.isPending || updateCourse.isPending;
 
   const isEdit = course !== null;
-  const sectionId = form.section_id ? Number(form.section_id) : undefined;
-  const nextOrder = useNextCourseOrder(!isEdit, sectionId);
+  const subjectId = form.subject_id ? Number(form.subject_id) : undefined;
+  const nextOrder = useNextCourseOrder(!isEdit, subjectId);
 
   const sortOrderValue =
     form.sort_order !== ""
       ? form.sort_order
-      : sectionId != null
+      : subjectId != null
         ? nextOrder.data
           ? String(nextOrder.data.data.next_order)
           : ""
@@ -126,11 +126,11 @@ function CourseForm({
   }
 
   function buildPayload(): CoursePayload | null {
-    const sectionId = Number(form.section_id);
-    if (!form.section_id || Number.isNaN(sectionId)) return null;
+    const subjectId = Number(form.subject_id);
+    if (!form.subject_id || Number.isNaN(subjectId)) return null;
 
     return {
-      section_id: sectionId,
+      subject_id: subjectId,
       name: form.name.trim(),
       slug: form.slug.trim() || null,
       description: form.description.trim() || null,
@@ -148,8 +148,8 @@ function CourseForm({
 
     const payload = buildPayload();
     if (!payload) {
-      setServerErrors({ section_id: ["يرجى اختيار الوحدة."] });
-      showApiError({ message: "يرجى اختيار الوحدة." });
+      setServerErrors({ subject_id: ["يرجى اختيار المادة."] });
+      showApiError({ message: "يرجى اختيار المادة." });
       return;
     }
 
@@ -186,25 +186,25 @@ function CourseForm({
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4" dir="rtl">
         <Field>
-          <FieldLabel htmlFor="course-section">الوحدة *</FieldLabel>
+          <FieldLabel htmlFor="course-subject">المادة *</FieldLabel>
           <FieldContent>
             <NativeSelect
-              id="course-section"
-              value={form.section_id}
-              onChange={(e) => handleChange("section_id", e.target.value)}
+              id="course-subject"
+              value={form.subject_id}
+              onChange={(e) => handleChange("subject_id", e.target.value)}
               className="w-full"
               data-size="default"
             >
               <NativeSelectOption value="" disabled>
-                اختر الوحدة...
+                اختر المادة...
               </NativeSelectOption>
-              {sections.map((section) => (
-                <NativeSelectOption key={section.id} value={String(section.id)}>
-                  {section.name}
+              {subjects.map((subject) => (
+                <NativeSelectOption key={subject.id} value={String(subject.id)}>
+                  {subject.name}
                 </NativeSelectOption>
               ))}
             </NativeSelect>
-            <FieldError errors={[fieldError("section_id")]} />
+            <FieldError errors={[fieldError("subject_id")]} />
           </FieldContent>
         </Field>
 
@@ -278,7 +278,7 @@ function CourseForm({
                 <Input
                   value={form.color}
                   onChange={(e) => handleChange("color", e.target.value)}
-                  placeholder="#2563EB"
+                  placeholder="#B08B66"
                   className="h-9 font-mono text-xs"
                 />
               </div>

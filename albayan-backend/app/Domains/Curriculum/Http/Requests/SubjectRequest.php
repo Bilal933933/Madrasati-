@@ -16,12 +16,19 @@ class SubjectRequest extends FormRequest
     {
         return [
             'grade_id' => ['required', 'integer', 'exists:grades,id'],
+            'semester_id' => ['nullable', 'integer', 'exists:semesters,id'],
             'name' => ['required', 'string', 'max:255'],
             'slug' => ['nullable', 'string', 'max:255', 'regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/', Rule::unique('subjects', 'slug')->ignore($this->route('subject'))],
             'image' => ['nullable', 'string', 'max:2048'],
             'icon' => ['nullable', 'string', 'max:100'],
             'color' => ['nullable', 'string', 'regex:/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/'],
-            'sort_order' => ['sometimes', 'integer', 'min:0', Rule::unique('subjects', 'sort_order')->where(fn ($q) => $q->where('grade_id', $this->input('grade_id')))->ignore($this->route('subject'))],
+            'sort_order' => ['sometimes', 'integer', 'min:0', Rule::unique('subjects', 'sort_order')->where(function ($q) {
+                $q->where('grade_id', $this->input('grade_id'));
+
+                if ($this->input('semester_id')) {
+                    $q->where('semester_id', $this->input('semester_id'));
+                }
+            })->ignore($this->route('subject'))],
             'is_published' => ['sometimes', 'boolean'],
         ];
     }
@@ -32,6 +39,8 @@ class SubjectRequest extends FormRequest
             'grade_id.required' => 'الصف مطلوب.',
             'grade_id.integer' => 'الصف يجب أن يكون رقمًا صحيحًا.',
             'grade_id.exists' => 'الصف المحدد غير موجود.',
+            'semester_id.integer' => 'الفصل الدراسي يجب أن يكون رقمًا صحيحًا.',
+            'semester_id.exists' => 'الفصل الدراسي المحدد غير موجود.',
             'name.required' => 'اسم المادة مطلوب.',
             'name.string' => 'اسم المادة يجب أن يكون نصًا.',
             'name.max' => 'اسم المادة يجب ألا يتجاوز 255 حرفًا.',

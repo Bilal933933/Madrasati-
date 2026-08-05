@@ -84,10 +84,10 @@ export function SubjectsTable({ subjects, grades, stages, isLoading, onEdit, onD
       <TableHeader>
         <TableRow>
           <TableHead>الاسم</TableHead>
-          <TableHead>الصف</TableHead>
-          <TableHead>المرحلة</TableHead>
-          <TableHead>الرابط (Slug)</TableHead>
-          <TableHead>الترتيب</TableHead>
+          <TableHead className="hidden md:table-cell">الصف</TableHead>
+          <TableHead className="hidden md:table-cell">المرحلة</TableHead>
+          <TableHead className="hidden md:table-cell">الرابط (Slug)</TableHead>
+          <TableHead className="hidden md:table-cell">الترتيب</TableHead>
           <TableHead>الحالة</TableHead>
           <TableHead className="text-end">إجراءات</TableHead>
         </TableRow>
@@ -106,12 +106,12 @@ export function SubjectsTable({ subjects, grades, stages, isLoading, onEdit, onD
                 <span className="font-medium">{subject.name}</span>
               </div>
             </TableCell>
-            <TableCell className="text-muted-foreground">{gradeName(subject.grade_id)}</TableCell>
-            <TableCell className="text-muted-foreground">{stageName(subject.grade_id)}</TableCell>
-            <TableCell className="font-mono text-xs text-muted-foreground">
+            <TableCell className="hidden text-muted-foreground md:table-cell">{gradeName(subject.grade_id)}</TableCell>
+            <TableCell className="hidden text-muted-foreground md:table-cell">{stageName(subject.grade_id)}</TableCell>
+            <TableCell className="hidden font-mono text-xs text-muted-foreground md:table-cell">
               {subject.slug}
             </TableCell>
-            <TableCell>{subject.sort_order ?? "-"}</TableCell>
+            <TableCell className="hidden md:table-cell">{subject.sort_order ?? "-"}</TableCell>
             <TableCell>
               <PublishedBadge published={subject.is_published} />
             </TableCell>

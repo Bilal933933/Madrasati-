@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('slug')->nullable()->unique();
             $table->text('summary')->nullable();
             $table->string('image')->nullable();
+            $table->string('video')->nullable();
             $table->string('icon')->nullable();
             $table->string('color')->nullable();
             $table->unsignedInteger('sort_order')->default(0);

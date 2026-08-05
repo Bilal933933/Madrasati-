@@ -14,14 +14,12 @@ import {
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { Course } from "@/features/courses/types/course.types";
-import type { Section } from "@/features/sections/types/section.types";
 import type { Subject } from "@/features/subjects/types/subject.types";
 import type { Grade } from "@/features/grades/types/grade.types";
 import type { Stage } from "@/features/stages/types/stage.types";
 
 type CoursesTableProps = {
   courses: Course[];
-  sections: Section[];
   subjects: Subject[];
   grades: Grade[];
   stages: Stage[];
@@ -47,7 +45,7 @@ function PublishedBadge({ published }: { published: boolean | null }) {
   );
 }
 
-export function CoursesTable({ courses, sections, subjects, grades, stages, isLoading, onEdit, onDelete }: CoursesTableProps) {
+export function CoursesTable({ courses, subjects, grades, stages, isLoading, onEdit, onDelete }: CoursesTableProps) {
   if (isLoading) {
     return (
       <div className="flex flex-col gap-3">
@@ -69,27 +67,21 @@ export function CoursesTable({ courses, sections, subjects, grades, stages, isLo
         </EmptyHeader>
         <EmptyContent>
           <EmptyDescription>
-            لم يُعثر على مقررات ضمن هذا النطاق. أضف مقررًا جديدًا أو غيّر فلتر الوحدة.
+            لم يُعثر على مقررات ضمن هذا النطاق. أضف مقررًا جديدًا أو غيّر فلتر المادة.
           </EmptyDescription>
         </EmptyContent>
       </Empty>
     );
   }
 
-  const sectionName = (sectionId: number) =>
-    sections.find((s) => s.id === sectionId)?.name ?? `#${sectionId}`;
-  const subjectName = (sectionId: number) => {
-    const section = sections.find((s) => s.id === sectionId);
-    return subjects.find((s) => s.id === section?.subject_id)?.name ?? "-";
-  };
-  const gradeName = (sectionId: number) => {
-    const section = sections.find((s) => s.id === sectionId);
-    const subject = subjects.find((s) => s.id === section?.subject_id);
+  const subjectName = (subjectId: number) =>
+    subjects.find((s) => s.id === subjectId)?.name ?? `#${subjectId}`;
+  const gradeName = (subjectId: number) => {
+    const subject = subjects.find((s) => s.id === subjectId);
     return grades.find((g) => g.id === subject?.grade_id)?.name ?? "-";
   };
-  const stageName = (sectionId: number) => {
-    const section = sections.find((s) => s.id === sectionId);
-    const subject = subjects.find((s) => s.id === section?.subject_id);
+  const stageName = (subjectId: number) => {
+    const subject = subjects.find((s) => s.id === subjectId);
     const grade = grades.find((g) => g.id === subject?.grade_id);
     return stages.find((s) => s.id === grade?.stage_id)?.name ?? "-";
   };
@@ -99,11 +91,10 @@ export function CoursesTable({ courses, sections, subjects, grades, stages, isLo
       <TableHeader>
         <TableRow>
           <TableHead>الاسم</TableHead>
-          <TableHead>الوحدة</TableHead>
-          <TableHead>المادة</TableHead>
-          <TableHead>الصف</TableHead>
-          <TableHead>المرحلة</TableHead>
-          <TableHead>الترتيب</TableHead>
+          <TableHead className="hidden md:table-cell">المادة</TableHead>
+          <TableHead className="hidden md:table-cell">الصف</TableHead>
+          <TableHead className="hidden md:table-cell">المرحلة</TableHead>
+          <TableHead className="hidden md:table-cell">الترتيب</TableHead>
           <TableHead>الحالة</TableHead>
           <TableHead className="text-end">إجراءات</TableHead>
         </TableRow>
@@ -129,11 +120,10 @@ export function CoursesTable({ courses, sections, subjects, grades, stages, isLo
                 </div>
               </div>
             </TableCell>
-            <TableCell className="text-muted-foreground">{sectionName(course.section_id)}</TableCell>
-            <TableCell className="text-muted-foreground">{subjectName(course.section_id)}</TableCell>
-            <TableCell className="text-muted-foreground">{gradeName(course.section_id)}</TableCell>
-            <TableCell className="text-muted-foreground">{stageName(course.section_id)}</TableCell>
-            <TableCell>{course.sort_order ?? "-"}</TableCell>
+            <TableCell className="hidden text-muted-foreground md:table-cell">{subjectName(course.subject_id)}</TableCell>
+            <TableCell className="hidden text-muted-foreground md:table-cell">{gradeName(course.subject_id)}</TableCell>
+            <TableCell className="hidden text-muted-foreground md:table-cell">{stageName(course.subject_id)}</TableCell>
+            <TableCell className="hidden md:table-cell">{course.sort_order ?? "-"}</TableCell>
             <TableCell>
               <PublishedBadge published={course.is_published} />
             </TableCell>

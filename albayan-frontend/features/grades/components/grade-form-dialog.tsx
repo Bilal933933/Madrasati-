@@ -85,7 +85,7 @@ function GradeForm({
     slug: grade?.slug ?? "",
     image: grade?.image ?? "",
     icon: grade?.icon ?? "",
-    color: grade?.color ?? "#2563EB",
+    color: grade?.color ?? "#B08B66",
     sort_order: grade ? String(grade.sort_order ?? 0) : "",
     is_published: grade?.is_published ?? true,
   }));
@@ -261,7 +261,7 @@ function GradeForm({
                 <Input
                   value={form.color}
                   onChange={(e) => handleChange("color", e.target.value)}
-                  placeholder="#2563EB"
+                  placeholder="#B08B66"
                   className="h-9 font-mono text-xs"
                 />
               </div>

@@ -67,7 +67,12 @@ export async function apiClient<T>(
   });
 
   if (!response.ok) {
-    const errorBody = await response.json().catch(() => null);
+    const errorBody = (await response.json().catch(() => null)) as
+      | {
+          message?: string;
+          errors?: Record<string, string[]> | null;
+        }
+      | null;
 
     const message =
       errorBody?.message ??

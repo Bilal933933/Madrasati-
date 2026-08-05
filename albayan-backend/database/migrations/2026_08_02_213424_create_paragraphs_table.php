@@ -14,9 +14,11 @@ return new class extends Migration
         Schema::create('paragraphs', function (Blueprint $table) {
             $table->id();
             $table->foreignId('lesson_id')->constrained()->cascadeOnDelete();
+            $table->string('title');
             $table->string('type')->default('text');
             $table->string('slug')->nullable()->unique();
             $table->string('image')->nullable();
+            $table->string('video')->nullable();
             $table->string('icon')->nullable();
             $table->string('color')->nullable();
             $table->longText('content');

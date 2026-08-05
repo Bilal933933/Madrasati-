@@ -2,16 +2,14 @@
 
 namespace App\Domains\Auth\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Domains\Auth\Http\Requests\ForgotPasswordRequest;
 use App\Domains\Auth\Http\Requests\ResetPasswordRequest;
 use App\Domains\Auth\Services\AuthService;
+use App\Http\Controllers\Controller;
 
 class PasswordResetController extends Controller
 {
-    public function __construct(private readonly AuthService $authService)
-    {
-    }
+    public function __construct(private readonly AuthService $authService) {}
 
     /**
      * POST /api/forgot-password

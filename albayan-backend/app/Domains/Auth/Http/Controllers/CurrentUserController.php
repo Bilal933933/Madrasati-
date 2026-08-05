@@ -2,8 +2,8 @@
 
 namespace App\Domains\Auth\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Domains\Auth\Http\Resources\UserResource;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 class CurrentUserController extends Controller

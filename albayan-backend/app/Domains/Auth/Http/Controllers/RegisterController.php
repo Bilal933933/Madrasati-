@@ -2,16 +2,14 @@
 
 namespace App\Domains\Auth\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Domains\Auth\Http\Requests\RegisterRequest;
 use App\Domains\Auth\Http\Resources\UserResource;
 use App\Domains\Auth\Services\AuthService;
+use App\Http\Controllers\Controller;
 
 class RegisterController extends Controller
 {
-    public function __construct(private readonly AuthService $authService)
-    {
-    }
+    public function __construct(private readonly AuthService $authService) {}
 
     /**
      * POST /api/register

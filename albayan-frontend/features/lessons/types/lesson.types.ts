@@ -5,6 +5,8 @@ export interface Lesson {
   slug: string;
   summary: string | null;
   image: string | null;
+  video: string | null;
+  video_embed: string | null;
   icon: string | null;
   color: string | null;
   sort_order: number | null;
@@ -17,6 +19,7 @@ export interface LessonPayload {
   slug?: string | null;
   summary?: string | null;
   image?: string | null;
+  video?: string | null;
   icon?: string | null;
   color?: string | null;
   sort_order?: number | null;

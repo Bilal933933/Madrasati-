@@ -4,7 +4,7 @@ namespace App\Domains\Curriculum\Services;
 
 use App\Domains\Curriculum\Models\Course;
 use App\Domains\Curriculum\Models\Grade;
-use App\Domains\Curriculum\Models\Section;
+use App\Domains\Curriculum\Models\Semester;
 use App\Domains\Curriculum\Models\Stage;
 use App\Domains\Curriculum\Models\Subject;
 use App\Support\ImageService;
@@ -185,12 +185,71 @@ class CurriculumService
         $grade->delete();
     }
 
+    /* -------------------------------- Semesters -------------------------------- */
+
+    public function semesters(?int $gradeId = null): Collection
+    {
+        return Semester::query()
+            ->when($gradeId, fn ($q) => $q->where('grade_id', $gradeId))
+            ->orderBy('sort_order')
+            ->get();
+    }
+
+    public function nextSemesterOrder(int $gradeId): int
+    {
+        return (Semester::query()->where('grade_id', $gradeId)->max('sort_order') ?? 0) + 1;
+    }
+
+    public function publishedSemesters(?int $gradeId = null): Collection
+    {
+        return Semester::query()
+            ->when($gradeId, fn ($q) => $q->where('grade_id', $gradeId))
+            ->whereHas('grade', fn ($q) => $q->where('is_published', true)
+                ->whereHas('stage', fn ($q2) => $q2->where('is_published', true)))
+            ->with(['subjects' => fn ($q) => $q->where('is_published', true)->orderBy('sort_order')])
+            ->orderBy('sort_order')
+            ->get();
+    }
+
+    public function findSemester(int $id): Semester
+    {
+        return Semester::findOrFail($id);
+    }
+
+    public function findPublishedSemester(int $id): Semester
+    {
+        return Semester::query()
+            ->whereHas('grade', fn ($q) => $q->where('is_published', true)
+                ->whereHas('stage', fn ($q2) => $q2->where('is_published', true)))
+            ->with(['subjects' => fn ($q) => $q->where('is_published', true)->orderBy('sort_order')])
+            ->findOrFail($id);
+    }
+
+    public function createSemester(array $data): Semester
+    {
+        return Semester::create($data);
+    }
+
+    public function updateSemester(int $id, array $data): Semester
+    {
+        $semester = Semester::findOrFail($id);
+        $semester->update($data);
+
+        return $semester;
+    }
+
+    public function deleteSemester(int $id): void
+    {
+        Semester::findOrFail($id)->delete();
+    }
+
     /* --------------------------------- Subjects --------------------------------- */
 
-    public function subjects(?int $gradeId = null): Collection
+    public function subjects(?int $gradeId = null, ?int $semesterId = null): Collection
     {
         return Subject::query()
             ->when($gradeId, fn ($q) => $q->where('grade_id', $gradeId))
+            ->when($semesterId, fn ($q) => $q->where('semester_id', $semesterId))
             ->orderBy('sort_order')
             ->get();
     }
@@ -206,7 +265,7 @@ class CurriculumService
             ->where('is_published', true)
             ->whereHas('grade', fn ($q) => $q->where('is_published', true)
                 ->whereHas('stage', fn ($q2) => $q2->where('is_published', true)))
-            ->with(['sections' => fn ($q) => $q->where('is_published', true)->orderBy('sort_order')])
+            ->with(['courses' => fn ($q) => $q->where('is_published', true)->orderBy('sort_order')])
             ->orderBy('sort_order')
             ->get();
     }
@@ -222,7 +281,7 @@ class CurriculumService
             ->where('is_published', true)
             ->whereHas('grade', fn ($q) => $q->where('is_published', true)
                 ->whereHas('stage', fn ($q2) => $q2->where('is_published', true)))
-            ->with(['sections' => fn ($q) => $q->where('is_published', true)->orderBy('sort_order')])
+            ->with(['courses' => fn ($q) => $q->where('is_published', true)->orderBy('sort_order')])
             ->findOrFail($id);
     }
 
@@ -233,7 +292,7 @@ class CurriculumService
             ->where('slug', $slug)
             ->whereHas('grade', fn ($q) => $q->where('is_published', true)
                 ->whereHas('stage', fn ($q2) => $q2->where('is_published', true)))
-            ->with(['sections' => fn ($q) => $q->where('is_published', true)->orderBy('sort_order')])
+            ->with(['courses' => fn ($q) => $q->where('is_published', true)->orderBy('sort_order')])
             ->firstOrFail();
     }
 
@@ -274,121 +333,28 @@ class CurriculumService
         $subject->delete();
     }
 
-    /* --------------------------------- Sections --------------------------------- */
+    /* ---------------------------------- Courses ---------------------------------- */
 
-    public function sections(?int $subjectId = null): Collection
+    public function courses(?int $subjectId = null): Collection
     {
-        return Section::query()
+        return Course::query()
             ->when($subjectId, fn ($q) => $q->where('subject_id', $subjectId))
             ->orderBy('sort_order')
             ->get();
     }
 
-    public function nextSectionOrder(int $subjectId): int
+    public function nextCourseOrder(int $subjectId): int
     {
-        return (Section::query()->where('subject_id', $subjectId)->max('sort_order') ?? 0) + 1;
-    }
-
-    public function publishedSections(): Collection
-    {
-        return Section::query()
-            ->where('is_published', true)
-            ->whereHas('subject', fn ($q) => $q->where('is_published', true)
-                ->whereHas('grade', fn ($q2) => $q2->where('is_published', true)
-                    ->whereHas('stage', fn ($q3) => $q3->where('is_published', true))))
-            ->with(['courses' => fn ($q) => $q->where('is_published', true)->orderBy('sort_order')])
-            ->orderBy('sort_order')
-            ->get();
-    }
-
-    public function findSection(int $id): Section
-    {
-        return Section::findOrFail($id);
-    }
-
-    public function findPublishedSection(int $id): Section
-    {
-        return Section::query()
-            ->where('is_published', true)
-            ->whereHas('subject', fn ($q) => $q->where('is_published', true)
-                ->whereHas('grade', fn ($q2) => $q2->where('is_published', true)
-                    ->whereHas('stage', fn ($q3) => $q3->where('is_published', true))))
-            ->with(['courses' => fn ($q) => $q->where('is_published', true)->orderBy('sort_order')])
-            ->findOrFail($id);
-    }
-
-    public function findPublishedSectionBySlug(string $slug): Section
-    {
-        return Section::query()
-            ->where('is_published', true)
-            ->where('slug', $slug)
-            ->whereHas('subject', fn ($q) => $q->where('is_published', true)
-                ->whereHas('grade', fn ($q2) => $q2->where('is_published', true)
-                    ->whereHas('stage', fn ($q3) => $q3->where('is_published', true))))
-            ->with(['courses' => fn ($q) => $q->where('is_published', true)->orderBy('sort_order')])
-            ->firstOrFail();
-    }
-
-    public function createSection(array $data): Section
-    {
-        $section = Section::create($data);
-
-        if (empty($section->slug)) {
-            $section->forceFill(['slug' => Slugger::from($section->name, $section->id)])->save();
-        }
-
-        return $section;
-    }
-
-    public function updateSection(int $id, array $data): Section
-    {
-        if (empty($data['slug'] ?? null)) {
-            unset($data['slug']);
-        }
-
-        $section = Section::findOrFail($id);
-
-        if (($data['image'] ?? null) !== $section->image) {
-            $this->imageService->delete($section->image);
-        }
-
-        $section->update($data);
-
-        return $section;
-    }
-
-    public function deleteSection(int $id): void
-    {
-        $section = Section::findOrFail($id);
-
-        $this->imageService->delete($section->image);
-
-        $section->delete();
-    }
-
-    /* ---------------------------------- Courses ---------------------------------- */
-
-    public function courses(?int $sectionId = null): Collection
-    {
-        return Course::query()
-            ->when($sectionId, fn ($q) => $q->where('section_id', $sectionId))
-            ->orderBy('sort_order')
-            ->get();
-    }
-
-    public function nextCourseOrder(int $sectionId): int
-    {
-        return (Course::query()->where('section_id', $sectionId)->max('sort_order') ?? 0) + 1;
+        return (Course::query()->where('subject_id', $subjectId)->max('sort_order') ?? 0) + 1;
     }
 
     public function publishedCourses(): Collection
     {
         return Course::query()
             ->where('is_published', true)
-            ->whereHas('section', fn ($q) => $q->where('is_published', true)
-                ->whereHas('subject', fn ($q2) => $q2->where('is_published', true)
-                    ->whereHas('grade', fn ($q3) => $q3->where('is_published', true)
-                        ->whereHas('stage', fn ($q4) => $q4->where('is_published', true)))))
+            ->whereHas('subject', fn ($q) => $q->where('is_published', true)
+                ->whereHas('grade', fn ($q2) => $q2->where('is_published', true)
+                    ->whereHas('stage', fn ($q3) => $q3->where('is_published', true))))
             ->orderBy('sort_order')
             ->get();
     }
@@ -402,10 +368,9 @@ class CurriculumService
     {
         return Course::query()
             ->where('is_published', true)
-            ->whereHas('section', fn ($q) => $q->where('is_published', true)
-                ->whereHas('subject', fn ($q2) => $q2->where('is_published', true)
-                    ->whereHas('grade', fn ($q3) => $q3->where('is_published', true)
-                        ->whereHas('stage', fn ($q4) => $q4->where('is_published', true)))))
+            ->whereHas('subject', fn ($q) => $q->where('is_published', true)
+                ->whereHas('grade', fn ($q2) => $q2->where('is_published', true)
+                    ->whereHas('stage', fn ($q3) => $q3->where('is_published', true))))
             ->findOrFail($id);
     }
 
@@ -414,10 +379,9 @@ class CurriculumService
         return Course::query()
             ->where('is_published', true)
             ->where('slug', $slug)
-            ->whereHas('section', fn ($q) => $q->where('is_published', true)
-                ->whereHas('subject', fn ($q2) => $q2->where('is_published', true)
-                    ->whereHas('grade', fn ($q3) => $q3->where('is_published', true)
-                        ->whereHas('stage', fn ($q4) => $q4->where('is_published', true)))))
+            ->whereHas('subject', fn ($q) => $q->where('is_published', true)
+                ->whereHas('grade', fn ($q2) => $q2->where('is_published', true)
+                    ->whereHas('stage', fn ($q3) => $q3->where('is_published', true))))
             ->firstOrFail();
     }
 

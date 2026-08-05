@@ -3,33 +3,31 @@
 import { useState } from "react";
 import { Plus } from "lucide-react";
 import { DeleteDialog } from "@/components/shared/delete-dialog";
+import { PageHeader } from "@/components/shared/page-header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
 import { CoursesTable } from "@/features/courses/components/courses-table";
 import { CourseFormDialog } from "@/features/courses/components/course-form-dialog";
 import { useCourses, useDeleteCourse } from "@/features/courses/hooks/useCourses";
-import { useSections } from "@/features/sections/hooks/useSections";
 import { useSubjects } from "@/features/subjects/hooks/useSubjects";
 import { useGrades } from "@/features/grades/hooks/useGrades";
 import { useStages } from "@/features/stages/hooks/useStages";
 import type { Course } from "@/features/courses/types/course.types";
 
 export default function AdminCoursesPage() {
-  const [sectionFilter, setSectionFilter] = useState<string>("all");
-  const [appliedSectionFilter, setAppliedSectionFilter] = useState<string>("all");
+  const [subjectFilter, setSubjectFilter] = useState<string>("all");
+  const [appliedSubjectFilter, setAppliedSubjectFilter] = useState<string>("all");
   const { data: coursesData, isLoading } = useCourses(
-    appliedSectionFilter === "all"
+    appliedSubjectFilter === "all"
       ? undefined
-      : { sectionId: Number(appliedSectionFilter) }
+      : { subjectId: Number(appliedSubjectFilter) }
   );
-  const { data: sectionsData, isLoading: sectionsLoading } = useSections();
   const { data: subjectsData, isLoading: subjectsLoading } = useSubjects();
   const { data: gradesData, isLoading: gradesLoading } = useGrades();
   const { data: stagesData, isLoading: stagesLoading } = useStages();
   const deleteCourse = useDeleteCourse();
   const courses = coursesData?.data ?? [];
-  const sections = sectionsData?.data ?? [];
   const subjects = subjectsData?.data ?? [];
   const grades = gradesData?.data ?? [];
   const stages = stagesData?.data ?? [];
@@ -50,48 +48,49 @@ export default function AdminCoursesPage() {
 
   return (
     <div className="flex flex-1 flex-col px-4 py-8 sm:px-6">
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">المقررات الدراسية</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            إدارة المقررات وتنظيمها ضمن الوحدات.
-          </p>
-        </div>
-        <div className="flex items-center gap-3">
-          <NativeSelect
-            aria-label="تصفية حسب الوحدة"
-            value={sectionFilter}
-            onChange={(e) => setSectionFilter(e.target.value)}
-            className="w-52"
-          >
-            <NativeSelectOption value="all">
-              كل الوحدات
-            </NativeSelectOption>
-            {sections.map((section) => (
-              <NativeSelectOption key={section.id} value={String(section.id)}>
-                {section.name}
+      <PageHeader
+        title="المقررات الدراسية"
+        description="إدارة المقررات وتنظيمها ضمن المواد."
+        actions={
+          <>
+            <NativeSelect
+              aria-label="تصفية حسب المادة"
+              value={subjectFilter}
+              onChange={(e) => setSubjectFilter(e.target.value)}
+              className="w-full sm:w-52"
+            >
+              <NativeSelectOption value="all">
+                كل المواد
               </NativeSelectOption>
-            ))}
-          </NativeSelect>
-          <Button variant="outline" onClick={() => setAppliedSectionFilter(sectionFilter)}>
-            تطبيق
-          </Button>
-          <Button onClick={openCreate}>
-            <Plus />
-            إضافة مقرر
-          </Button>
-        </div>
-      </div>
+              {subjects.map((subject) => (
+                <NativeSelectOption key={subject.id} value={String(subject.id)}>
+                  {subject.name}
+                </NativeSelectOption>
+              ))}
+            </NativeSelect>
+            <Button
+              variant="outline"
+              onClick={() => setAppliedSubjectFilter(subjectFilter)}
+              className="w-full sm:w-auto"
+            >
+              تطبيق
+            </Button>
+            <Button onClick={openCreate} className="w-full sm:w-auto">
+              <Plus />
+              إضافة مقرر
+            </Button>
+          </>
+        }
+      />
 
       <Card>
         <CardContent className="p-0 pt-4">
           <CoursesTable
             courses={courses}
-            sections={sections}
             subjects={subjects}
             grades={grades}
             stages={stages}
-            isLoading={isLoading || sectionsLoading || subjectsLoading || gradesLoading || stagesLoading}
+            isLoading={isLoading || subjectsLoading || gradesLoading || stagesLoading}
             onEdit={openEdit}
             onDelete={setDeletingCourse}
           />
@@ -102,8 +101,8 @@ export default function AdminCoursesPage() {
         open={formOpen}
         onOpenChange={setFormOpen}
         course={editingCourse}
-        sections={sections}
-        defaultSectionId={appliedSectionFilter === "all" ? undefined : Number(appliedSectionFilter)}
+        subjects={subjects}
+        defaultSubjectId={appliedSubjectFilter === "all" ? undefined : Number(appliedSubjectFilter)}
       />
 
       <DeleteDialog

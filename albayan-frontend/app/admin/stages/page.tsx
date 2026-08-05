@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Plus } from "lucide-react";
 import { DeleteDialog } from "@/components/shared/delete-dialog";
+import { PageHeader } from "@/components/shared/page-header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { StagesTable } from "@/features/stages/components/stages-table";
@@ -31,18 +32,16 @@ export default function AdminStagesPage() {
 
   return (
     <div className="flex flex-1 flex-col px-4 py-8 sm:px-6">
-      <div className="mb-6 flex items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">المراحل الدراسية</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            إدارة مراحل التعليم في المنصة.
-          </p>
-        </div>
-        <Button onClick={openCreate}>
-          <Plus />
-          إضافة مرحلة
-        </Button>
-      </div>
+      <PageHeader
+        title="المراحل الدراسية"
+        description="إدارة مراحل التعليم في المنصة."
+        actions={
+          <Button onClick={openCreate} className="w-full sm:w-auto">
+            <Plus />
+            إضافة مرحلة
+          </Button>
+        }
+      />
 
       <Card>
         <CardContent className="p-0 pt-4">

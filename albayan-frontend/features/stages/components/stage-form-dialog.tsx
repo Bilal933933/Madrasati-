@@ -35,7 +35,7 @@ const emptyForm = {
   slug: "",
   image: "",
   icon: "",
-  color: "#2563EB",
+  color: "#B08B66",
   sort_order: "",
   is_published: true,
 };
@@ -70,7 +70,7 @@ function StageForm({
           slug: stage.slug ?? "",
           image: stage.image ?? "",
           icon: stage.icon ?? "",
-          color: stage.color ?? "#2563EB",
+          color: stage.color ?? "#B08B66",
           sort_order: String(stage.sort_order ?? 0),
           is_published: stage.is_published ?? true,
         }
@@ -213,7 +213,7 @@ function StageForm({
                 <Input
                   value={form.color}
                   onChange={(e) => handleChange("color", e.target.value)}
-                  placeholder="#2563EB"
+                  placeholder="#B08B66"
                   className="h-9 font-mono text-xs"
                 />
               </div>

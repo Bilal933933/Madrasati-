@@ -13,6 +13,7 @@ import {
   FieldSeparator,
 } from "@/components/ui/field";
 import { Spinner } from "@/components/ui/spinner";
+import { getErrorMessage } from "@/lib/apiErrors";
 import { useLogin } from "../hooks/useLogin";
 import { GoogleLoginButton } from "./GoogleLoginButton";
 import { PasswordInput } from "./PasswordInput";
@@ -27,7 +28,7 @@ export function LoginForm() {
     login({ email, password });
   }
 
-  const errorMessage = (error as { message?: string })?.message;
+  const errorMessage = getErrorMessage(error);
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-5" dir="rtl">

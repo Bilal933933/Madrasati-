@@ -15,14 +15,14 @@ class CourseRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'section_id' => ['required', 'integer', 'exists:sections,id'],
+            'subject_id' => ['required', 'integer', 'exists:subjects,id'],
             'name' => ['required', 'string', 'max:255'],
             'slug' => ['nullable', 'string', 'max:255', 'regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/', Rule::unique('courses', 'slug')->ignore($this->route('course'))],
             'description' => ['nullable', 'string'],
             'image' => ['nullable', 'string', 'max:2048'],
             'icon' => ['nullable', 'string', 'max:100'],
             'color' => ['nullable', 'string', 'regex:/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/'],
-            'sort_order' => ['sometimes', 'integer', 'min:0', Rule::unique('courses', 'sort_order')->where(fn ($q) => $q->where('section_id', $this->input('section_id')))->ignore($this->route('course'))],
+            'sort_order' => ['sometimes', 'integer', 'min:0', Rule::unique('courses', 'sort_order')->where(fn ($q) => $q->where('subject_id', $this->input('subject_id')))->ignore($this->route('course'))],
             'is_published' => ['sometimes', 'boolean'],
         ];
     }
@@ -30,9 +30,9 @@ class CourseRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'section_id.required' => 'الوحدة مطلوبة.',
-            'section_id.integer' => 'الوحدة يجب أن تكون رقمًا صحيحًا.',
-            'section_id.exists' => 'الوحدة المحددة غير موجودة.',
+            'subject_id.required' => 'المادة مطلوبة.',
+            'subject_id.integer' => 'المادة يجب أن تكون رقمًا صحيحًا.',
+            'subject_id.exists' => 'المادة المحددة غير موجودة.',
             'name.required' => 'اسم المقرر مطلوب.',
             'name.string' => 'اسم المقرر يجب أن يكون نصًا.',
             'name.max' => 'اسم المقرر يجب ألا يتجاوز 255 حرفًا.',
@@ -48,7 +48,7 @@ class CourseRequest extends FormRequest
             'color.regex' => 'صيغة اللون غير صحيحة — استخدم HEX مثل #2563EB.',
             'sort_order.integer' => 'الترتيب يجب أن يكون رقمًا صحيحًا.',
             'sort_order.min' => 'الترتيب يجب أن يكون 0 أو أكثر.',
-            'sort_order.unique' => 'هذا الترتيب مستخدم مسبقًا في نفس الوحدة. اختر ترتيبًا آخر.',
+            'sort_order.unique' => 'هذا الترتيب مستخدم مسبقًا في نفس المادة. اختر ترتيبًا آخر.',
             'is_published.boolean' => 'قيمة النشر يجب أن تكون صحيحة أو خاطئة.',
         ];
     }

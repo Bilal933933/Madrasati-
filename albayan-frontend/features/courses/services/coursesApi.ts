@@ -1,5 +1,6 @@
 import { apiClient } from "@/lib/apiClient";
 import { buildListQuery } from "@/lib/query";
+import type { operations } from "@/types/api.generated";
 import type {
   CourseDeleteResponse,
   CourseListResponse,
@@ -8,27 +9,24 @@ import type {
 } from "../types/course.types";
 
 export interface CourseListFilters {
-  sectionId?: number;
+  subjectId?: number;
 }
 
-export interface NextOrderResponse {
-  data: {
-    next_order: number;
-  };
-}
+/** استجابة next-order مأخوذة مباشرة من العملية المولّدة في types/api.generated.ts */
+export type NextOrderResponse = operations["course.nextOrder"]["responses"][200]["content"]["application/json"];
 
 export const coursesApi = {
   listCourses: (filters?: CourseListFilters) =>
     apiClient<CourseListResponse>(
-      "/api/admin/courses" + buildListQuery({ section_id: filters?.sectionId }),
+      "/api/admin/courses" + buildListQuery({ subject_id: filters?.subjectId }),
       {
         method: "GET",
       }
     ),
 
-  nextOrder: (sectionId: number) =>
+  nextOrder: (subjectId: number) =>
     apiClient<NextOrderResponse>(
-      "/api/admin/courses/next-order" + buildListQuery({ section_id: sectionId }),
+      "/api/admin/courses/next-order" + buildListQuery({ subject_id: subjectId }),
       {
         method: "GET",
       }

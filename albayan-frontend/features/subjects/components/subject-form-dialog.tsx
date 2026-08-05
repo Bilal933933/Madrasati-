@@ -85,7 +85,7 @@ function SubjectForm({
     slug: subject?.slug ?? "",
     image: subject?.image ?? "",
     icon: subject?.icon ?? "",
-    color: subject?.color ?? "#2563EB",
+    color: subject?.color ?? "#B08B66",
     sort_order: subject ? String(subject.sort_order ?? 0) : "",
     is_published: subject?.is_published ?? true,
   }));
@@ -261,7 +261,7 @@ function SubjectForm({
                 <Input
                   value={form.color}
                   onChange={(e) => handleChange("color", e.target.value)}
-                  placeholder="#2563EB"
+                  placeholder="#B08B66"
                   className="h-9 font-mono text-xs"
                 />
               </div>

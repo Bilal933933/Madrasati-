@@ -78,9 +78,9 @@ export function GradesTable({ grades, stages, isLoading, onEdit, onDelete }: Gra
       <TableHeader>
         <TableRow>
           <TableHead>الاسم</TableHead>
-          <TableHead>المرحلة</TableHead>
-          <TableHead>الرابط (Slug)</TableHead>
-          <TableHead>الترتيب</TableHead>
+          <TableHead className="hidden md:table-cell">المرحلة</TableHead>
+          <TableHead className="hidden md:table-cell">الرابط (Slug)</TableHead>
+          <TableHead className="hidden md:table-cell">الترتيب</TableHead>
           <TableHead>الحالة</TableHead>
           <TableHead className="text-end">إجراءات</TableHead>
         </TableRow>
@@ -99,11 +99,11 @@ export function GradesTable({ grades, stages, isLoading, onEdit, onDelete }: Gra
                 <span className="font-medium">{grade.name}</span>
               </div>
             </TableCell>
-            <TableCell className="text-muted-foreground">{stageName(grade.stage_id)}</TableCell>
-            <TableCell className="font-mono text-xs text-muted-foreground">
+            <TableCell className="hidden text-muted-foreground md:table-cell">{stageName(grade.stage_id)}</TableCell>
+            <TableCell className="hidden font-mono text-xs text-muted-foreground md:table-cell">
               {grade.slug}
             </TableCell>
-            <TableCell>{grade.sort_order ?? "-"}</TableCell>
+            <TableCell className="hidden md:table-cell">{grade.sort_order ?? "-"}</TableCell>
             <TableCell>
               <PublishedBadge published={grade.is_published} />
             </TableCell>

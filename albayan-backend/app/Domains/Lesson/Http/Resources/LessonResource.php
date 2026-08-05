@@ -2,6 +2,7 @@
 
 namespace App\Domains\Lesson\Http\Resources;
 
+use App\Support\YouTubeUrl;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -16,6 +17,8 @@ class LessonResource extends JsonResource
             'slug' => $this->slug,
             'summary' => $this->summary,
             'image' => $this->image,
+            'video' => $this->video,
+            'video_embed' => YouTubeUrl::embed($this->video),
             'icon' => $this->icon,
             'color' => $this->color,
             'sort_order' => $this->sort_order,

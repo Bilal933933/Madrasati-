@@ -68,6 +68,7 @@ export function ResetPasswordForm() {
             autoComplete="new-password"
             className="h-11"
           />
+          <FieldError errors={[{ message: errorMessage }]} />
         </FieldContent>
       </Field>
 

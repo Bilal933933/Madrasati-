@@ -1,4 +1,4 @@
-@import "tailwindcss";
+/* @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
@@ -55,7 +55,7 @@
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
+  --primary: oklch(0.455 0.18 262.376);
   --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
@@ -66,7 +66,7 @@
   --destructive: oklch(0.577 0.245 27.325);
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  --ring: oklch(0.55 0.16 262.376);
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
@@ -90,8 +90,8 @@
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.205 0 0);
   --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
+  --primary: oklch(0.72 0.13 262.376);
+  --primary-foreground: oklch(0.19 0 0);
   --secondary: oklch(0.269 0 0);
   --secondary-foreground: oklch(0.985 0 0);
   --muted: oklch(0.269 0 0);
@@ -101,7 +101,7 @@
   --destructive: oklch(0.704 0.191 22.216);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
+  --ring: oklch(0.6 0.15 262.376);
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
@@ -127,4 +127,285 @@
   html {
     @apply font-sans;
   }
+}
+
+.rich-editor-content {
+  min-height: 10rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  line-height: 1.75;
+  text-align: right;
+}
+
+.rich-editor-content p {
+  margin: 0 0 0.5rem;
+}
+
+.rich-editor-content h1,
+.rich-editor-content h2,
+.rich-editor-content h3 {
+  margin: 0.75rem 0 0.5rem;
+  font-weight: 700;
+}
+
+.rich-editor-content h1 {
+  font-size: 1.25rem;
+}
+
+.rich-editor-content h2 {
+  font-size: 1.125rem;
+}
+
+.rich-editor-content h3 {
+  font-size: 1rem;
+}
+
+.rich-editor-content ul,
+.rich-editor-content ol {
+  margin: 0 1.25rem 0.5rem 0;
+  padding: 0;
+}
+
+.rich-editor-content ul {
+  list-style: disc;
+}
+
+.rich-editor-content ol {
+  list-style: decimal;
+}
+
+.rich-editor-content blockquote {
+  margin: 0 0 0.5rem;
+  padding-right: 0.75rem;
+  border-right: 3px solid var(--border);
+  color: var(--muted-foreground);
+}
+
+.rich-editor-content .is-empty::before {
+  content: attr(data-placeholder);
+  float: right;
+  height: 0;
+  pointer-events: none;
+  color: var(--muted-foreground);
+} */
+
+
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-ibm-plex-sans-arabic);
+  --font-mono: var(--font-geist-mono);
+  --font-heading: var(--font-ibm-plex-sans-arabic);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+}
+
+:root {
+  /* ===== Warm Earthy — الوضع الفاتح (Light Mode) ===== */
+  --background: #F4EFEA;          /* الخلفية الرئيسية */
+  --foreground: #2D2926;          /* النص الرئيسي */
+  --card: #FFFFFF;                /* خلفية البطاقات */
+  --card-foreground: #2D2926;
+  --popover: #FFFFFF;
+  --popover-foreground: #2D2926;
+  --primary: #B08B66;             /* اللون المميز / أزرار CTA */
+  --primary-foreground: #FFFFFF;
+  --secondary: #EFE5D8;           /* تدرج فاتح من البيج */
+  --secondary-foreground: #2D2926;
+  --muted: #EFE5D8;
+  --muted-foreground: #8A7B70;    /* النصوص الثانوية */
+  --accent: #E9DCC9;              /* خلفيات hover خفيفة */
+  --accent-foreground: #2D2926;
+  --accent-hover: #967350;        /* لون التمرير فوق الأزرار الرئيسية */
+  --destructive: oklch(0.577 0.245 27.325);
+  --success: #3F7A55;
+  --success-foreground: #FFFFFF;
+  --border: #E2D8CE;
+  --input: #E2D8CE;
+  --ring: #B08B66;
+  --chart-1: #B08B66;
+  --chart-2: #C9A47C;
+  --chart-3: #D8C4A8;
+  --chart-4: #8A7B70;
+  --chart-5: #6F6156;
+  --radius: 0.625rem;
+  --sidebar: #FAF6F0;
+  --sidebar-foreground: #2D2926;
+  --sidebar-primary: #B08B66;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #EFE5D8;
+  --sidebar-accent-foreground: #2D2926;
+  --sidebar-border: #E2D8CE;
+  --sidebar-ring: #B08B66;
+
+  /* Glassmorphism tokens */
+  --glass-bg: rgba(255, 255, 255, 0.65);
+  --glass-border: rgba(255, 255, 255, 0.4);
+  --shadow: 0 8px 32px 0 rgba(45, 41, 38, 0.06);
+}
+
+.dark {
+  /* ===== Warm Earthy — الوضع الداكن (Dark Mode) ===== */
+  --background: #1A1816;
+  --foreground: #ECE5DD;
+  --card: #272320;
+  --card-foreground: #ECE5DD;
+  --popover: #272320;
+  --popover-foreground: #ECE5DD;
+  --primary: #C9A47C;
+  --primary-foreground: #1A1816;
+  --secondary: #322D28;
+  --secondary-foreground: #ECE5DD;
+  --muted: #322D28;
+  --muted-foreground: #A89B90;
+  --accent: #3D3731;
+  --accent-foreground: #ECE5DD;
+  --accent-hover: #D8B58D;
+  --destructive: oklch(0.704 0.191 22.216);
+  --success: #7DB98F;
+  --success-foreground: #1A1816;
+  --border: #3D3731;
+  --input: #3D3731;
+  --ring: #C9A47C;
+  --chart-1: #C9A47C;
+  --chart-2: #A89B90;
+  --chart-3: #8A7B70;
+  --chart-4: #5C5248;
+  --chart-5: #3D3731;
+  --sidebar: #201C19;
+  --sidebar-foreground: #ECE5DD;
+  --sidebar-primary: #C9A47C;
+  --sidebar-primary-foreground: #1A1816;
+  --sidebar-accent: #322D28;
+  --sidebar-accent-foreground: #ECE5DD;
+  --sidebar-border: #3D3731;
+  --sidebar-ring: #C9A47C;
+
+  /* Glassmorphism tokens */
+  --glass-bg: rgba(39, 35, 32, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.35);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
+}
+
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow);
+}
+
+.rich-editor-content {
+  min-height: 10rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  line-height: 1.75;
+  text-align: right;
+}
+
+.rich-editor-content p {
+  margin: 0 0 0.5rem;
+}
+
+.rich-editor-content h1,
+.rich-editor-content h2,
+.rich-editor-content h3 {
+  margin: 0.75rem 0 0.5rem;
+  font-weight: 700;
+}
+
+.rich-editor-content h1 {
+  font-size: 1.25rem;
+}
+
+.rich-editor-content h2 {
+  font-size: 1.125rem;
+}
+
+.rich-editor-content h3 {
+  font-size: 1rem;
+}
+
+.rich-editor-content ul,
+.rich-editor-content ol {
+  margin: 0 1.25rem 0.5rem 0;
+  padding: 0;
+}
+
+.rich-editor-content ul {
+  list-style: disc;
+}
+
+.rich-editor-content ol {
+  list-style: decimal;
+}
+
+.rich-editor-content blockquote {
+  margin: 0 0 0.5rem;
+  padding-right: 0.75rem;
+  border-right: 3px solid var(--border);
+  color: var(--muted-foreground);
+}
+
+.rich-editor-content .is-empty::before {
+  content: attr(data-placeholder);
+  float: right;
+  height: 0;
+  pointer-events: none;
+  color: var(--muted-foreground);
 }

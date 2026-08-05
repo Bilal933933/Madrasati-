@@ -73,8 +73,8 @@ export function StagesTable({ stages, isLoading, onEdit, onDelete }: StagesTable
       <TableHeader>
         <TableRow>
           <TableHead>الاسم</TableHead>
-          <TableHead>الرابط (Slug)</TableHead>
-          <TableHead>الترتيب</TableHead>
+          <TableHead className="hidden md:table-cell">الرابط (Slug)</TableHead>
+          <TableHead className="hidden md:table-cell">الترتيب</TableHead>
           <TableHead>الحالة</TableHead>
           <TableHead className="text-end">إجراءات</TableHead>
         </TableRow>
@@ -93,10 +93,10 @@ export function StagesTable({ stages, isLoading, onEdit, onDelete }: StagesTable
                 <span className="font-medium">{stage.name}</span>
               </div>
             </TableCell>
-            <TableCell className="font-mono text-xs text-muted-foreground">
+            <TableCell className="hidden font-mono text-xs text-muted-foreground md:table-cell">
               {stage.slug}
             </TableCell>
-            <TableCell>{stage.sort_order ?? "-"}</TableCell>
+            <TableCell className="hidden md:table-cell">{stage.sort_order ?? "-"}</TableCell>
             <TableCell>
               <PublishedBadge published={stage.is_published} />
             </TableCell>

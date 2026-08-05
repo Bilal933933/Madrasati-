@@ -1,6 +1,7 @@
 "use client";
 
-import { Pencil, PlayCircle, Trash2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { BookOpen, ClipboardList, Pencil, PlayCircle, Trash2 } from "lucide-react";
 import { RowActions } from "@/components/shared/row-actions";
 import { EntityThumb } from "@/components/shared/entity-thumb";
 import {
@@ -15,7 +16,6 @@ import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTi
 import { Skeleton } from "@/components/ui/skeleton";
 import type { Lesson } from "@/features/lessons/types/lesson.types";
 import type { Course } from "@/features/courses/types/course.types";
-import type { Section } from "@/features/sections/types/section.types";
 import type { Subject } from "@/features/subjects/types/subject.types";
 import type { Grade } from "@/features/grades/types/grade.types";
 import type { Stage } from "@/features/stages/types/stage.types";
@@ -23,7 +23,6 @@ import type { Stage } from "@/features/stages/types/stage.types";
 type LessonsTableProps = {
   lessons: Lesson[];
   courses: Course[];
-  sections: Section[];
   subjects: Subject[];
   grades: Grade[];
   stages: Stage[];
@@ -49,7 +48,8 @@ function PublishedBadge({ published }: { published: boolean | null }) {
   );
 }
 
-export function LessonsTable({ lessons, courses, sections, subjects, grades, stages, isLoading, onEdit, onDelete }: LessonsTableProps) {
+export function LessonsTable({ lessons, courses, subjects, grades, stages, isLoading, onEdit, onDelete }: LessonsTableProps) {
+  const router = useRouter();
   if (isLoading) {
     return (
       <div className="flex flex-col gap-3">
@@ -80,25 +80,18 @@ export function LessonsTable({ lessons, courses, sections, subjects, grades, sta
 
   const courseName = (courseId: number) =>
     courses.find((c) => c.id === courseId)?.name ?? `#${courseId}`;
-  const sectionName = (courseId: number) => {
-    const course = courses.find((c) => c.id === courseId);
-    return sections.find((s) => s.id === course?.section_id)?.name ?? "-";
-  };
   const subjectName = (courseId: number) => {
     const course = courses.find((c) => c.id === courseId);
-    const section = sections.find((s) => s.id === course?.section_id);
-    return subjects.find((s) => s.id === section?.subject_id)?.name ?? "-";
+    return subjects.find((s) => s.id === course?.subject_id)?.name ?? "-";
   };
   const gradeName = (courseId: number) => {
     const course = courses.find((c) => c.id === courseId);
-    const section = sections.find((s) => s.id === course?.section_id);
-    const subject = subjects.find((s) => s.id === section?.subject_id);
+    const subject = subjects.find((s) => s.id === course?.subject_id);
     return grades.find((g) => g.id === subject?.grade_id)?.name ?? "-";
   };
   const stageName = (courseId: number) => {
     const course = courses.find((c) => c.id === courseId);
-    const section = sections.find((s) => s.id === course?.section_id);
-    const subject = subjects.find((s) => s.id === section?.subject_id);
+    const subject = subjects.find((s) => s.id === course?.subject_id);
     const grade = grades.find((g) => g.id === subject?.grade_id);
     return stages.find((s) => s.id === grade?.stage_id)?.name ?? "-";
   };
@@ -108,12 +101,11 @@ export function LessonsTable({ lessons, courses, sections, subjects, grades, sta
       <TableHeader>
         <TableRow>
           <TableHead>العنوان</TableHead>
-          <TableHead>المقرر</TableHead>
-          <TableHead>الوحدة</TableHead>
-          <TableHead>المادة</TableHead>
-          <TableHead>الصف</TableHead>
-          <TableHead>المرحلة</TableHead>
-          <TableHead>الترتيب</TableHead>
+          <TableHead className="hidden md:table-cell">المقرر</TableHead>
+          <TableHead className="hidden md:table-cell">المادة</TableHead>
+          <TableHead className="hidden md:table-cell">الصف</TableHead>
+          <TableHead className="hidden md:table-cell">المرحلة</TableHead>
+          <TableHead className="hidden md:table-cell">الترتيب</TableHead>
           <TableHead>الحالة</TableHead>
           <TableHead className="text-end">إجراءات</TableHead>
         </TableRow>
@@ -139,12 +131,11 @@ export function LessonsTable({ lessons, courses, sections, subjects, grades, sta
                 </div>
               </div>
             </TableCell>
-            <TableCell className="text-muted-foreground">{courseName(lesson.course_id)}</TableCell>
-            <TableCell className="text-muted-foreground">{sectionName(lesson.course_id)}</TableCell>
-            <TableCell className="text-muted-foreground">{subjectName(lesson.course_id)}</TableCell>
-            <TableCell className="text-muted-foreground">{gradeName(lesson.course_id)}</TableCell>
-            <TableCell className="text-muted-foreground">{stageName(lesson.course_id)}</TableCell>
-            <TableCell>{lesson.sort_order ?? "-"}</TableCell>
+            <TableCell className="hidden text-muted-foreground md:table-cell">{courseName(lesson.course_id)}</TableCell>
+            <TableCell className="hidden text-muted-foreground md:table-cell">{subjectName(lesson.course_id)}</TableCell>
+            <TableCell className="hidden text-muted-foreground md:table-cell">{gradeName(lesson.course_id)}</TableCell>
+            <TableCell className="hidden text-muted-foreground md:table-cell">{stageName(lesson.course_id)}</TableCell>
+            <TableCell className="hidden md:table-cell">{lesson.sort_order ?? "-"}</TableCell>
             <TableCell>
               <PublishedBadge published={lesson.is_published} />
             </TableCell>
@@ -153,6 +144,18 @@ export function LessonsTable({ lessons, courses, sections, subjects, grades, sta
                 <RowActions
                   ariaLabel={`إجراءات ${lesson.title}`}
                   items={[
+                    {
+                      key: "paragraphs",
+                      label: "الفقرات",
+                      icon: <BookOpen />,
+                      onSelect: () => router.push(`/admin/lessons/${lesson.id}/paragraphs`),
+                    },
+                    {
+                      key: "assessments",
+                      label: "التقييمات",
+                      icon: <ClipboardList />,
+                      onSelect: () => router.push(`/admin/lessons/${lesson.id}/assessments`),
+                    },
                     {
                       key: "edit",
                       label: "تعديل",

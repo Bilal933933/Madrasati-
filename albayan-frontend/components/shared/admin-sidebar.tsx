@@ -6,7 +6,6 @@ import {
   LayoutDashboard,
   Layers,
   BookOpen,
-  FolderOpen,
   Library,
   FileText,
   GraduationCap,
@@ -31,7 +30,6 @@ const NAV_ITEMS = [
   { href: "/admin/stages", label: "المراحل الدراسية", icon: Layers },
   { href: "/admin/grades", label: "الصفوف الدراسية", icon: BookOpen },
   { href: "/admin/subjects", label: "المواد الدراسية", icon: Library },
-  { href: "/admin/sections", label: "الوحدات الدراسية", icon: FolderOpen },
   { href: "/admin/courses", label: "المقررات الدراسية", icon: GraduationCap },
   { href: "/admin/lessons", label: "الدروس", icon: FileText },
 ];

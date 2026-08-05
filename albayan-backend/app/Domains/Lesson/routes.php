@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function () {
     Route::get('lessons/next-order', [AdminLessonController::class, 'nextOrder']);
     Route::apiResource('lessons', AdminLessonController::class);
+    Route::get('paragraphs/next-order', [AdminParagraphController::class, 'nextOrder']);
     Route::apiResource('paragraphs', AdminParagraphController::class);
 });
 

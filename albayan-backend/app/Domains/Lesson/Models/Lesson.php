@@ -3,10 +3,49 @@
 namespace App\Domains\Lesson\Models;
 
 use App\Domains\Curriculum\Models\Course;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Carbon;
 
+/**
+ * @property int $id
+ * @property int $course_id
+ * @property string $title
+ * @property string|null $slug
+ * @property string|null $summary
+ * @property string|null $image
+ * @property string|null $video
+ * @property string|null $icon
+ * @property string|null $color
+ * @property int $sort_order
+ * @property bool $is_published
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property-read Course $course
+ * @property-read Collection<int, Paragraph> $paragraphs
+ * @property-read int|null $paragraphs_count
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Lesson newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Lesson newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Lesson query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Lesson whereColor($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Lesson whereCourseId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Lesson whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Lesson whereIcon($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Lesson whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Lesson whereImage($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Lesson whereIsPublished($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Lesson whereSlug($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Lesson whereSortOrder($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Lesson whereSummary($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Lesson whereTitle($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Lesson whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Lesson whereVideo($value)
+ *
+ * @mixin \Eloquent
+ */
 class Lesson extends Model
 {
     protected $fillable = [
@@ -15,6 +54,7 @@ class Lesson extends Model
         'slug',
         'summary',
         'image',
+        'video',
         'icon',
         'color',
         'sort_order',

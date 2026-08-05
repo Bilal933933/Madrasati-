@@ -4,6 +4,7 @@ namespace App\Domains\Lesson\Services;
 
 use App\Domains\Lesson\Models\Lesson;
 use App\Domains\Lesson\Models\Paragraph;
+use App\Support\HtmlSanitizerService;
 use App\Support\ImageService;
 use App\Support\Slugger;
 use Illuminate\Database\Eloquent\Collection;
@@ -14,7 +15,10 @@ use Illuminate\Database\Eloquent\Collection;
  */
 class LessonService
 {
-    public function __construct(private readonly ImageService $imageService) {}
+    public function __construct(
+        private readonly ImageService $imageService,
+        private readonly HtmlSanitizerService $htmlSanitizerService,
+    ) {}
 
     /* ---------------------------------- Lessons ---------------------------------- */
 
@@ -36,10 +40,9 @@ class LessonService
         return Lesson::query()
             ->where('is_published', true)
             ->whereHas('course', fn ($q) => $q->where('is_published', true)
-                ->whereHas('section', fn ($q2) => $q2->where('is_published', true)
-                    ->whereHas('subject', fn ($q3) => $q3->where('is_published', true)
-                        ->whereHas('grade', fn ($q4) => $q4->where('is_published', true)
-                            ->whereHas('stage', fn ($q5) => $q5->where('is_published', true))))))
+                ->whereHas('subject', fn ($q2) => $q2->where('is_published', true)
+                    ->whereHas('grade', fn ($q3) => $q3->where('is_published', true)
+                        ->whereHas('stage', fn ($q4) => $q4->where('is_published', true)))))
             ->with(['paragraphs' => fn ($q) => $q->orderBy('sort_order')])
             ->orderBy('sort_order')
             ->get();
@@ -55,10 +58,9 @@ class LessonService
         return Lesson::query()
             ->where('is_published', true)
             ->whereHas('course', fn ($q) => $q->where('is_published', true)
-                ->whereHas('section', fn ($q2) => $q2->where('is_published', true)
-                    ->whereHas('subject', fn ($q3) => $q3->where('is_published', true)
-                        ->whereHas('grade', fn ($q4) => $q4->where('is_published', true)
-                            ->whereHas('stage', fn ($q5) => $q5->where('is_published', true))))))
+                ->whereHas('subject', fn ($q2) => $q2->where('is_published', true)
+                    ->whereHas('grade', fn ($q3) => $q3->where('is_published', true)
+                        ->whereHas('stage', fn ($q4) => $q4->where('is_published', true)))))
             ->with(['paragraphs' => fn ($q) => $q->orderBy('sort_order')])
             ->findOrFail($id);
     }
@@ -69,10 +71,9 @@ class LessonService
             ->where('is_published', true)
             ->where('slug', $slug)
             ->whereHas('course', fn ($q) => $q->where('is_published', true)
-                ->whereHas('section', fn ($q2) => $q2->where('is_published', true)
-                    ->whereHas('subject', fn ($q3) => $q3->where('is_published', true)
-                        ->whereHas('grade', fn ($q4) => $q4->where('is_published', true)
-                            ->whereHas('stage', fn ($q5) => $q5->where('is_published', true))))))
+                ->whereHas('subject', fn ($q2) => $q2->where('is_published', true)
+                    ->whereHas('grade', fn ($q3) => $q3->where('is_published', true)
+                        ->whereHas('stage', fn ($q4) => $q4->where('is_published', true)))))
             ->with(['paragraphs' => fn ($q) => $q->orderBy('sort_order')])
             ->firstOrFail();
     }
@@ -116,9 +117,17 @@ class LessonService
 
     /* ---------------------------------- Paragraphs ---------------------------------- */
 
-    public function paragraphs(): Collection
+    public function paragraphs(?int $lessonId = null): Collection
     {
-        return Paragraph::query()->orderBy('sort_order')->get();
+        return Paragraph::query()
+            ->when($lessonId, fn ($q) => $q->where('lesson_id', $lessonId))
+            ->orderBy('sort_order')
+            ->get();
+    }
+
+    public function nextParagraphOrder(int $lessonId): int
+    {
+        return (Paragraph::query()->where('lesson_id', $lessonId)->max('sort_order') ?? 0) + 1;
     }
 
     public function publishedParagraphs(): Collection
@@ -126,10 +135,9 @@ class LessonService
         return Paragraph::query()
             ->whereHas('lesson', fn ($q) => $q->where('is_published', true)
                 ->whereHas('course', fn ($q2) => $q2->where('is_published', true)
-                    ->whereHas('section', fn ($q3) => $q3->where('is_published', true)
-                        ->whereHas('subject', fn ($q4) => $q4->where('is_published', true)
-                            ->whereHas('grade', fn ($q5) => $q5->where('is_published', true)
-                                ->whereHas('stage', fn ($q6) => $q6->where('is_published', true)))))))
+                    ->whereHas('subject', fn ($q3) => $q3->where('is_published', true)
+                        ->whereHas('grade', fn ($q4) => $q4->where('is_published', true)
+                            ->whereHas('stage', fn ($q5) => $q5->where('is_published', true))))))
             ->orderBy('sort_order')
             ->get();
     }
@@ -145,19 +153,20 @@ class LessonService
             ->where('slug', $slug)
             ->whereHas('lesson', fn ($q) => $q->where('is_published', true)
                 ->whereHas('course', fn ($q2) => $q2->where('is_published', true)
-                    ->whereHas('section', fn ($q3) => $q3->where('is_published', true)
-                        ->whereHas('subject', fn ($q4) => $q4->where('is_published', true)
-                            ->whereHas('grade', fn ($q5) => $q5->where('is_published', true)
-                                ->whereHas('stage', fn ($q6) => $q6->where('is_published', true)))))))
+                    ->whereHas('subject', fn ($q3) => $q3->where('is_published', true)
+                        ->whereHas('grade', fn ($q4) => $q4->where('is_published', true)
+                            ->whereHas('stage', fn ($q5) => $q5->where('is_published', true))))))
             ->firstOrFail();
     }
 
     public function createParagraph(array $data): Paragraph
     {
+        $data['content'] = $this->htmlSanitizerService->sanitize($data['content'] ?? '');
+
         $paragraph = Paragraph::create($data);
 
         if (empty($paragraph->slug)) {
-            $paragraph->forceFill(['slug' => Slugger::from('paragraph', $paragraph->id)])->save();
+            $paragraph->forceFill(['slug' => Slugger::from($paragraph->title, $paragraph->id)])->save();
         }
 
         return $paragraph;
@@ -170,6 +179,15 @@ class LessonService
         }
 
         $paragraph = Paragraph::findOrFail($id);
+
+        if (isset($data['content'])) {
+            $data['content'] = $this->htmlSanitizerService->sanitize($data['content']);
+        }
+
+        if (($data['image'] ?? null) !== $paragraph->image) {
+            $this->imageService->delete($paragraph->image);
+        }
+
         $paragraph->update($data);
 
         return $paragraph;
@@ -177,6 +195,10 @@ class LessonService
 
     public function deleteParagraph(int $id): void
     {
-        Paragraph::findOrFail($id)->delete();
+        $paragraph = Paragraph::findOrFail($id);
+
+        $this->imageService->delete($paragraph->image);
+
+        $paragraph->delete();
     }
 }

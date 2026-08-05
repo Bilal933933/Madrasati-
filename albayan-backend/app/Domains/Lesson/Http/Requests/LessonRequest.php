@@ -2,6 +2,7 @@
 
 namespace App\Domains\Lesson\Http\Requests;
 
+use App\Support\Rules\YoutubeUrlRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -20,6 +21,7 @@ class LessonRequest extends FormRequest
             'slug' => ['nullable', 'string', 'max:255', 'regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/', Rule::unique('lessons', 'slug')->ignore($this->route('lesson'))],
             'summary' => ['nullable', 'string'],
             'image' => ['nullable', 'string', 'max:2048'],
+            'video' => ['nullable', 'string', 'max:2048', new YoutubeUrlRule],
             'icon' => ['nullable', 'string', 'max:100'],
             'color' => ['nullable', 'string', 'regex:/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/'],
             'sort_order' => ['sometimes', 'integer', 'min:0', Rule::unique('lessons', 'sort_order')->where(fn ($q) => $q->where('course_id', $this->input('course_id')))->ignore($this->route('lesson'))],
@@ -43,6 +45,8 @@ class LessonRequest extends FormRequest
             'summary.string' => 'الملخص يجب أن يكون نصًا.',
             'image.string' => 'الصورة يجب أن تكون رابطًا نصيًا صحيحًا.',
             'image.max' => 'رابط الصورة طويل جدًا.',
+            'video.string' => 'الفيديو يجب أن يكون نصًا.',
+            'video.max' => 'رابط الفيديو طويل جدًا.',
             'icon.string' => 'الأيقونة يجب أن تكون نصًا.',
             'icon.max' => 'الأيقونة يجب ألا تتجاوز 100 حرف.',
             'color.regex' => 'صيغة اللون غير صحيحة — استخدم HEX مثل #2563EB.',

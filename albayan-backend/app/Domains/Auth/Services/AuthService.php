@@ -7,15 +7,42 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Validation\ValidationException;
 
 class AuthService
 {
     /**
      * تسجيل مستخدم جديد بإيميل وكلمة سر
      * الدور دائمًا "student" افتراضيًا — لا يُقرأ من الطلب أبدًا
+     *
+     * إذا وُجد مستخدم بنفس الإيميل:
+     * - إن كانت له كلمة سر → خطأ "مستخدم بالفعل"
+     * - وإن كان حساب جوجل فقط (بلا كلمة سر) → ربط مباشر بتعيين كلمة السر الجديدة
+     *
+     * @throws ValidationException
      */
     public function register(array $data): User
     {
+        $existing = User::where('email', $data['email'])->first();
+
+        if ($existing) {
+            if ($existing->password) {
+                throw ValidationException::withMessages([
+                    'email' => ['هذا البريد الإلكتروني مسجّل مسبقًا.'],
+                ]);
+            }
+
+            // حساب مسجّل عبر جوجل فقط — نربطه بتعيين كلمة سر جديدة
+            $existing->forceFill([
+                'name' => $data['name'],
+                'password' => $data['password'],
+            ])->save();
+
+            Auth::login($existing);
+
+            return $existing;
+        }
+
         $user = User::create([
             'name' => $data['name'],
             'email' => $data['email'],
@@ -36,15 +63,19 @@ class AuthService
     /**
      * تسجيل الدخول بإيميل وكلمة سر
      *
-     * @throws \Illuminate\Validation\ValidationException
+     * @throws ValidationException
      */
     public function login(array $credentials): User
     {
         $user = User::where('email', $credentials['email'])->first();
 
         if (! $user || ! $user->password || ! Hash::check($credentials['password'], $user->password)) {
-            throw \Illuminate\Validation\ValidationException::withMessages([
-                'email' => ['بيانات الدخول غير صحيحة.'],
+            $message = $user && ! $user->password
+                ? 'هذا الحساب مسجّل عبر جوجل. سجّل عبر جوجل أو أنشئ كلمة سر من صفحة إنشاء الحساب.'
+                : 'بيانات الدخول غير صحيحة.';
+
+            throw ValidationException::withMessages([
+                'email' => [$message],
             ]);
         }
 
@@ -75,7 +106,7 @@ class AuthService
     /**
      * تنفيذ إعادة تعيين كلمة السر
      *
-     * @throws \Illuminate\Validation\ValidationException
+     * @throws ValidationException
      */
     public function resetPassword(array $data): void
     {
@@ -87,7 +118,7 @@ class AuthService
         );
 
         if ($status !== Password::PASSWORD_RESET) {
-            throw \Illuminate\Validation\ValidationException::withMessages([
+            throw ValidationException::withMessages([
                 'email' => ['تعذّر إعادة تعيين كلمة السر. تأكد من صلاحية الرابط.'],
             ]);
         }

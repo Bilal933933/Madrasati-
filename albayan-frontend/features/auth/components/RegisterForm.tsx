@@ -26,12 +26,21 @@ export function RegisterForm() {
 
   const { mutate: register, isPending, error } = useRegister();
 
+  const [confirmError, setConfirmError] = useState<string>();
+
   function handleChange(field: keyof typeof form, value: string) {
     setForm((prev) => ({ ...prev, [field]: value }));
+    if (field === "password_confirmation") {
+      setConfirmError(value !== form.password ? "كلمتا السر غير متطابقتين." : undefined);
+    }
   }
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
+    if (form.password !== form.password_confirmation) {
+      setConfirmError("كلمتا السر غير متطابقتين.");
+      return;
+    }
     register(form);
   }
 
@@ -106,6 +115,7 @@ export function RegisterForm() {
             autoComplete="new-password"
             className="h-11"
           />
+          <FieldError errors={confirmError ? [{ message: confirmError }] : []} />
         </FieldContent>
       </Field>
 

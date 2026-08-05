@@ -11,3 +11,4 @@
 require base_path('app/Domains/Auth/routes.php');
 require base_path('app/Domains/Curriculum/routes.php');
 require base_path('app/Domains/Lesson/routes.php');
+require base_path('app/Domains/Assessment/routes.php');

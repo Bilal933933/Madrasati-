@@ -11,11 +11,11 @@ export function useCourses(filters?: CourseListFilters) {
   });
 }
 
-export function useNextCourseOrder(enabled: boolean, sectionId?: number) {
+export function useNextCourseOrder(enabled: boolean, subjectId?: number) {
   return useQuery({
-    queryKey: ["courses", "next-order", sectionId],
-    queryFn: () => coursesApi.nextOrder(sectionId ?? 0),
-    enabled: enabled && sectionId != null && !Number.isNaN(sectionId),
+    queryKey: ["courses", "next-order", subjectId],
+    queryFn: () => coursesApi.nextOrder(subjectId ?? 0),
+    enabled: enabled && subjectId != null && !Number.isNaN(subjectId),
   });
 }
 

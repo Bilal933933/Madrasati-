@@ -27,7 +27,7 @@ export function ForgotPasswordForm() {
   if (isSuccess) {
     return (
       <div className="flex flex-col items-center gap-3 py-6 text-center" dir="rtl">
-        <CircleCheck className="size-10 text-emerald-600" />
+        <CircleCheck className="size-10 text-success" />
         <p className="text-sm text-muted-foreground">{data?.message}</p>
       </div>
     );
@@ -39,7 +39,7 @@ export function ForgotPasswordForm() {
         <FieldLabel htmlFor="email">البريد الإلكتروني</FieldLabel>
         <FieldContent>
           <div className="relative">
-            <Mail className="pointer-events-none absolute start-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+            <Mail className="pointer-events-none absolute end-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               id="email"
               type="email"
@@ -47,7 +47,7 @@ export function ForgotPasswordForm() {
               onChange={(e) => setEmail(e.target.value)}
               required
               autoComplete="email"
-              className="h-11 ps-9"
+              className="h-11 pe-9"
             />
           </div>
           <FieldError errors={[{ message: errorMessage }]} />

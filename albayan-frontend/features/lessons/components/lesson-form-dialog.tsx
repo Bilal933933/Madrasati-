@@ -18,6 +18,7 @@ import {
 import { Spinner } from "@/components/ui/spinner";
 import { IconSelect } from "@/components/shared/icon-select";
 import { ImageUpload } from "@/components/shared/image-upload";
+import { VideoUrlField } from "@/components/shared/video-url-field";
 import {
   Dialog,
   DialogContent,
@@ -45,6 +46,7 @@ type FormState = {
   slug: string;
   summary: string;
   image: string;
+  video: string;
   icon: string;
   color: string;
   sort_order: string;
@@ -87,8 +89,9 @@ function LessonForm({
     slug: lesson?.slug ?? "",
     summary: lesson?.summary ?? "",
     image: lesson?.image ?? "",
+    video: lesson?.video ?? "",
     icon: lesson?.icon ?? "",
-    color: lesson?.color ?? "#2563EB",
+    color: lesson?.color ?? "#B08B66",
     sort_order: lesson ? String(lesson.sort_order ?? 0) : "",
     is_published: lesson?.is_published ?? true,
   }));
@@ -135,6 +138,7 @@ function LessonForm({
       slug: form.slug.trim() || null,
       summary: form.summary.trim() || null,
       image: form.image.trim() || null,
+      video: form.video.trim() || null,
       icon: form.icon.trim() || null,
       color: form.color.trim() || null,
       sort_order: form.sort_order === "" ? (nextOrder.data?.data.next_order ?? 0) : Number(form.sort_order),
@@ -278,7 +282,7 @@ function LessonForm({
                 <Input
                   value={form.color}
                   onChange={(e) => handleChange("color", e.target.value)}
-                  placeholder="#2563EB"
+                  placeholder="#B08B66"
                   className="h-9 font-mono text-xs"
                 />
               </div>
@@ -296,6 +300,18 @@ function LessonForm({
               onValueChange={(value) => handleChange("image", value)}
             />
             <FieldError errors={[fieldError("image")]} />
+          </FieldContent>
+        </Field>
+
+        <Field>
+          <FieldLabel htmlFor="lesson-video">فيديو يوتيوب</FieldLabel>
+          <FieldContent>
+            <VideoUrlField
+              id="lesson-video"
+              value={form.video}
+              onValueChange={(value) => handleChange("video", value)}
+            />
+            <FieldError errors={[fieldError("video")]} />
           </FieldContent>
         </Field>
 

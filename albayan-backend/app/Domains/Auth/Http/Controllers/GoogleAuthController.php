@@ -2,15 +2,13 @@
 
 namespace App\Domains\Auth\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Domains\Auth\Services\GoogleAuthService;
+use App\Http\Controllers\Controller;
 use Laravel\Socialite\Facades\Socialite;
 
 class GoogleAuthController extends Controller
 {
-    public function __construct(private readonly GoogleAuthService $googleAuthService)
-    {
-    }
+    public function __construct(private readonly GoogleAuthService $googleAuthService) {}
 
     /**
      * GET /auth/google/redirect
