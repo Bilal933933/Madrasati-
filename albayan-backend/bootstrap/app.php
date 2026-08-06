@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Middleware\EnsureUserIsAdmin;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -31,6 +33,14 @@ return Application::configure(basePath: dirname(__DIR__))
             if ($request->is('api/*')) {
                 if ($e instanceof ValidationException) {
                     return null;
+                }
+
+                if ($e instanceof AuthenticationException) {
+                    return response()->json(['message' => 'يجب تسجيل الدخول للوصول إلى هذا المورد.'], 401);
+                }
+
+                if ($e instanceof AuthorizationException) {
+                    return response()->json(['message' => 'غير مصرّح لك بالوصول إلى هذا المورد.'], 403);
                 }
 
                 $status = method_exists($e, 'getStatusCode') ? $e->getStatusCode() : ($e->getCode() ?: 500);

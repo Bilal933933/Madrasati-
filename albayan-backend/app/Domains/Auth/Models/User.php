@@ -2,7 +2,9 @@
 
 namespace App\Domains\Auth\Models;
 
+use App\Domains\Curriculum\Models\UserContext;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\DatabaseNotificationCollection;
@@ -86,5 +88,13 @@ class User extends Authenticatable
     public function isAdmin(): bool
     {
         return $this->role === 'admin';
+    }
+
+    /**
+     * سياق تصفح الطالب — آخر مادة استكشفها (عبر user_contexts).
+     */
+    public function context(): HasOne
+    {
+        return $this->hasOne(UserContext::class);
     }
 }

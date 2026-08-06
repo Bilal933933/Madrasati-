@@ -1,4 +1,5 @@
 import { SubjectPage } from "@/features/explore/pages/SubjectPage";
+import { TrackContext } from "@/features/explore/components/TrackContext";
 
 export default async function SubjectRoute({
   params,
@@ -6,5 +7,10 @@ export default async function SubjectRoute({
   params: Promise<{ stage: string; grade: string; semester: string; subject: string }>;
 }) {
   const { subject } = await params;
-  return <SubjectPage subjectSlug={subject} />;
+  return (
+    <>
+      <TrackContext subjectSlug={subject} />
+      <SubjectPage subjectSlug={subject} />
+    </>
+  );
 }

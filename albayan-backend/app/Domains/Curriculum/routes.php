@@ -11,6 +11,7 @@ use App\Domains\Curriculum\Http\Controllers\Public\ExploreController;
 use App\Domains\Curriculum\Http\Controllers\SemesterController;
 use App\Domains\Curriculum\Http\Controllers\StageController;
 use App\Domains\Curriculum\Http\Controllers\SubjectController;
+use App\Domains\Curriculum\Http\Controllers\UserContextController;
 use App\Http\Controllers\Admin\UploadController;
 use Illuminate\Support\Facades\Route;
 
@@ -58,4 +59,9 @@ Route::prefix('explore')->group(function () {
     Route::get('stages/{stageKey}/grades/{gradeKey}/semesters', [ExploreController::class, 'semesters']);
     Route::get('stages/{stageKey}/grades/{gradeKey}/semesters/{semesterKey}/subjects', [ExploreController::class, 'subjects']);
     Route::get('subjects/{slug}', [ExploreController::class, 'subject']);
+});
+
+// سياق التصفح — للمستخدم المسجّل فقط (لا يمسّ هوية الطالب)
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/user-context', [UserContextController::class, 'update']);
 });
