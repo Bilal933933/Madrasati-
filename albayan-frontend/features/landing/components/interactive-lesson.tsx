@@ -1,6 +1,7 @@
 "use client";
 
 import { Check, ChevronDown, FileText, HelpCircle, Play } from "lucide-react";
+import Link from "next/link";
 import { AutoDemo } from "./auto-demo";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -67,6 +68,18 @@ export function InteractiveLesson() {
         <div className="p-5 sm:p-6">
           <AutoDemo steps={lessonSteps} interval={4500} />
         </div>
+      </div>
+
+      <div className="mx-auto mt-6 flex max-w-xl flex-col items-center gap-2">
+        <Button asChild size="lg" className="h-12 w-full px-6 text-base">
+          <Link href="/trial">
+            ابدأ التجربة
+            <Play className="size-4 rtl:rotate-180" />
+          </Link>
+        </Button>
+        <span className="text-xs text-muted-foreground">
+          فقرة واحدة + سؤالان — دون تسجيل
+        </span>
       </div>
     </section>
   );

@@ -19,13 +19,14 @@ export function FinalCta() {
           </p>
           <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Button asChild size="lg" className="h-12 w-full px-6 text-base sm:w-auto">
+              <Link href="/register">إنشاء حساب مجاني</Link>
+            </Button>
+            <span className="text-sm text-muted-foreground">أو</span>
+            <Button asChild variant="outline" size="lg" className="h-12 w-full px-6 text-base sm:w-auto">
               <Link href="/trial">
-                جرّب أول درس الآن
+                جرّب أول درس
                 <ArrowLeft className="size-4 rtl:rotate-180" />
               </Link>
-            </Button>
-            <Button asChild variant="outline" size="lg" className="h-12 w-full px-6 text-base sm:w-auto">
-              <Link href="/register">إنشاء حساب مجاني</Link>
             </Button>
           </div>
         </div>
