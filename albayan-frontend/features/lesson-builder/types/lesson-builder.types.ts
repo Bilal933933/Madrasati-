@@ -11,9 +11,12 @@ export type LessonBlockKind =
 export interface LessonFlowLesson {
   id: number;
   course_id: number;
+  course: string | null;
+  subject: string | null;
   title: string;
   slug: string | null;
   summary: string | null;
+  learning_objectives: string[] | null;
   image: string | null;
   video: string | null;
   video_embed: string | null;

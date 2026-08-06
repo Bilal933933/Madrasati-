@@ -6,6 +6,7 @@ export interface Lesson {
   title: string;
   slug: string;
   summary: string | null;
+  learning_objectives: string[] | null;
   image: string | null;
   video: string | null;
   video_embed: string | null;
@@ -20,6 +21,7 @@ export interface LessonPayload {
   title: string;
   slug?: string | null;
   summary?: string | null;
+  learning_objectives?: string[] | null;
   image?: string | null;
   video?: string | null;
   icon?: string | null;

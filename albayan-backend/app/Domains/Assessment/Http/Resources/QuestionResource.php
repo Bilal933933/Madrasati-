@@ -10,6 +10,8 @@ class QuestionResource extends JsonResource
     public function toArray(Request $request): array
     {
         $isAdmin = $request->user()?->isAdmin() === true;
+        // داخل تدفق الدرس (رحلة التعلم) تُكشف الإجابة للطالب ليتلقى تغذية فورية.
+        $exposeInFlow = $request->attributes->get('lesson_flow', false) === true;
 
         return [
             'id' => $this->id,
@@ -18,7 +20,10 @@ class QuestionResource extends JsonResource
             'content' => $this->content,
             'explanation' => $this->explanation,
             'sort_order' => $this->sort_order,
-            'correct_answer' => $this->when($isAdmin && $this->type === 'true_false', $this->correct_answer),
+            'correct_answer' => $this->when(
+                ($isAdmin || $exposeInFlow) && $this->type === 'true_false',
+                $this->correct_answer
+            ),
             'options' => OptionResource::collection($this->whenLoaded('options')),
         ];
     }

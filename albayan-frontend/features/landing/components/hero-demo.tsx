@@ -6,6 +6,7 @@ import {
   Check,
   ChevronDown,
   ClipboardList,
+  MapPin,
   Play,
   Sparkles,
 } from "lucide-react";
@@ -29,8 +30,8 @@ const FEEDBACK_MESSAGE =
 
 /**
  * المعاينة التفاعلية في الـ Hero (يسار RTL):
- * شاشة درس مصغّرة بحالات متحركة — يختار الزائر إجابة فيشعر أنه داخل الدرس:
- * سؤال قبلي ← تغذية راجعة ← انتقال إلى الفقرة ← بطاقة التحسن (قبل/بعد).
+ * شاشة درس تظهر وكأنها لقطة من حساب حقيقي — رأس بمسار الطالب
+ * (المادة/الوحدة/الدرس) ثم السؤال الحي ثم التغذية ثم الانتقال.
  */
 export function HeroDemo() {
   const [phase, setPhase] = useState<Phase>("question");
@@ -46,15 +47,19 @@ export function HeroDemo() {
   return (
     <div className="w-full">
       <div className="overflow-hidden rounded-3xl border bg-card shadow-lg shadow-primary/5">
-        {/* رأس الشاشة */}
-        <div className="flex items-center justify-between gap-3 border-b bg-muted/40 px-5 py-3">
-          <div>
-            <p className="text-xs font-medium text-muted-foreground">درس تجريبي</p>
-            <h3 className="font-bold">المبتدأ والخبر</h3>
+        {/* رأس الشاشة كمسار حقيقي */}
+        <div className="border-b bg-muted/40 px-5 py-3">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <p className="text-xs text-muted-foreground">
+                اليوم · اللغة العربية · الوحدة الثالثة · الدرس الرابع
+              </p>
+              <h3 className="mt-0.5 font-bold">المبتدأ والخبر</h3>
+            </div>
+            <span className="rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
+              ⏱ 18 دقيقة
+            </span>
           </div>
-          <span className="rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
-            ⏱ 18 دقيقة
-          </span>
         </div>
 
         {/* شريط التقدم */}
@@ -99,13 +104,19 @@ export function HeroDemo() {
           })}
         </div>
 
+        {/* أنت هنا */}
+        <div className="flex items-center gap-1.5 px-5 pt-3 text-xs font-medium text-primary">
+          <MapPin className="size-3.5" />
+          {phase === "question" ? "أنت الآن هنا: التقييم القبلي" : "أنت الآن هنا: الفقرة الأولى"}
+        </div>
+
         {/* جسم الشاشة */}
-        <div className="px-5 py-5">
+        <div className="px-5 py-4">
           {phase === "question" && (
             <div>
               <p className="mb-3 flex items-center gap-2 text-sm font-semibold">
                 <ClipboardList className="size-4 text-primary" />
-                التقييم القبلي
+                لنرَ ما تعرفه مسبقًا
               </p>
               <p className="mb-4 text-sm leading-relaxed">
                 ما إعراب «المبتدأ» في جملة «المبتدأ يبدأ الجملة الاسمية»؟

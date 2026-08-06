@@ -38,7 +38,7 @@ class StoreLessonBlockRequest extends FormRequest
 
         if ($kind === BlockKind::Paragraph->value) {
             $rules['title'] = ['required', 'string', 'max:255'];
-            $rules['content'] = ['required', 'string'];
+            $rules['content'] = ['required', 'json'];
         } elseif (in_array($kind, $assessmentKinds, true)) {
             $rules['title'] = ['required', 'string', 'max:255'];
         }
@@ -55,7 +55,7 @@ class StoreLessonBlockRequest extends FormRequest
             'title.string' => 'العنوان يجب أن يكون نصًا.',
             'title.max' => 'العنوان يجب ألا يتجاوز 255 حرفًا.',
             'content.required' => 'محتوى الفقرة مطلوب.',
-            'content.string' => 'محتوى الفقرة يجب أن يكون نصًا.',
+            'content.json' => 'محتوى الفقرة يجب أن يكون JSON سليم البنية.',
             'paragraph_id.integer' => 'الفقرة يجب أن تكون رقمًا صحيحًا.',
             'paragraph_id.exists' => 'الفقرة المحددة غير موجودة.',
             'assessment_id.integer' => 'التقييم يجب أن يكون رقمًا صحيحًا.',

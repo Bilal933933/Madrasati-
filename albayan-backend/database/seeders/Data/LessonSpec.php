@@ -30,7 +30,7 @@ class LessonSpec
     /** صح/خطأ: نص السؤال + قيمة الصواب + تفسير. */
     public static function tf(string $q, bool $answer, string $explanation = ''): array
     {
-        return ['kind' => 'tf', 'q' => $q, 'answer' => $answer, 'explanation' => $explanation];
+        return ['kind' => 'true_false', 'q' => $q, 'answer' => $answer, 'explanation' => $explanation];
     }
 
     /** فقرة: عنوان + محتوى + تقييم تكويني اختياري + صورة اختيارية. */
@@ -44,23 +44,34 @@ class LessonSpec
         ];
     }
 
-    /** بناء نص فقرة منمّق (تعريف + أمثلة قائمة + ملاحظة) لضمان تماسك العرض. */
+    /** بناء مستند TipTap (JSON) من: مقدمة + أمثلة قائمة + ملاحظة — لضمان عرض غني. */
     public static function body(string $intro, array $examples = [], string $note = ''): string
     {
-        $html = '<p>'.$intro.'</p>';
+        $content = [];
+
+        $content[] = ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => $intro]]];
 
         if ($examples !== []) {
-            $html .= '<h3>أمثلة توضيحية</h3><ul>';
-            foreach ($examples as $example) {
-                $html .= '<li>'.$example.'</li>';
-            }
-            $html .= '</ul>';
+            $items = array_map(
+                fn (string $example) => [
+                    'type' => 'listItem',
+                    'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => $example]]]],
+                ],
+                $examples
+            );
+            $content[] = ['type' => 'bulletList', 'content' => $items];
         }
 
         if ($note !== '') {
-            $html .= '<p><strong>خُلاصة:</strong> '.$note.'</p>';
+            $content[] = [
+                'type' => 'blockquote',
+                'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => $note]]]],
+            ];
         }
 
-        return $html;
+        return json_encode(
+            ['type' => 'doc', 'content' => $content],
+            JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
+        ) ?: '{"type":"doc","content":[]}';
     }
 }

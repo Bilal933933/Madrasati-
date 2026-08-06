@@ -20,6 +20,7 @@ class LessonFlowService
     public function flow(Lesson $lesson): Lesson
     {
         return $lesson->load([
+            'course.subject',
             'blocks' => fn ($q) => $q
                 ->orderBy('sort_order')
                 ->orderBy('id')

@@ -7,6 +7,7 @@ use App\Domains\Curriculum\Http\Controllers\Admin\StageController as AdminStageC
 use App\Domains\Curriculum\Http\Controllers\Admin\SubjectController as AdminSubjectController;
 use App\Domains\Curriculum\Http\Controllers\CourseController;
 use App\Domains\Curriculum\Http\Controllers\GradeController;
+use App\Domains\Curriculum\Http\Controllers\Public\ExploreController;
 use App\Domains\Curriculum\Http\Controllers\SemesterController;
 use App\Domains\Curriculum\Http\Controllers\StageController;
 use App\Domains\Curriculum\Http\Controllers\SubjectController;
@@ -48,4 +49,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/subjects/{slug}', [SubjectController::class, 'show']);
     Route::get('/courses', [CourseController::class, 'index']);
     Route::get('/courses/{slug}', [CourseController::class, 'show']);
+});
+
+// استكشاف هرمي عام — للزائر (بلا تسجيل) حسب تجربة الزائر
+Route::prefix('explore')->group(function () {
+    Route::get('stages', [ExploreController::class, 'stages']);
+    Route::get('stages/{stageKey}/grades', [ExploreController::class, 'grades']);
+    Route::get('stages/{stageKey}/grades/{gradeKey}/semesters', [ExploreController::class, 'semesters']);
+    Route::get('stages/{stageKey}/grades/{gradeKey}/semesters/{semesterKey}/subjects', [ExploreController::class, 'subjects']);
+    Route::get('subjects/{slug}', [ExploreController::class, 'subject']);
 });

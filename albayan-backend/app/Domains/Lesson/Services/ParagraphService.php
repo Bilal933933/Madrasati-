@@ -3,9 +3,9 @@
 namespace App\Domains\Lesson\Services;
 
 use App\Domains\Lesson\Models\Paragraph;
-use App\Support\HtmlSanitizerService;
 use App\Support\ImageService;
 use App\Support\Slugger;
+use App\Support\TiptapSanitizerService;
 use Illuminate\Database\Eloquent\Collection;
 
 /**
@@ -15,7 +15,7 @@ class ParagraphService
 {
     public function __construct(
         private readonly ImageService $imageService,
-        private readonly HtmlSanitizerService $htmlSanitizerService,
+        private readonly TiptapSanitizerService $tiptapSanitizerService,
     ) {}
 
     public function paragraphs(?int $lessonId = null): Collection
@@ -62,7 +62,7 @@ class ParagraphService
 
     public function createParagraph(array $data): Paragraph
     {
-        $data['content'] = $this->htmlSanitizerService->sanitize($data['content'] ?? '');
+        $data['content'] = $this->tiptapSanitizerService->sanitize($data['content'] ?? '');
 
         $paragraph = Paragraph::create($data);
 
@@ -82,7 +82,7 @@ class ParagraphService
         $paragraph = Paragraph::findOrFail($id);
 
         if (isset($data['content'])) {
-            $data['content'] = $this->htmlSanitizerService->sanitize($data['content']);
+            $data['content'] = $this->tiptapSanitizerService->sanitize($data['content']);
         }
 
         if (($data['image'] ?? null) !== $paragraph->image) {

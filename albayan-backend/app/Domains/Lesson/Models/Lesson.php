@@ -16,6 +16,7 @@ use Illuminate\Support\Carbon;
  * @property string $title
  * @property string|null $slug
  * @property string|null $summary
+ * @property array<int, string>|null $learning_objectives
  * @property string|null $image
  * @property string|null $video
  * @property string|null $icon
@@ -54,6 +55,7 @@ class Lesson extends Model
         'title',
         'slug',
         'summary',
+        'learning_objectives',
         'image',
         'video',
         'icon',
@@ -67,6 +69,7 @@ class Lesson extends Model
         return [
             'sort_order' => 'integer',
             'is_published' => 'boolean',
+            'learning_objectives' => 'array',
         ];
     }
 

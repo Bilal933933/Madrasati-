@@ -28,6 +28,8 @@ import { AssessmentFormDialog } from "@/features/assessments/components/assessme
 import { QuestionFormDialog } from "@/features/assessments/components/question-form-dialog";
 import { useDeleteQuestion } from "@/features/assessments/hooks/useQuestions";
 import { useAssessment as useAssessmentDetail } from "@/features/assessments/hooks/useAssessments";
+import { RichLessonContent } from "@/components/shared/rich-lesson-content";
+import { parseTiptap } from "@/features/lesson-engine/engine/tiptap-utils";
 import type { LessonFlowBlock, LessonBlockKind } from "../types/lesson-builder.types";
 import type { Assessment, Question } from "@/features/assessments/types/assessment.types";
 import type { Paragraph } from "@/features/paragraphs/types/paragraph.types";
@@ -293,9 +295,9 @@ function BlockBody({ block, collapsed }: { block: LessonFlowBlock; collapsed: bo
           <VideoEmbed url={paragraph.video_embed} />
         ) : (
           paragraph.content && (
-            <div
-              className="line-clamp-2 text-xs text-muted-foreground"
-              dangerouslySetInnerHTML={{ __html: paragraph.content }}
+            <RichLessonContent
+              doc={parseTiptap(paragraph.content)}
+              className="text-xs text-muted-foreground"
             />
           )
         )}

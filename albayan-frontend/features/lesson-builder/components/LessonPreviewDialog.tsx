@@ -15,6 +15,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
+import { RichLessonContent } from "@/components/shared/rich-lesson-content";
+import { parseTiptap } from "@/features/lesson-engine/engine/tiptap-utils";
 import type { LessonFlowBlock, LessonBlockKind } from "../types/lesson-builder.types";
 import type { Lesson } from "@/features/lessons/types/lesson.types";
 import type { Assessment, Question } from "@/features/assessments/types/assessment.types";
@@ -97,10 +99,7 @@ function PreviewContent({ block, lesson }: { block: LessonFlowBlock; lesson: Les
           <PreviewVideo url={paragraph.video_embed} />
         ) : (
           paragraph.content && (
-            <div
-              className="article-content text-sm leading-relaxed text-foreground"
-              dangerouslySetInnerHTML={{ __html: paragraph.content }}
-            />
+            <RichLessonContent doc={parseTiptap(paragraph.content)} className="text-sm leading-relaxed" />
           )
         )}
         {paragraph.image && (

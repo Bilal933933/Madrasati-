@@ -35,6 +35,7 @@ class Semester extends Model
 {
     protected $fillable = [
         'grade_id',
+        'key',
         'name',
         'sort_order',
     ];

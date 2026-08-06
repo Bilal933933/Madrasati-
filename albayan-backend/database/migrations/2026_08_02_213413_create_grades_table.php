@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('grades', function (Blueprint $table) {
             $table->id();
             $table->foreignId('stage_id')->constrained()->cascadeOnDelete();
+            $table->string('key')->nullable();
             $table->string('name');
             $table->string('slug')->nullable()->unique();
             $table->string('image')->nullable();
@@ -21,6 +22,7 @@ return new class extends Migration
             $table->string('color')->nullable();
             $table->unsignedInteger('sort_order')->default(0);
             $table->boolean('is_published')->default(true);
+            $table->unique(['stage_id', 'key']);
             $table->timestamps();
         });
     }

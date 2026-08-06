@@ -47,6 +47,7 @@ class Grade extends Model
 {
     protected $fillable = [
         'stage_id',
+        'key',
         'name',
         'slug',
         'image',

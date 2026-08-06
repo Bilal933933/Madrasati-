@@ -17,6 +17,7 @@ class SemesterSeeder extends Seeder
             foreach (CurriculumData::SEMESTER_NAMES as $index => $name) {
                 $service->createSemester([
                     'grade_id' => $grade->id,
+                    'key' => 'semester-'.($index + 1),
                     'name' => $name,
                     'sort_order' => $index,
                 ]);

@@ -24,7 +24,7 @@ class ParagraphRequest extends FormRequest
             'video' => ['nullable', 'string', 'max:2048', new YoutubeUrlRule],
             'icon' => ['nullable', 'string', 'max:100'],
             'color' => ['nullable', 'string', 'regex:/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/'],
-            'content' => ['required', 'string'],
+            'content' => ['required', 'json'],
             'sort_order' => ['sometimes', 'integer', 'min:0'],
         ];
     }
@@ -52,7 +52,7 @@ class ParagraphRequest extends FormRequest
             'icon.max' => 'الأيقونة يجب ألا تتجاوز 100 حرف.',
             'color.regex' => 'صيغة اللون غير صحيحة — استخدم HEX مثل #2563EB.',
             'content.required' => 'محتوى الفقرة مطلوب.',
-            'content.string' => 'محتوى الفقرة يجب أن يكون نصًا.',
+            'content.json' => 'محتوى الفقرة يجب أن يكون JSON سليم البنية.',
             'sort_order.integer' => 'الترتيب يجب أن يكون رقمًا صحيحًا.',
             'sort_order.min' => 'الترتيب يجب أن يكون 0 أو أكثر.',
         ];

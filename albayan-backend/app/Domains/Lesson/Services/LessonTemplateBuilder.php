@@ -24,7 +24,7 @@ class LessonTemplateBuilder
     public function buildDefault(Lesson $lesson): void
     {
         $this->editor->addPreAssessment($lesson->id, ['title' => 'تقييم قبلي']);
-        $this->editor->addParagraph($lesson->id, ['title' => 'فقرة الدرس', 'content' => '<p></p>']);
+        $this->editor->addParagraph($lesson->id, ['title' => 'فقرة الدرس', 'content' => '{"type":"doc","content":[]}']);
         $this->editor->addFinalAssessment($lesson->id, ['title' => 'تقييم ختامي']);
     }
 

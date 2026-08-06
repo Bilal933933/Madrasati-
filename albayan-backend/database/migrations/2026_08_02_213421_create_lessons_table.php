@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('title');
             $table->string('slug')->nullable()->unique();
             $table->text('summary')->nullable();
+            $table->json('learning_objectives')->nullable();
             $table->string('image')->nullable();
             $table->string('video')->nullable();
             $table->string('icon')->nullable();

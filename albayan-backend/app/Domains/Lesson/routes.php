@@ -5,6 +5,7 @@ use App\Domains\Lesson\Http\Controllers\Admin\LessonController as AdminLessonCon
 use App\Domains\Lesson\Http\Controllers\Admin\ParagraphController as AdminParagraphController;
 use App\Domains\Lesson\Http\Controllers\LessonController;
 use App\Domains\Lesson\Http\Controllers\ParagraphController;
+use App\Domains\Lesson\Http\Controllers\TrialController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -28,6 +29,12 @@ Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function ()
     Route::patch('lesson-blocks/{lessonBlock}', [AdminLessonBlockController::class, 'update']);
     Route::delete('lesson-blocks/{lessonBlock}', [AdminLessonBlockController::class, 'destroy']);
 });
+
+// معاينة الدرس — عامة للزائر (تُستخدم في الاستكشاف والبحث ولوحات التحكم)
+Route::get('/lessons/{slug}/preview', [LessonController::class, 'preview']);
+
+// النسخة التجريبية — عامة للزائر بلا تسجيل (فقرة + سؤالان + فيديو قصير)
+Route::get('/trial', [TrialController::class, 'show']);
 
 // مسارات عرض عام لأي مستخدم مسجّل — منشور فقط، عبر slug
 Route::middleware('auth:sanctum')->group(function () {

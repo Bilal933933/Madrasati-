@@ -36,6 +36,21 @@ class CurriculumData
     }
 
     /**
+     * أيقونة كل صف (مرجع يطابق ترتيب gradesByStage) — اسم lucide مخزَّن كنص.
+     * مفتاح المرحلة => أيقونات الصفوف بترتيبها.
+     */
+    public static function gradeIconsByStage(): array
+    {
+        return [
+            'primary' => [
+                'NotebookPen', 'NotebookText', 'BookCopy', 'BookOpenCheck', 'LibraryBig', 'BookCheck',
+            ],
+            'prep' => ['ClipboardList', 'ClipboardCheck', 'ClipboardPen'],
+            'secondary' => ['GraduationCap', 'School', 'Medal'],
+        ];
+    }
+
+    /**
      * المراحل الرائدة (Flagship): الصفوف التي يُبنى لها محتوى تعليمي عميق حقيقي.
      * مفتاح الصف => اسم الصف (مفتاح فريد يرتبط به المقررات والدروس).
      */

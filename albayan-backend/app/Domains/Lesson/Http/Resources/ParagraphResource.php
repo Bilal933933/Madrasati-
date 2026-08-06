@@ -21,7 +21,7 @@ class ParagraphResource extends JsonResource
             'video_embed' => YouTubeUrl::embed($this->video),
             'icon' => $this->icon,
             'color' => $this->color,
-            'content' => $this->content,
+            'content' => $this->content ? json_decode($this->content, true) : null,
             'sort_order' => $this->sort_order,
         ];
     }

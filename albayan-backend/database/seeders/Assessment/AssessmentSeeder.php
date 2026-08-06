@@ -42,7 +42,7 @@ class AssessmentSeeder extends Seeder
                 'type' => $question['kind'],
                 'content' => $question['q'],
                 'explanation' => $question['explanation'] ?? null,
-                'correct_answer' => $question['kind'] === 'tf' ? $question['answer'] : null,
+                'correct_answer' => $question['kind'] === 'true_false' ? $question['answer'] : null,
                 'sort_order' => $order,
             ]);
 

@@ -13,9 +13,12 @@ class LessonResource extends JsonResource
         return [
             'id' => $this->id,
             'course_id' => $this->course_id,
+            'course' => $this->whenLoaded('course', fn () => $this->course->name),
+            'subject' => $this->whenLoaded('course', fn () => $this->course->relationLoaded('subject') ? $this->course->subject->name : null),
             'title' => $this->title,
             'slug' => $this->slug,
             'summary' => $this->summary,
+            'learning_objectives' => $this->learning_objectives ?? [],
             'image' => $this->image,
             'video' => $this->video,
             'video_embed' => YouTubeUrl::embed($this->video),

@@ -15,6 +15,7 @@ class StageSeeder extends Seeder
 
         foreach (CurriculumData::stages() as $index => $stage) {
             $model = $service->createStage([
+                'key' => $stage['key'],
                 'name' => $stage['name'],
                 'icon' => $stage['icon'],
                 'color' => $stage['color'],

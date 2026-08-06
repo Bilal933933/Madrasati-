@@ -14,8 +14,10 @@ return new class extends Migration
         Schema::create('semesters', function (Blueprint $table) {
             $table->id();
             $table->foreignId('grade_id')->constrained()->cascadeOnDelete();
+            $table->string('key')->nullable();
             $table->string('name');
             $table->unsignedInteger('sort_order')->default(0);
+            $table->unique(['grade_id', 'key']);
             $table->timestamps();
         });
     }

@@ -21,15 +21,15 @@ export function LandingNavbar() {
 
   return (
     <header className="sticky top-0 z-40 border-b bg-background/80 backdrop-blur">
-      <div className="mx-auto flex h-14 w-full max-w-6xl items-center justify-between gap-2 px-4 sm:gap-4 sm:px-6">
-        <Link href="/" className="flex items-center gap-2">
+      <div className="mx-auto grid h-14 w-full max-w-6xl grid-cols-3 items-center gap-2 px-4 sm:gap-4 sm:px-6">
+        <Link href="/" className="flex items-center gap-2 justify-self-start">
           <span className="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
             <GraduationCap className="size-4" />
           </span>
           <span className="text-base font-bold tracking-tight">مدرستي</span>
         </Link>
 
-        <nav className="hidden items-center gap-6 md:flex">
+        <nav className="hidden items-center justify-center gap-6 md:flex">
           {NAV_LINKS.map((link) => (
             <Link
               key={link.href}
@@ -41,7 +41,7 @@ export function LandingNavbar() {
           ))}
         </nav>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center justify-end gap-2">
           {!user ? (
             <>
               <Button asChild variant="ghost" className="h-9 px-3">

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -49,6 +50,7 @@ type FormState = {
   title: string;
   slug: string;
   summary: string;
+  learning_objectives: string[];
   image: string;
   video: string;
   icon: string;
@@ -95,6 +97,7 @@ function LessonForm({
     title: lesson?.title ?? "",
     slug: lesson?.slug ?? "",
     summary: lesson?.summary ?? "",
+    learning_objectives: lesson?.learning_objectives ?? [],
     image: lesson?.image ?? "",
     video: lesson?.video ?? "",
     icon: lesson?.icon ?? "",
@@ -135,6 +138,24 @@ function LessonForm({
     return { message: serverErrors?.[field]?.[0] };
   }
 
+  function addObjective() {
+    setForm((prev) => ({ ...prev, learning_objectives: [...prev.learning_objectives, ""] }));
+  }
+
+  function updateObjective(index: number, text: string) {
+    setForm((prev) => ({
+      ...prev,
+      learning_objectives: prev.learning_objectives.map((value, i) => (i === index ? text : value)),
+    }));
+  }
+
+  function removeObjective(index: number) {
+    setForm((prev) => ({
+      ...prev,
+      learning_objectives: prev.learning_objectives.filter((_, i) => i !== index),
+    }));
+  }
+
   function buildPayload(): LessonPayload | null {
     const courseId = Number(form.course_id);
     if (!form.course_id || Number.isNaN(courseId)) return null;
@@ -144,6 +165,10 @@ function LessonForm({
       title: form.title.trim(),
       slug: form.slug.trim() || null,
       summary: form.summary.trim() || null,
+      learning_objectives:
+        form.learning_objectives.map((value) => value.trim()).filter((value) => value !== "").length > 0
+          ? form.learning_objectives.map((value) => value.trim()).filter((value) => value !== "")
+          : null,
       image: form.image.trim() || null,
       video: form.video.trim() || null,
       icon: form.icon.trim() || null,
@@ -247,6 +272,43 @@ function LessonForm({
             <FieldError errors={[fieldError("summary")]} />
           </FieldContent>
         </Field>
+
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center justify-between">
+            <p className="text-sm font-medium text-foreground">أهداف التعلم</p>
+            <button
+              type="button"
+              onClick={addObjective}
+              className="inline-flex items-center gap-1 rounded-md text-xs font-medium text-primary hover:underline"
+            >
+              <Plus className="size-3.5" />
+              إضافة هدف
+            </button>
+          </div>
+          {form.learning_objectives.length === 0 && (
+            <p className="text-xs text-muted-foreground">
+              بعد الانتهاء من هذا الدرس سيكون الطالب قادرًا على...
+            </p>
+          )}
+          {form.learning_objectives.map((objective, index) => (
+            <div key={index} className="flex items-center gap-2">
+              <Input
+                value={objective}
+                onChange={(e) => updateObjective(index, e.target.value)}
+                placeholder={`الهدف ${index + 1}`}
+                className="h-9"
+              />
+              <button
+                type="button"
+                onClick={() => removeObjective(index)}
+                aria-label={`حذف الهدف ${index + 1}`}
+                className="inline-flex size-9 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground"
+              >
+                <X className="size-4" />
+              </button>
+            </div>
+          ))}
+        </div>
 
         <Field>
           <FieldLabel htmlFor="lesson-slug">الرابط (Slug)</FieldLabel>

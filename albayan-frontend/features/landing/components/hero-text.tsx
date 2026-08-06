@@ -10,25 +10,24 @@ const TRUST_ITEMS = [
 
 /**
  * عمود النص في الـ Hero (يمين في RTL):
- * Badge ← المشكلة التي يعيشها الطالب ← الحل ← الوعد العاطفي ← الأزرار ← عنصر الثقة.
+ * Badge الشخصية ← قصة الطالب (المشكلة) ← الحل الواعد ← الوصف ← الأزرار ← عنصر الثقة.
  */
 export function HeroText() {
   return (
     <div className="flex flex-col items-start gap-5">
       <span className="inline-flex items-center gap-1.5 rounded-full border bg-background px-3 py-1 text-xs font-medium text-muted-foreground">
         <Sparkles className="size-3.5 text-primary" />
-        تعلم بطريقة تقيس فهمك بعد كل خطوة
+        التعلم ليس سباقًا... بل رحلة
       </span>
 
       <h1 className="text-3xl font-extrabold leading-tight tracking-tight sm:text-4xl lg:text-5xl">
-        هل تنتهي من الدرس
-        <br />
-        دون أن تعرف هل <span className="text-primary">فهمته فعلًا؟</span>
+        كم مرة أنهيت درسًا... ثم اكتشفت في الامتحان أنك{" "}
+        <span className="text-primary">لم تفهمه كما ظننت؟</span>
       </h1>
 
       <p className="max-w-md text-base leading-relaxed text-muted-foreground sm:text-lg">
-        لأن الهدف ليس إنهاء الدرس... بل أن تخرج وأنت واثق أنك فهمته. مدرستي
-        تقيس فهمك بعد كل خطوة حتى تصل إلى الإتقان.
+        لهذا صممنا رحلة لا تسمح لك بالانتقال قبل أن تتأكد أنك فهمت. كل طالب
+        يستحق أن يتعلم بثقة.
       </p>
 
       <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
@@ -49,7 +48,7 @@ export function HeroText() {
           size="lg"
           className="h-12 w-full px-6 text-base sm:w-auto"
         >
-          <Link href="/subjects">استكشف المواد</Link>
+          <Link href="/explore">استكشف المواد</Link>
         </Button>
       </div>
 

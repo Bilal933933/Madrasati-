@@ -20,6 +20,10 @@ class LessonFlowResource extends JsonResource
         /** @var Lesson $lesson */
         $lesson = $this->resource;
 
+        // تدفق الدرس رحلة تعلم: تُكشف الإجابات الصحيحة للطالب للتغذية الفورية
+        // (يبقى الحجب ساريًا في مسارات القياس الرسمية الأخرى).
+        $request->attributes->set('lesson_flow', true);
+
         return [
             'lesson' => new LessonResource($lesson),
             'blocks' => $lesson->blocks

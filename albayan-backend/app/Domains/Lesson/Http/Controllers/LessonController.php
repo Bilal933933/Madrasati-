@@ -3,6 +3,7 @@
 namespace App\Domains\Lesson\Http\Controllers;
 
 use App\Domains\Lesson\Http\Resources\LessonFlowResource;
+use App\Domains\Lesson\Http\Resources\LessonPreviewResource;
 use App\Domains\Lesson\Http\Resources\LessonResource;
 use App\Domains\Lesson\Services\LessonFlowService;
 use App\Domains\Lesson\Services\LessonService;
@@ -28,5 +29,18 @@ class LessonController extends Controller
         $lesson = $this->lessonService->findPublishedLessonBySlug($slug);
 
         return new LessonFlowResource($this->lessonFlowService->flow($lesson));
+    }
+
+    /**
+     * معاينة تعريفية للدرس (بلا محتوى الكتل) — للاستكشاف والبحث وغيرهما.
+     */
+    public function preview(string $slug)
+    {
+        $lesson = $this->lessonService->findPublishedLessonBySlug($slug)->load([
+            'course.subject',
+            'blocks' => fn ($q) => $q->orderBy('sort_order')->orderBy('id'),
+        ]);
+
+        return new LessonPreviewResource($lesson);
     }
 }

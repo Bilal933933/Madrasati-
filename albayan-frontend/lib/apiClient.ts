@@ -8,8 +8,23 @@
  *   حتى يحصل المتصفح على قيمة XSRF-TOKEN المطلوبة.
  */
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+const ENV_API_URL = process.env.NEXT_PUBLIC_API_URL?.trim();
+
+/**
+ * عنوان خادم Laravel:
+ * - في المتصفح: مسار نسبي (مثل /api) يُمرَّر عبر rewrites من Next.js،
+ *   فيعمل من أي جهاز دون مشاكل CORS أو localhost محلي.
+ * - على الخادم (SSR): عنوان مطلق — fetch في Node يتطلب URL كاملًا،
+ *   ولا تعمل الروابط النسبية هناك.
+ */
+function resolveApiBaseUrl(): string {
+  if (typeof window !== "undefined") {
+    return ENV_API_URL ?? "";
+  }
+  return ENV_API_URL || process.env.BACKEND_URL?.trim() || "http://localhost:8000";
+}
+
+const API_BASE_URL = resolveApiBaseUrl();
 
 /**
  * قراءة قيمة كوكي معيّن من المتصفح (نحتاجها لقراءة XSRF-TOKEN يدويًا)

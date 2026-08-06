@@ -40,6 +40,7 @@ use Illuminate\Support\Carbon;
 class Stage extends Model
 {
     protected $fillable = [
+        'key',
         'name',
         'slug',
         'image',

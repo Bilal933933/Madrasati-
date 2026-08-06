@@ -39,6 +39,8 @@ class LessonSeeder extends Seeder
                     'course_id' => $course->id,
                     'title' => $spec['title'],
                     'summary' => $spec['summary'] ?? null,
+                    'learning_objectives' => $spec['objectives']
+                        ?? [self::defaultObjective($spec['title'])],
                     'video' => $spec['video'] ?? null,
                     'icon' => $course->icon,
                     'color' => $course->color,
@@ -49,6 +51,12 @@ class LessonSeeder extends Seeder
                 $this->buildJourney($lesson, $spec);
             }
         }
+    }
+
+    /** الهدف الافتراضي لأي درس لا يحدد أهدافًا صريحة. */
+    private static function defaultObjective(string $title): string
+    {
+        return 'أتقن مفاهيم درس «'.$title.'» وتطبّقها في أمثلة من الحياة اليومية.';
     }
 
     /**

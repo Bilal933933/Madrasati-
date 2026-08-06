@@ -1,6 +1,6 @@
 "use client";
 
-import { useEditor, EditorContent } from "@tiptap/react";
+import { useEditor, EditorContent, type JSONContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Placeholder from "@tiptap/extension-placeholder";
 import {
@@ -52,14 +52,14 @@ export function RichTextEditor({
       }),
       Placeholder.configure({ placeholder }),
     ],
-    content: value,
+    content: parseContent(value),
     immediatelyRender: false,
     editorProps: {
       attributes: {
         class: "rich-editor-content focus:outline-none",
       },
     },
-    onUpdate: ({ editor }) => onValueChange(editor.getHTML()),
+    onUpdate: ({ editor }) => onValueChange(JSON.stringify(editor.getJSON())),
   });
 
   if (!editor) {
@@ -185,4 +185,23 @@ export function RichTextEditor({
       <EditorContent id={id} editor={editor} />
     </div>
   );
+}
+
+/**
+ * يقبل المحرر محتوى JSON من الباك (سلسلة) مع fallback لمحتوى HTML قديم.
+ * القيم غير الصالحة تُفسَّر كنص فارغ.
+ */
+function parseContent(value: string): JSONContent | string {
+  if (!value) {
+    return "";
+  }
+  try {
+    const parsed = JSON.parse(value) as unknown;
+    if (parsed && typeof parsed === "object") {
+      return parsed as JSONContent;
+    }
+  } catch {
+    /* قيمة HTML قديمة أو نص عادي — يعامل كنص HTML. */
+  }
+  return value;
 }
