@@ -38,6 +38,7 @@ export function mapLesson(flow: LessonFlow): LessonEngineData {
     lessonId: flow.lesson.id,
     title: flow.lesson.title,
     color: flow.lesson.color,
+    image: flow.lesson.image,
     subject: flow.lesson.subject ?? undefined,
     course: flow.lesson.course ?? undefined,
     objectives: flow.lesson.learning_objectives ?? [],
@@ -125,10 +126,15 @@ function normalizeContent(content: string | Record<string, unknown> | null | und
 
 function videoData(block: LessonFlowBlock): LessonContentData {
   let url: string | null = null;
+  let embed: string | null = null;
   if (block.data && "video" in block.data) {
     url = (block.data as { video: string | null }).video ?? null;
   }
-  return { kind: "lesson_video", url };
+  // الباك يسلّم video_embed (iframe يوتيوب) — يُعرض في شاشة المحتوى إن توفر.
+  if (block.data && "video_embed" in block.data) {
+    embed = (block.data as { video_embed: string | null }).video_embed ?? null;
+  }
+  return { kind: "lesson_video", url, embed };
 }
 
 function assessmentStep(block: LessonFlowBlock, mode: LessonAssessmentData["mode"]): LessonFlowStep {

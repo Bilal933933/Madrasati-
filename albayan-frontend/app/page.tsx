@@ -25,26 +25,28 @@ const JOURNEY_STATIONS = [
 
 export default function Home() {
   return (
-    <div className="flex min-h-dvh flex-col bg-background">
-      <LandingNavbar />
-      <ProgressPath stations={JOURNEY_STATIONS} />
+    <div className="relative flex min-h-dvh flex-col">
+      <div className="relative z-10 flex min-h-dvh flex-col">
+        <LandingNavbar />
+        <ProgressPath stations={JOURNEY_STATIONS} />
 
-      <main className="flex flex-1 flex-col">
-        <Hero />
-        <HowWeVerify />
-        <InteractiveLesson />
-        <Results />
-        <WhyItWorks />
-        <Subjects />
-        <Achievements />
-        <ParentTeacher />
-        <Testimonials />
-        <StudentJourney />
-        <Faq />
-        <FinalCta />
-      </main>
+        <main className="flex flex-1 flex-col pt-10">
+          <Hero />
+          <HowWeVerify />
+          <InteractiveLesson />
+          <Results />
+          <WhyItWorks />
+          <Subjects />
+          <Achievements />
+          <ParentTeacher />
+          <Testimonials />
+          <StudentJourney />
+          <Faq />
+          <FinalCta />
+        </main>
 
-      <LandingFooter />
+        <LandingFooter />
+      </div>
     </div>
   );
 }

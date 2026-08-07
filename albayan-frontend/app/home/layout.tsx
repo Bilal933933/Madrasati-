@@ -2,17 +2,20 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { GraduationCap } from "lucide-react";
-import Link from "next/link";
-import { Spinner } from "@/components/ui/spinner";
+import { Compass, Home as HomeIcon, LayoutDashboard, LogOut } from "lucide-react";
+import { Loader } from "@/components/shared/loader";
+import { SiteNavbar } from "@/components/shared/site-navbar";
 import { useAuthStore } from "@/features/auth/store/authStore";
+import { useLogout } from "@/features/auth/hooks/useLogout";
+import { StudentDock } from "@/features/student/components/student-dock";
 import { UserMenu } from "@/features/student/components/UserMenu";
 import { LandingFooter } from "@/features/landing/components/footer";
 
 /**
- * هيكل بيت الطالب: بار تنقّل خاص بالطالب (شعار + قائمة مستخدم) + محتوى + فوتر البوابة.
- * حارس تسجيل دخول: الزائر يُعاد إلى /login، والمدير لا يُمنع (يرى واجهة ربط
- * البيانات الدراسية لأنّه بلا ملف طالب بعد).
+ * هيكل بيت الطالب: بار تنقّل عائم عام موحّد (SiteNavbar) بشعار + قائمة
+ * المستخدم + محتوى + فوتر البوابة + شريط سفلي جوال (StudentDock).
+ * حارس تسجيل الدخول: الزائر يُعاد إلى /login، والمدير لا يُمنع (يرى واجهة
+ * ربط البيانات الدراسية لأنّه بلا ملف طالب بعد).
  */
 export default function StudentLayout({
   children,
@@ -20,6 +23,34 @@ export default function StudentLayout({
   const router = useRouter();
   const user = useAuthStore((state) => state.user);
   const isInitialized = useAuthStore((state) => state.isInitialized);
+  const logout = useLogout();
+
+  const dockItems = [
+    {
+      icon: <HomeIcon size={16} />,
+      label: "الرئيسية",
+      onClick: () => router.push("/home"),
+    },
+    {
+      icon: <Compass size={16} />,
+      label: "المواد",
+      onClick: () => router.push("/explore"),
+    },
+    ...(user?.role === "admin"
+      ? [
+          {
+            icon: <LayoutDashboard size={16} />,
+            label: "لوحة التحكم",
+            onClick: () => router.push("/admin"),
+          },
+        ]
+      : []),
+    {
+      icon: <LogOut size={16} />,
+      label: "تسجيل الخروج",
+      onClick: () => logout.mutate(),
+    },
+  ];
 
   useEffect(() => {
     if (isInitialized && !user) {
@@ -29,11 +60,7 @@ export default function StudentLayout({
   }, [isInitialized, user]);
 
   if (!isInitialized) {
-    return (
-      <div className="flex min-h-svh items-center justify-center bg-background">
-        <Spinner className="size-8" />
-      </div>
-    );
+    return <Loader className="translate-y-12" />;
   }
 
   if (!user) {
@@ -41,23 +68,14 @@ export default function StudentLayout({
   }
 
   return (
-    <div className="flex min-h-dvh flex-col bg-background">
-      <header className="sticky top-0 z-40 border-b bg-background/80 backdrop-blur">
-        <div className="mx-auto flex h-14 w-full max-w-5xl items-center justify-between px-4 sm:px-6">
-          <Link href="/home" className="flex items-center gap-2">
-            <span className="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-              <GraduationCap className="size-4" />
-            </span>
-            <span className="text-base font-bold tracking-tight">مدرستي</span>
-          </Link>
+    <div className="flex min-h-dvh flex-col">
+      <SiteNavbar brandHref="/home" actions={<UserMenu />} />
 
-          <UserMenu />
-        </div>
-      </header>
-
-      <main className="flex-1">{children}</main>
+      <main className="flex-1 pb-28">{children}</main>
 
       <LandingFooter />
+
+      <StudentDock items={dockItems} />
     </div>
   );
 }

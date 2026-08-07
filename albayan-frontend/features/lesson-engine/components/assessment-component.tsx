@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLessonEngineStore } from "@/features/lesson-engine/engine/lesson-engine-store";
 import type { AssessmentMode, LessonAssessmentData } from "@/features/lesson-engine/engine/types";
 import { QuestionCard } from "@/features/assessments/components/question/question-card";
@@ -25,10 +25,17 @@ const MODE_REASSURANCE: Record<AssessmentMode, string | null> = {
 const TRUE_OPTION_ID = 1;
 const FALSE_OPTION_ID = 2;
 
+// مهلة الانتقال التلقائي عند الإجابة الصحيحة (بالمللي ثانية) لقراءة التغذية.
+const AUTO_ADVANCE_MS = 2800;
+
 /**
  * مكوّن التقييم الموحّد — سير أسئلة واحد للتقييم القبلي وتحقق الفهم
- * والاختبار النهائي؛ يتبدل السلوك عبر `mode` فقط (رسالة الطمأنة وحكم
- * الانتقال). في pre/understanding لا حكم؛ في final يتطلب إجابة صحيحة.
+ * والاختبار النهائي؛ يتبدل عبر `mode` فقط.
+ *
+ * التغذية الراجعة:
+ * - إجابة صحيحة → ينتقل تلقائيًا بعد مهلة قصيرة ليقرأ الطالب التأكيد.
+ * - إجابة خاطئة → خياران للطالب: [التالي] أو [العودة إلى الفقرة السابقة],
+ *   فيبقى القرار بيده (رحلة تعلّم لا امتحان).
  */
 export function AssessmentComponent() {
   const current = useLessonEngineStore((s) => s.current);
@@ -58,9 +65,7 @@ export function AssessmentComponent() {
     );
   }
 
-  return (
-    <AssessmentSequence mode={mode} questions={questions} next={next} />
-  );
+  return <AssessmentSequence mode={mode} questions={questions} next={next} />;
 }
 
 function AssessmentSequence({
@@ -72,6 +77,7 @@ function AssessmentSequence({
   questions: LessonAssessmentData["questions"];
   next: () => void;
 }) {
+  const back = useLessonEngineStore((s) => s.back);
   const [current, setCurrent] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
   const [revealed, setRevealed] = useState(false);
@@ -80,13 +86,7 @@ function AssessmentSequence({
   const question = questions[current];
   const isLast = current === questions.length - 1;
   const correctOptionId = computeCorrectOptionId(question);
-
-  if (!question) {
-    return null;
-  }
-
-  const answerIsCorrect = isCorrect(question, selected);
-  const finalRequiresCorrect = mode === "final";
+  const answerIsCorrect = question ? isCorrect(question, selected) : false;
 
   const proceed = () => {
     if (!isLast) {
@@ -98,13 +98,7 @@ function AssessmentSequence({
     }
   };
 
-  const handleContinue = () => {
-    if (finalRequiresCorrect && !answerIsCorrect) {
-      // الاختبار النهائي: إجابة خاطئة تعيد نفس السؤال بعد عرض التغذية.
-      setSelected(null);
-      setRevealed(false);
-      return;
-    }
+  const markDoneAndProceed = () => {
     setDone((previous) => {
       const copy = [...previous];
       copy[current] = true;
@@ -112,6 +106,20 @@ function AssessmentSequence({
     });
     proceed();
   };
+
+  // إجابة صحيحة → انتقال تلقائي بعد مهلة قصيرة لقراءة التغذية الراجعة.
+  useEffect(() => {
+    if (!question || !revealed || !answerIsCorrect) {
+      return;
+    }
+    const timer = window.setTimeout(markDoneAndProceed, AUTO_ADVANCE_MS);
+    return () => window.clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [question, revealed, answerIsCorrect, current]);
+
+  if (!question) {
+    return null;
+  }
 
   return (
     <div className="flex flex-col gap-5">
@@ -151,6 +159,7 @@ function AssessmentSequence({
         />
       </QuestionCard>
 
+      {/* التغذية الراجعة بعد التحقق */}
       <div className="flex flex-col gap-2">
         {!revealed && (
           <QuestionFooter
@@ -159,11 +168,31 @@ function AssessmentSequence({
             onClick={() => setRevealed(true)}
           />
         )}
-        {revealed && (
-          <QuestionFooter
-            label={isLast ? (mode === "final" ? "إنهاء الاختبار" : "متابعة الدرس") : "التالي"}
-            onClick={handleContinue}
-          />
+
+        {revealed && answerIsCorrect && (
+          <p className="flex flex-col items-center gap-1 rounded-xl bg-emerald-500/10 px-4 py-3 text-center text-sm font-medium text-emerald-700">
+            إجابة صحيحة ✓
+            <span className="text-xs font-normal text-emerald-700/70">
+              سينتقل تلقائيًا بعد لحظة...
+            </span>
+          </p>
+        )}
+
+        {revealed && !answerIsCorrect && (
+          <>
+            <QuestionFooter
+              label={isLast ? (mode === "final" ? "إنهاء الاختبار" : "متابعة الدرس") : "التالي"}
+              onClick={markDoneAndProceed}
+            />
+            <Button
+              size="lg"
+              variant="outline"
+              className="h-12 w-full text-base"
+              onClick={() => back()}
+            >
+              العودة إلى الفقرة السابقة
+            </Button>
+          </>
         )}
       </div>
     </div>

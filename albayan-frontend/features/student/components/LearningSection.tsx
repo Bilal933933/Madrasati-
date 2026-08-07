@@ -43,9 +43,8 @@ function actionLabel(status: ProgressStatus): string {
 }
 
 /**
- * قسم تعلم (مادة في بيت الطالب أو مقرر في صفحة المادة) بنمط التصميم:
- * شريط علوي بالشارات + جسم بعمودين (صورة | محتوى) + آخر/قادم درس + شريط
- * تقدم + إحصائيات + زر إجراء يتغيّر حسب الحالة. بألوان الثيم فقط.
+ * قسم تعلم (مادة في بيت الطالب أو مقرر في صفحة المادة) بنمط Openverse انسيابي:
+ * بلا بطاقة/حدود/فواصل صلبة — صورة بلمسات تدرّجية + محتوى مفصول بالتباعد فقط.
  */
 export function LearningSection({
   index,
@@ -68,10 +67,10 @@ export function LearningSection({
   const visited = relativeTime(lastVisitedAt);
 
   return (
-    <section className="group overflow-hidden rounded-3xl border bg-card">
-      {/* الشريط العلوي */}
-      <div className="flex flex-wrap items-center gap-2.5 border-b bg-muted/40 px-5 py-3 sm:px-6">
-        <h2 className="font-bold">{title}</h2>
+    <section className="group">
+      {/* شريط العنوان بدون خلفية/حدود */}
+      <div className="mb-6 flex flex-wrap items-center gap-2.5">
+        <h2 className="text-2xl font-black tracking-tight">{title}</h2>
 
         {isCurrentItem && (
           <span className="flex items-center gap-1.5 rounded-full bg-primary px-2.5 py-1 text-xs font-semibold text-primary-foreground">
@@ -81,47 +80,42 @@ export function LearningSection({
         )}
 
         {badge && (
-          <span className="rounded-full border bg-muted/40 px-2.5 py-1 text-xs font-semibold text-muted-foreground">
+          <span className="rounded-full bg-muted px-2.5 py-1 text-xs font-semibold text-muted-foreground">
             {badge}
           </span>
         )}
 
         {status === "completed" && (
-          <span className="ms-auto flex items-center gap-1 text-xs font-semibold text-primary">
+          <span className="ms-auto flex items-center gap-1 text-sm font-semibold text-primary">
             <CheckCircle2 className="size-4" />
             مكتمل
           </span>
         )}
 
-        {visited && (
-          <span className="ms-auto text-xs text-muted-foreground">آخر زيارة: {visited}</span>
-        )}
+        {visited && <span className="ms-auto text-xs text-muted-foreground">آخر زيارة: {visited}</span>}
       </div>
 
       {/* جسم بعمودين */}
       <div className="grid grid-cols-1 lg:grid-cols-2">
         {/* الصورة */}
-        <div
-          className={cn(
-            "relative min-h-64 overflow-hidden bg-muted lg:min-h-80",
-            isEven ? "lg:order-2" : "lg:order-1",
-          )}
-        >
+        <div className={cn("relative overflow-hidden rounded-3xl lg:min-h-80", isEven ? "lg:order-2" : "lg:order-1")}>
           <ExploreThumb
             image={image}
+            fallbackImage="/images/subject-fallback.jpg"
             className="absolute inset-0 size-full rounded-none transition-transform duration-700 group-hover:scale-105"
             alt={title}
             fallback={
-              <span className="absolute inset-0 flex items-center justify-center">
+              <span className="absolute inset-0 flex items-center justify-center bg-muted">
                 <Icon className="size-16 text-primary" aria-hidden />
               </span>
             }
           />
-          <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 via-transparent to-transparent" />
+          {/* تدرّج يدمج الصورة مع الخلفية */}
+          <div className="absolute inset-0 bg-gradient-to-tr from-primary/25 via-transparent to-transparent" />
 
           {/* شارة التقدم */}
           {status !== "not_started" && (
-            <div className="absolute end-4 top-4 rounded-xl border bg-background/90 px-4 py-2.5 shadow-lg backdrop-blur-sm">
+            <div className="absolute end-4 top-4 rounded-2xl bg-background/90 px-4 py-2.5 shadow-lg backdrop-blur-sm">
               {status === "completed" ? (
                 <span className="flex items-center justify-center">
                   <CheckCircle2 className="size-6 text-primary" />
@@ -145,22 +139,17 @@ export function LearningSection({
         </div>
 
         {/* المحتوى */}
-        <div
-          className={cn(
-            "flex flex-col justify-between gap-5 p-6 sm:p-8",
-            isEven ? "lg:order-1" : "lg:order-2",
-          )}
-        >
-          <div>
+        <div className={cn("flex flex-col gap-6 p-2", isEven ? "lg:order-1 lg:pe-10" : "lg:order-2 lg:ps-10")}>
+          <div className="pt-2">
             <h3 className="text-xl font-bold tracking-tight sm:text-2xl">{title}</h3>
-            <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{tagline}</p>
+            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{tagline}</p>
           </div>
 
-          {/* آخر / قادم درس */}
+          {/* آخر / قادم درس — بلا حدود */}
           {(lastLesson || nextLesson) && (
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-3">
               {lastLesson && (
-                <div className="flex items-start gap-3 rounded-xl border bg-muted/40 p-3">
+                <div className="flex items-start gap-3 rounded-2xl bg-muted/50 p-4">
                   <Repeat className="mt-0.5 size-4 shrink-0 text-primary" aria-hidden />
                   <div>
                     <p className="mb-0.5 text-xs font-semibold text-primary">آخر درس</p>
@@ -169,7 +158,7 @@ export function LearningSection({
                 </div>
               )}
               {nextLesson && status !== "completed" && (
-                <div className="flex items-start gap-3 rounded-xl border bg-muted/40 p-3">
+                <div className="flex items-start gap-3 rounded-2xl bg-muted/50 p-4">
                   <PlayCircle className="mt-0.5 size-4 shrink-0 text-muted-foreground" aria-hidden />
                   <div>
                     <p className="mb-0.5 text-xs font-semibold text-muted-foreground">
@@ -189,19 +178,23 @@ export function LearningSection({
                 <span className="text-xs font-semibold text-muted-foreground">التقدم</span>
                 <span className="text-sm font-bold text-primary">{progress}%</span>
               </div>
-              <ProgressBar value={progress} />
+              <ProgressBar value={progress} className="h-1.5" />
             </div>
           )}
 
-          {/* الإحصائيات */}
-          <div className="flex items-center gap-5 border-y border-border py-4">
+          {/* الإحصائيات — بدون فواصل border */}
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
             {stats.map((stat, i) => (
-              <div key={stat.label} className="flex items-center gap-5">
-                <div className="flex flex-col items-center gap-0.5">
+              <div key={stat.label} className="flex items-center gap-x-6">
+                <div className="flex flex-col">
                   <span className="text-lg font-black">{stat.value}</span>
                   <span className="text-xs text-muted-foreground">{stat.label}</span>
                 </div>
-                {i < stats.length - 1 && <div className="h-8 w-px self-center bg-border" />}
+                {i < stats.length - 1 && (
+                  <span aria-hidden className="text-muted-foreground/50">
+                    ·
+                  </span>
+                )}
               </div>
             ))}
           </div>

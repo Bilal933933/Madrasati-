@@ -1,66 +1,75 @@
 "use client";
 
-import { GraduationCap, Sparkles } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { SiteNavbar } from "@/components/shared/site-navbar";
 import { useAuthStore } from "@/features/auth/store/authStore";
 
 const NAV_LINKS = [
   { href: "#subjects", label: "المواد" },
-  { href: "#how-it-works", label: "كيف نتأكد أنك فهمت؟" },
+  { href: "#how-it-works", label: "كيف تعمل؟" },
+  { href: "#why-it-works", label: "لماذا تختلف؟" },
   { href: "#faq", label: "الأسئلة" },
 ];
 
 /**
- * اليدر العام للبوابة (Public Landing Navbar):
- * شعار مدرستي + روابط أقسام الصفحة + زرا إجراء للزائر.
- * عند وجود مستخدم مسجل يُستبدل «جرّب مجانًا» برابط بيتي التعليمي.
+ * الهيدر العام للبوابة (Public Landing Navbar) — إعداد من المكوّن العام
+ * SiteNavbar (نمط Floating Pill) بنمط عائم مع زجاجية، روابط الأقسام
+ * وأزرار إجراء تعتمد على حالة تسجيل الدخول وقائمة أقسام للجوال تعرض
+ * أيقونات عند توفّرها.
  */
 export function LandingNavbar() {
   const user = useAuthStore((state) => state.user);
 
   return (
-    <header className="sticky top-0 z-40 border-b bg-background/80 backdrop-blur">
-      <div className="mx-auto grid h-14 w-full max-w-6xl grid-cols-3 items-center gap-2 px-4 sm:gap-4 sm:px-6">
-        <Link href="/" className="flex items-center gap-2 justify-self-start">
-          <span className="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-            <GraduationCap className="size-4" />
-          </span>
-          <span className="text-base font-bold tracking-tight">مدرستي</span>
-        </Link>
-
-        <nav className="hidden items-center justify-center gap-6 md:flex">
-          {NAV_LINKS.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+    <SiteNavbar
+      links={NAV_LINKS}
+      actions={
+        user ? (
+          <Button asChild className="rounded-full">
+            <Link href="/home">بيتي التعليمي</Link>
+          </Button>
+        ) : (
+          <>
+            <Button
+              asChild
+              variant="ghost"
+              className="hidden h-9 rounded-full px-4 text-muted-foreground hover:text-foreground sm:inline-flex"
             >
-              {link.label}
-            </Link>
-          ))}
-        </nav>
-
-        <div className="flex items-center justify-end gap-2">
-          {!user ? (
-            <>
-              <Button asChild variant="ghost" className="h-9 px-3">
-                <Link href="/login">تسجيل الدخول</Link>
-              </Button>
-              <Button asChild className="h-9 px-3">
-                <Link href="/trial">
-                  <Sparkles className="size-4" />
-                  جرّب مجانًا
-                </Link>
-              </Button>
-            </>
-          ) : (
-            <Button asChild className="h-9 px-3">
-              <Link href="/home">بيتي التعليمي</Link>
+              <Link href="/login">تسجيل الدخول</Link>
             </Button>
-          )}
-        </div>
-      </div>
-    </header>
+            <Button asChild className="h-9 rounded-full px-4">
+              <Link href="/trial">
+                <Sparkles className="size-4" />
+                جرّب مجانًا
+              </Link>
+            </Button>
+          </>
+        )
+      }
+      mobileActions={(close) =>
+        user ? (
+          <Button asChild className="w-full rounded-full">
+            <Link href="/home" onClick={close}>
+              بيتي التعليمي
+            </Link>
+          </Button>
+        ) : (
+          <>
+            <Button asChild variant="outline" className="w-full rounded-full">
+              <Link href="/login" onClick={close}>
+                تسجيل الدخول
+              </Link>
+            </Button>
+            <Button asChild className="w-full rounded-full">
+              <Link href="/trial" onClick={close}>
+                جرّب مجانًا
+              </Link>
+            </Button>
+          </>
+        )
+      }
+    />
   );
 }

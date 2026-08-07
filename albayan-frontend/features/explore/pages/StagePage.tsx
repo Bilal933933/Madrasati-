@@ -1,11 +1,12 @@
 import { ExploreBreadcrumb } from "../components/ExploreBreadcrumb";
+import { ExploreHero } from "../components/ExploreHero";
+import { ExploreItemCard } from "../components/ExploreItemCard";
 import { ExploreShell } from "../components/ExploreShell";
-import { GradeCard } from "../components/GradeCard";
 import { stageName, throwIfNotFound } from "../lib/explore";
 import { exploreApi } from "../services/exploreApi";
 
 /**
- * المستوى الثاني — صفوف مرحلة معينة.
+ * المستوى الثاني — صفوف مرحلة معينة بنمط بطاقات متناوبة كأقسام /home.
  */
 export async function StagePage({ stageKey }: { stageKey: string }) {
   let data;
@@ -26,19 +27,30 @@ export async function StagePage({ stageKey }: { stageKey: string }) {
         ]}
       />
 
-      <div className="mt-6 max-w-2xl">
-        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">{parent}</h1>
-        <p className="mt-2 text-muted-foreground">اختر صفك الدراسي لعرض فصوله ومواده.</p>
-      </div>
+      <ExploreHero
+        badge="المرحلة"
+        title={parent}
+        description="اختر صفك الدراسي لعرض فصوله وموادها."
+      />
 
       {data.data.length > 0 ? (
-        <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {data.data.map((grade) => (
-            <GradeCard key={grade.key} stageKey={stageKey} grade={grade} />
+        <div className="mt-10 flex flex-col gap-14">
+          {data.data.map((grade, index) => (
+            <ExploreItemCard
+              key={grade.key}
+              index={index}
+              href={`/explore/${stageKey}/${grade.key}`}
+              title={grade.name}
+              description={`${grade.semesters_count} فصول دراسية متاحة ضمن هذا الصف.`}
+              meta="صف دراسي"
+              image={grade.image}
+              icon={grade.icon}
+              color={grade.color}
+            />
           ))}
         </div>
       ) : (
-        <p className="mt-10 text-center text-muted-foreground">لا توجد صفوف دراسية بعد.</p>
+        <p className="mt-14 text-center text-muted-foreground">لا توجد صفوف دراسية بعد.</p>
       )}
     </ExploreShell>
   );

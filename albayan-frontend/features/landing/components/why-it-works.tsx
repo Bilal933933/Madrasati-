@@ -20,7 +20,7 @@ const NEW_WAY = [
  */
 export function WhyItWorks() {
   return (
-    <section className="mx-auto w-full max-w-6xl px-4 py-20 sm:px-6">
+    <section id="why-it-works" className="mx-auto w-full max-w-6xl scroll-mt-24 px-4 py-20 sm:px-6">
       <ScrollReveal className="mx-auto max-w-3xl text-center">
         <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
           لماذا تنجح هذه الطريقة؟

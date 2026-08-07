@@ -1,11 +1,12 @@
 import { ExploreBreadcrumb } from "../components/ExploreBreadcrumb";
+import { ExploreHero } from "../components/ExploreHero";
+import { ExploreItemCard } from "../components/ExploreItemCard";
 import { ExploreShell } from "../components/ExploreShell";
-import { StageCard } from "../components/StageCard";
 import { throwIfNotFound } from "../lib/explore";
 import { exploreApi } from "../services/exploreApi";
 
 /**
- * المستوى الأول — اختيار المرحلة الدراسية.
+ * المستوى الأول — مراحل دراسية بنمط بطاقات متناوبة (معلومة/صورة) كأقسام /home.
  */
 export async function ExplorePage() {
   let data;
@@ -19,21 +20,30 @@ export async function ExplorePage() {
     <ExploreShell>
       <ExploreBreadcrumb items={[{ label: "استكشف المواد", href: "/explore" }]} />
 
-      <div className="mt-6 max-w-2xl">
-        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">استكشف المناهج</h1>
-        <p className="mt-2 text-muted-foreground">
-          ابدأ باختيار مرحلتك الدراسية لنستعرض لك المواد والدروس المناسبة.
-        </p>
-      </div>
+      <ExploreHero
+        badge="استكشاف"
+        title="استكشف المناهج"
+        description="ابدأ باختيار مرحلتك الدراسية لنستعرض لك المواد والدروس المناسبة."
+      />
 
       {data.data.length > 0 ? (
-        <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {data.data.map((stage) => (
-            <StageCard key={stage.key} stage={stage} />
+        <div className="mt-10 flex flex-col gap-14">
+          {data.data.map((stage, index) => (
+            <ExploreItemCard
+              key={stage.key}
+              index={index}
+              href={`/explore/${stage.key}`}
+              title={stage.name}
+              description={`${stage.grades_count} صفوف دراسية متاحة ضمن هذه المرحلة.`}
+              meta="مرحلة دراسية"
+              image={stage.image}
+              icon={stage.icon}
+              color={stage.color}
+            />
           ))}
         </div>
       ) : (
-        <p className="mt-10 text-center text-muted-foreground">لا توجد مراحل دراسية بعد.</p>
+        <p className="mt-14 text-center text-muted-foreground">لا توجد مراحل دراسية بعد.</p>
       )}
     </ExploreShell>
   );

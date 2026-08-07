@@ -38,7 +38,7 @@ export interface AssessmentQuestion {
 /** البيانات التي تستهلكها شاشة المحتوى لكتلة ما. */
 export type LessonContentData =
   | { kind: "paragraph"; title?: string | null; content?: TiptapDoc | null; image?: string | null }
-  | { kind: "lesson_video"; url?: string | null };
+  | { kind: "lesson_video"; url?: string | null; embed?: string | null };
 
 /** البيانات التي تستهلكها شاشة التقييم. */
 export interface LessonAssessmentData {
@@ -67,6 +67,7 @@ export interface LessonEngineData {
   lessonId: number;
   title: string;
   color: string | null;
+  image: string | null;
   subject?: string;
   course?: string;
   objectives: string[];

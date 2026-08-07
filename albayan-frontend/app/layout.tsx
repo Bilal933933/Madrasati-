@@ -4,6 +4,7 @@ import { Providers } from "./providers";
 import { ThemeProvider } from "@/components/shared/theme-provider";
 import { DirectionProvider } from "@/components/ui/direction";
 import { AdminFab } from "@/components/shared/admin-fab";
+import { MoltenMetal } from "@/features/landing/components/molten-metal";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -55,18 +56,45 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} ${ibmPlexSansArabic.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
-        <DirectionProvider dir="rtl">
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            <Providers>{children}</Providers>
-            <AdminFab />
-          </ThemeProvider>
-        </DirectionProvider>
+      <body className="relative min-h-full flex flex-col">
+        {/* خلفية عامة للمشروع كامل: Molten Metal ثابتة خلف كل الصفحات */}
+        <div className="pointer-events-none fixed inset-0 z-0">
+          <MoltenMetal
+            color1="#8A5E38"
+            color2="#C9A47C"
+            color3="#F4EFE9"
+            speed={0.3}
+            scale={3.2}
+            detail={2}
+            glow={1.1}
+            coreSize={0.12}
+            swirl={0.8}
+            fold={-0.18}
+            blackPoint={0.12}
+            brightness={1.05}
+            grain
+            grainIntensity={0.04}
+            mouseInteraction
+            mouseStrength={0.25}
+            opacity={0.55}
+          />
+          {/* حجاب ناعم لضمان قراءة النصوص فوق الخلفية */}
+          <div className="absolute inset-0 bg-background/75" />
+        </div>
+
+        <div className="relative z-10 flex min-h-dvh flex-col">
+          <DirectionProvider dir="rtl">
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+            >
+              <Providers>{children}</Providers>
+              <AdminFab />
+            </ThemeProvider>
+          </DirectionProvider>
+        </div>
       </body>
     </html>
   );

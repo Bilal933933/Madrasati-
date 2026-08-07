@@ -1,11 +1,12 @@
 import { ExploreBreadcrumb } from "../components/ExploreBreadcrumb";
+import { ExploreHero } from "../components/ExploreHero";
+import { ExploreItemCard } from "../components/ExploreItemCard";
 import { ExploreShell } from "../components/ExploreShell";
-import { SubjectCard } from "../components/SubjectCard";
 import { gradeName, semesterName, stageName, throwIfNotFound } from "../lib/explore";
 import { exploreApi } from "../services/exploreApi";
 
 /**
- * المستوى الرابع — مواد فصل دراسي معين.
+ * المستوى الرابع — مواد فصل دراسي بنمط بطاقات متناوبة كأقسام /home.
  */
 export async function SemesterPage({
   stageKey,
@@ -40,25 +41,30 @@ export async function SemesterPage({
         ]}
       />
 
-      <div className="mt-6 max-w-2xl">
-        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">{semester}</h1>
-        <p className="mt-2 text-muted-foreground">استعرض مواد {grade} — {semester}.</p>
-      </div>
+      <ExploreHero
+        badge="الفصل الدراسي"
+        title={semester}
+        description={`استعرض مواد ${grade} — ${semester}.`}
+      />
 
       {data.data.length > 0 ? (
-        <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {data.data.map((subject) => (
-            <SubjectCard
+        <div className="mt-10 flex flex-col gap-14">
+          {data.data.map((subject, index) => (
+            <ExploreItemCard
               key={subject.slug}
-              stageKey={stageKey}
-              gradeKey={gradeKey}
-              semesterKey={semesterKey}
-              subject={subject}
+              index={index}
+              href={`/explore/${stageKey}/${gradeKey}/${semesterKey}/${subject.slug}`}
+              title={subject.name}
+              description={subject.description}
+              meta={`${subject.units_count} وحدات · ${subject.lessons_count} دروس`}
+              image={subject.image}
+              icon={subject.icon}
+              color={subject.color}
             />
           ))}
         </div>
       ) : (
-        <p className="mt-10 text-center text-muted-foreground">لا توجد مواد في هذا الفصل بعد.</p>
+        <p className="mt-14 text-center text-muted-foreground">لا توجد مواد في هذا الفصل بعد.</p>
       )}
     </ExploreShell>
   );

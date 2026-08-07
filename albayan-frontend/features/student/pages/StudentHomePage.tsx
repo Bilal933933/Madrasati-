@@ -1,59 +1,81 @@
-import { CalendarDays, GraduationCap, Hand, TrendingUp } from "lucide-react";
+import { GraduationCap, Hand, TrendingUp } from "lucide-react";
+import { ExploreThumb } from "@/features/explore/components/ExploreThumb";
 import { LearningSection } from "../components/LearningSection";
 import { ProgressBar } from "../components/progress-bar";
 import type { StudentHomeData } from "../types/student.types";
 
 /**
- * بيت الطالب — صفحة «ما الذي سأدرسه اليوم؟» بنمط مركز التعلم الشخصي:
- * هيدر بالترحيب وشارات الصف/الفصل + بطاقة التقدم الكلي + فواصل + أقسام
- * مواد متناوبة (LearningSection) مرتبة بأولوية الطالب.
+ * بيت الطالب — نفس نمط غلاف صفحة المادة (Hero):
+ * توهّج عائم + شارة الصف/الفصل + كتلة تقدم ناعمة في العمود النصي،
+ * وصورة الصف بجانبه في طبقة متلاشية. ثم فاصل متدرّج + مواد.
  */
-export async function StudentHomePage({ data }: { data: StudentHomeData }) {
+export function StudentHomePage({ data }: { data: StudentHomeData }) {
   return (
-    <div className="mx-auto w-full max-w-5xl px-4 py-10 sm:px-6">
-      {/* الهيدر */}
-      <header className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
-          السلام عليكم، {data.student.name}{" "}
-          <Hand className="inline size-7 align-text-bottom text-primary" aria-hidden />
-        </h1>
-        <p className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-2 text-muted-foreground">
-          <span className="flex items-center gap-1.5 font-medium">
-            <GraduationCap className="size-4" />
-            {data.grade.name}
-          </span>
-          <span className="flex items-center gap-1.5 font-medium">
-            <CalendarDays className="size-4" />
-            {data.semester.name}
-          </span>
-          <span className="text-sm text-muted-foreground/70">{data.academic_year}</span>
-        </p>
+    <div className="mx-auto w-full max-w-6xl px-4 pb-32 sm:px-6">
+      {/* غلاف البيت — Hero: يمين=نص (5) | يسار=صورة الصف المتلاشية (7) */}
+      <header className="relative overflow-hidden">
+        <div className="pointer-events-none absolute end-1/3 top-10 size-72 rounded-full bg-primary/15 opacity-40 blur-3xl" />
+
+        {/* Mobile-First: عمود واحد في الموبايل، عمودان من lg */}
+        <div className="grid grid-cols-1 items-center gap-6 lg:grid-cols-12">
+          {/* المحتوى والبيانات — يمين (بداية RTL) */}
+          <div className="flex flex-col lg:col-span-5">
+            <span className="inline-flex w-fit items-center rounded-md bg-primary/15 px-2.5 py-1 text-xs font-semibold text-foreground/80">
+              {data.grade.name} · {data.semester.name} · {data.academic_year}
+            </span>
+
+            <h1 className="mt-3 text-2xl font-bold tracking-tight text-foreground md:text-4xl">
+              السلام عليكم، {data.student.name}{" "}
+              <Hand className="inline size-8 align-text-bottom text-primary" aria-hidden />
+            </h1>
+
+            {/* كتلة التقدم — بنمط المرجع الناعم */}
+            <div className="mt-6 space-y-3 rounded-2xl border border-border/60 bg-card/60 p-4">
+              <div className="flex items-center justify-between text-sm">
+                <span className="font-medium text-muted-foreground">تقدمك الكلي هذا الفصل</span>
+                <span className="font-bold text-primary">{data.overall_progress}%</span>
+              </div>
+              <ProgressBar value={data.overall_progress} className="h-2" />
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 pt-1 text-xs text-muted-foreground">
+                <span className="flex items-center gap-1.5">
+                  <TrendingUp className="size-3.5" aria-hidden />
+                  <span className="font-semibold text-foreground">{data.subjects.length}</span> مادة
+                  متاحة
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* طبقة صورة الصف — بطاقة مدمجة في الموبايل، خلفية متلاشية من lg */}
+          <div className="relative col-span-1 aspect-[16/9] w-full overflow-hidden rounded-2xl lg:aspect-auto lg:col-span-7 lg:h-96 lg:rounded-none">
+            <ExploreThumb
+              image={data.grade.image}
+              fallbackImage="/images/subject-fallback.jpg"
+              className="absolute inset-0 size-full rounded-none object-cover"
+              alt={data.grade.name}
+              fallback={
+                <span className="absolute inset-0 flex items-center justify-center bg-muted">
+                  <GraduationCap className="size-24 text-muted-foreground" aria-hidden />
+                </span>
+              }
+            />
+            {/* تلاشٍ خفيف عند الحافة السفلية فقط */}
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-background/60 to-transparent lg:h-24 lg:from-background" />
+            {/* تلاشٍ أفقي خفيف إلى الخلفية على الشاشات الكبيرة فقط */}
+            <div className="pointer-events-none absolute inset-0 hidden bg-gradient-to-r from-transparent to-background lg:block" />
+          </div>
+        </div>
       </header>
 
-      {/* بطاقة التقدم الكلي */}
-      <div className="mb-10 flex flex-col gap-5 rounded-2xl border bg-card p-5 sm:flex-row sm:items-center sm:gap-8">
-        <div className="flex-1">
-          <p className="text-xs font-semibold text-muted-foreground">تقدمك الكلي هذا الفصل</p>
-          <div className="mt-2">
-            <span className="text-4xl font-black">{data.overall_progress}%</span>
-          </div>
-          <ProgressBar value={data.overall_progress} className="mt-3" />
-          <p className="mt-2 text-xs text-muted-foreground">{data.subjects.length} مادة متاحة</p>
-        </div>
-        <span className="flex size-14 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-          <TrendingUp className="size-7" aria-hidden />
-        </span>
-      </div>
-
-      {/* فاصل */}
-      <div className="mb-8 flex items-center gap-4">
-        <div className="h-px flex-1 bg-border" />
+      {/* فاصل ناعم بالتدرج بدل الخط الصلب */}
+      <div className="mt-14 flex items-center gap-4">
+        <div className="h-px flex-1 bg-gradient-to-l from-transparent via-border/60 to-transparent" />
         <p className="px-3 text-xs font-semibold text-muted-foreground">موادك</p>
-        <div className="h-px flex-1 bg-border" />
+        <div className="h-px flex-1 bg-gradient-to-r from-transparent via-border/60 to-transparent" />
       </div>
 
       {data.subjects.length > 0 ? (
-        <div className="flex flex-col gap-6">
+        <div className="mt-10 flex flex-col gap-14">
           {data.subjects.map((subject, index) => (
             <LearningSection
               key={subject.id}
@@ -83,7 +105,7 @@ export async function StudentHomePage({ data }: { data: StudentHomeData }) {
           ))}
         </div>
       ) : (
-        <p className="py-16 text-center text-muted-foreground">
+        <p className="mt-14 py-16 text-center text-muted-foreground">
           لا توجد مواد متاحة لك هذا الفصل بعد.
         </p>
       )}

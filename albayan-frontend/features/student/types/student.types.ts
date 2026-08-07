@@ -7,6 +7,7 @@ export interface LessonPreview {
   title: string;
   image?: string | null;
   color?: string | null;
+  summary?: string | null;
   blocks_count?: number;
   duration?: number | null;
 }
@@ -43,12 +44,14 @@ export interface StudentHomeData {
   grade: {
     key: string;
     name: string;
+    image?: string | null;
+    icon?: string | null;
   };
   semester: {
     key: string;
     name: string;
   };
-  academic_year: string;
+academic_year: string;
   overall_progress: number;
   subjects: StudentSubject[];
 }
@@ -105,6 +108,7 @@ export interface StudentSubjectResponse {
 export interface StudentCourseLesson extends LessonPreview {
   completed: boolean;
   started_at: string | null;
+  learning_objectives?: string[] | null;
 }
 
 export interface StudentCourseDetail {

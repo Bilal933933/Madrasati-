@@ -53,7 +53,7 @@ const FAQS = [
  */
 export function Faq() {
   return (
-    <section className="mx-auto w-full max-w-3xl px-4 py-20 sm:px-6">
+    <section id="faq" className="mx-auto w-full max-w-3xl scroll-mt-24 px-4 py-20 sm:px-6">
       <ScrollReveal className="mb-10 text-center">
         <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">أسئلة شائعة</h2>
         <p className="mt-3 text-muted-foreground">كل شيء واضح قبل أن تبدأ.</p>

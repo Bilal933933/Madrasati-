@@ -37,7 +37,7 @@ export default function AdminLayout({
   // جارٍ التحقق من الجلسة
   if (!isInitialized) {
     return (
-      <div className="flex min-h-svh items-center justify-center bg-background">
+      <div className="flex min-h-svh items-center justify-center">
         <Spinner className="size-8" />
       </div>
     );
@@ -46,7 +46,7 @@ export default function AdminLayout({
   // مستخدم مسجّل لكنه ليس أدمن → غير مصرّح
   if (user && user.role !== "admin") {
     return (
-      <div className="flex min-h-svh items-center justify-center bg-background px-4">
+      <div className="flex min-h-svh items-center justify-center px-4">
         <Card className="max-w-md">
           <CardHeader className="items-center text-center">
             <span className="mb-2 flex size-12 items-center justify-center rounded-xl bg-destructive/10 text-destructive">

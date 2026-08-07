@@ -38,6 +38,8 @@ class StudentHomeResource extends JsonResource
             'grade' => [
                 'key' => $grade->key,
                 'name' => $grade->name,
+                'image' => $grade->image,
+                'icon' => $grade->icon,
             ],
             'semester' => [
                 'key' => $semester->key,

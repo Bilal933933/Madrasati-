@@ -57,7 +57,7 @@ const SUBJECTS = [
  */
 export function Subjects() {
   return (
-    <section className="border-y bg-muted/30">
+    <section id="subjects" className="scroll-mt-24 border-y bg-muted/30">
       <div className="mx-auto w-full max-w-6xl px-4 py-20 sm:px-6">
         <ScrollReveal className="mx-auto max-w-3xl text-center">
           <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">

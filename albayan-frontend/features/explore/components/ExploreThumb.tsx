@@ -9,18 +9,25 @@ import { imageUrl } from "@/lib/image";
 export function ExploreThumb({
   image,
   fallback,
+  fallbackImage,
   className,
   alt,
 }: {
   image: string | null | undefined;
   /** واجهة البديل عند غياب الصورة — أي عنصر (صندوق أيقونة ملون مثلًا). */
   fallback: ReactNode;
+  /** مسار صورة بديلة ثابتة (داخل الفرونت) تُعرض عند غياب الصورة قبل الـ fallback. */
+  fallbackImage?: string | null;
   className?: string;
   alt?: string;
 }) {
   const src = imageUrl(image);
 
   if (!src) {
+    if (fallbackImage) {
+      // eslint-disable-next-line @next/next/no-img-element
+      return <img src={fallbackImage} alt={alt ?? ""} className={cn("shrink-0 rounded-xl object-cover", className)} />;
+    }
     return fallback;
   }
 

@@ -70,7 +70,9 @@ class StudentCourseResource extends JsonResource
             'title' => $lesson->title,
             'image' => $lesson->image,
             'color' => $lesson->color,
+            'summary' => $lesson->summary,
             'blocks_count' => $lesson->blocks_count ?? 0,
+            'learning_objectives' => $lesson->learning_objectives ?? [],
             'duration' => EstimatedDuration::fromBlockCount($lesson->blocks_count ?? 0),
         ];
     }

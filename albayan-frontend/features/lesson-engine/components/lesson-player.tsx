@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { useLessonFlow } from "@/features/lesson-engine/hooks/useLessonFlow";
 import { useLessonProgressSync } from "@/features/lesson-engine/hooks/useLessonProgressSync";
 import { useLessonEngineStore } from "@/features/lesson-engine/engine/lesson-engine-store";
@@ -24,6 +25,7 @@ interface LessonPlayerProps {
  * لا يعرف المحرك ترتيبًا ولا يعرض تفاصيل كتل للطالب.
  */
 export function LessonPlayer({ lessonSlug, onFinish }: LessonPlayerProps) {
+  const router = useRouter();
   const { data, isLoading, isError, error, refetch } = useLessonFlow(lessonSlug);
   const engine = useLessonEngineStore((s) => s.engine);
   const current = useLessonEngineStore((s) => s.current);
@@ -76,7 +78,7 @@ export function LessonPlayer({ lessonSlug, onFinish }: LessonPlayerProps) {
     current.screen === "start" || current.screen === "assessment" ? (
       <div aria-hidden className="h-3" />
     ) : current.screen === "finish" ? (
-      <Button size="lg" className="h-12 w-full text-base" onClick={() => onFinish?.()}>
+      <Button size="lg" className="h-12 w-full text-base" onClick={() => (onFinish ? onFinish() : router.back())}>
         العودة إلى الدروس
       </Button>
     ) : undefined;

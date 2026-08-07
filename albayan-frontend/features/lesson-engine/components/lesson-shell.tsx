@@ -40,8 +40,14 @@ export function LessonShell({
   const canBack = currentIndex > 0;
 
   return (
-    <div className="flex min-h-dvh flex-col bg-background">
-      <header className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur">
+    <div className="relative flex min-h-dvh flex-col bg-background">
+      {/* توهّج خلفي ناعم خلف السمة بأكملها */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-0 h-64 bg-gradient-to-b from-primary/5 to-transparent"
+      />
+
+      <header className="sticky top-0 z-10 border-b bg-background/90 backdrop-blur">
         <div className="mx-auto flex w-full max-w-2xl items-center gap-3 px-4 py-2.5 sm:px-6">
           <div className="flex w-8 shrink-0 items-center justify-center">
             {canBack && (
@@ -64,29 +70,32 @@ export function LessonShell({
             )}
             <h1 className="truncate text-sm font-semibold leading-tight">{title}</h1>
           </div>
-          <span className="w-8 shrink-0" aria-hidden />
+          {phaseLabel && (
+            <span className="flex w-20 shrink-0 justify-end">
+              <span className="rounded-full bg-primary/10 px-2.5 py-1 text-[0.65rem] font-semibold text-primary">
+                {phaseLabel}
+              </span>
+            </span>
+          )}
         </div>
         <div className="mx-auto w-full max-w-2xl px-4 pb-2.5 sm:px-6">
           <ProgressBar />
         </div>
       </header>
 
-      <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col px-4 py-5 sm:px-6">
-        {phaseLabel && (
-          <p className="mb-3 flex items-center gap-2 text-sm font-medium text-primary">{phaseLabel}</p>
-        )}
+      <main className="relative mx-auto flex w-full max-w-2xl flex-1 flex-col px-4 py-5 sm:px-6">
         <div
           className={cn(
             "flex flex-1 flex-col",
             showCard &&
-              "rounded-2xl border border-border/60 bg-card p-5 shadow-sm transition-shadow"
+              "rounded-2xl border border-border/60 bg-card/80 p-5 shadow-sm ring-1 ring-border/40 transition-shadow sm:p-6"
           )}
         >
           {children}
         </div>
       </main>
 
-      <footer className="sticky bottom-0 z-10 mt-auto border-t border-border/60 bg-background/95 px-4 py-3 backdrop-blur sm:px-6">
+      <footer className="sticky bottom-0 z-10 mt-auto border-t border-border/60 bg-background/90 px-4 py-3 backdrop-blur sm:px-6">
         <div className="mx-auto flex w-full max-w-2xl items-center justify-center gap-3">
           {footer ?? (
             <Button size="lg" className="h-12 w-full text-base" onClick={() => next()}>

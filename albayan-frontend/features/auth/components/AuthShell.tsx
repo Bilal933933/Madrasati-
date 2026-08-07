@@ -19,7 +19,7 @@ type AuthShellProps = {
 
 export function AuthShell({ title, description, children, footer }: AuthShellProps) {
   return (
-    <div className="relative flex min-h-dvh flex-1 flex-col overflow-hidden bg-background">
+    <div className="relative flex min-h-dvh flex-1 flex-col overflow-hidden">
       <div
         aria-hidden
         className="pointer-events-none absolute -top-32 -end-32 size-72 rounded-full bg-primary/5 blur-3xl"

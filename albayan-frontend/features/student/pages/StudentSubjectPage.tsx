@@ -6,22 +6,10 @@ import { LearningSection } from "../components/LearningSection";
 import { ProgressBar } from "../components/progress-bar";
 import type { StudentSubjectDetail } from "../types/student.types";
 
-function QuickStat({ value, label }: { value: string | number; label: string }) {
-  return (
-    <div className="text-center">
-      <p className="text-2xl font-black">{value}</p>
-      <p className="text-xs text-muted-foreground">{label}</p>
-    </div>
-  );
-}
-
-function StatDivider() {
-  return <div className="w-px self-stretch bg-border" />;
-}
-
 /**
- * صفحة المادة للطالب — غلاف المادة مع تقدمها وإحصائياتها + المقرر الحالي
- * + أقسام مقرراتها (LearningSection) بتقدم كل مقرر وزر يقود لأول درس فيه.
+ * صفحة المادة للطالب — نمط Open Canvas انسيابي بلا بطاقات/فواصل صلبة:
+ * غلاف عائم بعمق تدرّجي وتوهج خلفي + إحصاءات نصية رشيقة + مقررات
+ * متباعدة عموديًا دون إطارات. بألوان الثيم فقط (فاتح/داكن).
  */
 export function StudentSubjectPage({ subject }: { subject: StudentSubjectDetail }) {
   const currentUnit = subject.units.find((unit) => unit.status === "in_progress");
@@ -29,9 +17,9 @@ export function StudentSubjectPage({ subject }: { subject: StudentSubjectDetail 
   const Icon = EXPLORE_ICONS[subject.icon ?? ""] ?? GraduationCap;
 
   return (
-    <div>
+    <div className="mx-auto w-full max-w-6xl px-4 pb-32 sm:px-6">
       {/* زر رجوع */}
-      <div className="mb-6">
+      <div className="mb-8">
         <Link
           href="/home"
           className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
@@ -41,75 +29,93 @@ export function StudentSubjectPage({ subject }: { subject: StudentSubjectDetail 
         </Link>
       </div>
 
-      {/* غلاف المادة */}
-      <header className="overflow-hidden rounded-3xl border bg-card">
-        <div className="relative h-44 overflow-hidden bg-muted sm:h-56">
-          <ExploreThumb
-            image={subject.image}
-            className="absolute inset-0 size-full rounded-none object-cover"
-            alt={subject.name}
-            fallback={
-              <span className="absolute inset-0 flex items-center justify-center bg-muted">
-                <Icon className="size-16 text-muted-foreground" aria-hidden />
-              </span>
-            }
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-          <div className="absolute inset-x-0 bottom-0 flex items-end gap-4 px-6 pb-5 sm:px-8">
-            <span className="flex size-14 shrink-0 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-lg">
-              <Icon className="size-7" aria-hidden />
+      {/* غلاف المادة — Hero: يمين=نص (5) | يسار=صورة متلاشية (7) */}
+      <header className="relative overflow-hidden">
+        {/* طبقة التوهج العائم */}
+        <div className="pointer-events-none absolute end-1/3 top-10 size-72 rounded-full bg-primary/15 opacity-40 blur-3xl" />
+
+        {/* Mobile-First: عمود واحد في الموبايل، عمودان من lg */}
+        <div className="grid grid-cols-1 items-center gap-6 lg:grid-cols-12">
+          {/* المحتوى والبيانات — يمين (بداية RTL) */}
+          <div className="flex flex-col lg:col-span-5">
+            <span className="inline-flex w-fit items-center rounded-md bg-primary/15 px-2.5 py-1 text-xs font-semibold text-foreground/80">
+              {subject.grade.name} · {subject.semester.name}
             </span>
-            <div>
-              <p className="mb-0.5 text-xs font-semibold text-white/75">
-                {subject.grade.name} · {subject.semester.name}
+            <h1 className="mt-3 text-2xl font-bold tracking-tight text-foreground md:text-4xl">
+              {subject.name}
+            </h1>
+            {subject.description ? (
+              <p className="mt-2 max-w-xl text-sm leading-relaxed text-muted-foreground sm:text-base">
+                {subject.description}
               </p>
-              <h1 className="text-3xl font-black leading-tight text-white">{subject.name}</h1>
-            </div>
-          </div>
-        </div>
+            ) : null}
 
-        {/* التقدم والإحصائيات */}
-        <div className="px-6 py-5 sm:px-8">
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-center">
-            <div className="flex-1">
-              <div className="mb-2 flex items-center justify-between">
-                <span className="text-sm font-semibold text-muted-foreground">تقدمك في المادة</span>
-                <span className="text-xl font-black text-primary">{subject.progress}%</span>
+            {/* كتلة التقدم والبيانات */}
+            <div className="mt-6 space-y-3 rounded-2xl border border-border/60 bg-card/60 p-4">
+              <div className="flex items-center justify-between text-sm">
+                <span className="font-medium text-muted-foreground">تقدمك في المادة</span>
+                <span className="font-bold text-primary">{subject.progress}%</span>
               </div>
-              <ProgressBar value={subject.progress} />
+              <ProgressBar value={subject.progress} className="h-2" />
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 pt-1 text-xs text-muted-foreground">
+                <span>
+                  <span className="font-semibold text-foreground">{subject.units_count}</span> وحدات
+                </span>
+                <span aria-hidden className="text-muted-foreground/50">•</span>
+                <span>
+                  <span className="font-semibold text-foreground">{subject.lessons_count}</span> دروس
+                </span>
+                <span aria-hidden className="text-muted-foreground/50">•</span>
+                <span>
+                  <span className="font-semibold text-foreground">{completedUnits}</span> مكتمل
+                </span>
+              </div>
             </div>
 
-            <div className="flex items-center gap-6">
-              <QuickStat value={subject.units_count} label="وحدات" />
-              <StatDivider />
-              <QuickStat value={subject.lessons_count} label="دروس" />
-              <StatDivider />
-              <QuickStat value={completedUnits} label="مكتمل" />
-            </div>
+            {/* المقرر الحالي */}
+            {currentUnit && (
+              <div className="mt-4 inline-flex items-center gap-2 text-sm text-muted-foreground">
+                <span className="size-2 animate-pulse rounded-full bg-primary" />
+                <span>
+                  المقرر الحالي:{" "}
+                  <span className="font-semibold text-foreground">{currentUnit.name}</span>
+                  {currentUnit.next_lesson ? ` · ${currentUnit.next_lesson.title}` : ""}
+                </span>
+              </div>
+            )}
           </div>
 
-          {currentUnit && (
-            <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/5 px-4 py-2">
-              <span className="size-2 animate-pulse rounded-full bg-primary" />
-              <span className="text-xs font-semibold text-primary">
-                المقرر الحالي: {currentUnit.name}
-                {currentUnit.next_lesson ? ` · ${currentUnit.next_lesson.title}` : ""}
-              </span>
-            </div>
-          )}
+          {/* طبقة الصورة — بطاقة مدمجة في الموبايل، خلفية متلاشية من lg */}
+          <div className="relative col-span-1 aspect-[16/9] w-full overflow-hidden rounded-2xl lg:aspect-auto lg:col-span-7 lg:h-96 lg:rounded-none">
+            <ExploreThumb
+              image={subject.image}
+              fallbackImage="/images/subject-fallback.jpg"
+              className="absolute inset-0 size-full rounded-none object-cover"
+              alt={subject.name}
+              fallback={
+                <span className="absolute inset-0 flex items-center justify-center bg-muted">
+                  <Icon className="size-24 text-muted-foreground" aria-hidden />
+                </span>
+              }
+            />
+            {/* تلاشٍ خفيف عند الحافة السفلية فقط (لا يغطي منتصف الصورة) */}
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-background/60 to-transparent lg:h-24 lg:from-background" />
+            {/* تلاشٍ أفقي خفيف إلى الخلفية على الشاشات الكبيرة فقط */}
+            <div className="pointer-events-none absolute inset-0 hidden bg-gradient-to-r from-transparent to-background lg:block" />
+          </div>
         </div>
       </header>
 
-      {/* فاصل */}
-      <div className="my-8 flex items-center gap-4">
-        <div className="h-px flex-1 bg-border" />
+      {/* فاصل ناعم بالتدرج بدل الخط الصلب */}
+      <div className="mt-14 flex items-center gap-4">
+        <div className="h-px flex-1 bg-gradient-to-l from-transparent via-border/60 to-transparent" />
         <p className="px-3 text-xs font-semibold text-muted-foreground">مقررات {subject.name}</p>
-        <div className="h-px flex-1 bg-border" />
+        <div className="h-px flex-1 bg-gradient-to-r from-transparent via-border/60 to-transparent" />
       </div>
 
       {/* المقررات */}
       {subject.units.length > 0 ? (
-        <div className="flex flex-col gap-6">
+        <div className="mt-10 flex flex-col gap-14">
           {subject.units.map((unit, index) => (
             <LearningSection
               key={unit.id}
@@ -133,7 +139,7 @@ export function StudentSubjectPage({ subject }: { subject: StudentSubjectDetail 
           ))}
         </div>
       ) : (
-        <p className="py-16 text-center text-muted-foreground">
+        <p className="py-20 text-center text-muted-foreground">
           لا توجد مقررات منشورة في هذه المادة بعد.
         </p>
       )}
