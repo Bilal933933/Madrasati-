@@ -1,16 +1,25 @@
 "use client";
 
+import {
+  BookOpen,
+  Hand,
+  Library,
+  PartyPopper,
+  RefreshCcw,
+  Sparkles,
+  Target,
+} from "lucide-react";
 import { useInView } from "../hooks/use-in-view";
 import { cn } from "@/lib/utils";
 
 const JOURNEY_STEPS = [
-  { icon: "👋", label: "دخل لأول مرة", note: "تجربة أول درس دون تسجيل" },
-  { icon: "🎯", label: "جرّب الدرس", note: "عرف مستواه بتقييم قبلي" },
-  { icon: "📖", label: "تعلّم", note: "فقرة فقرة بشرح مبسّط" },
-  { icon: "🔁", label: "راجع", note: "عندما لا يفهم — نعيد معه بهدوء" },
-  { icon: "✨", label: "أتقن", note: "التقييم النهائي يثبت الفهم" },
-  { icon: "📚", label: "أنهى الوحدة", note: "الدروس اكتملت 5/5" },
-  { icon: "🎉", label: "احتفل", note: "رأى تحسّنه بنفسه" },
+  { icon: Hand, label: "دخل لأول مرة", note: "تجربة أول درس دون تسجيل" },
+  { icon: Target, label: "جرّب الدرس", note: "عرف مستواه بتقييم قبلي" },
+  { icon: BookOpen, label: "تعلّم", note: "فقرة فقرة بشرح مبسّط" },
+  { icon: RefreshCcw, label: "راجع", note: "عندما لا يفهم — نعيد معه بهدوء" },
+  { icon: Sparkles, label: "أتقن", note: "التقييم النهائي يثبت الفهم" },
+  { icon: Library, label: "أنهى الوحدة", note: "الدروس اكتملت 5/5" },
+  { icon: PartyPopper, label: "احتفل", note: "رأى تحسّنه بنفسه" },
 ];
 
 /**
@@ -44,14 +53,17 @@ export function StudentJourney() {
             <div key={step.label} className="relative flex items-start gap-4 sm:gap-6">
               <span
                 className={cn(
-                  "relative z-10 flex size-11 shrink-0 items-center justify-center rounded-full border bg-background text-xl shadow-sm transition-all duration-500 sm:size-14",
+                  "relative z-10 flex size-11 shrink-0 items-center justify-center rounded-full border bg-background shadow-sm transition-all duration-500 sm:size-14",
                   inView
                     ? "border-primary text-primary"
                     : "border-border text-muted-foreground",
                 )}
                 style={{ transitionDelay: `${index * 120}ms` }}
               >
-                {step.icon}
+                {(() => {
+                  const Icon = step.icon;
+                  return <Icon className="size-5 sm:size-6" aria-hidden />;
+                })()}
               </span>
               <div
                 className={cn(

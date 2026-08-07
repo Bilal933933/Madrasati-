@@ -4,6 +4,7 @@ namespace App\Domains\Lesson\Models;
 
 use App\Domains\Assessment\Models\Assessment;
 use App\Domains\Curriculum\Models\Course;
+use App\Domains\Progress\Models\LessonCompletion;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -91,5 +92,10 @@ class Lesson extends Model
     public function blocks(): HasMany
     {
         return $this->hasMany(LessonBlock::class)->orderBy('sort_order')->orderBy('id');
+    }
+
+    public function completions(): HasMany
+    {
+        return $this->hasMany(LessonCompletion::class);
     }
 }

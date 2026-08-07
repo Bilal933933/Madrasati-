@@ -50,6 +50,10 @@ export async function ensureCsrfCookie(): Promise<void> {
 
 interface RequestOptions extends RequestInit {
   withCsrf?: boolean;
+  /** كوكيز المتصفح الممرَّرة أثناء SSR (Server Components) — تُرسل للباك كي لا يرى الزائرَ الطلبَ. */
+  ssrCookies?: string;
+  /** أصل المتصفح (Origin) أثناء SSR — Sanctum يرفض الجلسة بلا Origin من دومين stateful. */
+  ssrOrigin?: string;
 }
 
 /**
@@ -59,7 +63,7 @@ export async function apiClient<T>(
   endpoint: string,
   options: RequestOptions = {}
 ): Promise<T> {
-  const { withCsrf = false, headers, ...rest } = options;
+  const { withCsrf = false, headers, ssrCookies, ssrOrigin, ...rest } = options;
 
   if (withCsrf) {
     await ensureCsrfCookie();
@@ -77,6 +81,8 @@ export async function apiClient<T>(
       Accept: "application/json",
       ...(isFormData ? {} : { "Content-Type": "application/json" }),
       ...(xsrfToken ? { "X-XSRF-TOKEN": xsrfToken } : {}),
+      ...(ssrCookies ? { Cookie: ssrCookies } : {}),
+      ...(ssrOrigin ? { Origin: ssrOrigin } : {}),
       ...headers,
     },
   });

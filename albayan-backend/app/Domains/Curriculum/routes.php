@@ -10,8 +10,9 @@ use App\Domains\Curriculum\Http\Controllers\GradeController;
 use App\Domains\Curriculum\Http\Controllers\Public\ExploreController;
 use App\Domains\Curriculum\Http\Controllers\SemesterController;
 use App\Domains\Curriculum\Http\Controllers\StageController;
+use App\Domains\Curriculum\Http\Controllers\StudentHomeController;
+use App\Domains\Curriculum\Http\Controllers\StudentProfileController;
 use App\Domains\Curriculum\Http\Controllers\SubjectController;
-use App\Domains\Curriculum\Http\Controllers\UserContextController;
 use App\Http\Controllers\Admin\UploadController;
 use Illuminate\Support\Facades\Route;
 
@@ -61,7 +62,13 @@ Route::prefix('explore')->group(function () {
     Route::get('subjects/{slug}', [ExploreController::class, 'subject']);
 });
 
-// سياق التصفح — للمستخدم المسجّل فقط (لا يمسّ هوية الطالب)
+// سياق التصفح — للمستخدم المسجّل فقط: آخر مادة استكشفها (تُخزَّن في student_profiles)
 Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/user-context', [UserContextController::class, 'update']);
+    Route::post('/user-context', [StudentProfileController::class, 'updateLastSubject']);
+});
+
+// بيت الطالب — للمستخدم المسجّل فقط: مواد صفه وفصله مرتبة بأولويته
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/student/home', StudentHomeController::class);
+    Route::post('/student/profile', [StudentProfileController::class, 'update']);
 });

@@ -16,7 +16,7 @@ export function useRegister() {
       toast.success(data.message ?? "تم إنشاء الحساب بنجاح.");
       setUser(data.user);
       queryClient.invalidateQueries({ queryKey: ["auth", "current-user"] });
-      router.push("/");
+      router.push("/home");
     },
     onError: (error) => {
       toast.error(

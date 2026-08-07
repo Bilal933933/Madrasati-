@@ -36,8 +36,9 @@ export function LessonPlayer({ lessonSlug, onFinish }: LessonPlayerProps) {
     }
   }, [data, engine, init]);
 
-  // يسجّل تقدم الطالب محليًا (الشاشة الحالية + المكتملة) تلقائيًا.
-  useLessonProgressSync();
+  // يسجّل تقدم الطالب محليًا (الشاشة الحالية + المكتملة) تلقائيًا،
+  // ويزامن البداية/الإكمال مع الباك (فوق الحفظ المحلي دون تغييره).
+  useLessonProgressSync(lessonSlug);
 
   useEffect(() => () => reset(), [reset]);
 

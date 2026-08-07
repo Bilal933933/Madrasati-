@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Domains\Auth\Models\StudentProfile;
 use App\Domains\Auth\Models\User;
 use App\Domains\Curriculum\Models\Grade;
 use App\Domains\Curriculum\Models\Semester;
@@ -46,6 +47,19 @@ class UserContextTest extends TestCase
         return User::create(['name' => 'طالب', 'email' => 'student@test.com', 'password' => 'secret', 'role' => 'student']);
     }
 
+    private function createUserWithProfile(): User
+    {
+        $user = $this->createUser();
+
+        StudentProfile::create([
+            'user_id' => $user->id,
+            'grade_id' => $this->grade->id,
+            'semester_id' => $this->semester->id,
+        ]);
+
+        return $user;
+    }
+
     public function test_guest_cannot_save_context(): void
     {
         $this->seedSubject('math', 'الرياضيات');
@@ -53,7 +67,7 @@ class UserContextTest extends TestCase
         $response = $this->postJson('/api/user-context', ['subject_slug' => 'math']);
 
         $response->assertStatus(401);
-        $this->assertDatabaseCount('user_contexts', 0);
+        $this->assertDatabaseCount('student_profiles', 0);
     }
 
     public function test_protected_endpoint_returns_401_for_guest(): void
@@ -63,42 +77,52 @@ class UserContextTest extends TestCase
         $this->postJson('/api/user-context', ['subject_slug' => 'math'])->assertStatus(401);
     }
 
-    public function test_authenticated_user_can_save_context(): void
+    public function test_authenticated_user_with_profile_can_save_context(): void
     {
         $subject = $this->seedSubject('math', 'الرياضيات');
-        $user = $this->createUser();
+        $user = $this->createUserWithProfile();
 
         $this->actingAs($user)
             ->postJson('/api/user-context', ['subject_slug' => 'math'])
             ->assertStatus(200);
 
-        $this->assertDatabaseHas('user_contexts', [
+        $this->assertDatabaseHas('student_profiles', [
             'user_id' => $user->id,
             'last_subject_id' => $subject->id,
         ]);
+    }
+
+    public function test_user_without_profile_cannot_save_context(): void
+    {
+        $this->seedSubject('math', 'الرياضيات');
+        $user = $this->createUser();
+
+        $this->actingAs($user)
+            ->postJson('/api/user-context', ['subject_slug' => 'math'])
+            ->assertStatus(404);
     }
 
     public function test_context_updates_last_subject_on_new_visit(): void
     {
         $first = $this->seedSubject('math', 'الرياضيات');
         $second = $this->seedSubject('science', 'العلوم');
-        $user = $this->createUser();
+        $user = $this->createUserWithProfile();
 
         $this->actingAs($user)->postJson('/api/user-context', ['subject_slug' => 'math']);
         $this->actingAs($user)->postJson('/api/user-context', ['subject_slug' => 'science']);
 
-        $this->assertDatabaseHas('user_contexts', [
+        $this->assertDatabaseHas('student_profiles', [
             'user_id' => $user->id,
             'last_subject_id' => $second->id,
         ]);
 
-        $this->assertSame(1, $user->context()->count());
-        $this->assertNotSame($first->id, $user->context()->first()->last_subject_id);
+        $this->assertSame(1, StudentProfile::where('user_id', $user->id)->count());
+        $this->assertNotSame($first->id, $user->profile->last_subject_id);
     }
 
     public function test_context_rejects_unknown_subject_slug(): void
     {
-        $user = $this->createUser();
+        $user = $this->createUserWithProfile();
 
         $this->actingAs($user)
             ->postJson('/api/user-context', ['subject_slug' => 'unknown'])

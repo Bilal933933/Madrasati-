@@ -11,9 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('user_contexts', function (Blueprint $table) {
+        Schema::create('student_profiles', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->unique()->constrained()->cascadeOnDelete();
+            $table->foreignId('grade_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('semester_id')->constrained()->cascadeOnDelete();
             $table->foreignId('last_subject_id')->nullable()->constrained('subjects')->nullOnDelete();
             $table->timestamps();
         });
@@ -24,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('user_contexts');
+        Schema::dropIfExists('student_profiles');
     }
 };

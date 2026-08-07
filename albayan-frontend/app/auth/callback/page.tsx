@@ -13,7 +13,7 @@ export default function AuthCallbackPage() {
 
   useEffect(() => {
     if (isInitialized) {
-      router.replace(user ? "/" : "/login");
+      router.replace(user ? "/home" : "/login");
     }
   }, [isInitialized, user, router]);
 

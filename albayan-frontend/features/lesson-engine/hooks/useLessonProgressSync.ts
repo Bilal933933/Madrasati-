@@ -2,14 +2,20 @@ import { useEffect, useRef } from "react";
 import { useLessonEngineStore } from "../engine/lesson-engine-store";
 import { useLessonProgressStore } from "../state/lessonProgressStore";
 import { useLessonProgress } from "./useLessonProgress";
+import { lessonApi } from "../services/lessonApi";
 
 /**
  * هوك المزامنة التلقائية لتقدم الطالب داخل الدرس.
  * شغّله مرة واحدة داخل صفحة الدرس (بعد تحميل الرحلة): يراقب الشاشة الحالية
  * لمحرك الدرس ويسجّل كل شاشة يصل إليها الطالب حتى في حال الرجوع، ويعلّم
  * الدرس مكتملًا عند بلوغ شاشة النهاية.
+ *
+ * المزامنة مع الباك (تُضاف فوق الحفظ المحلي دون تغييره):
+ * - start: أول ما ينتقل الطالب من شاشة البداية (بدءًا أو استئنافًا).
+ * - complete: عند بلوغ شاشة النهاية.
+ * كلاهما fire-and-forget — فشل الشبكة لا يعطّل اللعب.
  */
-export function useLessonProgressSync() {
+export function useLessonProgressSync(lessonSlug: string) {
   const data = useLessonEngineStore((state) => state.data);
   const current = useLessonEngineStore((state) => state.current);
   const flow = useLessonEngineStore((state) => state.flow);
@@ -45,4 +51,26 @@ export function useLessonProgressSync() {
       markCompleted(lessonId);
     }
   }, [lessonId, screen, isCompleted, markCompleted]);
+
+  // مزامنة الباك: start مرة واحدة عند بدء الدرس فعليًا (الخروج من شاشة البداية).
+  const startSentRef = useRef(false);
+
+  useEffect(() => {
+    if (!lessonSlug || !screen || screen === "start" || startSentRef.current) {
+      return;
+    }
+    startSentRef.current = true;
+    lessonApi.start(lessonSlug).catch(() => {});
+  }, [lessonSlug, screen]);
+
+  // مزامنة الباك: complete عند بلوغ شاشة النهاية.
+  const completeSentRef = useRef(false);
+
+  useEffect(() => {
+    if (!lessonSlug || screen !== "finish" || completeSentRef.current) {
+      return;
+    }
+    completeSentRef.current = true;
+    lessonApi.complete(lessonSlug).catch(() => {});
+  }, [lessonSlug, screen]);
 }

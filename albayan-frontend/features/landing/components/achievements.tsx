@@ -1,16 +1,16 @@
-import { Sprout } from "lucide-react";
+import { Leaf, Sprout, TreeDeciduous, Trophy } from "lucide-react";
 import { ScrollReveal } from "./scroll-reveal";
 import { StaggerGroup } from "./stagger-group";
 
 const GROWTH_STAGES = [
-  { icon: "🌱", time: "اليوم", label: "أول درس", note: "تبدأ شجرتك ببذرة" },
-  { icon: "🌿", time: "بعد أسبوع", label: "أول وحدة", note: "النبتة تكبر" },
-  { icon: "🌳", time: "بعد شهر", label: "استمرارك", note: "شجرة راسخة" },
-  { icon: "🏆", time: "الإتقان", label: "إكمال المادة", note: "ثمرة رحلتك" },
+  { icon: Sprout, time: "اليوم", label: "أول درس", note: "تبدأ شجرتك ببذرة" },
+  { icon: Leaf, time: "بعد أسبوع", label: "أول وحدة", note: "النبتة تكبر" },
+  { icon: TreeDeciduous, time: "بعد شهر", label: "استمرارك", note: "شجرة راسخة" },
+  { icon: Trophy, time: "الإتقان", label: "إكمال المادة", note: "ثمرة رحلتك" },
 ];
 
 /**
- * قسم "الإنجازات": قصة نمو زمنية من 🌱 إلى 🏆 — كل مرحلة ترتبط بفترة
+ * قسم "الإنجازات": قصة نمو زمنية من بذرة إلى كأس — كل مرحلة ترتبط بفترة
  * زمنية (اليوم/أسبوع/شهر/إتقان) ليشعر الطالب بالنمو لا بجمع شارات.
  */
 export function Achievements() {
@@ -31,8 +31,11 @@ export function Achievements() {
             <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-[0.65rem] font-bold text-primary">
               {stage.time}
             </span>
-            <span className="flex size-14 items-center justify-center rounded-full border bg-card text-3xl shadow-sm transition-all duration-500 hover:-translate-y-1 hover:shadow-md">
-              {stage.icon}
+            <span className="flex size-14 items-center justify-center rounded-full border bg-card text-primary shadow-sm transition-all duration-500 hover:-translate-y-1 hover:shadow-md">
+              {(() => {
+                const Icon = stage.icon;
+                return <Icon className="size-7" aria-hidden />;
+              })()}
             </span>
             <p className="text-center text-sm font-semibold">{stage.label}</p>
             <p className="text-center text-xs text-muted-foreground">{stage.note}</p>

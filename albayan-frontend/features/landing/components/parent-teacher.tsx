@@ -1,4 +1,4 @@
-import { Bell, BookOpen, TrendingUp } from "lucide-react";
+import { Bell, BookOpen, PartyPopper, TrendingUp } from "lucide-react";
 import { FloatingCard } from "./floating-card";
 import { ScrollReveal } from "./scroll-reveal";
 
@@ -37,7 +37,10 @@ export function ParentTeacher() {
               </div>
 
               <div className="rounded-2xl bg-primary/10 p-4 text-center">
-                <p className="text-sm font-bold text-primary">🎉 أحمد تحسّن اليوم</p>
+                <p className="flex items-center justify-center gap-1.5 text-sm font-bold text-primary">
+                  <PartyPopper className="size-4" aria-hidden />
+                  أحمد تحسّن اليوم
+                </p>
                 <div className="mt-3 flex items-center justify-center gap-3 text-sm">
                   <span className="text-muted-foreground">45%</span>
                   <span className="text-primary">←</span>

@@ -2,8 +2,9 @@
 
 namespace App\Domains\Auth\Models;
 
-use App\Domains\Curriculum\Models\UserContext;
+use App\Domains\Progress\Models\LessonCompletion;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\DatabaseNotification;
@@ -91,10 +92,19 @@ class User extends Authenticatable
     }
 
     /**
-     * سياق تصفح الطالب — آخر مادة استكشفها (عبر user_contexts).
+     * الملف الأكاديمي للطالب — الحالة الحالية: صفه وفصله وآخر مادة استكشفها
+     * (عبر student_profiles).
      */
-    public function context(): HasOne
+    public function profile(): HasOne
     {
-        return $this->hasOne(UserContext::class);
+        return $this->hasOne(StudentProfile::class);
+    }
+
+    /**
+     * سجلات تقدّم الطالب في الدروس (بدءًا وإكمالًا).
+     */
+    public function lessonCompletions(): HasMany
+    {
+        return $this->hasMany(LessonCompletion::class);
     }
 }

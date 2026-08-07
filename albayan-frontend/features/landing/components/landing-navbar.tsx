@@ -56,7 +56,7 @@ export function LandingNavbar() {
             </>
           ) : (
             <Button asChild className="h-9 px-3">
-              <Link href="/">بيتي التعليمي</Link>
+              <Link href="/home">بيتي التعليمي</Link>
             </Button>
           )}
         </div>

@@ -1,5 +1,14 @@
 "use client";
 
+import {
+  BookOpen,
+  ClipboardCheck,
+  GraduationCap,
+  Home,
+  TrendingUp,
+  Trophy,
+  type LucideIcon,
+} from "lucide-react";
 import { useScrollProgress } from "../hooks/use-scroll-progress";
 import { cn } from "@/lib/utils";
 
@@ -7,6 +16,19 @@ export interface JourneyStation {
   icon: string;
   label: string;
 }
+
+/**
+ * خريطة أسماء أيقونات المسار إلى مكوّنات SVG فعلية — تمرر الأسماء
+ * كنص عبر حدود Server/Client فلا يمكن تمرير مرجعيات المكوّنات مباشرة.
+ */
+const STATION_ICONS: Record<string, LucideIcon> = {
+  Home,
+  BookOpen,
+  ClipboardCheck,
+  TrendingUp,
+  GraduationCap,
+  Trophy,
+};
 
 interface ProgressPathProps {
   stations: JourneyStation[];
@@ -48,13 +70,16 @@ export function ProgressPath({ stations, className }: ProgressPathProps) {
             <div key={station.label} className="relative flex flex-col items-center gap-1">
               <span
                 className={cn(
-                  "flex size-7 items-center justify-center rounded-full border bg-background text-sm transition-all duration-500",
+                  "flex size-7 items-center justify-center rounded-full border bg-background transition-all duration-500",
                   active
                     ? "border-primary text-primary shadow-md shadow-primary/20"
                     : "border-border text-muted-foreground",
                 )}
               >
-                {station.icon}
+                {(() => {
+                  const Icon = STATION_ICONS[station.icon] ?? Home;
+                  return <Icon className="size-3.5" aria-hidden />;
+                })()}
               </span>
               <span
                 className={cn(

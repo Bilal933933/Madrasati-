@@ -1,5 +1,15 @@
 import { toast } from "sonner";
 
+export interface ApiError {
+  status: number;
+  message: string;
+  errors?: Record<string, string[]> | null;
+}
+
+export function isApiError(error: unknown): error is ApiError {
+  return typeof error === "object" && error !== null && "status" in error;
+}
+
 interface ApiErrorLike {
   status?: number;
   message?: string;

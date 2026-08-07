@@ -26,6 +26,8 @@ class DatabaseSeeder extends Seeder
             Lesson\LessonSeeder::class,
             Assessment\AssessmentSeeder::class,
             Assessment\QuestionSeeder::class,
+            StudentProfileSeeder::class,
+            StudentProgressSeeder::class,
         ]);
     }
 }

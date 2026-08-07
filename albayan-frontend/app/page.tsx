@@ -15,12 +15,12 @@ import { Testimonials } from "@/features/landing/components/testimonials";
 import { WhyItWorks } from "@/features/landing/components/why-it-works";
 
 const JOURNEY_STATIONS = [
-  { icon: "🏠", label: "البداية" },
-  { icon: "📖", label: "الدرس" },
-  { icon: "📝", label: "التقييم" },
-  { icon: "📈", label: "التحسن" },
-  { icon: "🎓", label: "الإتقان" },
-  { icon: "🏆", label: "الإنجاز" },
+  { icon: "Home", label: "البداية" },
+  { icon: "BookOpen", label: "الدرس" },
+  { icon: "ClipboardCheck", label: "التقييم" },
+  { icon: "TrendingUp", label: "التحسن" },
+  { icon: "GraduationCap", label: "الإتقان" },
+  { icon: "Trophy", label: "الإنجاز" },
 ];
 
 export default function Home() {
