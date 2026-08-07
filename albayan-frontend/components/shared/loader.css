@@ -1,0 +1,195 @@
+/* ===== Loader (أعمدة متحركة مع كرات) ===== */
+.md-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.md-loader-main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.md-loader-up {
+  position: relative;
+  width: 1.15em;
+  height: 13em;
+}
+
+.md-loader-bar-group,
+.md-loader-ball-group {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.md-loader-bar,
+.md-loader-bar::after,
+.md-loader-ball {
+  background: var(--muted);
+}
+
+.md-loader-bar {
+  position: absolute;
+  width: 1.15em;
+  height: 13em;
+  border-radius: 50px;
+}
+
+.md-loader-bar::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1.15em;
+  height: 5em;
+  border-radius: 50px;
+  border: 1px solid var(--border);
+  box-shadow:
+    inset 5px 5px 15px rgb(0 0 0 / 12%),
+    inset -5px -5px 15px rgb(255 255 255 / 25%);
+  mask-image: linear-gradient(
+    to bottom,
+    black calc(100% - 48px),
+    transparent 100%
+  );
+}
+
+.md-loader-bar::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 1.15em;
+  height: 4.5em;
+  background: var(--muted);
+  border-radius: 50px;
+  border: 1px solid var(--border);
+  box-shadow:
+    inset 5px 5px 15px rgb(0 0 0 / 12%),
+    inset -5px -5px 15px rgb(255 255 255 / 25%);
+  mask-image: linear-gradient(
+    to top,
+    black calc(100% - 48px),
+    transparent 100%
+  );
+}
+
+.md-loader-ball-wrap {
+  position: absolute;
+  width: 1.15em;
+  height: 13em;
+  border-radius: 50px;
+  background: transparent;
+}
+
+.md-loader-ball {
+  width: 1.15em;
+  height: 1.15em;
+  box-shadow:
+    rgb(0 0 0 / 17%) 0px -10px 10px 0px inset,
+    rgb(0 0 0 / 15%) 0px -15px 15px 0px inset,
+    rgb(0 0 0 / 10%) 0px -40px 20px 0px inset,
+    rgb(0 0 0 / 6%) 0px 2px 1px,
+    rgb(0 0 0 / 9%) 0px 4px 2px,
+    rgb(0 0 0 / 9%) 0px 8px 4px,
+    rgb(0 0 0 / 9%) 0px 16px 8px,
+    rgb(0 0 0 / 9%) 0px 32px 16px,
+    0px -1px 15px -8px rgb(0 0 0 / 9%);
+  border-radius: 50%;
+  transition: transform 800ms cubic-bezier(1, -0.4, 0, 1.4);
+  animation: 3.63s md-loader-move ease-in-out infinite;
+}
+
+.md-loader-bar:nth-child(2) {
+  transform: rotate(20deg);
+}
+.md-loader-bar:nth-child(3) {
+  transform: rotate(40deg);
+}
+.md-loader-bar:nth-child(4) {
+  transform: rotate(60deg);
+}
+.md-loader-bar:nth-child(5) {
+  transform: rotate(80deg);
+}
+.md-loader-bar:nth-child(6) {
+  transform: rotate(100deg);
+}
+.md-loader-bar:nth-child(7) {
+  transform: rotate(120deg);
+}
+.md-loader-bar:nth-child(8) {
+  transform: rotate(140deg);
+}
+.md-loader-bar:nth-child(9) {
+  transform: rotate(160deg);
+}
+
+.md-loader-ball-wrap:nth-child(2) {
+  transform: rotate(20deg);
+}
+.md-loader-ball-wrap:nth-child(3) {
+  transform: rotate(40deg);
+}
+.md-loader-ball-wrap:nth-child(4) {
+  transform: rotate(60deg);
+}
+.md-loader-ball-wrap:nth-child(5) {
+  transform: rotate(80deg);
+}
+.md-loader-ball-wrap:nth-child(6) {
+  transform: rotate(100deg);
+}
+.md-loader-ball-wrap:nth-child(7) {
+  transform: rotate(120deg);
+}
+.md-loader-ball-wrap:nth-child(8) {
+  transform: rotate(140deg);
+}
+.md-loader-ball-wrap:nth-child(9) {
+  transform: rotate(160deg);
+}
+
+.md-loader-ball-1 {
+  animation-delay: 0.2s;
+}
+.md-loader-ball-2 {
+  animation-delay: 0.4s;
+}
+.md-loader-ball-3 {
+  animation-delay: 0.6s;
+}
+.md-loader-ball-4 {
+  animation-delay: 0.8s;
+}
+.md-loader-ball-5 {
+  animation-delay: 1s;
+}
+.md-loader-ball-6 {
+  animation-delay: 1.2s;
+}
+.md-loader-ball-7 {
+  animation-delay: 1.4s;
+}
+.md-loader-ball-8 {
+  animation-delay: 1.6s;
+}
+
+@keyframes md-loader-move {
+  0% {
+    transform: translateY(0em);
+  }
+  50% {
+    transform: translateY(12em);
+  }
+  100% {
+    transform: translateY(0em);
+  }
+}

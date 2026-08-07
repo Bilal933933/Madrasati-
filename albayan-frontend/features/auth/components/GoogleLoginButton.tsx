@@ -37,7 +37,7 @@ export function GoogleLoginButton() {
       type="button"
       variant="outline"
       onClick={handleClick}
-      className="h-11 w-full text-base"
+      className="h-12 w-full rounded-full text-base transition-all hover:scale-[1.02] active:scale-[0.98]"
     >
       <GoogleIcon />
       المتابعة عبر جوجل
