@@ -23,6 +23,7 @@ use Illuminate\Support\Carbon;
  * @property string|null $icon
  * @property string|null $color
  * @property int $sort_order
+ * @property int|null $month_no
  * @property bool $is_published
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
@@ -62,6 +63,7 @@ class Lesson extends Model
         'icon',
         'color',
         'sort_order',
+        'month_no',
         'is_published',
     ];
 
@@ -69,6 +71,7 @@ class Lesson extends Model
     {
         return [
             'sort_order' => 'integer',
+            'month_no' => 'integer',
             'is_published' => 'boolean',
             'learning_objectives' => 'array',
         ];

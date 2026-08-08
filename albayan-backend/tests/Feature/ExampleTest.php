@@ -2,18 +2,17 @@
 
 namespace Tests\Feature;
 
-// use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class ExampleTest extends TestCase
 {
     /**
-     * A basic test example.
+     * نقطة API محمية ترفض الزائر غير المسجّل (401).
      */
     public function test_the_application_returns_a_successful_response(): void
     {
-        $response = $this->get('/');
+        $response = $this->withHeader('Accept', 'application/json')->get('/api/user');
 
-        $response->assertStatus(200);
+        $response->assertUnauthorized();
     }
 }

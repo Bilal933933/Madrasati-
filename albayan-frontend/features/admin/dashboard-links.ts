@@ -5,6 +5,8 @@ import {
   CalendarDays,
   GraduationCap,
   FileText,
+  HelpCircle,
+  FileCheck2,
   type LucideIcon,
 } from "lucide-react";
 
@@ -22,4 +24,6 @@ export const DASHBOARD_LINKS: DashboardLink[] = [
   { href: "/admin/subjects", title: "المواد الدراسية", description: "إدارة المواد وتنظيمها ضمن الصفوف.", icon: Library },
   { href: "/admin/courses", title: "المقررات الدراسية", description: "إدارة المقررات وتنظيمها ضمن المواد.", icon: GraduationCap },
   { href: "/admin/lessons", title: "الدروس", description: "إدارة الدروس وتنظيمها ضمن المقررات.", icon: FileText },
+  { href: "/admin/bank-questions", title: "بنك الأسئلة", description: "إدارة أسئلة الامتحانات المرتبطة بالدروس.", icon: HelpCircle },
+  { href: "/admin/exams", title: "الامتحانات", description: "إدارة تعريفات الامتحانات ونطاقاتها.", icon: FileCheck2 },
 ];

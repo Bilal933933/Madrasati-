@@ -11,6 +11,8 @@ import {
   BookMarked,
   FileText,
   GraduationCap,
+  HelpCircle,
+  FileCheck2,
 } from "lucide-react";
 import {
   Sidebar,
@@ -35,6 +37,8 @@ const NAV_ITEMS = [
   { href: "/admin/subjects", label: "المواد الدراسية", icon: Library },
   { href: "/admin/courses", label: "الوحدات", icon: BookMarked },
   { href: "/admin/lessons", label: "الدروس", icon: FileText },
+  { href: "/admin/bank-questions", label: "بنك الأسئلة", icon: HelpCircle },
+  { href: "/admin/exams", label: "الامتحانات", icon: FileCheck2 },
 ];
 
 export function AdminSidebar() {

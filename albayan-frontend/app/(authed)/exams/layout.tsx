@@ -6,30 +6,31 @@ import {
   Compass,
   GraduationCap,
   Home as HomeIcon,
-  LayoutDashboard,
   LogOut,
 } from "lucide-react";
 import { Loader } from "@/components/shared/loader";
-import { SiteNavbar } from "@/components/shared/site-navbar";
+import { SiteNavbar, type NavItem } from "@/components/shared/site-navbar";
 import { useAuthStore } from "@/features/auth/store/authStore";
 import { useLogout } from "@/features/auth/hooks/useLogout";
 import { StudentDock } from "@/features/student/components/student-dock";
 import { UserMenu } from "@/features/student/components/UserMenu";
-import { LandingFooter } from "@/features/landing/components/footer";
 
 /**
- * هيكل بيت الطالب: بار تنقّل عائم عام موحّد (SiteNavbar) بشعار + قائمة
- * المستخدم + محتوى + فوتر البوابة + شريط سفلي جوال (StudentDock).
- * حارس تسجيل الدخول: الزائر يُعاد إلى /login، والمدير لا يُمنع (يرى واجهة
- * ربط البيانات الدراسية لأنّه بلا ملف طالب بعد).
+ * شل منطقة الامتحانات: حارس تسجيل دخول + هيدر موحّد + شريط سفلي جوال.
  */
-export default function StudentLayout({
+export default function ExamsLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   const router = useRouter();
   const user = useAuthStore((state) => state.user);
   const isInitialized = useAuthStore((state) => state.isInitialized);
   const logout = useLogout();
+
+  const links: NavItem[] = [
+    { href: "/home", label: "الرئيسية" },
+    { href: "/explore", label: "المواد" },
+    { href: "/exams", label: "الامتحانات" },
+  ];
 
   const dockItems = [
     {
@@ -47,15 +48,6 @@ export default function StudentLayout({
       label: "الامتحانات",
       onClick: () => router.push("/exams"),
     },
-    ...(user?.role === "admin"
-      ? [
-          {
-            icon: <LayoutDashboard size={16} />,
-            label: "لوحة التحكم",
-            onClick: () => router.push("/admin"),
-          },
-        ]
-      : []),
     {
       icon: <LogOut size={16} />,
       label: "تسجيل الخروج",
@@ -80,11 +72,9 @@ export default function StudentLayout({
 
   return (
     <div className="flex min-h-dvh flex-col">
-      <SiteNavbar brandHref="/home" actions={<UserMenu />} />
+      <SiteNavbar brandHref="/home" links={links} actions={<UserMenu />} />
 
       <main className="flex-1 pb-28">{children}</main>
-
-      <LandingFooter />
 
       <StudentDock items={dockItems} />
     </div>
