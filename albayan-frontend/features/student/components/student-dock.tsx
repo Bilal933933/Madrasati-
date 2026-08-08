@@ -11,11 +11,10 @@ import {
   Children,
   cloneElement,
   useEffect,
-  useMemo,
   useRef,
   useState,
-  type MouseEvent,
 } from "react";
+import { useIsMobile } from "@/hooks/use-mobile";
 import "./student-dock.css";
 
 type StudentDockItem = {
@@ -30,19 +29,17 @@ type StudentDockProps = {
   className?: string;
   spring?: { mass: number; stiffness: number; damping: number };
   magnification?: number;
-  distance?: number;
-  panelHeight?: number;
-  dockHeight?: number;
   baseItemSize?: number;
 };
+
+type DockOrientation = "bottom" | "side";
 
 function DockItem({
   children,
   className = "",
   onClick,
-  mouseX,
+  orientation,
   spring,
-  distance,
   magnification,
   baseItemSize,
   label,
@@ -50,9 +47,8 @@ function DockItem({
   children: React.ReactNode;
   className?: string;
   onClick?: () => void;
-  mouseX: ReturnType<typeof useMotionValue<number>>;
+  orientation: DockOrientation;
   spring: { mass: number; stiffness: number; damping: number };
-  distance: number;
   magnification: number;
   baseItemSize: number;
   label: string;
@@ -60,20 +56,12 @@ function DockItem({
   const ref = useRef<HTMLDivElement>(null);
   const isHovered = useMotionValue(0);
 
-  const mouseDistance = useTransform(mouseX, (val) => {
-    const rect = ref.current?.getBoundingClientRect() ?? {
-      x: 0,
-      width: baseItemSize,
-    };
-    return val - rect.x - baseItemSize / 2;
-  });
-
-  const targetSize = useTransform(
-    mouseDistance,
-    [-distance, 0, distance],
-    [baseItemSize, magnification, baseItemSize]
+  const targetScale = useTransform(
+    isHovered,
+    [0, 1],
+    [1, magnification / baseItemSize]
   );
-  const size = useSpring(targetSize, spring);
+  const scale = useSpring(targetScale, spring);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" || e.key === " ") {
@@ -85,13 +73,18 @@ function DockItem({
   return (
     <motion.div
       ref={ref}
-      style={{ width: size, height: size }}
-      onHoverStart={() => isHovered.set(1)}
-      onHoverEnd={() => isHovered.set(0)}
+      style={{
+        scale,
+        width: baseItemSize,
+        height: baseItemSize,
+        transformOrigin: "center",
+      }}
+      className={`dock-item ${className}`}
+      onMouseEnter={() => isHovered.set(1)}
+      onMouseLeave={() => isHovered.set(0)}
       onFocus={() => isHovered.set(1)}
       onBlur={() => isHovered.set(0)}
       onClick={onClick}
-      className={`dock-item ${className}`}
       tabIndex={0}
       role="button"
       aria-haspopup="true"
@@ -101,8 +94,9 @@ function DockItem({
       {Children.map(children, (child) => {
         const childEl = child as React.ReactElement<{
           isHovered?: ReturnType<typeof useMotionValue<number>>;
+          orientation?: DockOrientation;
         }>;
-        return cloneElement(childEl, { isHovered });
+        return cloneElement(childEl, { isHovered, orientation });
       })}
     </motion.div>
   );
@@ -110,10 +104,12 @@ function DockItem({
 
 function DockLabel({
   children,
+  orientation = "bottom",
   isHovered,
   className = "",
 }: {
   children: React.ReactNode;
+  orientation?: DockOrientation;
   isHovered?: ReturnType<typeof useMotionValue<number>>;
   className?: string;
 }) {
@@ -127,15 +123,18 @@ function DockLabel({
     return () => unsubscribe();
   }, [isHovered]);
 
+  const labelClass =
+    orientation === "side" ? "dock-label--side" : "dock-label";
+
   return (
     <AnimatePresence>
       {isVisible && (
         <motion.div
-          initial={{ opacity: 0, y: 0 }}
-          animate={{ opacity: 1, y: -10 }}
-          exit={{ opacity: 0, y: 0 }}
+          initial={{ opacity: 0, y: 0, x: orientation === "side" ? -8 : 8 }}
+          animate={{ opacity: 1, y: orientation === "side" ? 0 : -10, x: 0 }}
+          exit={{ opacity: 0, y: 0, x: orientation === "side" ? -8 : 8 }}
           transition={{ duration: 0.2 }}
-          className={`dock-label ${className}`}
+          className={`${labelClass} ${className}`}
           role="tooltip"
         >
           {children}
@@ -154,48 +153,23 @@ export function StudentDock({
   className = "",
   spring = { mass: 0.1, stiffness: 150, damping: 12 },
   magnification = 56,
-  distance = 200,
-  panelHeight = 52,
-  dockHeight = 256,
   baseItemSize = 40,
 }: StudentDockProps) {
-  const mouseX = useMotionValue(Infinity);
-  const isHovered = useMotionValue(0);
-
-  const maxHeight = useMemo(
-    () => Math.max(dockHeight, magnification + magnification / 2 + 4),
-    [magnification, dockHeight]
-  );
-  const heightRow = useTransform(isHovered, [0, 1], [panelHeight, maxHeight]);
-  const height = useSpring(heightRow, spring);
+  const isMobile = useIsMobile();
+  const orientation: DockOrientation = isMobile ? "bottom" : "side";
 
   return (
-    <motion.div
-      style={{ height, scrollbarWidth: "none" }}
-      className="dock-outer"
+    <div
+      className={`dock-outer ${orientation === "side" ? "dock-outer--side" : ""}`}
     >
-      <motion.div
-        onMouseMove={(e: MouseEvent) => {
-          isHovered.set(1);
-          mouseX.set(e.pageX);
-        }}
-        onMouseLeave={() => {
-          isHovered.set(0);
-          mouseX.set(Infinity);
-        }}
-        className={`dock-panel ${className}`}
-        style={{ height: panelHeight }}
-        role="toolbar"
-        aria-label="شريط تنقّل سفلي"
-      >
+      <div className={`dock-panel ${className}`} role="toolbar" aria-label="شريط تنقّل">
         {items.map((item, index) => (
           <DockItem
             key={index}
             onClick={item.onClick}
             className={item.className}
-            mouseX={mouseX}
+            orientation={orientation}
             spring={spring}
-            distance={distance}
             magnification={magnification}
             baseItemSize={baseItemSize}
             label={item.label}
@@ -204,7 +178,7 @@ export function StudentDock({
             <DockLabel>{item.label}</DockLabel>
           </DockItem>
         ))}
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   );
 }

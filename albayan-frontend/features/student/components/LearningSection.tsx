@@ -98,7 +98,7 @@ export function LearningSection({
       {/* جسم بعمودين */}
       <div className="grid grid-cols-1 lg:grid-cols-2">
         {/* الصورة */}
-        <div className={cn("relative overflow-hidden rounded-3xl lg:min-h-80", isEven ? "lg:order-2" : "lg:order-1")}>
+        <div className={cn("relative aspect-[16/9] overflow-hidden rounded-3xl lg:aspect-auto lg:min-h-80", isEven ? "lg:order-2" : "lg:order-1")}>
           <ExploreThumb
             image={image}
             fallbackImage="/images/subject-fallback.jpg"

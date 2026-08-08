@@ -82,7 +82,7 @@ export default function StudentLayout({
     <div className="flex min-h-dvh flex-col">
       <SiteNavbar brandHref="/home" actions={<UserMenu />} />
 
-      <main className="flex-1 pb-28">{children}</main>
+      <main className="flex-1 pb-28 lg:pb-0 lg:pe-28">{children}</main>
 
       <LandingFooter />
 

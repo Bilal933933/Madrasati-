@@ -11,6 +11,16 @@
   pointer-events: none;
 }
 
+/* الموضع الجانبي (الشاشات الكبيرة) — عمودي على جانب الصفحة حسب RTL */
+.dock-outer--side {
+  inset-inline: auto;
+  inset-inline-end: 0.75rem;
+  bottom: auto;
+  top: 50%;
+  margin: 0;
+  transform: translateY(-50%);
+}
+
 .dock-panel {
   pointer-events: auto;
   position: absolute;
@@ -24,6 +34,17 @@
   border: 1px solid var(--border);
   box-shadow: 0 8px 32px 0 rgb(45 41 38 / 0.12);
   padding: 0 0.375rem 0.375rem;
+}
+
+.dock-outer--side .dock-panel {
+  bottom: auto;
+  transform: none;
+  position: static;
+  flex-direction: column;
+  align-items: center;
+  height: fit-content;
+  width: fit-content;
+  padding: 0.375rem;
 }
 
 .dock-item {
@@ -67,4 +88,21 @@
   padding: 0.125rem 0.5rem;
   font-size: 0.75rem;
   transform: translateX(-50%);
+}
+
+/* التسمية الجانبية (الشاشات الكبيرة): تظهر بجانب الأيقونة ناحية حافة الصفحة */
+.dock-label--side {
+  position: absolute;
+  top: 50%;
+  inset-inline-end: 100%;
+  margin-inline-end: 0.5rem;
+  width: fit-content;
+  white-space: nowrap;
+  border-radius: 0.375rem;
+  border: 1px solid var(--border);
+  background: var(--popover);
+  color: var(--foreground);
+  padding: 0.125rem 0.5rem;
+  font-size: 0.75rem;
+  transform: translateY(-50%);
 }
