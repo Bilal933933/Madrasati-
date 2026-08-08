@@ -26,11 +26,11 @@ class StudentExamController extends Controller
     ) {}
 
     /**
-     * الامتحانات المتاحة للطالب (نشطة فقط) مع حالة الفتح والتقدّم.
+     * الامتحانات المتاحة للطالب (نشطة فقط + ضمن صفه) مع حالة الفتح والتقدّم.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $blueprints = $this->blueprintService->blueprints(null, activeOnly: true);
+        $blueprints = $this->blueprintService->blueprintsForUser($request->user(), activeOnly: true);
 
         return ExamBlueprintResource::collection(
             $blueprints->map(function ($blueprint) {

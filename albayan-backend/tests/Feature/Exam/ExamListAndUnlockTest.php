@@ -2,6 +2,10 @@
 
 namespace Tests\Feature\Exam;
 
+use App\Domains\Curriculum\Models\Grade;
+use App\Domains\Curriculum\Models\Semester;
+use App\Domains\Curriculum\Models\Stage;
+use App\Domains\Curriculum\Models\Subject;
 use App\Domains\Exam\Models\ExamBlueprint;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -64,6 +68,102 @@ class ExamListAndUnlockTest extends BaseExamTestCase
         $response->assertOk()
             ->assertJsonPath('data.attempts_left', 1)
             ->assertJsonPath('data.best_score', $attempt['score_percentage'] ?? 0);
+    }
+
+    #[Test]
+    public function list_shows_only_blueprints_of_students_grade(): void
+    {
+        $this->makeMcq($this->lessonOne);
+        $this->completeScopeForStudent();
+
+        // امتحان صف الطالب (الرابع) — عبر سلسلة درس→مقرر→مادة
+        $this->makeBlueprint([
+            'title' => 'امتحان صفي — الرابع',
+            'lesson_id' => $this->lessonOne->id,
+        ]);
+
+        // امتحان صف آخر (الخامس) — عبر مادة صف مختلف
+        $otherGrade = Grade::create(['stage_id' => $this->stage->id, 'key' => 'grade-5', 'name' => 'الخامس', 'sort_order' => 2, 'is_published' => true]);
+        $otherSemester = Semester::create(['grade_id' => $otherGrade->id, 'key' => 'semester-1', 'name' => 'الفصل الأول', 'sort_order' => 0]);
+        $otherSubject = Subject::create(['grade_id' => $otherGrade->id, 'semester_id' => $otherSemester->id, 'name' => 'علوم', 'slug' => 'science', 'sort_order' => 1, 'is_published' => true]);
+        ExamBlueprint::create([
+            'exam_type' => 'monthly',
+            'title' => 'امتحان صف آخر — الخامس',
+            'subject_id' => $otherSubject->id,
+            'month_no' => 1,
+            'duration_minutes' => 30,
+            'easy_count' => 1,
+            'medium_count' => 0,
+            'hard_count' => 0,
+            'is_active' => true,
+        ]);
+
+        $response = $this->actingAs($this->student)->getJson('/api/exams');
+
+        $response->assertOk()
+            ->assertJsonCount(1, 'data')
+            ->assertJsonPath('data.0.title', 'امتحان صفي — الرابع');
+    }
+
+    #[Test]
+    public function list_shows_full_blueprint_when_stage_matches(): void
+    {
+        $this->makeMcq($this->lessonOne);
+        $this->completeScopeForStudent();
+
+        ExamBlueprint::create([
+            'exam_type' => 'full',
+            'title' => 'الامتحان الشامل — المرحلة',
+            'stage_id' => $this->stage->id,
+            'duration_minutes' => 30,
+            'easy_count' => 1,
+            'medium_count' => 0,
+            'hard_count' => 0,
+            'is_active' => true,
+        ]);
+
+        $response = $this->actingAs($this->student)->getJson('/api/exams');
+
+        $response->assertOk()
+            ->assertJsonPath('data.0.title', 'الامتحان الشامل — المرحلة');
+    }
+
+    #[Test]
+    public function list_hides_blueprints_of_other_stage_and_other_grade(): void
+    {
+        $this->makeMcq($this->lessonOne);
+        $this->completeScopeForStudent();
+
+        // مرحلة أخرى — لا تظهر لطالب المرحلة الابتدائية
+        $otherStage = Stage::create(['name' => 'الإعدادية', 'sort_order' => 2, 'is_published' => true]);
+
+        ExamBlueprint::create([
+            'exam_type' => 'full',
+            'title' => 'امتحان مرحلة أخرى',
+            'stage_id' => $otherStage->id,
+            'duration_minutes' => 30,
+            'easy_count' => 1,
+            'medium_count' => 0,
+            'hard_count' => 0,
+            'is_active' => true,
+        ]);
+
+        // امتحان بدون صف (نِسّب خاطئ) لا يظهر أيضًا
+        ExamBlueprint::create([
+            'exam_type' => 'full',
+            'title' => 'امتحان بلا نطاق',
+            'grade_id' => null,
+            'stage_id' => null,
+            'duration_minutes' => 30,
+            'easy_count' => 1,
+            'medium_count' => 0,
+            'hard_count' => 0,
+            'is_active' => true,
+        ]);
+
+        $response = $this->actingAs($this->student)->getJson('/api/exams');
+
+        $response->assertOk()->assertJsonCount(0, 'data');
     }
 
     /* --------------------- نطاقات الفتح (الأنواع الخمسة) --------------------- */

@@ -2,6 +2,7 @@
 
 namespace App\Domains\Exam\Services;
 
+use App\Domains\Auth\Models\User;
 use App\Domains\Curriculum\Models\Course;
 use App\Domains\Curriculum\Models\Grade;
 use App\Domains\Curriculum\Models\Subject;
@@ -34,6 +35,72 @@ class ExamBlueprintService
             ->with(['lesson', 'course', 'subject', 'grade', 'stage'])
             ->orderByDesc('id')
             ->get();
+    }
+
+    /**
+     * امتحانات الطالب — النشطة فقط وضمن صفّه الدراسي (من ملفه الأكاديمي).
+     *
+     * كل نوع امتحان يُحصر في صف واحد عبر السلسلة التعليمية:
+     *   lesson   → lesson → course → subject
+     *   unit     → course → subject
+     *   monthly / semester → subject
+     *   full     → grade_id أو stage_id
+     */
+    public function blueprintsForUser(User $user, bool $activeOnly = false): Collection
+    {
+        $gradeId = $user->profile?->grade_id;
+        $stageId = $user->profile?->grade?->stage_id;
+
+        if ($gradeId === null) {
+            return collect();
+        }
+
+        return ExamBlueprint::query()
+            ->when($activeOnly, fn ($q) => $q->where('is_active', true))
+            ->with([
+                'lesson.course.subject',
+                'course.subject',
+                'subject',
+                'grade',
+                'stage',
+            ])
+            ->orderByDesc('id')
+            ->get()
+            ->filter(
+                fn (ExamBlueprint $blueprint) => $this->belongsToStudentGrade(
+                    $blueprint,
+                    $gradeId,
+                    $stageId
+                )
+            )
+            ->values();
+    }
+
+    /**
+     * هل النطاق الصفّي لهذا الامتحان يخصّ صف/مرحلة الطالب؟
+     */
+    private function belongsToStudentGrade(
+        ExamBlueprint $blueprint,
+        int $gradeId,
+        ?int $stageId
+    ): bool {
+        // الامتحان الشامل: مقسوم على صف أو على مرحلة كاملة
+        if ($blueprint->exam_type === 'full') {
+            if ($blueprint->stage_id !== null) {
+                return $stageId !== null && $blueprint->stage_id === $stageId;
+            }
+
+            return $blueprint->grade_id === $gradeId;
+        }
+
+        $blueprintGradeId = match ($blueprint->exam_type) {
+            'lesson' => $blueprint->lesson?->course?->subject?->grade_id,
+            'unit' => $blueprint->course?->subject?->grade_id,
+            'monthly', 'semester' => $blueprint->subject?->grade_id,
+            default => null,
+        };
+
+        return $blueprintGradeId === $gradeId;
     }
 
     public function findBlueprint(int $id): ExamBlueprint

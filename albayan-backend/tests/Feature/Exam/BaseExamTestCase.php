@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Exam;
 
+use App\Domains\Auth\Models\StudentProfile;
 use App\Domains\Auth\Models\User;
 use App\Domains\Curriculum\Models\Course;
 use App\Domains\Curriculum\Models\Grade;
@@ -63,6 +64,13 @@ abstract class BaseExamTestCase extends TestCase
         $this->grade = Grade::create(['stage_id' => $this->stage->id, 'name' => 'الرابع', 'sort_order' => 1, 'is_published' => true]);
         $this->semester = Semester::create(['grade_id' => $this->grade->id, 'name' => 'الفصل الأول', 'sort_order' => 1]);
         $this->subject = Subject::create(['grade_id' => $this->grade->id, 'semester_id' => $this->semester->id, 'name' => 'الرياضيات', 'slug' => 'math', 'sort_order' => 1, 'is_published' => true]);
+
+        // ملف أكاديمي للطالب — صفه وفصله (قائمة الامتحانات تُحصر بصفه)
+        StudentProfile::create([
+            'user_id' => $this->student->id,
+            'grade_id' => $this->grade->id,
+            'semester_id' => $this->semester->id,
+        ]);
 
         $this->courseOne = Course::create(['subject_id' => $this->subject->id, 'name' => 'الأعداد', 'sort_order' => 1, 'is_published' => true]);
         $this->courseTwo = Course::create(['subject_id' => $this->subject->id, 'name' => 'الهندسة', 'sort_order' => 2, 'is_published' => true]);
