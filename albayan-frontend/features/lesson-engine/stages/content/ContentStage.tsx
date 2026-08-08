@@ -1,6 +1,7 @@
 "use client";
 
-import { ImageIcon } from "lucide-react";
+import { ImageIcon, Play } from "lucide-react";
+import { useState } from "react";
 import { RichLessonContent } from "@/components/shared/rich-lesson-content";
 import { ExploreThumb } from "@/features/explore/components/ExploreThumb";
 import type { TiptapDoc } from "@/features/lesson-engine/engine/tiptap-types";
@@ -24,38 +25,110 @@ export function ContentStage() {
     return <VideoContent url={content.url} embed={content.embed} />;
   }
 
-  return <ParagraphContent title={content.title} doc={content.content} image={content.image} />;
+  return (
+    <ParagraphContent
+      title={content.title}
+      doc={content.content}
+      image={content.image}
+      url={content.url}
+      embed={content.embed}
+    />
+  );
 }
 
 function ParagraphContent({
   title,
   doc,
   image,
+  url,
+  embed,
 }: {
   title?: string | null;
   doc?: TiptapDoc | null;
   image?: string | null;
+  url?: string | null;
+  embed?: string | null;
 }) {
+  // وجود فيديو مرتبط بالفقرة يُفعّل زر التبديل (صورة/فيديو).
+  const hasVideo = Boolean(url || embed);
+  const [media, setMedia] = useState<"image" | "video">("image");
+
   return (
-    <article className="flex flex-col gap-5">
+    <article className="flex flex-1 flex-col">
+      {/* العنوان يعتلي كلًا من الوسيط والنص */}
       {title && (
-        <h2 className="text-2xl font-bold leading-tight tracking-tight text-foreground">
+        <h2 className="mb-6 text-2xl font-bold leading-tight tracking-tight text-foreground lg:text-3xl">
           {title}
         </h2>
       )}
-      <ExploreThumb
-        image={image}
-        fallbackImage="/images/lesson-fallback.jpg"
-        className="h-auto w-full rounded-xl object-cover"
-        alt={title ?? "صورة"}
-        fallback={
-          <span className="flex h-auto min-h-48 w-full items-center justify-center rounded-xl bg-muted">
-            <ImageIcon className="size-10 text-muted-foreground" aria-hidden />
-          </span>
-        }
-      />
-      <RichLessonContent doc={doc ?? null} className="text-base leading-relaxed" />
+
+      <div className="grid flex-1 gap-6 lg:grid-cols-[0.95fr_1.05fr] lg:items-start lg:gap-10">
+        {/* الوسيط — صورة/فيديو قابل للتغيير، بأبعاد ثابتة داخل حاوية محصورة */}
+        <div className="relative order-2 aspect-[4/3] w-full overflow-hidden rounded-xl border border-border/60 bg-muted lg:order-1 lg:top-24 lg:sticky lg:aspect-square">
+          {hasVideo && media === "video" ? (
+            <EmbedFrame url={url} embed={embed} />
+          ) : (
+            <ExploreThumb
+              image={image}
+              fallbackImage="/images/lesson-fallback.jpg"
+              className="absolute inset-0 size-full object-cover"
+              alt={title ?? "صورة"}
+              fallback={
+                <span className="flex size-full items-center justify-center rounded-xl bg-muted">
+                  <ImageIcon className="size-10 text-muted-foreground" aria-hidden />
+                </span>
+              }
+            />
+          )}
+
+          {/* زر التبديل بين الصورة والفيديو أسفل الوسيط */}
+          {hasVideo && (
+            <button
+              type="button"
+              onClick={() => setMedia((value) => (value === "image" ? "video" : "image"))}
+              className="absolute inset-x-3 bottom-3 flex h-10 items-center justify-center gap-2 rounded-lg border border-border/60 bg-background/85 text-xs font-bold text-foreground backdrop-blur transition-colors hover:bg-background"
+            >
+              {media === "image" ? (
+                <>
+                  <Play className="size-4 text-primary" aria-hidden />
+                  مشاهدة الفيديو
+                </>
+              ) : (
+                <>
+                  <ImageIcon className="size-4 text-primary" aria-hidden />
+                  عرض الصورة
+                </>
+              )}
+            </button>
+          )}
+        </div>
+
+        {/* النص */}
+        <div className="order-1 flex flex-col gap-5 lg:order-2">
+          <RichLessonContent doc={doc ?? null} className="text-base leading-relaxed" />
+        </div>
+      </div>
     </article>
+  );
+}
+
+function EmbedFrame({ url, embed }: { url?: string | null; embed?: string | null }) {
+  if (embed) {
+    return (
+      <div className="absolute inset-0">
+        <iframe
+          src={embed}
+          title="فيديو الدرس"
+          className="size-full"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowFullScreen
+          loading="lazy"
+        />
+      </div>
+    );
+  }
+  return (
+    <video className="absolute inset-0 size-full" controls preload="metadata" src={url ?? undefined} />
   );
 }
 

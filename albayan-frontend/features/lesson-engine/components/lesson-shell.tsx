@@ -48,7 +48,7 @@ export function LessonShell({
       />
 
       <header className="sticky top-0 z-10 border-b bg-background/90 backdrop-blur">
-        <div className="mx-auto flex w-full max-w-2xl items-center gap-3 px-4 py-2.5 sm:px-6">
+        <div className="mx-auto flex w-full max-w-6xl items-center gap-3 px-4 py-2.5 sm:px-6 lg:px-8">
           <div className="flex w-8 shrink-0 items-center justify-center">
             {canBack && (
               <Button
@@ -78,25 +78,25 @@ export function LessonShell({
             </span>
           )}
         </div>
-        <div className="mx-auto w-full max-w-2xl px-4 pb-2.5 sm:px-6">
+        <div className="mx-auto w-full max-w-6xl px-4 pb-2.5 sm:px-6 lg:px-8">
           <ProgressBar />
         </div>
       </header>
 
-      <main className="relative mx-auto flex w-full max-w-2xl flex-1 flex-col px-4 py-5 sm:px-6">
+      <main className="relative mx-auto flex w-full max-w-6xl flex-1 flex-col px-4 py-5 sm:px-6 lg:px-8">
         <div
           className={cn(
             "flex flex-1 flex-col",
             showCard &&
-              "rounded-2xl border border-border/60 bg-card/80 p-5 shadow-sm ring-1 ring-border/40 transition-shadow sm:p-6"
+              "rounded-2xl border border-border/60 bg-card/80 p-5 shadow-sm ring-1 ring-border/40 transition-shadow sm:p-6 lg:p-8"
           )}
         >
           {children}
         </div>
       </main>
 
-      <footer className="sticky bottom-0 z-10 mt-auto border-t border-border/60 bg-background/90 px-4 py-3 backdrop-blur sm:px-6">
-        <div className="mx-auto flex w-full max-w-2xl items-center justify-center gap-3">
+      <footer className="border-t border-border/60 bg-background/90 px-4 py-3 sm:px-6">
+        <div className="mx-auto flex w-full max-w-6xl items-center justify-center gap-3">
           {footer ?? (
             <Button size="lg" className="h-12 w-full text-base" onClick={() => next()}>
               متابعة

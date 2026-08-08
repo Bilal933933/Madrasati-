@@ -37,7 +37,15 @@ export interface AssessmentQuestion {
 
 /** البيانات التي تستهلكها شاشة المحتوى لكتلة ما. */
 export type LessonContentData =
-  | { kind: "paragraph"; title?: string | null; content?: TiptapDoc | null; image?: string | null }
+  | {
+      kind: "paragraph";
+      title?: string | null;
+      content?: TiptapDoc | null;
+      image?: string | null;
+      /** فيديو/تضمين مرتبط بالفقرة — يُمكّن زر التبديل (صورة/فيديو). */
+      url?: string | null;
+      embed?: string | null;
+    }
   | { kind: "lesson_video"; url?: string | null; embed?: string | null };
 
 /** البيانات التي تستهلكها شاشة التقييم. */

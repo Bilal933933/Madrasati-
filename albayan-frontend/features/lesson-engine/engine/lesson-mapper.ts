@@ -97,12 +97,16 @@ function paragraphData(block: LessonFlowBlock): LessonContentData {
     title?: string | null;
     content?: string | Record<string, unknown> | null;
     image?: string | null;
+    video?: string | null;
+    video_embed?: string | null;
   } | null;
   return {
     kind: "paragraph",
     title: p?.title ?? null,
     content: parseTiptap(normalizeContent(p?.content)),
     image: p?.image ?? null,
+    url: p?.video ?? null,
+    embed: p?.video_embed ?? null,
   };
 }
 

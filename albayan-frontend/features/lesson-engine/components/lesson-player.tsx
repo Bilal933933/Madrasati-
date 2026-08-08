@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useLessonFlow } from "@/features/lesson-engine/hooks/useLessonFlow";
 import { useLessonProgressSync } from "@/features/lesson-engine/hooks/useLessonProgressSync";
+import { useLessonProgress } from "@/features/lesson-engine/hooks/useLessonProgress";
 import { useLessonEngineStore } from "@/features/lesson-engine/engine/lesson-engine-store";
 import { mapLesson } from "@/features/lesson-engine/engine/lesson-mapper";
 import { stageRenderer } from "@/features/lesson-engine/engine/stage-renderer";
@@ -30,6 +31,7 @@ export function LessonPlayer({ lessonSlug, onFinish }: LessonPlayerProps) {
   const engine = useLessonEngineStore((s) => s.engine);
   const current = useLessonEngineStore((s) => s.current);
   const init = useLessonEngineStore((s) => s.init);
+  const jumpTo = useLessonEngineStore((s) => s.jumpTo);
   const reset = useLessonEngineStore((s) => s.reset);
 
   useEffect(() => {
@@ -38,7 +40,18 @@ export function LessonPlayer({ lessonSlug, onFinish }: LessonPlayerProps) {
     }
   }, [data, engine, init]);
 
-  // يسجّل تقدم الطالب محليًا (الشاشة الحالية + المكتملة) تلقائيًا،
+  // تقدم محفوظ (حفظ محلي): نستأنف تلقائيًا عند إعادة التحميل.
+  const { lastStepId, hasProgress, isCompleted } = useLessonProgress(data?.data?.lesson.id ?? 0);
+
+  useEffect(() => {
+    // ننتقل لآخر شاشة محفوظة، دون إعادة إكمال درس انتهى سابقًا.
+    if (engine && current?.screen === "start" && hasProgress && !isCompleted && lastStepId) {
+      jumpTo(lastStepId);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [engine, current?.screen]);
+
+  // يسجّل تقدم الطالب تلقائيًا محليًا (الشاشة الحالية + الإكمال)،
   // ويزامن البداية/الإكمال مع الباك (فوق الحفظ المحلي دون تغييره).
   useLessonProgressSync(lessonSlug);
 
