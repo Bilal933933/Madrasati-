@@ -12,7 +12,9 @@ export interface LessonFlowLesson {
   id: number;
   course_id: number;
   course: string | null;
+  course_slug: string | null;
   subject: string | null;
+  subject_slug: string | null;
   title: string;
   slug: string | null;
   summary: string | null;
@@ -43,6 +45,18 @@ export interface LessonFlowBlock {
 
 export interface LessonFlow {
   lesson: LessonFlowLesson;
+  /** الدرس التالي في المقرر (للتنقل من شاشة النهاية) — null لآخر درس. */
+  next_lesson: {
+    id: number;
+    slug: string | null;
+    title: string;
+    summary: string | null;
+  } | null;
+  /** امتحان الدرس النشط المرتبط — null إذا لم يكن للدرس اختبار. */
+  lesson_exam: {
+    id: number;
+    title: string;
+  } | null;
   blocks: LessonFlowBlock[];
 }
 

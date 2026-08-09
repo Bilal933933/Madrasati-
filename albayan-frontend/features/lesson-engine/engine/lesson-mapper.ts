@@ -40,9 +40,13 @@ export function mapLesson(flow: LessonFlow): LessonEngineData {
     color: flow.lesson.color,
     image: flow.lesson.image,
     subject: flow.lesson.subject ?? undefined,
+    subjectSlug: flow.lesson.subject_slug ?? null,
     course: flow.lesson.course ?? undefined,
+    courseSlug: flow.lesson.course_slug ?? null,
     objectives: flow.lesson.learning_objectives ?? [],
     summary: flow.lesson.summary ?? undefined,
+    nextLesson: flow.next_lesson,
+    lessonExam: flow.lesson_exam,
     flow: buildFlow(blocks),
   };
 }

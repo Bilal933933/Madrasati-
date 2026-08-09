@@ -5,6 +5,7 @@ namespace App\Domains\Lesson\Services;
 use App\Domains\Lesson\Models\Lesson;
 use App\Support\ImageService;
 use App\Support\Slugger;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -48,11 +49,7 @@ class LessonService
     public function publishedLessons(): Collection
     {
         return Lesson::query()
-            ->where('is_published', true)
-            ->whereHas('course', fn ($q) => $q->where('is_published', true)
-                ->whereHas('subject', fn ($q2) => $q2->where('is_published', true)
-                    ->whereHas('grade', fn ($q3) => $q3->where('is_published', true)
-                        ->whereHas('stage', fn ($q4) => $q4->where('is_published', true)))))
+            ->fullyPublished()
             ->orderBy('sort_order')
             ->get();
     }
@@ -65,24 +62,37 @@ class LessonService
     public function findPublishedLesson(int $id): Lesson
     {
         return Lesson::query()
-            ->where('is_published', true)
-            ->whereHas('course', fn ($q) => $q->where('is_published', true)
-                ->whereHas('subject', fn ($q2) => $q2->where('is_published', true)
-                    ->whereHas('grade', fn ($q3) => $q3->where('is_published', true)
-                        ->whereHas('stage', fn ($q4) => $q4->where('is_published', true)))))
+            ->fullyPublished()
             ->findOrFail($id);
     }
 
     public function findPublishedLessonBySlug(string $slug): Lesson
     {
         return Lesson::query()
-            ->where('is_published', true)
+            ->fullyPublished()
             ->where('slug', $slug)
-            ->whereHas('course', fn ($q) => $q->where('is_published', true)
-                ->whereHas('subject', fn ($q2) => $q2->where('is_published', true)
-                    ->whereHas('grade', fn ($q3) => $q3->where('is_published', true)
-                        ->whereHas('stage', fn ($q4) => $q4->where('is_published', true)))))
             ->firstOrFail();
+    }
+
+    /**
+     * الدرس المنشور التالي في نفس المقرر (course) — يُستخدم في شاشة النهاية.
+     * يرجع null إذا كان هذا آخر درس منشور في المقرر.
+     */
+    public function nextPublishedLesson(Lesson $lesson): ?Lesson
+    {
+        return Lesson::query()
+            ->fullyPublished()
+            ->where('course_id', $lesson->course_id)
+            ->where(function (Builder $q) use ($lesson) {
+                $q->where('sort_order', '>', $lesson->sort_order)
+                    ->orWhere(function (Builder $q2) use ($lesson) {
+                        $q2->where('sort_order', $lesson->sort_order)
+                            ->where('id', '>', $lesson->id);
+                    });
+            })
+            ->orderBy('sort_order')
+            ->orderBy('id')
+            ->first();
     }
 
     public function createLesson(array $data): Lesson

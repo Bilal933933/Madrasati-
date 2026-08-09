@@ -4,6 +4,7 @@ namespace App\Domains\Assessment\Models;
 
 use App\Domains\Lesson\Models\Lesson;
 use App\Domains\Lesson\Models\Paragraph;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -68,5 +69,14 @@ class Assessment extends Model
     public function questions(): HasMany
     {
         return $this->hasMany(Question::class);
+    }
+
+    /**
+     * التقييمات التابعة لدرس منشور بالكامل عبر السلسلة التعليمية
+     * (الدرس ← المقرر ← المادة ← الصف ← المرحلة).
+     */
+    public function scopeWithinPublishedLesson(Builder $query): Builder
+    {
+        return $query->whereHas('lesson', fn ($q) => $q->fullyPublished());
     }
 }

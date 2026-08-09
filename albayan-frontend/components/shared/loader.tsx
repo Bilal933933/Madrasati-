@@ -5,11 +5,20 @@ type LoaderProps = {
   caption?: string;
   /** يُطبَّق على غلاف الـ Loader (وهو fixed) — مفيد لتعديل موقعه مثل translate-y. */
   className?: string;
+  /** بتنسيق داخل المحتوى (main) بدل ملء الشاشة — لا يغطي النافبار/الفوتر. */
+  inline?: boolean;
 };
 
-export function Loader({ caption = "جارٍ التحميل...", className }: LoaderProps) {
+export function Loader({
+  caption = "جارٍ التحميل...",
+  className,
+  inline = false,
+}: LoaderProps) {
   return (
-    <div className={cn("md-loader", className)} role="status">
+    <div
+      className={cn(inline ? "md-loader-inline" : "md-loader", className)}
+      role="status"
+    >
       <div className="md-loader-main">
         <div className="md-loader-up">
           <div className="md-loader-bar-group">

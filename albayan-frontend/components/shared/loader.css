@@ -1,13 +1,24 @@
 /* ===== Loader (أعمدة متحركة مع كرات) ===== */
-.md-loader {
-  position: fixed;
-  inset: 0;
-  z-index: 50;
+.md-loader,
+.md-loader-inline {
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
   gap: 1.5rem;
+}
+
+/* ملء الشاشة — للحمّالات التي تحل محل الصفحة كاملة (انتظار تهيئة الجلسة). */
+.md-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+}
+
+/* بتنسيق داخل المحتوى (main) — لا يغطي النافبار/الفوتر أثناء تنقّل المسارات. */
+.md-loader-inline {
+  position: relative;
+  min-height: 60vh;
 }
 
 .md-loader-main {

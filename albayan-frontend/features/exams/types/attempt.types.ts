@@ -1,4 +1,5 @@
 import type { ExamBlueprint, QuestionType } from "./exam.types";
+import type { AchievementUnlocksPayload } from "@/features/achievements/types/achievement.types";
 
 export type AttemptStatus = "in_progress" | "completed";
 
@@ -96,7 +97,8 @@ export interface SaveProgressResponse {
   message: string;
 }
 
-export interface SubmitAttemptResponse {
+export interface SubmitAttemptResponse
+  extends AchievementUnlocksPayload {
   data: ExamAttemptSummary;
   message: string;
 }

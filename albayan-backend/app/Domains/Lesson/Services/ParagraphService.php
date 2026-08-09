@@ -34,11 +34,7 @@ class ParagraphService
     public function publishedParagraphs(): Collection
     {
         return Paragraph::query()
-            ->whereHas('lesson', fn ($q) => $q->where('is_published', true)
-                ->whereHas('course', fn ($q2) => $q2->where('is_published', true)
-                    ->whereHas('subject', fn ($q3) => $q3->where('is_published', true)
-                        ->whereHas('grade', fn ($q4) => $q4->where('is_published', true)
-                            ->whereHas('stage', fn ($q5) => $q5->where('is_published', true))))))
+            ->withinPublishedLesson()
             ->orderBy('sort_order')
             ->get();
     }
@@ -52,11 +48,7 @@ class ParagraphService
     {
         return Paragraph::query()
             ->where('slug', $slug)
-            ->whereHas('lesson', fn ($q) => $q->where('is_published', true)
-                ->whereHas('course', fn ($q2) => $q2->where('is_published', true)
-                    ->whereHas('subject', fn ($q3) => $q3->where('is_published', true)
-                        ->whereHas('grade', fn ($q4) => $q4->where('is_published', true)
-                            ->whereHas('stage', fn ($q5) => $q5->where('is_published', true))))))
+            ->withinPublishedLesson()
             ->firstOrFail();
     }
 

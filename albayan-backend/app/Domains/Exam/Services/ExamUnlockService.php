@@ -57,9 +57,9 @@ class ExamUnlockService
         }
 
         return LessonCompletion::query()
-            ->where('user_id', $user->id)
-            ->whereNotNull('completed_at')
-            ->whereIn('lesson_id', $required)
+            ->forUser($user)
+            ->completed()
+            ->inLessons($required)
             ->pluck('lesson_id');
     }
 }

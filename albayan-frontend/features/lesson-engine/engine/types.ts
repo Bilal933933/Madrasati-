@@ -77,8 +77,19 @@ export interface LessonEngineData {
   color: string | null;
   image: string | null;
   subject?: string;
+  subjectSlug?: string | null;
   course?: string;
+  courseSlug?: string | null;
   objectives: string[];
   summary?: string;
+  /** الدرس التالي في المقرر — لشاشة النهاية (بدايته/بطاقته) — null لآخر درس. */
+  nextLesson?: {
+    id: number;
+    slug: string | null;
+    title: string;
+    summary?: string | null;
+  } | null;
+  /** امتحان الدرس النشط — يظهر زر «عرض اختبار الدرس» في النهاية إن وُجد. */
+  lessonExam?: { id: number; title: string } | null;
   flow: LessonFlowStep[];
 }

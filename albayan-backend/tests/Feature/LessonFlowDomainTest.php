@@ -8,6 +8,7 @@ use App\Domains\Curriculum\Models\Course;
 use App\Domains\Curriculum\Models\Grade;
 use App\Domains\Curriculum\Models\Stage;
 use App\Domains\Curriculum\Models\Subject;
+use App\Domains\Exam\Models\ExamBlueprint;
 use App\Domains\Lesson\Enums\BlockKind;
 use App\Domains\Lesson\Models\Lesson;
 use App\Domains\Lesson\Models\LessonBlock;
@@ -149,5 +150,78 @@ class LessonFlowDomainTest extends TestCase
         // Idempotent: التشغيل مجددًا لا يكرر الكتل.
         $builder->attachExistingContent($lesson);
         $this->assertSame(5, $lesson->blocks()->count());
+    }
+
+    public function test_flow_exposes_next_lesson_and_course_slugs(): void
+    {
+        $stage = Stage::create(['name' => 'الابتدائية', 'sort_order' => 1, 'is_published' => true]);
+        $grade = Grade::create(['stage_id' => $stage->id, 'name' => 'الأول', 'sort_order' => 1, 'is_published' => true]);
+        $subject = Subject::create(['grade_id' => $grade->id, 'name' => 'الرياضيات', 'slug' => 'math', 'sort_order' => 1, 'is_published' => true]);
+        $course = Course::create(['subject_id' => $subject->id, 'name' => 'الوحدة الأولى', 'slug' => 'unit-one', 'sort_order' => 1, 'is_published' => true]);
+
+        $first = app(LessonService::class)->createLesson([
+            'course_id' => $course->id,
+            'title' => 'درس الجمع',
+            'sort_order' => 1,
+            'is_published' => true,
+        ]);
+        $second = app(LessonService::class)->createLesson([
+            'course_id' => $course->id,
+            'title' => 'درس الطرح',
+            'sort_order' => 2,
+            'is_published' => true,
+        ]);
+
+        $student = User::create(['name' => 'طالب', 'email' => 'student@flow.test', 'password' => 'secret', 'role' => 'student']);
+
+        $response = $this->actingAs($student)->getJson("/api/lessons/{$first->slug}");
+        $response->assertStatus(200);
+
+        $json = $response->json('data');
+        $this->assertSame('unit-one', $json['lesson']['course_slug']);
+        $this->assertSame('math', $json['lesson']['subject_slug']);
+        $this->assertSame($second->id, $json['next_lesson']['id']);
+        $this->assertSame($second->slug, $json['next_lesson']['slug']);
+        $this->assertSame('درس الطرح', $json['next_lesson']['title']);
+        $this->assertNull($json['lesson_exam']);
+
+        // آخر درس في المقرر — لا درس تالٍ.
+        $last = $this->actingAs($student)->getJson("/api/lessons/{$second->slug}");
+        $last->assertStatus(200);
+        $this->assertNull($last->json('data.next_lesson'));
+    }
+
+    public function test_flow_exposes_active_lesson_exam(): void
+    {
+        $lesson = $this->seedLesson();
+
+        $blueprint = ExamBlueprint::create([
+            'exam_type' => 'lesson',
+            'title' => 'امتحان درس الجمع',
+            'lesson_id' => $lesson->id,
+            'duration_minutes' => 30,
+            'attempts_allowed' => 2,
+            'easy_count' => 1,
+            'medium_count' => 0,
+            'hard_count' => 0,
+            'pass_threshold_percent' => 50,
+            'show_review_after_submit' => true,
+            'is_active' => true,
+        ]);
+
+        $student = User::create(['name' => 'طالب', 'email' => 'student@flow.test', 'password' => 'secret', 'role' => 'student']);
+
+        $response = $this->actingAs($student)->getJson("/api/lessons/{$lesson->slug}");
+        $response->assertStatus(200);
+
+        $json = $response->json('data');
+        $this->assertSame($blueprint->id, $json['lesson_exam']['id']);
+        $this->assertSame('امتحان درس الجمع', $json['lesson_exam']['title']);
+
+        // تعطيل الامتحان — يختفي من الاستجابة نهائيًا.
+        $blueprint->update(['is_active' => false]);
+        $disabled = $this->actingAs($student)->getJson("/api/lessons/{$lesson->slug}");
+        $disabled->assertStatus(200);
+        $this->assertNull($disabled->json('data.lesson_exam'));
     }
 }

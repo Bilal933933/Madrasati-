@@ -16,6 +16,11 @@ class ContentCatalog
             ...ArabicPreparatory::plans(),
             ...ArabicSecondary::plans(),
             ...SampleLessons::plans(),
+            ...EnglishData::plans(),
+            ...ScienceData::plans(),
+            ...SocialStudiesData::plans(),
+            ...ProfessionalSkillsData::plans(),
+            ...ReligionData::plans(),
         ];
     }
 

@@ -2,11 +2,13 @@
 
 namespace App\Domains\Exam\Models;
 
+use App\Domains\Auth\Models\User;
 use App\Domains\Curriculum\Models\Course;
 use App\Domains\Curriculum\Models\Grade;
 use App\Domains\Curriculum\Models\Stage;
 use App\Domains\Curriculum\Models\Subject;
 use App\Domains\Lesson\Models\Lesson;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -106,6 +108,41 @@ class ExamBlueprint extends Model
     public function attempts(): HasMany
     {
         return $this->hasMany(ExamAttempt::class, 'blueprint_id');
+    }
+
+    /**
+     * قائمة الامتحانات ضمن صفّ/مرحلة الطالب (من ملفه الأكاديمي) — في SQL مباشرةً.
+     *
+     * التكافؤ عبر النطاقات الخمسة:
+     *   full                → grade_id أو stage_id مباشرة
+     *   lesson              → lesson → course → subject
+     *   unit                → course → subject
+     *   monthly / semester  → subject
+     */
+    public function scopeForStudent(Builder $query, User $user): Builder
+    {
+        $gradeId = $user->profile?->grade_id;
+        $stageId = $user->profile?->grade?->stage_id;
+
+        if ($gradeId === null) {
+            return $query->whereRaw('1 = 0');
+        }
+
+        return $query->where(function (Builder $q) use ($gradeId, $stageId) {
+            $q->where(function (Builder $gradeScope) use ($gradeId) {
+                $gradeScope->whereNotNull('grade_id')->where('grade_id', $gradeId);
+            });
+
+            if ($stageId !== null) {
+                $q->orWhere(function (Builder $stageScope) use ($stageId) {
+                    $stageScope->whereNotNull('stage_id')->where('stage_id', $stageId);
+                });
+            }
+
+            $q->orWhereHas('lesson.course.subject', fn (Builder $s) => $s->where('grade_id', $gradeId))
+                ->orWhereHas('course.subject', fn (Builder $s) => $s->where('grade_id', $gradeId))
+                ->orWhereHas('subject', fn (Builder $s) => $s->where('grade_id', $gradeId));
+        });
     }
 
     /**

@@ -2,6 +2,7 @@
 
 namespace App\Domains\Curriculum\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -78,5 +79,15 @@ class Grade extends Model
     public function subjects(): HasMany
     {
         return $this->hasMany(Subject::class);
+    }
+
+    /**
+     * الصفوف المنشورة الواقعة داخل مرحلة منشورة.
+     */
+    public function scopeWithinPublishedHierarchy(Builder $query): Builder
+    {
+        return $query
+            ->where('is_published', true)
+            ->whereHas('stage', fn ($q) => $q->where('is_published', true));
     }
 }

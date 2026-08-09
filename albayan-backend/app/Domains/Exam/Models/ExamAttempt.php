@@ -3,6 +3,7 @@
 namespace App\Domains\Exam\Models;
 
 use App\Domains\Auth\Models\User;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -87,5 +88,22 @@ class ExamAttempt extends Model
     public function isExpired(): bool
     {
         return $this->deadline_at !== null && $this->deadline_at->isPast();
+    }
+
+    public function scopeOwnedBy(Builder $query, User $user): Builder
+    {
+        return $query->where('user_id', $user->id);
+    }
+
+    public function scopeInProgress(Builder $query): Builder
+    {
+        return $query->where('status', 'in_progress');
+    }
+
+    public function scopeExpired(Builder $query): Builder
+    {
+        return $query->where('status', 'in_progress')
+            ->whereNotNull('deadline_at')
+            ->where('deadline_at', '<', now());
     }
 }

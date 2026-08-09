@@ -3,6 +3,7 @@ import { useLessonEngineStore } from "../engine/lesson-engine-store";
 import { useLessonProgressStore } from "../state/lessonProgressStore";
 import { useLessonProgress } from "./useLessonProgress";
 import { lessonApi } from "../services/lessonApi";
+import { notifyUnlockedAchievements } from "@/features/achievements/lib/achievementUnlocks";
 
 /**
  * هوك مزامنة تقدم الطالب داخل الدرس.
@@ -71,6 +72,9 @@ export function useLessonProgressSync(lessonSlug: string) {
       return;
     }
     completeSentRef.current = true;
-    lessonApi.complete(lessonSlug).catch(() => {});
+    lessonApi
+      .complete(lessonSlug)
+      .then((data) => notifyUnlockedAchievements(data.unlocked_achievements))
+      .catch(() => {});
   }, [lessonSlug, screen]);
 }

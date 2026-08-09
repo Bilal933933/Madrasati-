@@ -2,8 +2,12 @@
 
 namespace App\Domains\Auth\Models;
 
+use App\Domains\Achievement\Models\Achievement;
+use App\Domains\Achievement\Models\UserAchievement;
 use App\Domains\Progress\Models\LessonCompletion;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -26,6 +30,8 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $updated_at
  * @property-read DatabaseNotificationCollection<int, DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
+ * @property-read Collection<int, Achievement> $achievements
+ * @property-read Collection<int, UserAchievement> $userAchievements
  *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User newQuery()
@@ -106,5 +112,23 @@ class User extends Authenticatable
     public function lessonCompletions(): HasMany
     {
         return $this->hasMany(LessonCompletion::class);
+    }
+
+    /**
+     * صلات الإنجازات المفتوحة (القيد الفريد user_id + achievement_id).
+     */
+    public function userAchievements(): HasMany
+    {
+        return $this->hasMany(UserAchievement::class);
+    }
+
+    /**
+     * الأوسمة المفتوحة (علاقة BelongsToMany عبر الحجز user_achievements).
+     */
+    public function achievements(): BelongsToMany
+    {
+        return $this->belongsToMany(Achievement::class, 'user_achievements')
+            ->withPivot('unlocked_at')
+            ->withTimestamps();
     }
 }

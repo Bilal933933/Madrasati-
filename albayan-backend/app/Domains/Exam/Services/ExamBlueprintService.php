@@ -48,15 +48,9 @@ class ExamBlueprintService
      */
     public function blueprintsForUser(User $user, bool $activeOnly = false): Collection
     {
-        $gradeId = $user->profile?->grade_id;
-        $stageId = $user->profile?->grade?->stage_id;
-
-        if ($gradeId === null) {
-            return collect();
-        }
-
         return ExamBlueprint::query()
             ->when($activeOnly, fn ($q) => $q->where('is_active', true))
+            ->forStudent($user)
             ->with([
                 'lesson.course.subject',
                 'course.subject',
@@ -65,21 +59,13 @@ class ExamBlueprintService
                 'stage',
             ])
             ->orderByDesc('id')
-            ->get()
-            ->filter(
-                fn (ExamBlueprint $blueprint) => $this->belongsToStudentGrade(
-                    $blueprint,
-                    $gradeId,
-                    $stageId
-                )
-            )
-            ->values();
+            ->get();
     }
 
     /**
      * هل النطاق الصفّي لهذا الامتحان يخصّ صف/مرحلة الطالب؟
      */
-    private function belongsToStudentGrade(
+    public function belongsToStudentGrade(
         ExamBlueprint $blueprint,
         int $gradeId,
         ?int $stageId
@@ -106,6 +92,19 @@ class ExamBlueprintService
     public function findBlueprint(int $id): ExamBlueprint
     {
         return ExamBlueprint::with(['lesson', 'course', 'subject', 'grade', 'stage'])->findOrFail($id);
+    }
+
+    /**
+     * الامتحان النشط من نوع «درس» المرتبط بهذا الدرس تحديدًا — يُعرض في شاشة
+     * نهاية الدرس («عرض اختبار الدرس») إن وُجد، وإلا null.
+     */
+    public function activeLessonExam(int $lessonId): ?ExamBlueprint
+    {
+        return ExamBlueprint::query()
+            ->where('exam_type', 'lesson')
+            ->where('lesson_id', $lessonId)
+            ->where('is_active', true)
+            ->first();
     }
 
     /**

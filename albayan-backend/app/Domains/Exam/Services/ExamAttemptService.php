@@ -3,12 +3,14 @@
 namespace App\Domains\Exam\Services;
 
 use App\Domains\Auth\Models\User;
+use App\Domains\Exam\Events\ExamCompletedEvent;
 use App\Domains\Exam\Models\ExamAttempt;
 use App\Domains\Exam\Models\ExamAttemptQuestion;
 use App\Domains\Exam\Models\ExamBlueprint;
 use App\Domains\Exam\Models\ExamProgress;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Validation\ValidationException;
 
 /**
@@ -38,8 +40,8 @@ class ExamAttemptService
 
         $existing = ExamAttempt::query()
             ->where('blueprint_id', $blueprint->id)
-            ->where('user_id', $user->id)
-            ->where('status', 'in_progress')
+            ->ownedBy($user)
+            ->inProgress()
             ->first();
 
         if ($existing) {
@@ -118,12 +120,12 @@ class ExamAttemptService
             throw ValidationException::withMessages(['attempt_id' => 'هذه المحاولة لم تعد قابلة للتسليم.']);
         }
 
-        $attempt->update([
-            'status' => 'completed',
-            'submitted_at' => now(),
-        ]);
+        $event = $this->completeAndDispatch($attempt);
 
-        return $this->gradingService->grade($attempt);
+        // الأوسمة المفتوحة حديثًا — لتظهر في استجابة تسليم المحاولة.
+        $attempt->unlocked_achievements = $event->unlocked;
+
+        return $attempt;
     }
 
     /**
@@ -132,9 +134,8 @@ class ExamAttemptService
     public function autoExpire(): int
     {
         $expired = ExamAttempt::query()
-            ->where('status', 'in_progress')
-            ->whereNotNull('deadline_at')
-            ->where('deadline_at', '<', now())
+            ->inProgress()
+            ->expired()
             ->get();
 
         $count = 0;
@@ -158,12 +159,25 @@ class ExamAttemptService
      */
     private function finalizeExpiredAttempt(ExamAttempt $attempt): void
     {
+        $this->completeAndDispatch($attempt);
+    }
+
+    /**
+     * إنهاء المحاولة (الحالة + التصحيح) ونشر حدث ExamCompleted للأنظمة المستمعة.
+     */
+    private function completeAndDispatch(ExamAttempt $attempt): ExamCompletedEvent
+    {
         $attempt->update([
             'status' => 'completed',
             'submitted_at' => now(),
         ]);
 
         $this->gradingService->grade($attempt);
+
+        $event = new ExamCompletedEvent($attempt->user, $attempt);
+        Event::dispatch($event);
+
+        return $event;
     }
 
     /* ------------------------------------------------------------------ */
@@ -175,8 +189,11 @@ class ExamAttemptService
         }
 
         if ($attempt->isExpired()) {
-            // يُسجّل التسليم التلقائي عند جرد المهمة واستدعاء الانتهاء
-            throw ValidationException::withMessages(['attempt_id' => 'انتهى وقت الامتحان وتمت أرشفة الإجابات تلقائيًا.']);
+            $this->finalizeExpiredAttempt($attempt);
+            throw ValidationException::withMessages([
+                'attempt_id' => 'انتهى وقت الامتحان، تم تصحيح إجاباتك تلقائيًا.',
+                'redirect_to' => $attempt->fresh()->id, // إشارة للفرونت بالتوجيه للنتيجة
+            ]);
         }
     }
 

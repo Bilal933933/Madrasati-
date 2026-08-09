@@ -1,5 +1,6 @@
 import { GraduationCap, Hand, TrendingUp } from "lucide-react";
 import { ExploreThumb } from "@/features/explore/components/ExploreThumb";
+import { AchievementsHomeCard } from "@/features/achievements/components/student/achievements-home-card";
 import { LearningSection } from "../components/LearningSection";
 import { ProgressBar } from "../components/progress-bar";
 import type { StudentHomeData } from "../types/student.types";
@@ -44,6 +45,9 @@ export function StudentHomePage({ data }: { data: StudentHomeData }) {
                 </span>
               </div>
             </div>
+
+            {/* ملخص الإنجازات — بطاقة مدمجة ترتبط بصفحة الإنجازات */}
+            <AchievementsHomeCard />
           </div>
 
           {/* طبقة صورة الصف — بطاقة مدمجة في الموبايل، خلفية متلاشية من lg */}

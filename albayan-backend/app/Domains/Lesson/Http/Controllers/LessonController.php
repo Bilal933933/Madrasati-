@@ -2,6 +2,7 @@
 
 namespace App\Domains\Lesson\Http\Controllers;
 
+use App\Domains\Exam\Services\ExamBlueprintService;
 use App\Domains\Lesson\Http\Resources\LessonFlowResource;
 use App\Domains\Lesson\Http\Resources\LessonPreviewResource;
 use App\Domains\Lesson\Http\Resources\LessonResource;
@@ -17,6 +18,7 @@ class LessonController extends Controller
     public function __construct(
         private readonly LessonService $lessonService,
         private readonly LessonFlowService $lessonFlowService,
+        private readonly ExamBlueprintService $examBlueprintService,
     ) {}
 
     public function index()
@@ -27,6 +29,10 @@ class LessonController extends Controller
     public function show(string $slug)
     {
         $lesson = $this->lessonService->findPublishedLessonBySlug($slug);
+
+        // بيانات شاشة النهاية: الدرس التالي في المقرر + امتحان الدرس (إن وُجد).
+        $lesson->setAttribute('next_lesson', $this->lessonService->nextPublishedLesson($lesson));
+        $lesson->setAttribute('lesson_exam', $this->examBlueprintService->activeLessonExam($lesson->id));
 
         return new LessonFlowResource($this->lessonFlowService->flow($lesson));
     }

@@ -13,7 +13,8 @@ class DatabaseSeeder extends Seeder
      * ترتيب البذر:
      * المستخدمون ← الهيكل الأكاديمي (مراحل/صفوف/فصول/مواد/مقررات)
      * ← الدروس ورحلاتها ← أسئلة التقييم ← ملف الطالب وتقدّمه
-     * ← بنك أسئلة الامتحانات وتعريفاتها ومحاولة تجريبية.
+     * ← بنك أسئلة الامتحانات وتعريفاتها ومحاولة تجريبية
+     * ← تعريفات الإنجازات (مستقلة عن تقدّم الطالب).
      */
     public function run(): void
     {
@@ -32,6 +33,7 @@ class DatabaseSeeder extends Seeder
             Exam\BankQuestionSeeder::class,
             Exam\ExamBlueprintSeeder::class,
             Exam\DemoExamAttemptSeeder::class,
+            Achievement\AchievementSeeder::class,
         ]);
     }
 }

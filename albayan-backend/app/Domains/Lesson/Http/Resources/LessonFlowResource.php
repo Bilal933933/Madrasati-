@@ -26,6 +26,20 @@ class LessonFlowResource extends JsonResource
 
         return [
             'lesson' => new LessonResource($lesson),
+            'next_lesson' => $lesson->next_lesson
+                ? [
+                    'id' => $lesson->next_lesson->id,
+                    'slug' => $lesson->next_lesson->slug,
+                    'title' => $lesson->next_lesson->title,
+                    'summary' => $lesson->next_lesson->summary,
+                ]
+                : null,
+            'lesson_exam' => $lesson->lesson_exam
+                ? [
+                    'id' => $lesson->lesson_exam->id,
+                    'title' => $lesson->lesson_exam->title,
+                ]
+                : null,
             'blocks' => $lesson->blocks
                 ->map(fn (LessonBlock $block) => [
                     'id' => $block->id,

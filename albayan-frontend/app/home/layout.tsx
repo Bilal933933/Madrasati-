@@ -8,6 +8,7 @@ import {
   Home as HomeIcon,
   LayoutDashboard,
   LogOut,
+  Medal,
 } from "lucide-react";
 import { Loader } from "@/components/shared/loader";
 import { SiteNavbar } from "@/components/shared/site-navbar";
@@ -46,6 +47,11 @@ export default function StudentLayout({
       icon: <GraduationCap size={16} />,
       label: "الامتحانات",
       onClick: () => router.push("/exams"),
+    },
+    {
+      icon: <Medal size={16} />,
+      label: "الإنجازات",
+      onClick: () => router.push("/achievements"),
     },
     ...(user?.role === "admin"
       ? [

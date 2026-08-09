@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { getErrorMessage } from "@/lib/apiErrors";
+import { getErrorMessage, isApiError } from "@/lib/apiErrors";
+import { notifyUnlockedAchievements } from "@/features/achievements/lib/achievementUnlocks";
 import { studentExamsApi } from "../services/studentExamsApi";
 import { useExamProgressStore } from "../state/examProgressStore";
 import type { ExamAnswerValue } from "../types/progress.types";
@@ -46,6 +47,17 @@ function seedWebServerAnswers(attempt: ExamAttemptDetail): Record<number, ExamAn
 
 function isEmptyValue(v?: ExamAnswerValue): boolean {
   return v == null || (v.optionId == null && v.booleanValue == null);
+}
+
+/**
+ * هل خطأ الباك يحمل إشارة توجيه للنتيجة؟ (انتهى وقت الامتحان وصُححت الإجابات تلقائيًا)
+ * الباك يبثّ `redirect_to` في errors عند إنهاء محاولة منتهية.
+ */
+function expiryRedirectId(error: unknown): number | null {
+  if (!isApiError(error)) return null;
+  const raw = error.errors?.redirect_to?.[0];
+  const id = Number(raw);
+  return Number.isFinite(id) ? id : null;
 }
 
 function sameValue(a: ExamAnswerValue, b?: ExamAnswerValue): boolean {
@@ -131,6 +143,18 @@ export function useAttemptEngine(
 
   const submittedRef = useRef(false);
 
+  // انتهى وقت المحاولة في الباك — نوجّه للنتيجة وننظّف التقدم المحلي (مرة واحدة فقط).
+  const handleExpiryRedirect = (error: unknown): boolean => {
+    if (submittedRef.current) return true;
+    if (expiryRedirectId(error) == null) return false;
+
+    submittedRef.current = true;
+    useExamProgressStore.getState().clearAttempt(attemptId);
+    toast.info("انتهى وقت الامتحان، تم تصحيح إجاباتك تلقائيًا.");
+    onSubmitted();
+    return true;
+  };
+
   const saveAnswer = useMutation({
     mutationFn: ({
       questionId,
@@ -145,6 +169,7 @@ export function useAttemptEngine(
         .markSynced(attemptId, variables.questionId, true);
     },
     onError: (error) => {
+      if (handleExpiryRedirect(error)) return;
       toast.error(getErrorMessage(error, "تعذّر حفظ الإجابة. إعادة المحاولة لاحقًا."));
     },
   });
@@ -183,6 +208,7 @@ export function useAttemptEngine(
     mutationFn: (payload: SaveProgressPayload) =>
       studentExamsApi.saveProgress(attemptId, payload),
     onError: (error) => {
+      if (handleExpiryRedirect(error)) return;
       toast.error(getErrorMessage(error, "تعذّر حفظ التقدم. سيُعاد عند التغيير التالي."));
     },
   });
@@ -246,10 +272,12 @@ export function useAttemptEngine(
     onSuccess: (data) => {
       useExamProgressStore.getState().clearAttempt(attemptId);
       toast.success(data?.message ?? "تم تسليم المحاولة بنجاح.");
+      notifyUnlockedAchievements(data?.unlocked_achievements);
       onSubmitted();
     },
     onError: (error) => {
       // قد تكون المحاولة أُنهيت تلقائيًا عند انتهاء الوقت — نعيد الجلب لنرى الحالة.
+      if (handleExpiryRedirect(error)) return;
       toast.error(getErrorMessage(error, "تعذّرت تسليم المحاولة."));
       submittedRef.current = false;
       queryClient.invalidateQueries({ queryKey: ["exam-attempt", attemptId] });
@@ -317,18 +345,21 @@ export function useAttemptEngine(
     submitRef.current = submit;
   });
 
-  // المؤقت — يسلّم تلقائيًا عند انتهاء الوقت مرة واحدة
+  // المؤقت — يسلّم تلقائيًا عند انتهاء الوقت مرة واحدة، ويسلّم فورًا لو فُتحت الصفحة بعد الموعد
   useEffect(() => {
     if (!attempt.deadline_at) return;
 
     const deadline = new Date(attempt.deadline_at).getTime();
-    if (deadline - Date.now() <= 0) return;
+    if (deadline - Date.now() <= 0) {
+      if (!submittedRef.current) submitRef.current();
+      return;
+    }
 
     const tick = () => {
-      const remain = Math.max(0, Math.floor((deadline - Date.now()) / 1000));
-      setRemainingSeconds(remain);
+      const r = Math.max(0, Math.floor((deadline - Date.now()) / 1000));
+      setRemainingSeconds(r);
 
-      if (remain <= 0 && !submittedRef.current) {
+      if (r <= 0 && !submittedRef.current) {
         submitRef.current();
       }
     };

@@ -84,16 +84,8 @@ class TrialService
     private function publishedWithParagraphAndAssessment(): Builder
     {
         return Lesson::query()
-            ->where('is_published', true)
-            ->whereHas('course', fn ($q) => $q->where('is_published', true)
-                ->whereHas('subject', fn ($q2) => $q2->where('is_published', true)
-                    ->whereHas('grade', fn ($q3) => $q3->where('is_published', true)
-                        ->whereHas('stage', fn ($q4) => $q4->where('is_published', true)))))
-            ->whereHas('blocks', fn ($q) => $q->where('block_kind', BlockKind::Paragraph->value))
-            ->whereHas('blocks', fn ($q) => $q->whereIn('block_kind', [
-                BlockKind::PreAssessment->value,
-                BlockKind::FormativeAssessment->value,
-                BlockKind::FinalAssessment->value,
-            ]));
+            ->fullyPublished()
+            ->hasParagraphBlock()
+            ->hasAssessmentBlock();
     }
 }

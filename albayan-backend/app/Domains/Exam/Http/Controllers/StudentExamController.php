@@ -2,6 +2,7 @@
 
 namespace App\Domains\Exam\Http\Controllers;
 
+use App\Domains\Achievement\Http\Resources\AchievementResource;
 use App\Domains\Exam\Http\Resources\ExamAttemptDetailResource;
 use App\Domains\Exam\Http\Resources\ExamAttemptResource;
 use App\Domains\Exam\Http\Resources\ExamBlueprintResource;
@@ -12,6 +13,7 @@ use App\Domains\Exam\Services\ExamBlueprintService;
 use App\Domains\Exam\Services\ExamUnlockService;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
 
 /**
@@ -51,6 +53,8 @@ class StudentExamController extends Controller
         $blueprint = $this->blueprintService->findBlueprint($id);
         $user = $request->user();
 
+        $this->authorize('view', $blueprint, 'هذا الامتحان غير متاح لصفك الدراسي.');
+
         $blueprint->unlock_progress = $this->unlockService->progress($user, $blueprint);
         $blueprint->setAttribute('attempts_left', $this->attemptsLeft($blueprint, $user));
         $blueprint->setAttribute('best_score', $this->bestScore($blueprint, $user));
@@ -64,6 +68,8 @@ class StudentExamController extends Controller
     public function myAttempts(Request $request, int $id)
     {
         $blueprint = $this->blueprintService->findBlueprint($id);
+
+        $this->authorize('view', $blueprint, 'هذا الامتحان غير متاح لصفك الدراسي.');
 
         $attempts = $blueprint->attempts()
             ->where('user_id', $request->user()->id)
@@ -80,6 +86,9 @@ class StudentExamController extends Controller
     public function start(Request $request, int $id)
     {
         $blueprint = $this->blueprintService->findBlueprint($id);
+
+        $this->authorize('take', $blueprint, 'هذا الامتحان غير متاح لصفك الدراسي.');
+
         $attempt = $this->attemptService->start($request->user(), $blueprint);
 
         return response()->json([
@@ -93,7 +102,8 @@ class StudentExamController extends Controller
      */
     public function showAttempt(Request $request, int $attemptId)
     {
-        $attempt = $this->findOwnAttempt($request, $attemptId);
+        $attempt = $this->findAttempt($attemptId);
+        $this->authorize('view', $attempt, 'لا يمكنك الوصول إلى محاولة طالب آخر.', 'attempt_id');
         $reveal = $attempt->status === 'completed'
             && $attempt->blueprint->show_review_after_submit;
 
@@ -105,7 +115,8 @@ class StudentExamController extends Controller
      */
     public function saveAnswer(Request $request, int $attemptId, int $questionId)
     {
-        $attempt = $this->findOwnAttempt($request, $attemptId);
+        $attempt = $this->findAttempt($attemptId);
+        $this->authorize('answer', $attempt, 'لا يمكنك الوصول إلى محاولة طالب آخر.', 'attempt_id');
 
         $question = $attempt->questions()
             ->whereKey($questionId)
@@ -136,7 +147,8 @@ class StudentExamController extends Controller
      */
     public function syncProgress(Request $request, int $attemptId)
     {
-        $attempt = $this->findOwnAttempt($request, $attemptId);
+        $attempt = $this->findAttempt($attemptId);
+        $this->authorize('updateProgress', $attempt, 'لا يمكنك الوصول إلى محاولة طالب آخر.', 'attempt_id');
 
         $validated = $request->validate([
             'current_index' => ['required', 'integer', 'min:0'],
@@ -180,29 +192,35 @@ class StudentExamController extends Controller
      */
     public function submit(Request $request, int $attemptId)
     {
-        $attempt = $this->findOwnAttempt($request, $attemptId);
+        $attempt = $this->findAttempt($attemptId);
+        $this->authorize('submit', $attempt, 'لا يمكنك الوصول إلى محاولة طالب آخر.', 'attempt_id');
 
         $attempt = $this->attemptService->submit($attempt);
 
         return response()->json([
             'data' => new ExamAttemptResource($attempt->load('blueprint')),
             'message' => 'تم تسليم المحاولة بنجاح.',
+            'unlocked_achievements' => AchievementResource::collection($attempt->unlocked_achievements ?? []),
         ]);
     }
 
     /* ------------------------------------------------------------------ */
 
-    private function findOwnAttempt(Request $request, int $attemptId): ExamAttempt
+    private function findAttempt(int $attemptId): ExamAttempt
     {
-        $attempt = ExamAttempt::query()
+        return ExamAttempt::query()
             ->with('blueprint')
             ->findOrFail($attemptId);
+    }
 
-        if ($attempt->user_id !== $request->user()->id) {
-            throw ValidationException::withMessages(['attempt_id' => 'لا يمكنك الوصول إلى محاولة طالب آخر.']);
+    /**
+     * قرار الصلاحية عبر الـ Policy — الرفض يُترجم لرسالة عربية (422) كما يعتمد الفرونت.
+     */
+    private function authorize(string $ability, mixed $arguments, string $message, string $field = 'id'): void
+    {
+        if (! Gate::allows($ability, $arguments)) {
+            throw ValidationException::withMessages([$field => $message]);
         }
-
-        return $attempt;
     }
 
     private function assertOptionBelongsToQuestion($question, array $validated): void

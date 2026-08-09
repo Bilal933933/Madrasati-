@@ -4,9 +4,11 @@ namespace App\Domains\Progress\Models;
 
 use App\Domains\Auth\Models\User;
 use App\Domains\Lesson\Models\Lesson;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 
 /**
  * سجل تقدّم الطالب في درس — بدءًا وإكمالًا.
@@ -62,5 +64,31 @@ class LessonCompletion extends Model
     public function lesson(): BelongsTo
     {
         return $this->belongsTo(Lesson::class);
+    }
+
+    /**
+     * سجلات مستخدم واحد — يقبل الموديل أو المعرّف مباشرة.
+     */
+    public function scopeForUser(Builder $query, User|int $user): Builder
+    {
+        return $query->where('user_id', $user instanceof User ? $user->id : $user);
+    }
+
+    /**
+     * السجلات المكتملة فقط (completed_at معبأة).
+     */
+    public function scopeCompleted(Builder $query): Builder
+    {
+        return $query->whereNotNull('completed_at');
+    }
+
+    /**
+     * سجلات قائمة دروس محددة.
+     *
+     * @param  array<int, int>|Collection<int, int>  $lessonIds
+     */
+    public function scopeInLessons(Builder $query, array|Collection $lessonIds): Builder
+    {
+        return $query->whereIn('lesson_id', $lessonIds);
     }
 }

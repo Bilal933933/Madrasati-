@@ -2,6 +2,7 @@
 
 namespace App\Domains\Progress\Http\Controllers;
 
+use App\Domains\Achievement\Http\Resources\AchievementResource;
 use App\Domains\Lesson\Services\LessonService;
 use App\Domains\Progress\Services\ProgressService;
 use App\Http\Controllers\Controller;
@@ -30,11 +31,14 @@ class StudentLessonProgressController extends Controller
 
     public function complete(string $slug, Request $request): JsonResponse
     {
-        $this->progressService->markCompleted(
+        $record = $this->progressService->markCompleted(
             $request->user(),
             $this->lessonService->findPublishedLessonBySlug($slug),
         );
 
-        return response()->json(['message' => 'تم تسجيل إكمال الدرس.']);
+        return response()->json([
+            'message' => 'تم تسجيل إكمال الدرس.',
+            'unlocked_achievements' => AchievementResource::collection($record->unlocked_achievements ?? []),
+        ]);
     }
 }

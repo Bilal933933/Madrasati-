@@ -9,6 +9,7 @@ use App\Domains\Lesson\Services\LessonEditorService;
 use App\Domains\Lesson\Services\LessonService;
 use App\Domains\Lesson\Services\ParagraphService;
 use Database\Seeders\Data\ContentCatalog;
+use Database\Seeders\Data\LessonSpec;
 use Database\Seeders\Support\SeedRegistry;
 use Illuminate\Database\Seeder;
 
@@ -59,6 +60,14 @@ class LessonSeeder extends Seeder
         return 'أتقن مفاهيم درس «'.$title.'» وتطبّقها في أمثلة من الحياة اليومية.';
     }
 
+    /** صورة مخطط افتراضية لأي فقرة لم تحدد صورة صريحة — تضمن مخططًا لكل فقرة. */
+    private static function fallbackParagraphImage(Lesson $lesson, string $title): string
+    {
+        $subject = $lesson->course->subject->name ?? 'اللغة العربية';
+
+        return LessonSpec::diagram($title, $subject);
+    }
+
     /**
      * بناء رحلة الدرس بالترتيب الرسمي: قبلي ← (فقرة + تكويني)* ← فيديو شامل ← نهائي.
      */
@@ -85,7 +94,7 @@ class LessonSeeder extends Seeder
             $paragraphBlock = $editor->addParagraph($lesson->id, [
                 'title' => $paragraph['title'],
                 'content' => $paragraph['content'],
-                'image' => $paragraph['image'] ?? null,
+                'image' => $paragraph['image'] ?? self::fallbackParagraphImage($lesson, $paragraph['title']),
                 'icon' => $lesson->icon,
                 'color' => $lesson->color,
             ]);

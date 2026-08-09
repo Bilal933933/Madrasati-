@@ -118,8 +118,7 @@ class CurriculumService
     public function publishedGrades(): Collection
     {
         return Grade::query()
-            ->where('is_published', true)
-            ->whereHas('stage', fn ($q) => $q->where('is_published', true))
+            ->withinPublishedHierarchy()
             ->with(['subjects' => fn ($q) => $q->where('is_published', true)->orderBy('sort_order')])
             ->orderBy('sort_order')
             ->get();
@@ -133,8 +132,7 @@ class CurriculumService
     public function findPublishedGrade(int $id): Grade
     {
         return Grade::query()
-            ->where('is_published', true)
-            ->whereHas('stage', fn ($q) => $q->where('is_published', true))
+            ->withinPublishedHierarchy()
             ->with(['subjects' => fn ($q) => $q->where('is_published', true)->orderBy('sort_order')])
             ->findOrFail($id);
     }
@@ -142,9 +140,8 @@ class CurriculumService
     public function findPublishedGradeBySlug(string $slug): Grade
     {
         return Grade::query()
-            ->where('is_published', true)
+            ->withinPublishedHierarchy()
             ->where('slug', $slug)
-            ->whereHas('stage', fn ($q) => $q->where('is_published', true))
             ->with(['subjects' => fn ($q) => $q->where('is_published', true)->orderBy('sort_order')])
             ->firstOrFail();
     }
@@ -205,8 +202,7 @@ class CurriculumService
     {
         return Semester::query()
             ->when($gradeId, fn ($q) => $q->where('grade_id', $gradeId))
-            ->whereHas('grade', fn ($q) => $q->where('is_published', true)
-                ->whereHas('stage', fn ($q2) => $q2->where('is_published', true)))
+            ->withinPublishedHierarchy()
             ->with(['subjects' => fn ($q) => $q->where('is_published', true)->orderBy('sort_order')])
             ->orderBy('sort_order')
             ->get();
@@ -220,8 +216,7 @@ class CurriculumService
     public function findPublishedSemester(int $id): Semester
     {
         return Semester::query()
-            ->whereHas('grade', fn ($q) => $q->where('is_published', true)
-                ->whereHas('stage', fn ($q2) => $q2->where('is_published', true)))
+            ->withinPublishedHierarchy()
             ->with(['subjects' => fn ($q) => $q->where('is_published', true)->orderBy('sort_order')])
             ->findOrFail($id);
     }
@@ -264,9 +259,7 @@ class CurriculumService
     public function publishedSubjects(): Collection
     {
         return Subject::query()
-            ->where('is_published', true)
-            ->whereHas('grade', fn ($q) => $q->where('is_published', true)
-                ->whereHas('stage', fn ($q2) => $q2->where('is_published', true)))
+            ->withinPublishedHierarchy()
             ->with(['courses' => fn ($q) => $q->where('is_published', true)->orderBy('sort_order')])
             ->orderBy('sort_order')
             ->get();
@@ -280,9 +273,7 @@ class CurriculumService
     public function findPublishedSubject(int $id): Subject
     {
         return Subject::query()
-            ->where('is_published', true)
-            ->whereHas('grade', fn ($q) => $q->where('is_published', true)
-                ->whereHas('stage', fn ($q2) => $q2->where('is_published', true)))
+            ->withinPublishedHierarchy()
             ->with(['courses' => fn ($q) => $q->where('is_published', true)->orderBy('sort_order')])
             ->findOrFail($id);
     }
@@ -290,10 +281,8 @@ class CurriculumService
     public function findPublishedSubjectBySlug(string $slug): Subject
     {
         return Subject::query()
-            ->where('is_published', true)
+            ->withinPublishedHierarchy()
             ->where('slug', $slug)
-            ->whereHas('grade', fn ($q) => $q->where('is_published', true)
-                ->whereHas('stage', fn ($q2) => $q2->where('is_published', true)))
             ->with(['courses' => fn ($q) => $q->where('is_published', true)->orderBy('sort_order')])
             ->firstOrFail();
     }
@@ -360,10 +349,7 @@ class CurriculumService
     public function publishedCourses(): Collection
     {
         return Course::query()
-            ->where('is_published', true)
-            ->whereHas('subject', fn ($q) => $q->where('is_published', true)
-                ->whereHas('grade', fn ($q2) => $q2->where('is_published', true)
-                    ->whereHas('stage', fn ($q3) => $q3->where('is_published', true))))
+            ->withinPublishedHierarchy()
             ->orderBy('sort_order')
             ->get();
     }
@@ -376,21 +362,15 @@ class CurriculumService
     public function findPublishedCourse(int $id): Course
     {
         return Course::query()
-            ->where('is_published', true)
-            ->whereHas('subject', fn ($q) => $q->where('is_published', true)
-                ->whereHas('grade', fn ($q2) => $q2->where('is_published', true)
-                    ->whereHas('stage', fn ($q3) => $q3->where('is_published', true))))
+            ->withinPublishedHierarchy()
             ->findOrFail($id);
     }
 
     public function findPublishedCourseBySlug(string $slug): Course
     {
         return Course::query()
-            ->where('is_published', true)
+            ->withinPublishedHierarchy()
             ->where('slug', $slug)
-            ->whereHas('subject', fn ($q) => $q->where('is_published', true)
-                ->whereHas('grade', fn ($q2) => $q2->where('is_published', true)
-                    ->whereHas('stage', fn ($q3) => $q3->where('is_published', true))))
             ->firstOrFail();
     }
 

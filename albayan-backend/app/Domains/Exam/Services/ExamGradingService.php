@@ -33,7 +33,7 @@ class ExamGradingService
         $attempt->update([
             'correct_count' => $correct,
             'score_percentage' => $percentage,
-            'passed' => intval($percentage) >= $threshold,
+            'passed' => round($percentage) >= $threshold,
         ]);
 
         return $attempt->load('questions');

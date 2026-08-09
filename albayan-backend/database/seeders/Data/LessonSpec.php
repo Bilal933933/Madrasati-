@@ -21,6 +21,29 @@ class LessonSpec
     /** رابط فيديو شامل تجريبي (فيديو يوتيوب طويل). */
     public const VIDEO = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
 
+    /** ألوان المخططات الافتراضية لكل مادة — يطابق ألوان CurriculumData. */
+    public const DIAGRAM_COLORS = [
+        'اللغة العربية' => ['FFF3E0', '9A6700'],
+        'الرياضيات' => ['FDE68A', '92400E'],
+        'العلوم' => ['D1FAE5', '065F46'],
+        'اللغة الإنجليزية' => ['CFFAFE', '155E75'],
+        'الدراسات الاجتماعية' => ['F3E8FF', '6B21A8'],
+        'المهارات المهنية' => ['E2E8F0', '334155'],
+        'التربية الدينية' => ['ECFCCB', '3F6212'],
+    ];
+
+    /** مخطط توضيحي (صورة placeholder) يستخدم كصورة افتراضية لأي فقرة درس دون صورة صريحة. */
+    public static function diagram(string $title, string $subject, array $colors = []): string
+    {
+        [$bg, $fg] = $colors !== []
+            ? $colors
+            : (self::DIAGRAM_COLORS[$subject] ?? ['E9D8FD', '7E22CE']);
+
+        $text = str_replace(' ', '-', 'مخطط-'.$title);
+
+        return "https://placehold.co/800x450/{$bg}/{$fg}?text={$text}";
+    }
+
     /** اختيار من متعدد: نص السؤال + خيارات + فهرس الصواب + تفسير. */
     public static function mcq(string $q, array $options, int $answer, string $explanation = ''): array
     {
@@ -44,22 +67,29 @@ class LessonSpec
         ];
     }
 
-    /** بناء مستند TipTap (JSON) من: مقدمة + أمثلة قائمة + ملاحظة — لضمان عرض غني. */
-    public static function body(string $intro, array $examples = [], string $note = ''): string
+    /**
+     * بناء مستند TipTap (JSON) غني — يغطّي كتلة الفقرة بأكملها لضمان عرض مكتمل:
+     * مقدمة (فقرة أو أكثر) + أمثلة قائمة نقطية + أمثلة مرقّمة + ملاحظة تذكير.
+     * مع دعم تحديد (غامق) داخل أي نص.
+     *
+     * @param  string|string[]  $intro  فقرة نصية واحدة أو عدة فقرات
+     * @param  string[]  $examples  أمثلة قائمة نقطية
+     * @param  string[]  $ordered  أمثلة قائمة مرقّمة
+     */
+    public static function body(string|array $intro, array $examples = [], string $note = '', array $ordered = []): string
     {
         $content = [];
 
-        $content[] = ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => $intro]]];
+        foreach ((array) $intro as $paragraph) {
+            $content[] = ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => $paragraph]]];
+        }
 
         if ($examples !== []) {
-            $items = array_map(
-                fn (string $example) => [
-                    'type' => 'listItem',
-                    'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => $example]]]],
-                ],
-                $examples
-            );
-            $content[] = ['type' => 'bulletList', 'content' => $items];
+            $content[] = ['type' => 'bulletList', 'content' => self::listItems($examples)];
+        }
+
+        if ($ordered !== []) {
+            $content[] = ['type' => 'orderedList', 'content' => self::listItems($ordered)];
         }
 
         if ($note !== '') {
@@ -73,5 +103,17 @@ class LessonSpec
             ['type' => 'doc', 'content' => $content],
             JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
         ) ?: '{"type":"doc","content":[]}';
+    }
+
+    /** يحوّل النصوص إلى عناصر listItem جاهزة لـ TipTap. */
+    private static function listItems(array $texts): array
+    {
+        return array_map(
+            fn (string $text) => [
+                'type' => 'listItem',
+                'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => $text]]]],
+            ],
+            $texts
+        );
     }
 }

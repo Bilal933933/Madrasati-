@@ -3,6 +3,7 @@
 namespace App\Domains\Curriculum\Models;
 
 use App\Domains\Lesson\Models\Lesson;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -85,5 +86,15 @@ class Subject extends Model
     public function lessons(): HasManyThrough
     {
         return $this->hasManyThrough(Lesson::class, Course::class, 'subject_id', 'course_id');
+    }
+
+    /**
+     * المواد المنشورة الواقعة داخل صف منشور داخل مرحلة منشورة.
+     */
+    public function scopeWithinPublishedHierarchy(Builder $query): Builder
+    {
+        return $query
+            ->where('is_published', true)
+            ->whereHas('grade', fn ($q) => $q->withinPublishedHierarchy());
     }
 }

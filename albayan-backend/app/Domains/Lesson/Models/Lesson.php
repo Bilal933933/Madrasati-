@@ -4,7 +4,9 @@ namespace App\Domains\Lesson\Models;
 
 use App\Domains\Assessment\Models\Assessment;
 use App\Domains\Curriculum\Models\Course;
+use App\Domains\Lesson\Enums\BlockKind;
 use App\Domains\Progress\Models\LessonCompletion;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -100,5 +102,39 @@ class Lesson extends Model
     public function completions(): HasMany
     {
         return $this->hasMany(LessonCompletion::class);
+    }
+
+    /**
+     * الدروس المنشورة كاملًا عبر السلسلة التعليمية: الدرس ← المقرر ←
+     * المادة ← الصف ← المرحلة (كلها is_published).
+     */
+    public function scopeFullyPublished(Builder $query): Builder
+    {
+        return $query
+            ->where('is_published', true)
+            ->whereHas('course', fn ($q) => $q->where('is_published', true)
+                ->whereHas('subject', fn ($q2) => $q2->where('is_published', true)
+                    ->whereHas('grade', fn ($q3) => $q3->where('is_published', true)
+                        ->whereHas('stage', fn ($q4) => $q4->where('is_published', true)))));
+    }
+
+    /**
+     * الدروس التي تحتوي كتلة فقرة واحدة على الأقل — أحد شرطي نافذة التجربة.
+     */
+    public function scopeHasParagraphBlock(Builder $query): Builder
+    {
+        return $query->whereHas('blocks', fn ($q) => $q->where('block_kind', BlockKind::Paragraph->value));
+    }
+
+    /**
+     * الدروس التي تحتوي كتلة تقييم (قبلي/تكويني/ختامي) واحدة على الأقل — الشرط الثاني لنافذة التجربة.
+     */
+    public function scopeHasAssessmentBlock(Builder $query): Builder
+    {
+        return $query->whereHas('blocks', fn ($q) => $q->whereIn('block_kind', [
+            BlockKind::PreAssessment->value,
+            BlockKind::FormativeAssessment->value,
+            BlockKind::FinalAssessment->value,
+        ]));
     }
 }

@@ -7,9 +7,11 @@ use App\Domains\Curriculum\Models\Course;
 use App\Domains\Curriculum\Models\Subject;
 use App\Domains\Lesson\Models\Lesson;
 use App\Domains\Progress\Enums\ProgressStatus;
+use App\Domains\Progress\Events\LessonCompletedEvent;
 use App\Domains\Progress\Models\LessonCompletion;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Event;
 
 /**
  * منطق تقدّم الطالب (Progress) — التسجيل والاشتقاق.
@@ -34,7 +36,8 @@ class ProgressService
     }
 
     /**
-     * يسلّم "أكمل الطالب الدرس" — يضبط completed_at (مع started_at إن غاب).
+     * يسلّم "أكمل الطالب الدرس" — يضبط completed_at (مع started_at إن غاب)
+     * وينشر حدث LessonCompleted لتصله الأنظمة المستمعة (الإنجازات).
      */
     public function markCompleted(User $user, Lesson $lesson): LessonCompletion
     {
@@ -43,6 +46,12 @@ class ProgressService
         $record->started_at ??= now();
         $record->completed_at = now();
         $record->save();
+
+        $event = new LessonCompletedEvent($user, $lesson);
+        Event::dispatch($event);
+
+        // الأوسمة المفتوحة حديثًا — تملؤها مستمعات الحدث لتظهر في استجابة الواجهة.
+        $record->unlocked_achievements = $event->unlocked;
 
         return $record;
     }
@@ -57,7 +66,7 @@ class ProgressService
     public function snapshotsForSubjects(User $user, Collection $subjects): array
     {
         $completions = LessonCompletion::query()
-            ->where('user_id', $user->id)
+            ->forUser($user)
             ->get()
             ->keyBy('lesson_id');
 
@@ -191,8 +200,8 @@ class ProgressService
         }
 
         return LessonCompletion::query()
-            ->where('user_id', $user->id)
-            ->whereIn('lesson_id', $ids)
+            ->forUser($user)
+            ->inLessons($ids)
             ->get()
             ->keyBy('lesson_id');
     }

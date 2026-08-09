@@ -30,6 +30,7 @@ export function LessonPlayer({ lessonSlug, onFinish }: LessonPlayerProps) {
   const { data, isLoading, isError, error, refetch } = useLessonFlow(lessonSlug);
   const engine = useLessonEngineStore((s) => s.engine);
   const current = useLessonEngineStore((s) => s.current);
+  const engineData = useLessonEngineStore((s) => s.data);
   const init = useLessonEngineStore((s) => s.init);
   const jumpTo = useLessonEngineStore((s) => s.jumpTo);
   const reset = useLessonEngineStore((s) => s.reset);
@@ -85,14 +86,30 @@ export function LessonPlayer({ lessonSlug, onFinish }: LessonPlayerProps) {
 
   const Stage = stageRenderer[current.screen];
 
+  // العودة إلى صفحة «دروس المادة» التي جاء منها الطالب (Pagina الوحدة) —
+  // عبر سلَغ المادة والوحدة إن توفّرا، وإلا فالرجوع الخلفي/onFinish.
+  const goToCourseLessons = () => {
+    const subjectSlug = engineData?.subjectSlug;
+    const courseSlug = engineData?.courseSlug;
+    if (subjectSlug && courseSlug) {
+      router.push(`/home/subject/${subjectSlug}/course/${courseSlug}`);
+      return;
+    }
+    if (onFinish) {
+      onFinish();
+      return;
+    }
+    router.back();
+  };
+
   // شاشات البداية/التقييم تدير أزرارها داخل المحتوى (ابدأ/تحقق/التالي)؛
   // نُمرّر footer صريحًا لكل شاشة عوضًا عن الافتراضي «متابعة».
   const footer =
     current.screen === "start" || current.screen === "assessment" ? (
       <div aria-hidden className="h-3" />
     ) : current.screen === "finish" ? (
-      <Button size="lg" className="h-12 w-full text-base" onClick={() => (onFinish ? onFinish() : router.back())}>
-        العودة إلى الدروس
+      <Button size="lg" className="h-12 w-full text-base" onClick={goToCourseLessons}>
+        العودة إلى دَروس المادة
       </Button>
     ) : undefined;
 

@@ -37,11 +37,7 @@ class AssessmentService
             ->when($lessonId, fn ($q) => $q->where('lesson_id', $lessonId))
             ->when($paragraphId, fn ($q) => $q->where('paragraph_id', $paragraphId))
             ->when($type, fn ($q) => $q->where('type', $type))
-            ->whereHas('lesson', fn ($ql) => $ql->where('is_published', true)
-                ->whereHas('course', fn ($qc) => $qc->where('is_published', true)
-                    ->whereHas('subject', fn ($qs) => $qs->where('is_published', true)
-                        ->whereHas('grade', fn ($qg) => $qg->where('is_published', true)
-                            ->whereHas('stage', fn ($qst) => $qst->where('is_published', true))))))
+            ->withinPublishedLesson()
             ->with(['questions' => fn ($qq) => $qq->orderBy('sort_order')
                 ->with(['options' => fn ($qo) => $qo->orderBy('sort_order')])])
             ->orderBy('sort_order')
@@ -51,11 +47,7 @@ class AssessmentService
     public function publishedAssessment(int $id): Assessment
     {
         return Assessment::query()
-            ->whereHas('lesson', fn ($ql) => $ql->where('is_published', true)
-                ->whereHas('course', fn ($qc) => $qc->where('is_published', true)
-                    ->whereHas('subject', fn ($qs) => $qs->where('is_published', true)
-                        ->whereHas('grade', fn ($qg) => $qg->where('is_published', true)
-                            ->whereHas('stage', fn ($qst) => $qst->where('is_published', true))))))
+            ->withinPublishedLesson()
             ->with(['questions' => fn ($qq) => $qq->orderBy('sort_order')
                 ->with(['options' => fn ($qo) => $qo->orderBy('sort_order')])])
             ->findOrFail($id);

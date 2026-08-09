@@ -2,6 +2,7 @@
 
 namespace App\Domains\Lesson\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
@@ -66,5 +67,14 @@ class Paragraph extends Model
     public function lesson(): BelongsTo
     {
         return $this->belongsTo(Lesson::class);
+    }
+
+    /**
+     * الفقرات التابعة لدرس منشور بالكامل عبر السلسلة التعليمية
+     * (الدرس ← المقرر ← المادة ← الصف ← المرحلة).
+     */
+    public function scopeWithinPublishedLesson(Builder $query): Builder
+    {
+        return $query->whereHas('lesson', fn ($q) => $q->fullyPublished());
     }
 }

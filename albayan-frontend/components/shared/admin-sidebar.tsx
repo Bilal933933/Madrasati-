@@ -13,6 +13,7 @@ import {
   GraduationCap,
   HelpCircle,
   FileCheck2,
+  Medal,
 } from "lucide-react";
 import {
   Sidebar,
@@ -39,6 +40,7 @@ const NAV_ITEMS = [
   { href: "/admin/lessons", label: "الدروس", icon: FileText },
   { href: "/admin/bank-questions", label: "بنك الأسئلة", icon: HelpCircle },
   { href: "/admin/exams", label: "الامتحانات", icon: FileCheck2 },
+  { href: "/admin/achievements", label: "الإنجازات", icon: Medal },
 ];
 
 export function AdminSidebar() {

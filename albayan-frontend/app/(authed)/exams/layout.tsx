@@ -7,6 +7,7 @@ import {
   GraduationCap,
   Home as HomeIcon,
   LogOut,
+  Medal,
 } from "lucide-react";
 import { Loader } from "@/components/shared/loader";
 import { SiteNavbar, type NavItem } from "@/components/shared/site-navbar";
@@ -30,6 +31,7 @@ export default function ExamsLayout({
     { href: "/home", label: "الرئيسية" },
     { href: "/explore", label: "المواد" },
     { href: "/exams", label: "الامتحانات" },
+    { href: "/achievements", label: "الإنجازات" },
   ];
 
   const dockItems = [
@@ -47,6 +49,11 @@ export default function ExamsLayout({
       icon: <GraduationCap size={16} />,
       label: "الامتحانات",
       onClick: () => router.push("/exams"),
+    },
+    {
+      icon: <Medal size={16} />,
+      label: "الإنجازات",
+      onClick: () => router.push("/achievements"),
     },
     {
       icon: <LogOut size={16} />,
