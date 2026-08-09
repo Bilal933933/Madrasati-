@@ -1,5 +1,6 @@
 import { GraduationCap } from "lucide-react";
 import Link from "next/link";
+import { MaterialsLink } from "./materials-link";
 
 const FOOTER_COLUMNS = [
   {
@@ -43,15 +44,24 @@ export function LandingFooter() {
           <div key={column.title}>
             <h3 className="mb-3 text-sm font-bold">{column.title}</h3>
             <nav className="flex flex-col gap-2">
-              {column.links.map((link) => (
-                <Link
-                  key={link.label}
-                  href={link.href}
-                  className="text-sm text-muted-foreground hover:text-foreground hover:underline"
-                >
-                  {link.label}
-                </Link>
-              ))}
+              {column.links.map((link) =>
+                link.href === "/explore" ? (
+                  <MaterialsLink
+                    key={link.label}
+                    className="text-sm text-muted-foreground hover:text-foreground hover:underline"
+                  >
+                    {link.label}
+                  </MaterialsLink>
+                ) : (
+                  <Link
+                    key={link.label}
+                    href={link.href}
+                    className="text-sm text-muted-foreground hover:text-foreground hover:underline"
+                  >
+                    {link.label}
+                  </Link>
+                )
+              )}
             </nav>
           </div>
         ))}

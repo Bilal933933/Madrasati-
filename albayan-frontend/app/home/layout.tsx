@@ -41,7 +41,7 @@ export default function StudentLayout({
     {
       icon: <Compass size={16} />,
       label: "المواد",
-      onClick: () => router.push("/explore"),
+      onClick: () => router.push("/home"),
     },
     {
       icon: <GraduationCap size={16} />,

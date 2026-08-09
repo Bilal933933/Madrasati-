@@ -29,7 +29,7 @@ export default function ExamsLayout({
 
   const links: NavItem[] = [
     { href: "/home", label: "الرئيسية" },
-    { href: "/explore", label: "المواد" },
+    { href: "/home", label: "المواد" },
     { href: "/exams", label: "الامتحانات" },
     { href: "/achievements", label: "الإنجازات" },
   ];
@@ -43,7 +43,7 @@ export default function ExamsLayout({
     {
       icon: <Compass size={16} />,
       label: "المواد",
-      onClick: () => router.push("/explore"),
+      onClick: () => router.push("/home"),
     },
     {
       icon: <GraduationCap size={16} />,

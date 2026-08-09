@@ -8,6 +8,7 @@ use App\Domains\Exam\Services\ExamBlueprintService;
 use App\Domains\Lesson\Models\Lesson;
 use Database\Seeders\Support\SeedRegistry;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Collection;
 
 /**
  * يبذر تعريفات الامتحانات (Exam Blueprints) عبر ExamBlueprintService::create —
@@ -72,7 +73,7 @@ class ExamBlueprintSeeder extends Seeder
 
     /* --------------------------- دروس الصف --------------------------- */
 
-    private function subjects(): array
+    private function subjects(): Collection
     {
         return Subject::query()
             ->where('grade_id', SeedRegistry::$grades[self::GRADE_KEY])

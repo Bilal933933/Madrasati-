@@ -9,7 +9,7 @@ import {
   Layers,
   PlayCircle,
 } from "lucide-react";
-import Link from "next/link";
+import { MaterialsLink } from "./materials-link";
 import { ScrollReveal } from "./scroll-reveal";
 import { StaggerGroup } from "./stagger-group";
 
@@ -95,10 +95,10 @@ export function Subjects() {
               </div>
 
               <div className="mt-4 flex max-h-0 items-center gap-1.5 overflow-hidden text-sm font-medium text-primary transition-all duration-300 group-hover:max-h-8 group-hover:mt-4">
-                <Link href="/explore" className="flex items-center gap-1.5">
+                <MaterialsLink className="flex items-center gap-1.5">
                   ابدأ من هنا
                   <ChevronLeft className="size-4 rtl:rotate-180" />
-                </Link>
+                </MaterialsLink>
               </div>
               <p className="mt-3 text-[0.65rem] text-muted-foreground/70">
                 آخر تحديث: اليوم

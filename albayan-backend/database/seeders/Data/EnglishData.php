@@ -34,7 +34,7 @@ class EnglishData
     {
         return [
             'title' => 'My School / مدرستي',
-            'summary' => "نتعلّم أسماء الأماكن والأدوات في المدرسة باللغة الإنجليزية ونتواصل بجمل بسيطة.",
+            'summary' => 'نتعلّم أسماء الأماكن والأدوات في المدرسة باللغة الإنجليزية ونتواصل بجمل بسيطة.',
             'objectives' => [
                 "'نحفظ مفردات المدرسة: classroom، book، pen، board.",
                 'أكوّن جملة إنجليزية بسيطة عن مدرستي.',
@@ -43,27 +43,27 @@ class EnglishData
             'video' => LessonSpec::VIDEO,
             'pre' => [
                 LessonSpec::mcq('كلمة «كتاب» بالإنجليزية هي...', ['book', 'pen', 'bag', 'table'], 0, 'Book تعني كتاب.'),
-                LessonSpec::tf("The word «classroom» means room of class.", true, 'Classroom = فصل دراسي.'),
+                LessonSpec::tf('The word «classroom» means room of class.', true, 'Classroom = فصل دراسي.'),
                 LessonSpec::mcq('ما معنى «pen»؟', ['قلم', 'كتاب', 'حقيبة', 'طباشير'], 0, 'Pen = قلم جاف.'),
             ],
             'paragraphs' => [
                 LessonSpec::paragraph(
                     'كلمات الفصل الدراسي',
                     LessonSpec::body(
-                        "نحفظ أسماء ما حولنا في الفصل: book (كتاب)، pen (قلم)، pencil (رصاص)، board (سبورة)، desk (مقعد/منضدة)، bag (حقيبة).",
+                        'نحفظ أسماء ما حولنا في الفصل: book (كتاب)، pen (قلم)، pencil (رصاص)، board (سبورة)، desk (مقعد/منضدة)، bag (حقيبة).',
                         ['This is a book.', 'That is a pen.', 'I have a pencil.'],
                         'اربط كل كلمة بالشيء الذي تراه أمامك حتى تثبت في الذاكرة.',
                         ['كرر كل كلمة ثلاث مرات بصوت مسموع.', 'أشر إلى الشيء عند نطق اسمه.', 'اكتب الكلمة تحت كل شيء في دفترك.'],
                     ),
                     [
                         LessonSpec::mcq('الكلمة الإنجليزية لكلمة «سبورة» هي...', ['board', 'book', 'bag', 'door'], 0, 'Board = سبورة.'),
-                        LessonSpec::tf("The word «pencil» means stop." , false, 'Pencil تعني قلم رصاص.'),
+                        LessonSpec::tf('The word «pencil» means stop.', false, 'Pencil تعني قلم رصاص.'),
                     ]
                 ),
                 LessonSpec::paragraph(
                     'جملة «This is»',
                     LessonSpec::body(
-                        "نستخدم This is للإشارة إلى شيء قريب منا، فنقول: This is a book (هذا كتاب)، وهذه أبسط جملة للتقديم.",
+                        'نستخدم This is للإشارة إلى شيء قريب منا، فنقول: This is a book (هذا كتاب)، وهذه أبسط جملة للتقديم.',
                         ['This is a pen.', 'This is my desk.', 'This is the board.'],
                         'This is = هذا/هذه (للشيء القريب المفرد).',
                     ),
@@ -75,7 +75,7 @@ class EnglishData
                 LessonSpec::paragraph(
                     'أدواتي المدرسية',
                     LessonSpec::body(
-                        "نتعلّم صيغة الجمع البسيطة بإضافة s: books (كتب)، pens (أقلام)، pencils (أقلام رصاص)، bags (حقائب).",
+                        'نتعلّم صيغة الجمع البسيطة بإضافة s: books (كتب)، pens (أقلام)، pencils (أقلام رصاص)، bags (حقائب).',
                         ['Books on the desk.', 'Pens in the bag.', 'Pencils on the table.'],
                         'إضافة s تحوّل المفرد إلى جمع في الإنجليزية.',
                     ),
@@ -87,7 +87,7 @@ class EnglishData
                 LessonSpec::paragraph(
                     'محادثة قصيرة',
                     LessonSpec::body(
-                        "نتدرب على محادثة بسيطة: What is this? (ما هذا؟) — This is a book. حيث نسأل ونجيب بجملة كاملة.",
+                        'نتدرب على محادثة بسيطة: What is this? (ما هذا؟) — This is a book. حيث نسأل ونجيب بجملة كاملة.',
                         ['What is this? → This is a board.', 'What is this? → This is a desk.', 'What is that? → That is a door.'],
                         'اسأل عن كل شيء حولك ولا تتردد في السؤال.',
                     ),
@@ -99,7 +99,7 @@ class EnglishData
                 LessonSpec::paragraph(
                     'أنشودة الفصل',
                     LessonSpec::body(
-                        "ختامًا نحفظ نشيدًا قصيرًا: I go to school, I go to school, with my bag and my book. فتثبت المفردات في الذاكرة بالموسيقى.",
+                        'ختامًا نحفظ نشيدًا قصيرًا: I go to school, I go to school, with my bag and my book. فتثبت المفردات في الذاكرة بالموسيقى.',
                         ['I go to school with my bag.', 'I have a pen and a book.', 'I learn every day.'],
                         'الأناشيد أسرع وسيلة لحفظ المفردات.',
                     ),

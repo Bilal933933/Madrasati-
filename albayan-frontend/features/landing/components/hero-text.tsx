@@ -1,6 +1,7 @@
 import { ArrowLeft, CheckCircle2, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { MaterialsLink } from "./materials-link";
 
 const TRUST_ITEMS = [
   { label: "تقييم قبلي" },
@@ -48,7 +49,7 @@ export function HeroText() {
           size="lg"
           className="h-12 w-full px-6 text-base sm:w-auto"
         >
-          <Link href="/explore">استكشف المواد</Link>
+          <MaterialsLink>استكشف المواد</MaterialsLink>
         </Button>
       </div>
 
