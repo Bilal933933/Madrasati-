@@ -3,6 +3,7 @@
 namespace Database\Seeders\Exam;
 
 use App\Domains\Curriculum\Models\Course;
+use App\Domains\Curriculum\Models\Subject;
 use App\Domains\Exam\Services\ExamBlueprintService;
 use App\Domains\Lesson\Models\Lesson;
 use Database\Seeders\Support\SeedRegistry;
@@ -16,7 +17,8 @@ use Illuminate\Database\Seeder;
  * - داخل كل مادة/فصل يُرقَّم المقرر (Course) بالترتيب 1..n ↔ شهر الوحدة.
  * - امتحانات الشهر (monthly) تعتمد هذا الترقيم لاستجلاب دروس نطاقها.
  *
- * النطاق التجريبي: الصف الرابع الابتدائي فقط — درس + وحدة + شهري + فصلي + شامل.
+ * النطاق: الصف الرابع الابتدائي — امتحان لكل درس وكل وحدة وكل شهر،
+ * + فصلي لكل مادة، + شامل للصف.
  */
 class ExamBlueprintSeeder extends Seeder
 {
@@ -31,7 +33,7 @@ class ExamBlueprintSeeder extends Seeder
         $this->createLessonExams($blueprintService);
         $this->createUnitExams($blueprintService);
         $this->createMonthlyExams($blueprintService);
-        $this->createSemesterExam($blueprintService);
+        $this->createSemesterExams($blueprintService);
         $this->createFullExam($blueprintService);
     }
 
@@ -68,17 +70,26 @@ class ExamBlueprintSeeder extends Seeder
         }
     }
 
+    /* --------------------------- دروس الصف --------------------------- */
+
+    private function subjects(): array
+    {
+        return Subject::query()
+            ->where('grade_id', SeedRegistry::$grades[self::GRADE_KEY])
+            ->get();
+    }
+
     /* ------------------------------- دروس ------------------------------- */
 
     private function createLessonExams(ExamBlueprintService $blueprintService): void
     {
-        foreach (['المبتدأ والخبر', 'الفاعل', 'الجملة الاسمية والجملة الفعلية'] as $title) {
-            $lesson = $this->lessonByTitle($title);
+        $lessons = Lesson::query()
+            ->whereHas('course.subject.grade', fn ($q) => $q->whereKey(SeedRegistry::$grades[self::GRADE_KEY]))
+            ->orderBy('sort_order')
+            ->limit(60)
+            ->get();
 
-            if ($lesson === null) {
-                continue;
-            }
-
+        foreach ($lessons as $lesson) {
             $blueprintService->create([
                 'exam_type' => 'lesson',
                 'title' => 'امتحان درس «'.$lesson->title.'»',
@@ -100,39 +111,21 @@ class ExamBlueprintSeeder extends Seeder
 
     private function createUnitExams(ExamBlueprintService $blueprintService): void
     {
-        // وحدة النحو (الصف الرابع الابتدائي).
-        $nahw = $this->courseByKey('النحو');
+        $courses = Course::whereIn(
+            'subject_id',
+            $this->subjects()->pluck('id')->all()
+        )->get();
 
-        if ($nahw !== null) {
+        foreach ($courses as $course) {
             $blueprintService->create([
                 'exam_type' => 'unit',
-                'title' => 'امتحان وحدة النحو',
-                'description' => 'امتحان يغطي دروس النحو: قواعد الجملة الاسمية والفعلية.',
-                'course_id' => $nahw->id,
+                'title' => 'امتحان وحدة '.$course->name,
+                'description' => 'امتحان يغطي دروس وحدة «'.$course->name.'» بعد إتمامها.',
+                'course_id' => $course->id,
                 'duration_minutes' => 30,
                 'attempts_allowed' => 2,
                 'easy_count' => 3,
                 'medium_count' => 2,
-                'hard_count' => 1,
-                'pass_threshold_percent' => 60,
-                'show_review_after_submit' => true,
-                'is_active' => true,
-            ]);
-        }
-
-        // وحدة الرياضيات (الأعداد والعمليات).
-        $math = $this->courseByKey('الأعداد والعمليات');
-
-        if ($math !== null) {
-            $blueprintService->create([
-                'exam_type' => 'unit',
-                'title' => 'امتحان وحدة الرياضيات: الأعداد والعمليات',
-                'description' => 'امتحان يغطي عمليات الجمع والطرح ومقارنة الأعداد.',
-                'course_id' => $math->id,
-                'duration_minutes' => 30,
-                'attempts_allowed' => 2,
-                'easy_count' => 2,
-                'medium_count' => 1,
                 'hard_count' => 1,
                 'pass_threshold_percent' => 60,
                 'show_review_after_submit' => true,
@@ -145,70 +138,63 @@ class ExamBlueprintSeeder extends Seeder
 
     private function createMonthlyExams(ExamBlueprintService $blueprintService): void
     {
-        $arabic = SeedRegistry::$subjects[self::GRADE_KEY.'|1|اللغة العربية'] ?? null;
+        foreach ($this->subjects() as $subject) {
+            $courseMonths = Course::where('subject_id', $subject->id)
+                ->orderBy('sort_order')
+                ->get()
+                ->count();
 
-        if ($arabic === null) {
-            return;
+            for ($month = 1; $month <= $courseMonths; $month++) {
+                $blueprintService->create([
+                    'exam_type' => 'monthly',
+                    'title' => 'امتحان الشهر '.$this->monthLabel($month).' — '.$subject->name,
+                    'description' => 'امتحان شهري لدروس الشهر '.$this->monthLabel($month).' من مادة '.$subject->name.'.',
+                    'subject_id' => $subject->id,
+                    'month_no' => $month,
+                    'duration_minutes' => 30,
+                    'attempts_allowed' => 2,
+                    'easy_count' => 3,
+                    'medium_count' => 2,
+                    'hard_count' => 1,
+                    'pass_threshold_percent' => 60,
+                    'show_review_after_submit' => true,
+                    'is_active' => true,
+                ]);
+            }
         }
+    }
 
-        // شهر أول مفتوح (وحدة النحو أُكملت) + شهر ثانِ مغلق (يُظهر التقدّم).
-        $blueprintService->create([
-            'exam_type' => 'monthly',
-            'title' => 'امتحان الشهر الأول — اللغة العربية',
-            'description' => 'امتحان شهري لأسابيع الشهر الأول في مادة اللغة العربية.',
-            'subject_id' => $arabic,
-            'month_no' => 1,
-            'duration_minutes' => 30,
-            'attempts_allowed' => 2,
-            'easy_count' => 3,
-            'medium_count' => 2,
-            'hard_count' => 1,
-            'pass_threshold_percent' => 60,
-            'show_review_after_submit' => true,
-            'is_active' => true,
-        ]);
-
-        $blueprintService->create([
-            'exam_type' => 'monthly',
-            'title' => 'امتحان الشهر الثاني — اللغة العربية',
-            'description' => 'امتحان شهري لدروس الشهر الثاني من مادة اللغة العربية.',
-            'subject_id' => $arabic,
-            'month_no' => 2,
-            'duration_minutes' => 30,
-            'attempts_allowed' => 2,
-            'easy_count' => 3,
-            'medium_count' => 2,
-            'hard_count' => 1,
-            'pass_threshold_percent' => 60,
-            'show_review_after_submit' => true,
-            'is_active' => true,
-        ]);
+    private function monthLabel(int $month): string
+    {
+        return match ($month) {
+            1 => 'الأول',
+            2 => 'الثاني',
+            3 => 'الثالث',
+            4 => 'الرابع',
+            default => (string) $month,
+        };
     }
 
     /* ------------------------- فصلي (semester) ------------------------- */
 
-    private function createSemesterExam(ExamBlueprintService $blueprintService): void
+    private function createSemesterExams(ExamBlueprintService $blueprintService): void
     {
-        $arabic = SeedRegistry::$subjects[self::GRADE_KEY.'|1|اللغة العربية'] ?? null;
-
-        if ($arabic === null) {
-            return;
+        foreach ($this->subjects() as $subject) {
+            $blueprintService->create([
+                'exam_type' => 'semester',
+                'title' => 'امتحان الفصل الدراسي الأول — '.$subject->name,
+                'description' => 'امتحان شامل لدروس الفصل الدراسي الأول في مادة '.$subject->name.'.',
+                'subject_id' => $subject->id,
+                'duration_minutes' => 60,
+                'attempts_allowed' => 2,
+                'easy_count' => 4,
+                'medium_count' => 3,
+                'hard_count' => 2,
+                'pass_threshold_percent' => 60,
+                'show_review_after_submit' => true,
+                'is_active' => true,
+            ]);
         }
-
-        $blueprintService->create([
-            'exam_type' => 'semester',
-            'title' => 'امتحان الفصل الدراسي الأول — اللغة العربية',
-            'description' => 'امتحان شامل لدروس الفصل الدراسي الأول في اللغة العربية.',
-            'subject_id' => $arabic,
-            'duration_minutes' => 60,
-            'attempts_allowed' => 2,
-            'easy_count' => 4,
-            'medium_count' => 3,
-            'hard_count' => 2,
-            'pass_threshold_percent' => 60,
-            'show_review_after_submit' => true,
-            'is_active' => true,
-        ]);
     }
 
     /* ------------------------- شامل (full) ------------------------- */
@@ -235,24 +221,5 @@ class ExamBlueprintSeeder extends Seeder
             'show_review_after_submit' => true,
             'is_active' => true,
         ]);
-    }
-
-    /* ------------------------ أدوات مساعدة ------------------------ */
-
-    private function lessonByTitle(string $title): ?Lesson
-    {
-        return Lesson::query()
-            ->where('title', $title)
-            ->whereHas('course.subject.grade', fn ($q) => $q->whereKey(SeedRegistry::$grades[self::GRADE_KEY]))
-            ->first();
-    }
-
-    private function courseByKey(string $unit): ?Course
-    {
-        $courseId = SeedRegistry::$courses[self::GRADE_KEY.'|1|اللغة العربية|'.$unit]
-            ?? SeedRegistry::$courses[self::GRADE_KEY.'|1|الرياضيات|'.$unit]
-            ?? null;
-
-        return $courseId !== null ? Course::find($courseId) : null;
     }
 }
