@@ -3,8 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 
 /**
- * يرجع ref للعنصر و inView: يتحول إلى true عند دخول العنصر الشاشة،
- * ويبقى true بعد ذلك (لا يتراجع).
+ * يرجع ref للعنصر و inView: يتحول إلى true عند دخول العنصر الشاشة
+ * و false عند خروجه، فيُعاد تشغيل الأنيميشن في كل مرة يُمرَّر عليها.
  */
 export function useInView<T extends HTMLElement>(threshold = 0.2) {
   const ref = useRef<T>(null);
@@ -16,10 +16,7 @@ export function useInView<T extends HTMLElement>(threshold = 0.2) {
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
-          setInView(true);
-          observer.disconnect();
-        }
+        setInView(entry.isIntersecting);
       },
       { threshold },
     );

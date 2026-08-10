@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Compass, GraduationCap, Home as HomeIcon, LogOut, Medal } from "lucide-react";
+import { BarChart3, Compass, GraduationCap, Home as HomeIcon, LogOut, Medal } from "lucide-react";
 import { Loader } from "@/components/shared/loader";
 import { SiteNavbar, type NavItem } from "@/components/shared/site-navbar";
 import { useAuthStore } from "@/features/auth/store/authStore";
@@ -25,6 +25,7 @@ export default function AchievementsLayout({
     { href: "/home", label: "الرئيسية" },
     { href: "/home", label: "المواد" },
     { href: "/exams", label: "الامتحانات" },
+    { href: "/results", label: "نتائجي" },
     { href: "/achievements", label: "الإنجازات" },
   ];
 
@@ -48,6 +49,11 @@ export default function AchievementsLayout({
       icon: <Medal size={16} />,
       label: "الإنجازات",
       onClick: () => router.push("/achievements"),
+    },
+    {
+      icon: <BarChart3 size={16} />,
+      label: "نتائجي",
+      onClick: () => router.push("/results"),
     },
     {
       icon: <LogOut size={16} />,

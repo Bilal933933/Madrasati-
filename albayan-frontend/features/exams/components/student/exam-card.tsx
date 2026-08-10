@@ -7,6 +7,7 @@ import {
   Unlock,
 } from "lucide-react";
 import Link from "next/link";
+import { ScrollReveal } from "@/features/landing/components/scroll-reveal";
 import { ProgressBar } from "@/features/student/components/progress-bar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -23,17 +24,20 @@ function typeLabel(exam: ExamBlueprint): string {
 export function ExamCard({
   exam,
   href,
+  index = 0,
 }: {
   exam: ExamBlueprint;
   href: string;
+  index?: number;
 }) {
   const isLocked = exam.unlock_progress != null && exam.unlock_progress < 100;
 
   return (
-    <Card
-      className={cn("text-right transition-all", !exam.is_active && "opacity-70")}
-    >
-      <CardContent className="flex flex-col gap-4">
+    <ScrollReveal delay={index * 120}>
+      <Card
+        className={cn("text-right transition-all", !exam.is_active && "opacity-70")}
+      >
+        <CardContent className="flex flex-col gap-4">
         <div className="flex items-start justify-between gap-3">
           <div className="flex flex-col gap-1">
             <span className="inline-flex w-fit items-center rounded-md bg-primary/15 px-2.5 py-1 text-xs font-semibold text-foreground/80">
@@ -110,6 +114,7 @@ export function ExamCard({
           <Link href={href}>{isLocked ? "عرض النطاق" : "ادخل الامتحان"}</Link>
         </Button>
       </CardContent>
-    </Card>
+      </Card>
+    </ScrollReveal>
   );
 }

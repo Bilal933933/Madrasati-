@@ -21,6 +21,7 @@ Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function ()
 // مسارات الطالب — أي مستخدم مسجّل
 Route::middleware('auth:sanctum')->prefix('exams')->group(function () {
     Route::get('/', [StudentExamController::class, 'index']);
+    Route::get('attempts', [StudentExamController::class, 'myAttemptsIndex']);
     Route::get('attempts/{attemptId}', [StudentExamController::class, 'showAttempt']);
     Route::put('attempts/{attemptId}/questions/{questionId}', [StudentExamController::class, 'saveAnswer']);
     Route::put('attempts/{attemptId}/progress', [StudentExamController::class, 'syncProgress']);

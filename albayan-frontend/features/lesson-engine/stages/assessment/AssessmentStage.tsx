@@ -1,5 +1,6 @@
 "use client";
 
+import { ScrollReveal } from "@/features/landing/components/scroll-reveal";
 import { AssessmentComponent } from "@/features/lesson-engine/components/assessment-component";
 
 /**
@@ -7,5 +8,9 @@ import { AssessmentComponent } from "@/features/lesson-engine/components/assessm
  * (قبلي/تحقق فهم/نهائي) عبر `current.block.kind`.
  */
 export function AssessmentStage() {
-  return <AssessmentComponent />;
+  return (
+    <ScrollReveal className="flex flex-1 flex-col">
+      <AssessmentComponent />
+    </ScrollReveal>
+  );
 }

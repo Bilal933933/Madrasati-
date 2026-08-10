@@ -1,5 +1,6 @@
 import { ArrowLeft, GraduationCap } from "lucide-react";
 import Link from "next/link";
+import { ScrollReveal } from "@/features/landing/components/scroll-reveal";
 import { ExploreThumb } from "@/features/explore/components/ExploreThumb";
 import { EXPLORE_ICONS } from "@/features/explore/lib/exploreIcons";
 import { LearningSection } from "../components/LearningSection";
@@ -30,7 +31,7 @@ export function StudentSubjectPage({ subject }: { subject: StudentSubjectDetail 
       </div>
 
       {/* غلاف المادة — Hero: يمين=نص (5) | يسار=صورة متلاشية (7) */}
-      <header className="relative overflow-hidden">
+      <ScrollReveal className="relative overflow-hidden">
         {/* طبقة التوهج العائم */}
         <div className="pointer-events-none absolute end-1/3 top-10 size-72 rounded-full bg-primary/15 opacity-40 blur-3xl" />
 
@@ -104,14 +105,14 @@ export function StudentSubjectPage({ subject }: { subject: StudentSubjectDetail 
             <div className="pointer-events-none absolute inset-0 hidden bg-gradient-to-r from-transparent to-background lg:block" />
           </div>
         </div>
-      </header>
+      </ScrollReveal>
 
       {/* فاصل ناعم بالتدرج بدل الخط الصلب */}
-      <div className="mt-14 flex items-center gap-4">
+      <ScrollReveal className="mt-14 flex items-center gap-4">
         <div className="h-px flex-1 bg-gradient-to-l from-transparent via-border/60 to-transparent" />
         <p className="px-3 text-xs font-semibold text-muted-foreground">مقررات {subject.name}</p>
         <div className="h-px flex-1 bg-gradient-to-r from-transparent via-border/60 to-transparent" />
-      </div>
+      </ScrollReveal>
 
       {/* المقررات */}
       {subject.units.length > 0 ? (

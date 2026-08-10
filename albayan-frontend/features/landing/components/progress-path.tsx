@@ -47,7 +47,7 @@ export function ProgressPath({ stations, className }: ProgressPathProps) {
     <div
       aria-hidden
       className={cn(
-        "pointer-events-none fixed inset-y-0 start-6 z-30 hidden flex-col items-center lg:flex",
+        "pointer-events-none fixed inset-y-0 start-6 z-30 hidden flex-col items-center 2xl:flex",
         className,
       )}
     >

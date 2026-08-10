@@ -137,3 +137,28 @@ export interface StudentCourseDetail {
 export interface StudentCourseResponse {
   data: StudentCourseDetail;
 }
+
+/** درس مكتمل ضمن سجل نتائج الطالب — مادة/مقرر/تاريخ الإكمال. */
+export interface CompletedLesson {
+  id: number;
+  lesson: LessonPreview;
+  subject: {
+    id: number;
+    slug: string;
+    name: string;
+    icon: string | null;
+    color: string | null;
+  };
+  course_name: string;
+  completed_at: string;
+}
+
+export interface CompletedLessonsStats {
+  total: number;
+  subjects_count: number;
+}
+
+export interface CompletedLessonsResponse {
+  data: CompletedLesson[];
+  stats: CompletedLessonsStats;
+}

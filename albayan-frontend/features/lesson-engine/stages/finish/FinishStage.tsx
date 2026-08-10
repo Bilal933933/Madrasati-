@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Check, ClipboardList, PartyPopper } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ScrollReveal } from "@/features/landing/components/scroll-reveal";
 import { useLessonEngineStore } from "@/features/lesson-engine/engine/lesson-engine-store";
 import type { LessonUnitFeed } from "@/features/lesson-engine/engine/types";
 
@@ -44,13 +45,15 @@ export function FinishStage() {
       />
 
       {unitCompleted && unit ? (
-        <UnitFinished
-          unit={unit}
-          onStartNext={() => unit.next_course?.start_slug && router.push(`/learn/${unit.next_course.start_slug}`)}
-          onBack={goToCourseLessons}
-        />
+        <ScrollReveal>
+          <UnitFinished
+            unit={unit}
+            onStartNext={() => unit.next_course?.start_slug && router.push(`/learn/${unit.next_course.start_slug}`)}
+            onBack={goToCourseLessons}
+          />
+        </ScrollReveal>
       ) : (
-        <>
+        <ScrollReveal className="flex w-full flex-col items-center gap-5">
           <span className="relative flex size-20 items-center justify-center rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 shadow-lg shadow-emerald-500/25">
             <Check className="size-10 text-white" strokeWidth={3} aria-hidden />
           </span>
@@ -120,7 +123,7 @@ export function FinishStage() {
               <ClipboardList className="size-5" aria-hidden />
             </Button>
           ) : null}
-        </>
+        </ScrollReveal>
       )}
     </div>
   );

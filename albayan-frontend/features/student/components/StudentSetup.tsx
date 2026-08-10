@@ -18,6 +18,7 @@ import { exploreApi } from "@/features/explore/services/exploreApi";
 import type { ExploreGrade, ExploreSemester, ExploreStage } from "@/features/explore/types/explore.types";
 import { showApiError } from "@/lib/apiErrors";
 import { studentHomeApi } from "../services/studentHomeApi";
+import { ScrollReveal } from "@/features/landing/components/scroll-reveal";
 
 /**
  * ربط الطالب بالمحتوى: اختيار المرحلة ← الصف ← الفصل ثم حفظ بياناته الدراسية.
@@ -74,18 +75,25 @@ export function StudentSetup() {
 
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-col items-center px-4 py-16 sm:px-6">
-      <span className="flex size-16 items-center justify-center rounded-full bg-primary/10 text-primary">
-        <BookOpenCheck className="size-8" />
-      </span>
+      <ScrollReveal>
+        <span className="flex size-16 items-center justify-center rounded-full bg-primary/10 text-primary">
+          <BookOpenCheck className="size-8" />
+        </span>
+      </ScrollReveal>
 
-      <h1 className="mt-6 text-3xl font-bold tracking-tight sm:text-4xl">
-        لنبدأ رحلتك التعليمية
-      </h1>
-      <p className="mt-3 max-w-md text-center text-muted-foreground">
-        اختر مرحلتك الدراسية ثم صفّك وفصلك حتى نعرض لك موادّك الدراسية.
-      </p>
+      <ScrollReveal delay={120}>
+        <h1 className="mt-6 text-3xl font-bold tracking-tight sm:text-4xl">
+          لنبدأ رحلتك التعليمية
+        </h1>
+      </ScrollReveal>
+      <ScrollReveal delay={200}>
+        <p className="mt-3 max-w-md text-center text-muted-foreground">
+          اختر مرحلتك الدراسية ثم صفّك وفصلك حتى نعرض لك موادّك الدراسية.
+        </p>
+      </ScrollReveal>
 
-      <div className="mt-8 w-full max-w-md space-y-4 rounded-3xl border bg-card p-6 sm:p-8">
+      <ScrollReveal delay={280} className="mt-8 w-full max-w-md">
+        <div className="space-y-4 rounded-3xl border bg-card p-6 sm:p-8">
         <div className="space-y-2">
           <label className="text-sm font-medium">المرحلة الدراسية</label>
           <Select
@@ -175,6 +183,7 @@ export function StudentSetup() {
           {saving ? "جارٍ الحفظ..." : "بدء التعلم"}
         </Button>
       </div>
+      </ScrollReveal>
     </div>
   );
 }

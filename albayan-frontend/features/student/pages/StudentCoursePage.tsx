@@ -1,5 +1,6 @@
 import { ArrowLeft, Layers } from "lucide-react";
 import Link from "next/link";
+import { ScrollReveal } from "@/features/landing/components/scroll-reveal";
 import { ExploreThumb } from "@/features/explore/components/ExploreThumb";
 import { EXPLORE_ICONS } from "@/features/explore/lib/exploreIcons";
 import { LessonCard } from "../components/LessonCard";
@@ -30,7 +31,7 @@ export function StudentCoursePage({
       </div>
 
       {/* غلاف المقرر — Mobile-First: عمود واحد في الموبايل، عمودان من lg */}
-      <header className="relative overflow-hidden">
+      <ScrollReveal className="relative overflow-hidden">
         <div className="grid grid-cols-1 items-center gap-6 lg:grid-cols-12">
           {/* المحتوى والبيانات — يمين (بداية RTL) */}
           <div className="flex flex-col lg:col-span-5">
@@ -84,14 +85,14 @@ export function StudentCoursePage({
             <div className="pointer-events-none absolute inset-0 hidden bg-gradient-to-r from-transparent to-background lg:block" />
           </div>
         </div>
-      </header>
+      </ScrollReveal>
 
       {/* فاصل ناعم بالتدرج بدل الخط الصلب */}
-      <div className="mt-14 flex items-center gap-4">
+      <ScrollReveal className="mt-14 flex items-center gap-4">
         <div className="h-px flex-1 bg-gradient-to-l from-transparent via-border/60 to-transparent" />
         <p className="px-3 text-xs font-semibold text-muted-foreground">دروس {course.name}</p>
         <div className="h-px flex-1 bg-gradient-to-r from-transparent via-border/60 to-transparent" />
-      </div>
+      </ScrollReveal>
 
       {course.lessons.length > 0 ? (
         <div className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-2">

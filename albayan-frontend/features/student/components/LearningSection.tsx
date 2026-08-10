@@ -2,6 +2,7 @@ import { CheckCircle2, ChevronLeft, Layers, PlayCircle, Repeat } from "lucide-re
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
 import { arSA } from "date-fns/locale";
+import { ScrollReveal } from "@/features/landing/components/scroll-reveal";
 import { ExploreThumb } from "@/features/explore/components/ExploreThumb";
 import { EXPLORE_ICONS } from "@/features/explore/lib/exploreIcons";
 import { cn } from "@/lib/utils";
@@ -67,7 +68,7 @@ export function LearningSection({
   const visited = relativeTime(lastVisitedAt);
 
   return (
-    <section className="group">
+    <ScrollReveal delay={index * 120} className="group">
       {/* شريط العنوان بدون خلفية/حدود */}
       <div className="mb-6 flex flex-wrap items-center gap-2.5">
         <h2 className="text-2xl font-black tracking-tight">{title}</h2>
@@ -220,6 +221,6 @@ export function LearningSection({
           )}
         </div>
       </div>
-    </section>
+    </ScrollReveal>
   );
 }

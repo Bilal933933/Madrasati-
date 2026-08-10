@@ -3,6 +3,7 @@
 import { ImageIcon, Play } from "lucide-react";
 import { useState } from "react";
 import { RichLessonContent } from "@/components/shared/rich-lesson-content";
+import { ScrollReveal } from "@/features/landing/components/scroll-reveal";
 import { ExploreThumb } from "@/features/explore/components/ExploreThumb";
 import type { TiptapDoc } from "@/features/lesson-engine/engine/tiptap-types";
 import { useLessonEngineStore } from "@/features/lesson-engine/engine/lesson-engine-store";
@@ -22,17 +23,23 @@ export function ContentStage() {
   }
 
   if (content.kind === "lesson_video") {
-    return <VideoContent url={content.url} embed={content.embed} />;
+    return (
+      <ScrollReveal className="flex flex-1 flex-col justify-center">
+        <VideoContent url={content.url} embed={content.embed} />
+      </ScrollReveal>
+    );
   }
 
   return (
-    <ParagraphContent
-      title={content.title}
-      doc={content.content}
-      image={content.image}
-      url={content.url}
-      embed={content.embed}
-    />
+    <ScrollReveal className="flex flex-1 flex-col">
+      <ParagraphContent
+        title={content.title}
+        doc={content.content}
+        image={content.image}
+        url={content.url}
+        embed={content.embed}
+      />
+    </ScrollReveal>
   );
 }
 

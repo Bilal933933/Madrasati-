@@ -81,6 +81,33 @@ class StudentExamController extends Controller
     }
 
     /**
+     * سجل كل محاولات الطالب عبر كل الامتحانات + إحصائياته.
+     */
+    public function myAttemptsIndex(Request $request)
+    {
+        $user = $request->user();
+
+        $attempts = ExamAttempt::query()
+            ->ownedBy($user)
+            ->with('blueprint')
+            ->orderByDesc('started_at')
+            ->get();
+
+        $completed = $attempts->where('status', 'completed');
+        $average = $completed->whereNotNull('score_percentage')->avg('score_percentage');
+
+        return response()->json([
+            'data' => ExamAttemptResource::collection($attempts),
+            'stats' => [
+                'total' => $attempts->count(),
+                'completed' => $completed->count(),
+                'in_progress' => $attempts->where('status', 'in_progress')->count(),
+                'average_percentage' => $average !== null ? round((float) $average, 1) : null,
+            ],
+        ]);
+    }
+
+    /**
      * بدء محاولة جديدة.
      */
     public function start(Request $request, int $id)

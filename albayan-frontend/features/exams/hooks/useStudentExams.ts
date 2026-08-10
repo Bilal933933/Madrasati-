@@ -25,6 +25,13 @@ export function useExamMyAttempts(id: number) {
   });
 }
 
+export function useMyAttemptsHistory() {
+  return useQuery({
+    queryKey: ["my-attempts-history"],
+    queryFn: () => studentExamsApi.listAllAttempts(),
+  });
+}
+
 export function useExamAttempt(attemptId: number) {
   return useQuery({
     queryKey: ["exam-attempt", attemptId],

@@ -1,5 +1,6 @@
 import { apiClient } from "@/lib/apiClient";
 import type {
+  CompletedLessonsResponse,
   StudentCourseResponse,
   StudentHomeResponse,
   StudentSubjectResponse,
@@ -52,5 +53,15 @@ export const studentHomeApi = {
       method: "POST",
       withCsrf: true,
       body: JSON.stringify(payload),
+    }),
+
+  /** سجل نتائج الدروس المكتملة للطالب + إحصائياتها. */
+  completedLessons: (ssr?: SsrContext) =>
+    apiClient<CompletedLessonsResponse>("/api/student/completed-lessons", {
+      method: "GET",
+      cache: "no-store",
+      ...(ssr
+        ? { ssrCookies: ssr.cookie, ssrOrigin: ssr.origin }
+        : {}),
     }),
 };

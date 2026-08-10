@@ -1,6 +1,6 @@
 "use client";
 
-import { LogOut, LayoutDashboard } from "lucide-react";
+import { BarChart3, History, LogOut, LayoutDashboard } from "lucide-react";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -61,7 +61,23 @@ export function UserMenu() {
             </DropdownMenuItem>
             <DropdownMenuSeparator />
           </>
-        ) : null}
+        ) : (
+          <>
+            <DropdownMenuItem asChild>
+              <Link href="/results" className="cursor-pointer">
+                <BarChart3 className="size-4" />
+                نتائجي
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href="/exams/attempts" className="cursor-pointer">
+                <History className="size-4" />
+                محاولاتي
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+          </>
+        )}
 
         <DropdownMenuItem
           variant="destructive"

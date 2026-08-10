@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import { ScrollReveal } from "@/features/landing/components/scroll-reveal";
 import { ExploreThumb } from "@/features/explore/components/ExploreThumb";
 import { cn } from "@/lib/utils";
 import type { StudentCourseLesson } from "../types/student.types";
@@ -52,12 +53,13 @@ export function LessonCard({
   const outcomes = lesson.learning_objectives ?? [];
 
   return (
-    <div
-      className={cn(
-        "flex flex-col justify-between rounded-3xl border border-border/60 bg-card/60 p-5 transition-all duration-200 hover:shadow-md",
-        isNext && "border-primary/30 bg-primary/5",
-      )}
-    >
+    <ScrollReveal delay={index * 80}>
+      <div
+        className={cn(
+          "flex flex-col justify-between rounded-3xl border border-border/60 bg-card/60 p-5 transition-all duration-200 hover:shadow-md",
+          isNext && "border-primary/30 bg-primary/5",
+        )}
+      >
       {/* المحتوى */}
       <div>
         {/* الرأس: صورة + عنوان + شارة */}
@@ -158,6 +160,7 @@ export function LessonCard({
         <PlayCircle className="size-4" aria-hidden />
         {ACTION_TEXT[status]}
       </Link>
-    </div>
+      </div>
+    </ScrollReveal>
   );
 }

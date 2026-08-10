@@ -1,5 +1,6 @@
 import { ArrowLeft, CheckCircle2, Home } from "lucide-react";
 import Link from "next/link";
+import { ScrollReveal } from "@/features/landing/components/scroll-reveal";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { ExamAttemptDetail } from "../../types/attempt.types";
@@ -23,7 +24,8 @@ export function ResultView({ attempt }: { attempt: ExamAttemptDetail }) {
 
   return (
     <div className="mx-auto w-full max-w-3xl px-4 py-8 sm:px-6">
-      <div className="mb-8 flex flex-col items-center gap-6 rounded-2xl border border-border/60 bg-card p-6 text-center shadow-md sm:p-8">
+      <ScrollReveal>
+        <div className="mb-8 flex flex-col items-center gap-6 rounded-2xl border border-border/60 bg-card p-6 text-center shadow-md sm:p-8">
         <ScoreCircle percentage={score} />
 
         <div className="flex flex-col items-center gap-1">
@@ -72,30 +74,35 @@ export function ResultView({ attempt }: { attempt: ExamAttemptDetail }) {
           </Button>
         </div>
       </div>
+      </ScrollReveal>
 
       {attempt.revealed ? (
-        <div className="space-y-4">
-          <h2 className="flex items-center gap-2 text-lg font-bold text-foreground">
-            <CheckCircle2 className="size-5 text-success" aria-hidden />
-            مراجعة الإجابات
-          </h2>
-          {attempt.questions.map((q, index) => (
-            <QuestionCard
-              key={q.id}
-              question={q}
-              index={index}
-              total={attempt.total_questions}
-              revealed
-              selectedOptionId={q.selected_option_id}
-              selectedBoolean={q.selected_boolean}
-            />
-          ))}
-        </div>
+        <ScrollReveal delay={120}>
+          <div className="space-y-4">
+            <h2 className="flex items-center gap-2 text-lg font-bold text-foreground">
+              <CheckCircle2 className="size-5 text-success" aria-hidden />
+              مراجعة الإجابات
+            </h2>
+            {attempt.questions.map((q, index) => (
+              <QuestionCard
+                key={q.id}
+                question={q}
+                index={index}
+                total={attempt.total_questions}
+                revealed
+                selectedOptionId={q.selected_option_id}
+                selectedBoolean={q.selected_boolean}
+              />
+            ))}
+          </div>
+        </ScrollReveal>
       ) : (
-        <div className="rounded-xl border border-border/60 bg-card p-6 text-center text-sm text-muted-foreground">
-          المراجعة التفصيلية غير متاحة لصاحب هذا الامتحان. تعلّم من النقاط
-          الخاطئة في محاولتك القادمة.
-        </div>
+        <ScrollReveal delay={120}>
+          <div className="rounded-xl border border-border/60 bg-card p-6 text-center text-sm text-muted-foreground">
+            المراجعة التفصيلية غير متاحة لصاحب هذا الامتحان. تعلّم من النقاط
+            الخاطئة في محاولتك القادمة.
+          </div>
+        </ScrollReveal>
       )}
     </div>
   );

@@ -46,6 +46,9 @@ export interface ExamAttemptDetail {
 export interface ExamAttemptSummary {
   id: number;
   blueprint: ExamBlueprint | null;
+  exam_title: string | null;
+  exam_type: ExamBlueprint["exam_type"] | null;
+  exam_type_label: string | null;
   attempt_number: number;
   status: AttemptStatus;
   started_at: string | null;
@@ -59,6 +62,18 @@ export interface ExamAttemptSummary {
 
 export interface ExamAttemptListResponse {
   data: ExamAttemptSummary[];
+}
+
+export interface AttemptStats {
+  total: number;
+  completed: number;
+  in_progress: number;
+  average_percentage: number | null;
+}
+
+export interface ExamAttemptHistoryResponse {
+  data: ExamAttemptSummary[];
+  stats: AttemptStats;
 }
 
 export interface ExamAttemptDetailResponse {

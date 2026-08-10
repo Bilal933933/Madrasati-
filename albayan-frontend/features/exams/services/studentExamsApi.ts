@@ -6,6 +6,7 @@ import type {
 } from "../types/exam.types";
 import type {
   ExamAttemptDetailResponse,
+  ExamAttemptHistoryResponse,
   ExamAttemptListResponse,
   ExamAttemptStartResponse,
   SaveAnswerPayload,
@@ -30,6 +31,12 @@ export const studentExamsApi = {
   /** سجل محاولات الطالب على امتحان واحد. */
   myAttempts: (id: number) =>
     apiClient<ExamAttemptListResponse>(`/api/exams/${id}/attempts`, {
+      method: "GET",
+    }),
+
+  /** سجل كل محاولات الطالب عبر كل الامتحانات + إحصائيات. */
+  listAllAttempts: () =>
+    apiClient<ExamAttemptHistoryResponse>("/api/exams/attempts", {
       method: "GET",
     }),
 

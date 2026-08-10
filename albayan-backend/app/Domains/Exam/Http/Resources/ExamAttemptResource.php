@@ -2,6 +2,7 @@
 
 namespace App\Domains\Exam\Http\Resources;
 
+use App\Domains\Exam\Enums\ExamType;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -15,6 +16,11 @@ class ExamAttemptResource extends JsonResource
         return [
             'id' => $this->id,
             'blueprint' => $this->whenLoaded('blueprint', fn () => new ExamBlueprintResource($this->blueprint)),
+            'exam_title' => $this->blueprint?->title,
+            'exam_type' => $this->blueprint?->exam_type,
+            'exam_type_label' => $this->blueprint
+                ? ExamType::tryFrom($this->blueprint->exam_type)?->label()
+                : null,
             'attempt_number' => $this->attempt_number,
             'status' => $this->status,
             'started_at' => $this->started_at?->toISOString(),

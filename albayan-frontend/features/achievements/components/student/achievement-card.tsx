@@ -1,24 +1,32 @@
 import { cn } from "@/lib/utils";
 import { ProgressBar } from "@/features/student/components/progress-bar";
+import { ScrollReveal } from "@/features/landing/components/scroll-reveal";
 import { AchievementIcon } from "../../lib/achievementIcons";
 import type { AchievementProgress } from "../../types/achievement.types";
 
 /** بطاقة إنجاز للطالب — حالة الفتح تلوّنها، والقفل يعرض التقدم نحو العتبة. */
-export function AchievementCard({ item }: { item: AchievementProgress }) {
+export function AchievementCard({
+  item,
+  index = 0,
+}: {
+  item: AchievementProgress;
+  index?: number;
+}) {
   const progressPct =
     item.threshold > 0
       ? Math.round((item.progress / item.threshold) * 100)
       : 0;
 
   return (
-    <div
-      className={cn(
-        "relative flex flex-col gap-3 overflow-hidden rounded-2xl border p-4",
-        item.unlocked
-          ? "border-primary/30 bg-primary/5"
-          : "border-border/60 bg-card/60"
-      )}
-    >
+    <ScrollReveal delay={index * 120}>
+      <div
+        className={cn(
+          "relative flex flex-col gap-3 overflow-hidden rounded-2xl border p-4",
+          item.unlocked
+            ? "border-primary/30 bg-primary/5"
+            : "border-border/60 bg-card/60"
+        )}
+      >
       <div className="flex items-start justify-between gap-3">
         <div
           className={cn(
@@ -58,6 +66,7 @@ export function AchievementCard({ item }: { item: AchievementProgress }) {
           </span>
         </div>
       )}
-    </div>
+      </div>
+    </ScrollReveal>
   );
 }

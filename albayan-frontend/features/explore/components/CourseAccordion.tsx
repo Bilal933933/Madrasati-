@@ -1,5 +1,6 @@
 import { ChevronDown, Layers } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { ScrollReveal } from "@/features/landing/components/scroll-reveal";
 import { EXPLORE_ICONS } from "../lib/exploreIcons";
 import type { ExploreUnit } from "../types/explore.types";
 import { ExploreThumb } from "./ExploreThumb";
@@ -14,7 +15,8 @@ export function CourseAccordion({ unit, index }: { unit: ExploreUnit; index: num
   const Icon = EXPLORE_ICONS[unit.icon ?? ""] ?? Layers;
 
   return (
-    <details className="group overflow-hidden">
+    <ScrollReveal delay={index * 120}>
+      <details className="group overflow-hidden">
       <summary className="grid cursor-pointer list-none grid-cols-1 items-center gap-6 py-2 [&::-webkit-details-marker]:hidden lg:grid-cols-12">
         {/* الصورة / الكولباك — تُعرض دائمًا */}
         <div
@@ -66,6 +68,7 @@ export function CourseAccordion({ unit, index }: { unit: ExploreUnit; index: num
           <p className="py-3 text-center text-sm text-muted-foreground">لا توجد دروس بعد.</p>
         )}
       </div>
-    </details>
+      </details>
+    </ScrollReveal>
   );
 }

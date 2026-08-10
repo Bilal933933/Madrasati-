@@ -18,9 +18,9 @@ import { StudentDock } from "@/features/student/components/student-dock";
 import { UserMenu } from "@/features/student/components/UserMenu";
 
 /**
- * شل منطقة الامتحانات: حارس تسجيل دخول + هيدر موحّد + شريط سفلي جوال.
+ * شل منطقة نتائجي: حارس تسجيل دخول + هيدر موحّد + شريط سفلي جوال.
  */
-export default function ExamsLayout({
+export default function ResultsLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   const router = useRouter();
@@ -53,14 +53,14 @@ export default function ExamsLayout({
       onClick: () => router.push("/exams"),
     },
     {
-      icon: <Medal size={16} />,
-      label: "الإنجازات",
-      onClick: () => router.push("/achievements"),
-    },
-    {
       icon: <BarChart3 size={16} />,
       label: "نتائجي",
       onClick: () => router.push("/results"),
+    },
+    {
+      icon: <Medal size={16} />,
+      label: "الإنجازات",
+      onClick: () => router.push("/achievements"),
     },
     {
       icon: <LogOut size={16} />,

@@ -31,26 +31,26 @@ export function HeroText() {
         يستحق أن يتعلم بثقة.
       </p>
 
-      <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
-        <div className="flex flex-col gap-1 sm:w-auto">
+      <div className="flex w-full flex-col gap-3 sm:w-auto">
+        <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-start">
           <Button asChild size="lg" className="h-12 w-full px-6 text-base sm:w-auto">
             <Link href="/trial">
               جرّب أول درس مجانًا
               <ArrowLeft className="size-4 rtl:rotate-180" />
             </Link>
           </Button>
-          <span className="text-center text-xs text-muted-foreground sm:text-start">
-            بدون تسجيل
-          </span>
+          <Button
+            asChild
+            variant="outline"
+            size="lg"
+            className="h-12 w-full px-6 text-base sm:w-auto"
+          >
+            <MaterialsLink>استكشف المواد</MaterialsLink>
+          </Button>
         </div>
-        <Button
-          asChild
-          variant="outline"
-          size="lg"
-          className="h-12 w-full px-6 text-base sm:w-auto"
-        >
-          <MaterialsLink>استكشف المواد</MaterialsLink>
-        </Button>
+        <span className="text-center text-xs text-muted-foreground sm:text-start">
+          بدون تسجيل
+        </span>
       </div>
 
       <ul className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:gap-6">

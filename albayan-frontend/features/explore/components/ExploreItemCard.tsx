@@ -1,6 +1,7 @@
 import { ChevronLeft, Library } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { ScrollReveal } from "@/features/landing/components/scroll-reveal";
 import { EXPLORE_ICONS } from "../lib/exploreIcons";
 import { ExploreThumb } from "./ExploreThumb";
 
@@ -31,7 +32,8 @@ export function ExploreItemCard({
   const Icon = EXPLORE_ICONS[icon ?? ""] ?? Library;
 
   return (
-    <Link href={href} className="group grid grid-cols-1 items-center gap-6 lg:grid-cols-12">
+    <ScrollReveal delay={index * 120}>
+      <Link href={href} className="group grid grid-cols-1 items-center gap-6 lg:grid-cols-12">
       {/* الصورة / الكولباك — تُعرض دائمًا */}
       <div
         className={cn(
@@ -77,6 +79,7 @@ export function ExploreItemCard({
           />
         </span>
       </div>
-    </Link>
+      </Link>
+    </ScrollReveal>
   );
 }

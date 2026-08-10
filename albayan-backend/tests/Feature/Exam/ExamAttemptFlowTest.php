@@ -310,4 +310,48 @@ class ExamAttemptFlowTest extends BaseExamTestCase
         $this->assertSame('ما هو الرقم الصحيح؟', $snapshot['content']);
         $this->assertArrayHasKey('correct_option_id', $snapshot, 'اللقطة تُخزّن الحل للتصحيح');
     }
+
+    #[Test]
+    public function my_attempts_index_returns_attempts_and_stats(): void
+    {
+        $this->makeMcq($this->lessonOne);
+        $this->completeScopeForStudent();
+        $blueprint = $this->makeBlueprint(['easy_count' => 1]);
+
+        $this->actingAs($this->student);
+
+        $attempt = $this->postJson("/api/exams/{$blueprint->id}/start")->json('data');
+        $this->postJson("/api/exams/attempts/{$attempt['id']}/submit")->assertOk();
+
+        $response = $this->getJson('/api/exams/attempts');
+
+        $response->assertOk()
+            ->assertJsonPath('stats.total', 1)
+            ->assertJsonPath('stats.completed', 1)
+            ->assertJsonPath('stats.in_progress', 0)
+            ->assertJsonPath('stats.average_percentage', 0)
+            ->assertJsonCount(1, 'data')
+            ->assertJsonPath('data.0.exam_title', 'امتحان الدرس')
+            ->assertJsonPath('data.0.exam_type_label', 'امتحان الدرس')
+            ->assertJsonPath('data.0.status', 'completed');
+
+        $response->assertJsonMissingPath('data.0.correct_option_id');
+    }
+
+    #[Test]
+    public function my_attempts_index_is_scoped_to_current_user(): void
+    {
+        $this->makeMcq($this->lessonOne);
+        $this->completeScopeForStudent();
+        $blueprint = $this->makeBlueprint(['easy_count' => 1]);
+
+        $this->actingAs($this->student);
+        $attempt = $this->postJson("/api/exams/{$blueprint->id}/start")->json('data');
+
+        $this->actingAs($this->otherStudent)
+            ->getJson('/api/exams/attempts')
+            ->assertOk()
+            ->assertJsonPath('stats.total', 0)
+            ->assertJsonCount(0, 'data');
+    }
 }

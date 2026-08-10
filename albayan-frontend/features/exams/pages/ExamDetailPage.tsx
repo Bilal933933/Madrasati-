@@ -11,6 +11,7 @@ import {
   Trophy,
 } from "lucide-react";
 import Link from "next/link";
+import { ScrollReveal } from "@/features/landing/components/scroll-reveal";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -89,8 +90,9 @@ export function ExamDetailPage({ examId }: { examId: number }) {
         كل الامتحانات
       </Link>
 
-      <Card className="text-right shadow-md">
-        <CardContent className="flex flex-col gap-5 p-6">
+      <ScrollReveal>
+        <Card className="text-right shadow-md">
+          <CardContent className="flex flex-col gap-5 p-6">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex flex-col gap-1">
               <span className="inline-flex w-fit items-center rounded-md bg-primary/15 px-2.5 py-1 text-xs font-semibold text-foreground/80">
@@ -190,14 +192,15 @@ export function ExamDetailPage({ examId }: { examId: number }) {
           </div>
         </CardContent>
       </Card>
+      </ScrollReveal>
 
-      <div className="my-8 flex items-center gap-4">
+      <ScrollReveal className="my-8 flex items-center gap-4">
         <div className="h-px flex-1 bg-gradient-to-l from-transparent via-border/60 to-transparent" />
         <p className="px-3 text-xs font-semibold text-muted-foreground">
           محاولاتي ({attempts.length})
         </p>
         <div className="h-px flex-1 bg-gradient-to-r from-transparent via-border/60 to-transparent" />
-      </div>
+      </ScrollReveal>
 
       {attempts.length === 0 ? (
         <Empty className="py-12">
@@ -213,10 +216,11 @@ export function ExamDetailPage({ examId }: { examId: number }) {
         </Empty>
       ) : (
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-          {attempts.map((attempt) => (
+          {attempts.map((attempt, index) => (
             <AttemptCard
               key={attempt.id}
               attempt={attempt}
+              index={index}
               resultHref={`/exams/result/${attempt.id}`}
               continueHref={`/exams/attempt/${attempt.id}`}
             />

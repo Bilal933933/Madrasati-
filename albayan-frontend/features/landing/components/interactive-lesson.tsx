@@ -3,6 +3,7 @@
 import { Check, ChevronDown, FileText, HelpCircle, Play } from "lucide-react";
 import Link from "next/link";
 import { AutoDemo } from "./auto-demo";
+import { ScrollReveal } from "./scroll-reveal";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -43,16 +44,16 @@ export function InteractiveLesson() {
 
   return (
     <section className="mx-auto w-full max-w-6xl px-4 py-20 sm:px-6">
-      <div className="mx-auto max-w-3xl text-center">
+      <ScrollReveal className="mx-auto max-w-3xl text-center">
         <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
           شاهد كيف يسير الدرس
         </h2>
         <p className="mt-3 text-muted-foreground">
           الدرس يتحرك أمامك — بدون تسجيل، بدون انتظار.
         </p>
-      </div>
+      </ScrollReveal>
 
-      <div className="mx-auto mt-12 max-w-xl overflow-hidden rounded-3xl border bg-card shadow-lg shadow-primary/5">
+      <ScrollReveal className="mx-auto mt-12 max-w-xl overflow-hidden rounded-3xl border bg-card shadow-lg shadow-primary/5" delay={100}>
         {/* رأس الشاشة */}
         <div className="flex items-center justify-between gap-3 border-b bg-muted/40 px-5 py-3">
           <div>
@@ -68,9 +69,9 @@ export function InteractiveLesson() {
         <div className="p-5 sm:p-6">
           <AutoDemo steps={lessonSteps} interval={4500} />
         </div>
-      </div>
+      </ScrollReveal>
 
-      <div className="mx-auto mt-6 flex max-w-xl flex-col items-center gap-2">
+      <ScrollReveal className="mx-auto mt-6 flex max-w-xl flex-col items-center gap-2" delay={200}>
         <Button asChild size="lg" className="h-12 w-full px-6 text-base">
           <Link href="/trial">
             ابدأ التجربة
@@ -80,7 +81,7 @@ export function InteractiveLesson() {
         <span className="text-xs text-muted-foreground">
           فقرة واحدة + سؤالان — دون تسجيل
         </span>
-      </div>
+      </ScrollReveal>
     </section>
   );
 }

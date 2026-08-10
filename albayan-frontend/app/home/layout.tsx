@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
+  BarChart3,
   Compass,
   GraduationCap,
   Home as HomeIcon,
@@ -52,6 +53,11 @@ export default function StudentLayout({
       icon: <Medal size={16} />,
       label: "الإنجازات",
       onClick: () => router.push("/achievements"),
+    },
+    {
+      icon: <BarChart3 size={16} />,
+      label: "نتائجي",
+      onClick: () => router.push("/results"),
     },
     ...(user?.role === "admin"
       ? [

@@ -2,6 +2,7 @@
 
 import { ArrowLeft, GraduationCap, PlayCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ScrollReveal } from "@/features/landing/components/scroll-reveal";
 import { ExploreThumb } from "@/features/explore/components/ExploreThumb";
 import { useLessonEngineStore } from "@/features/lesson-engine/engine/lesson-engine-store";
 import { useLessonProgress } from "@/features/lesson-engine/hooks/useLessonProgress";
@@ -40,7 +41,7 @@ export function StartStage() {
   return (
     <div className="grid flex-1 items-center gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:gap-12">
       {/* نص البداية + نداء ابدأ */}
-      <div className="flex flex-col gap-6">
+      <ScrollReveal className="flex flex-col gap-6">
         <span className="inline-flex w-fit items-center gap-2 self-start rounded-full border border-primary/20 bg-primary/5 px-3 py-1.5 text-xs font-bold text-primary">
           <PlayCircle className="size-3.5" aria-hidden />
           درس تفاعلي جديد
@@ -86,10 +87,12 @@ export function StartStage() {
           {isCompleted ? "إعادة الدرس" : "ابدأ الدرس"}
           <ArrowLeft className="size-5" aria-hidden />
         </Button>
-      </div>
+      </ScrollReveal>
 
       {/* الغلاف — همية بصرية في الجهة المقابلة */}
-      <Cover image={image} color={color} title={title} subject={subject} course={course} />
+      <ScrollReveal delay={150}>
+        <Cover image={image} color={color} title={title} subject={subject} course={course} />
+      </ScrollReveal>
     </div>
   );
 }

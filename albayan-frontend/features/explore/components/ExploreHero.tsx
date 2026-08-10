@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { ScrollReveal } from "@/features/landing/components/scroll-reveal";
 
 /**
  * هيدر صفحة استكشاف بنمط Open Canvas انسيابي (نفس لغة صفحة المادة):
@@ -17,7 +18,7 @@ export function ExploreHero({
     <header className="relative mt-6 overflow-hidden">
       <div className="pointer-events-none absolute end-1/3 top-10 size-72 rounded-full bg-primary/15 opacity-40 blur-3xl" />
 
-      <div className="relative max-w-2xl">
+      <ScrollReveal className="relative max-w-2xl">
         <span className="inline-flex w-fit items-center rounded-md bg-primary/15 px-2.5 py-1 text-xs font-semibold text-foreground/80">
           {badge}
         </span>
@@ -27,7 +28,7 @@ export function ExploreHero({
         <p className="mt-2 max-w-xl text-sm leading-relaxed text-muted-foreground sm:text-base">
           {description}
         </p>
-      </div>
+      </ScrollReveal>
     </header>
   );
 }

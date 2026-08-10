@@ -3,6 +3,7 @@ import { CourseAccordion } from "../components/CourseAccordion";
 import { ExploreBreadcrumb } from "../components/ExploreBreadcrumb";
 import { ExploreShell } from "../components/ExploreShell";
 import { ExploreThumb } from "../components/ExploreThumb";
+import { ScrollReveal } from "@/features/landing/components/scroll-reveal";
 import { throwIfNotFound } from "../lib/explore";
 import { exploreApi } from "../services/exploreApi";
 
@@ -31,7 +32,7 @@ export async function SubjectPage({ subjectSlug }: { subjectSlug: string }) {
       />
 
       {/* غلاف المادة — Hero: يمين=نص (5) | يسار=صورة متلاشية (7) */}
-      <header className="relative mt-6 overflow-hidden">
+      <ScrollReveal className="relative mt-6 overflow-hidden">
         <div className="pointer-events-none absolute end-1/3 top-10 size-72 rounded-full bg-primary/15 opacity-40 blur-3xl" />
 
         <div className="grid grid-cols-1 items-center gap-6 lg:grid-cols-12">
@@ -75,14 +76,14 @@ export async function SubjectPage({ subjectSlug }: { subjectSlug: string }) {
             <div className="pointer-events-none absolute inset-0 hidden bg-gradient-to-r from-transparent to-background lg:block" />
           </div>
         </div>
-      </header>
+      </ScrollReveal>
 
       {/* فاصل ناعم بالتدرج */}
-      <div className="mt-14 flex items-center gap-4">
+      <ScrollReveal className="mt-14 flex items-center gap-4">
         <div className="h-px flex-1 bg-gradient-to-l from-transparent via-border/60 to-transparent" />
         <p className="px-3 text-xs font-semibold text-muted-foreground">وحدات {subject.name}</p>
         <div className="h-px flex-1 bg-gradient-to-r from-transparent via-border/60 to-transparent" />
-      </div>
+      </ScrollReveal>
 
       {subject.units.length > 0 ? (
         <div className="mt-10 flex flex-col gap-14">
