@@ -4,7 +4,7 @@ namespace App\Domains\Achievement\Http\Controllers\Admin;
 
 use App\Domains\Achievement\Http\Requests\AchievementRequest;
 use App\Domains\Achievement\Http\Resources\AchievementResource;
-use App\Domains\Achievement\Services\AchievementService;
+use App\Domains\Achievement\Services\AchievementAdminService;
 use App\Http\Controllers\Controller;
 
 /**
@@ -12,7 +12,7 @@ use App\Http\Controllers\Controller;
  */
 class AchievementController extends Controller
 {
-    public function __construct(private readonly AchievementService $achievementService) {}
+    public function __construct(private readonly AchievementAdminService $achievementService) {}
 
     /**
      * @response { "data": { "id": 1, "key": "first-lesson", "metric": "lessons_completed", "metric_label": "دروس مكتملة", "threshold": 1, "title": "الخطوة الأولى", "description": "أكملت أول درس لك.", "icon": "Sprout", "is_active": true, "sort_order": 0 }[] }

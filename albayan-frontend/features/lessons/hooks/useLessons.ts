@@ -1,6 +1,5 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
-import { getErrorMessage } from "@/lib/apiErrors";
+import { useQuery, type QueryKey } from "@tanstack/react-query";
+import { useResourceMutation } from "@/lib/useCrudResource";
 import { lessonsApi, type LessonListFilters } from "../services/lessonsApi";
 import type { LessonPayload } from "../types/lesson.types";
 
@@ -27,48 +26,29 @@ export function useNextLessonOrder(enabled: boolean, courseId?: number) {
   });
 }
 
-export function useCreateLesson() {
-  const queryClient = useQueryClient();
+const INVALIDATE_KEYS: QueryKey[] = [["lessons"]];
 
-  return useMutation({
-    mutationFn: (payload: LessonPayload) => lessonsApi.createLesson(payload),
-    onSuccess: (data) => {
-      toast.success(data.message ?? "تم إنشاء الدرس بنجاح.");
-      queryClient.invalidateQueries({ queryKey: ["lessons"] });
-    },
-    onError: (error) => {
-      toast.error(getErrorMessage(error));
-    },
+export function useCreateLesson() {
+  return useResourceMutation({
+    mutationFn: lessonsApi.createLesson,
+    invalidateKeys: INVALIDATE_KEYS,
+    successMessage: "تم إنشاء الدرس بنجاح.",
   });
 }
 
 export function useUpdateLesson() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
+  return useResourceMutation({
     mutationFn: ({ id, payload }: { id: number; payload: LessonPayload }) =>
       lessonsApi.updateLesson(id, payload),
-    onSuccess: (data) => {
-      toast.success(data.message ?? "تم تحديث الدرس بنجاح.");
-      queryClient.invalidateQueries({ queryKey: ["lessons"] });
-    },
-    onError: (error) => {
-      toast.error(getErrorMessage(error));
-    },
+    invalidateKeys: INVALIDATE_KEYS,
+    successMessage: "تم تحديث الدرس بنجاح.",
   });
 }
 
 export function useDeleteLesson() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (id: number) => lessonsApi.deleteLesson(id),
-    onSuccess: (data) => {
-      toast.success(data.message ?? "تم حذف الدرس بنجاح.");
-      queryClient.invalidateQueries({ queryKey: ["lessons"] });
-    },
-    onError: (error) => {
-      toast.error(getErrorMessage(error));
-    },
+  return useResourceMutation({
+    mutationFn: lessonsApi.deleteLesson,
+    invalidateKeys: INVALIDATE_KEYS,
+    successMessage: "تم حذف الدرس بنجاح.",
   });
 }

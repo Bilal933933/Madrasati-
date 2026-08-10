@@ -2,6 +2,7 @@
 
 namespace App\Domains\Curriculum\Models;
 
+use App\Support\ClearsExploreCache;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -46,6 +47,8 @@ use Illuminate\Support\Carbon;
  */
 class Grade extends Model
 {
+    use ClearsExploreCache;
+
     protected $fillable = [
         'stage_id',
         'key',

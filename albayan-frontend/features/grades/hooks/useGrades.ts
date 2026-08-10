@@ -1,6 +1,5 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
-import { getErrorMessage } from "@/lib/apiErrors";
+import { useQuery, type QueryKey } from "@tanstack/react-query";
+import { useResourceMutation } from "@/lib/useCrudResource";
 import { gradesApi, type GradeListFilters } from "../services/gradesApi";
 import type { GradePayload } from "../types/grade.types";
 
@@ -19,48 +18,29 @@ export function useNextGradeOrder(enabled: boolean, stageId?: number) {
   });
 }
 
-export function useCreateGrade() {
-  const queryClient = useQueryClient();
+const INVALIDATE_KEYS: QueryKey[] = [["grades"]];
 
-  return useMutation({
-    mutationFn: (payload: GradePayload) => gradesApi.createGrade(payload),
-    onSuccess: (data) => {
-      toast.success(data.message ?? "تم إنشاء الصف بنجاح.");
-      queryClient.invalidateQueries({ queryKey: ["grades"] });
-    },
-    onError: (error) => {
-      toast.error(getErrorMessage(error));
-    },
+export function useCreateGrade() {
+  return useResourceMutation({
+    mutationFn: gradesApi.createGrade,
+    invalidateKeys: INVALIDATE_KEYS,
+    successMessage: "تم إنشاء الصف بنجاح.",
   });
 }
 
 export function useUpdateGrade() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
+  return useResourceMutation({
     mutationFn: ({ id, payload }: { id: number; payload: GradePayload }) =>
       gradesApi.updateGrade(id, payload),
-    onSuccess: (data) => {
-      toast.success(data.message ?? "تم تحديث الصف بنجاح.");
-      queryClient.invalidateQueries({ queryKey: ["grades"] });
-    },
-    onError: (error) => {
-      toast.error(getErrorMessage(error));
-    },
+    invalidateKeys: INVALIDATE_KEYS,
+    successMessage: "تم تحديث الصف بنجاح.",
   });
 }
 
 export function useDeleteGrade() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (id: number) => gradesApi.deleteGrade(id),
-    onSuccess: (data) => {
-      toast.success(data.message ?? "تم حذف الصف بنجاح.");
-      queryClient.invalidateQueries({ queryKey: ["grades"] });
-    },
-    onError: (error) => {
-      toast.error(getErrorMessage(error));
-    },
+  return useResourceMutation({
+    mutationFn: gradesApi.deleteGrade,
+    invalidateKeys: INVALIDATE_KEYS,
+    successMessage: "تم حذف الصف بنجاح.",
   });
 }

@@ -32,6 +32,7 @@ export function LessonPlayer({ lessonSlug, onFinish }: LessonPlayerProps) {
   const current = useLessonEngineStore((s) => s.current);
   const engineData = useLessonEngineStore((s) => s.data);
   const init = useLessonEngineStore((s) => s.init);
+  const syncUnit = useLessonEngineStore((s) => s.syncUnit);
   const jumpTo = useLessonEngineStore((s) => s.jumpTo);
   const reset = useLessonEngineStore((s) => s.reset);
 
@@ -54,7 +55,14 @@ export function LessonPlayer({ lessonSlug, onFinish }: LessonPlayerProps) {
 
   // يسجّل تقدم الطالب تلقائيًا محليًا (الشاشة الحالية + الإكمال)،
   // ويزامن البداية/الإكمال مع الباك (فوق الحفظ المحلي دون تغييره).
-  useLessonProgressSync(lessonSlug);
+  // عند الإكمال نعيد جلب الرحلة لنُحدّث ملخص الوحدة (قد تكتمل بإكمال هذا الدرس).
+  useLessonProgressSync(lessonSlug, {
+    onCompleted: async () => {
+      const result = await refetch();
+      const unit = result.data?.data?.unit ?? null;
+      syncUnit(unit);
+    },
+  });
 
   useEffect(() => () => reset(), [reset]);
 

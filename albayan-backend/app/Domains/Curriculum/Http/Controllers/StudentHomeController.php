@@ -4,8 +4,9 @@ namespace App\Domains\Curriculum\Http\Controllers;
 
 use App\Domains\Curriculum\Http\Resources\Public\StudentHomeResource;
 use App\Domains\Curriculum\Queries\StudentHomeQuery;
-use App\Domains\Progress\Services\ProgressService;
+use App\Domains\Progress\Services\ProgressAggregator;
 use App\Http\Controllers\Controller;
+use App\Support\StudentHomeCache;
 use Illuminate\Http\Request;
 
 /**
@@ -18,7 +19,7 @@ class StudentHomeController extends Controller
 {
     public function __construct(
         private readonly StudentHomeQuery $query,
-        private readonly ProgressService $progressService,
+        private readonly ProgressAggregator $progressAggregator,
     ) {}
 
     public function __invoke(Request $request)
@@ -29,10 +30,17 @@ class StudentHomeController extends Controller
 
         $lastSubjectId = $request->user()->profile?->last_subject_id;
 
-        $subjects = $this->query->subjects($profile, $lastSubjectId);
+        // يُفسَّر الخرج (Arrays نقية) ويُخزَّن لكل طالب لفترة قصيرة؛
+        // يُبطَل عند إكمال درس أو تعديل ملفه الأكاديمي (راجع StudentHomeCache::forget).
+        $payload = StudentHomeCache::remember($request->user()->id, function () use ($request, $lastSubjectId, $profile) {
+            $subjects = $this->query->subjects($profile, $lastSubjectId);
 
-        $snapshots = $this->progressService->snapshotsForSubjects($request->user(), $subjects);
+            $snapshots = $this->progressAggregator->snapshotsForSubjects($request->user(), $subjects);
 
-        return new StudentHomeResource($profile, $subjects, $snapshots);
+            return (new StudentHomeResource($profile, $subjects, $snapshots))->resolve($request);
+        });
+
+        // الحفاظ على غلاف `data` الذي تتوقعه الواجهة من JsonResource العادي.
+        return ['data' => $payload];
     }
 }

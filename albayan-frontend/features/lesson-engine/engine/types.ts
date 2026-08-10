@@ -91,5 +91,35 @@ export interface LessonEngineData {
   } | null;
   /** امتحان الدرس النشط — يظهر زر «عرض اختبار الدرس» في النهاية إن وُجد. */
   lessonExam?: { id: number; title: string } | null;
+  /** ملخص الوحدة (المقرر) من تقدم المستخدم — يغذّي شاشة نهاية الوحدة (5.6). */
+  unit?: LessonUnitFeed | null;
   flow: LessonFlowStep[];
+}
+
+/** ملخص الوحدة كما يستهلكه المحرك من LessonFlowUnit. */
+export interface LessonUnitFeed {
+  course: {
+    id: number;
+    name: string;
+    slug: string | null;
+    image: string | null;
+    color: string | null;
+  };
+  completion: {
+    completed_count: number;
+    total_count: number;
+    progress: number;
+    status: string;
+    next_lesson: {
+      id: number;
+      slug: string | null;
+      title: string;
+    } | null;
+  };
+  next_course: {
+    id: number;
+    name: string;
+    slug: string | null;
+    start_slug: string | null;
+  } | null;
 }

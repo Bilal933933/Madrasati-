@@ -224,4 +224,119 @@ class LessonFlowDomainTest extends TestCase
         $disabled->assertStatus(200);
         $this->assertNull($disabled->json('data.lesson_exam'));
     }
+
+    public function test_flow_exposes_unit_completion_status_for_user(): void
+    {
+        $stage = Stage::create(['name' => 'الابتدائية', 'sort_order' => 1, 'is_published' => true]);
+        $grade = Grade::create(['stage_id' => $stage->id, 'name' => 'الأول', 'sort_order' => 1, 'is_published' => true]);
+        $subject = Subject::create(['grade_id' => $grade->id, 'name' => 'الرياضيات', 'slug' => 'math', 'sort_order' => 1, 'is_published' => true]);
+        $course = Course::create(['subject_id' => $subject->id, 'name' => 'الوحدة الأولى', 'slug' => 'unit-one', 'sort_order' => 1, 'is_published' => true]);
+
+        $first = app(LessonService::class)->createLesson([
+            'course_id' => $course->id,
+            'title' => 'درس الجمع',
+            'sort_order' => 1,
+            'is_published' => true,
+        ]);
+        $second = app(LessonService::class)->createLesson([
+            'course_id' => $course->id,
+            'title' => 'درس الطرح',
+            'sort_order' => 2,
+            'is_published' => true,
+        ]);
+
+        $student = User::create(['name' => 'طالب', 'email' => 'student@unit.test', 'password' => 'secret', 'role' => 'student']);
+
+        // لم يكمل الطالب شيئًا بعد — الوحدة غير مكتملة.
+        $response = $this->actingAs($student)->getJson("/api/lessons/{$first->slug}");
+        $response->assertStatus(200);
+        $unit = $response->json('data.unit');
+        $this->assertSame('الوحدة الأولى', $unit['course']['name']);
+        $this->assertSame(0, $unit['completion']['completed_count']);
+        $this->assertSame(2, $unit['completion']['total_count']);
+        $this->assertSame('not_started', $unit['completion']['status']);
+
+        // يكمل درس الجمع فقط — مازالت غير مكتملة، والدرس التالي هو الطرح.
+        $this->actingAs($student)->postJson("/api/student/lessons/{$first->slug}/complete")->assertOk();
+        $inProgress = $this->actingAs($student)->getJson("/api/lessons/{$second->slug}");
+        $unit = $inProgress->json('data.unit');
+        $this->assertSame('in_progress', $unit['completion']['status']);
+        $this->assertSame(1, $unit['completion']['completed_count']);
+        $this->assertSame('درس الطرح', $unit['completion']['next_lesson']['title']);
+
+        // يكمل كل الدروس — الوحدة مكتملة فعليًا مهما كان ترتيب الاكتمال.
+        $this->actingAs($student)->postJson("/api/student/lessons/{$second->slug}/complete")->assertOk();
+        $completed = $this->actingAs($student)->getJson("/api/lessons/{$first->slug}");
+        $unit = $completed->json('data.unit');
+        $this->assertSame('completed', $unit['completion']['status']);
+        $this->assertSame(2, $unit['completion']['completed_count']);
+        $this->assertSame(2, $unit['completion']['total_count']);
+        $this->assertNull($unit['completion']['next_lesson']);
+    }
+
+    public function test_flow_reports_incomplete_unit_when_last_lesson_alone_is_completed(): void
+    {
+        $stage = Stage::create(['name' => 'الابتدائية', 'sort_order' => 1, 'is_published' => true]);
+        $grade = Grade::create(['stage_id' => $stage->id, 'name' => 'الأول', 'sort_order' => 1, 'is_published' => true]);
+        $subject = Subject::create(['grade_id' => $grade->id, 'name' => 'الرياضيات', 'slug' => 'math', 'sort_order' => 1, 'is_published' => true]);
+        $course = Course::create(['subject_id' => $subject->id, 'name' => 'الوحدة الأولى', 'slug' => 'unit-one', 'sort_order' => 1, 'is_published' => true]);
+
+        $first = app(LessonService::class)->createLesson([
+            'course_id' => $course->id,
+            'title' => 'درس الجمع',
+            'sort_order' => 1,
+            'is_published' => true,
+        ]);
+        $second = app(LessonService::class)->createLesson([
+            'course_id' => $course->id,
+            'title' => 'درس الطرح',
+            'sort_order' => 2,
+            'is_published' => true,
+        ]);
+
+        $student = User::create(['name' => 'طالب', 'email' => 'student@unit.test', 'password' => 'secret', 'role' => 'student']);
+
+        // يكمل الدرس الأخير فقط — يجب ألا تُعتبر الوحدة مكتملة،
+        // ويُوجَّه الطالب لأول درسٍ غير مكتمل (الجمع) لا إلى «انتهت الوحدة».
+        $this->actingAs($student)->postJson("/api/student/lessons/{$second->slug}/complete")->assertOk();
+
+        $response = $this->actingAs($student)->getJson("/api/lessons/{$second->slug}");
+        $response->assertStatus(200);
+        $unit = $response->json('data.unit');
+        $this->assertSame('in_progress', $unit['completion']['status']);
+        $this->assertSame(1, $unit['completion']['completed_count']);
+        $this->assertSame(2, $unit['completion']['total_count']);
+        $this->assertSame('درس الجمع', $unit['completion']['next_lesson']['title']);
+    }
+
+    public function test_flow_exposes_next_course_for_unit_end(): void
+    {
+        $stage = Stage::create(['name' => 'الابتدائية', 'sort_order' => 1, 'is_published' => true]);
+        $grade = Grade::create(['stage_id' => $stage->id, 'name' => 'الأول', 'sort_order' => 1, 'is_published' => true]);
+        $subject = Subject::create(['grade_id' => $grade->id, 'name' => 'الرياضيات', 'slug' => 'math', 'sort_order' => 1, 'is_published' => true]);
+        $courseOne = Course::create(['subject_id' => $subject->id, 'name' => 'الوحدة الأولى', 'slug' => 'unit-one', 'sort_order' => 1, 'is_published' => true]);
+        $courseTwo = Course::create(['subject_id' => $subject->id, 'name' => 'الوحدة الثانية', 'slug' => 'unit-two', 'sort_order' => 2, 'is_published' => true]);
+
+        $lesson = app(LessonService::class)->createLesson([
+            'course_id' => $courseOne->id,
+            'title' => 'درس الجمع',
+            'sort_order' => 1,
+            'is_published' => true,
+        ]);
+        $nextLesson = app(LessonService::class)->createLesson([
+            'course_id' => $courseTwo->id,
+            'title' => 'درس الضرب',
+            'sort_order' => 1,
+            'is_published' => true,
+        ]);
+
+        $student = User::create(['name' => 'طالب', 'email' => 'student@unit.test', 'password' => 'secret', 'role' => 'student']);
+
+        $response = $this->actingAs($student)->getJson("/api/lessons/{$lesson->slug}");
+        $response->assertStatus(200);
+        $nextCourse = $response->json('data.unit.next_course');
+        $this->assertSame('الوحدة الثانية', $nextCourse['name']);
+        $this->assertSame('unit-two', $nextCourse['slug']);
+        $this->assertSame($nextLesson->slug, $nextCourse['start_slug']);
+    }
 }

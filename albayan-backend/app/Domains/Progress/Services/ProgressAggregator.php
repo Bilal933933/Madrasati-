@@ -7,55 +7,18 @@ use App\Domains\Curriculum\Models\Course;
 use App\Domains\Curriculum\Models\Subject;
 use App\Domains\Lesson\Models\Lesson;
 use App\Domains\Progress\Enums\ProgressStatus;
-use App\Domains\Progress\Events\LessonCompletedEvent;
 use App\Domains\Progress\Models\LessonCompletion;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Event;
 
 /**
- * منطق تقدّم الطالب (Progress) — التسجيل والاشتقاق.
- *
- * مصدر الحقيقة جدول lesson_completions (سجل لكل طالب/درس). كل حالات
- * المواد والمقررات والتقدّم الكلي تُشتق من هذه السجلات؛ لا يُخزَّن
- * أي تقدم مُجمع.
+ * اشتقاق تقدّم الطالب (قراءات) — لقطات المواد والمقررات والتقدم الكلي
+ * من سجلات lesson_completions (مصدر الحقيقة). لا يكتب أي بيانات؛
+ * التسجيل مناطٌ بـ ProgressRecorder.
  */
-class ProgressService
+class ProgressAggregator
 {
-    /**
-     * يسلّم "بدأ الطالب الدرس" — يضبط started_at عند أول فتح فقط.
-     */
-    public function markStarted(User $user, Lesson $lesson): LessonCompletion
-    {
-        $record = $user->lessonCompletions()->firstOrNew(['lesson_id' => $lesson->id]);
-
-        $record->started_at ??= now();
-        $record->save();
-
-        return $record;
-    }
-
-    /**
-     * يسلّم "أكمل الطالب الدرس" — يضبط completed_at (مع started_at إن غاب)
-     * وينشر حدث LessonCompleted لتصله الأنظمة المستمعة (الإنجازات).
-     */
-    public function markCompleted(User $user, Lesson $lesson): LessonCompletion
-    {
-        $record = $user->lessonCompletions()->firstOrNew(['lesson_id' => $lesson->id]);
-
-        $record->started_at ??= now();
-        $record->completed_at = now();
-        $record->save();
-
-        $event = new LessonCompletedEvent($user, $lesson);
-        Event::dispatch($event);
-
-        // الأوسمة المفتوحة حديثًا — تملؤها مستمعات الحدث لتظهر في استجابة الواجهة.
-        $record->unlocked_achievements = $event->unlocked;
-
-        return $record;
-    }
-
     /**
      * خريطة تقدم لكل مادة مفاتيحها id المادة — بجلب سجلات المستخدم دفعة واحدة.
      *
@@ -114,6 +77,88 @@ class ProgressService
                     'started_at' => $completions->get($lesson->id)?->started_at?->toIso8601String(),
                 ],
             ])->all(),
+        ];
+    }
+
+    /**
+     * ملخص وحدة (مقرر) لدرسٍ وللمستخدم الحالي — يغذّي شاشة نهاية الدرس:
+     * حالة إكمال الوحدة من تقدم حقيقي + الوحدة التالية في نفس المادة.
+     *
+     * @return array{
+     *     course: array{id:int, name:string, slug:?string, image:?string, color:?string},
+     *     completion: array{completed_count:int, total_count:int, progress:int, status:string, next_lesson: ?array},
+     *     next_course: ?array
+     * }
+     */
+    public function unitCompletionForLesson(User $user, Lesson $lesson): array
+    {
+        $course = $lesson->course;
+
+        $snapshot = $this->snapshotForCourse($user, $course);
+
+        return [
+            'course' => [
+                'id' => $course->id,
+                'name' => $course->name,
+                'slug' => $course->slug,
+                'image' => $course->image,
+                'color' => $course->color,
+            ],
+            'completion' => [
+                'completed_count' => $snapshot['completed_count'],
+                'total_count' => $snapshot['total_count'],
+                'progress' => $snapshot['progress'],
+                'status' => $snapshot['status'],
+                'next_lesson' => $snapshot['next_lesson']
+                    ? [
+                        'id' => $snapshot['next_lesson']->id,
+                        'slug' => $snapshot['next_lesson']->slug,
+                        'title' => $snapshot['next_lesson']->title,
+                    ]
+                    : null,
+            ],
+            'next_course' => $this->nextCourse($course),
+        ];
+    }
+
+    /**
+     * الوحدة التالية المنشورة في نفس المادة (بعد وحدة الدرس الحالي) —
+     * مع درسها الأول (start_slug) لتوجيه [ابدأ الوحدة التالية].
+     *
+     * @return array{id:int, name:string, slug:?string, start_slug:?string}|null
+     */
+    public function nextCourse(?Course $course): ?array
+    {
+        if ($course === null) {
+            return null;
+        }
+
+        $next = Course::query()
+            ->where('subject_id', $course->subject_id)
+            ->where('is_published', true)
+            ->where(function (Builder $q) use ($course) {
+                $q->where('sort_order', '>', $course->sort_order)
+                    ->orWhere(function (Builder $q2) use ($course) {
+                        $q2->where('sort_order', $course->sort_order)
+                            ->where('id', '>', $course->id);
+                    });
+            })
+            ->orderBy('sort_order')
+            ->orderBy('id')
+            ->with(['lessons' => fn ($q) => $q
+                ->where('is_published', true)
+                ->orderBy('sort_order')])
+            ->first();
+
+        if ($next === null) {
+            return null;
+        }
+
+        return [
+            'id' => $next->id,
+            'name' => $next->name,
+            'slug' => $next->slug,
+            'start_slug' => $next->lessons->first()?->slug,
         ];
     }
 

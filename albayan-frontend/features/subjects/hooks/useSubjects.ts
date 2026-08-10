@@ -1,6 +1,5 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
-import { getErrorMessage } from "@/lib/apiErrors";
+import { useQuery, type QueryKey } from "@tanstack/react-query";
+import { useResourceMutation } from "@/lib/useCrudResource";
 import { subjectsApi, type SubjectListFilters } from "../services/subjectsApi";
 import type { SubjectPayload } from "../types/subject.types";
 
@@ -19,48 +18,29 @@ export function useNextSubjectOrder(enabled: boolean, gradeId?: number) {
   });
 }
 
-export function useCreateSubject() {
-  const queryClient = useQueryClient();
+const INVALIDATE_KEYS: QueryKey[] = [["subjects"]];
 
-  return useMutation({
-    mutationFn: (payload: SubjectPayload) => subjectsApi.createSubject(payload),
-    onSuccess: (data) => {
-      toast.success(data.message ?? "تم إنشاء المادة بنجاح.");
-      queryClient.invalidateQueries({ queryKey: ["subjects"] });
-    },
-    onError: (error) => {
-      toast.error(getErrorMessage(error));
-    },
+export function useCreateSubject() {
+  return useResourceMutation({
+    mutationFn: subjectsApi.createSubject,
+    invalidateKeys: INVALIDATE_KEYS,
+    successMessage: "تم إنشاء المادة بنجاح.",
   });
 }
 
 export function useUpdateSubject() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
+  return useResourceMutation({
     mutationFn: ({ id, payload }: { id: number; payload: SubjectPayload }) =>
       subjectsApi.updateSubject(id, payload),
-    onSuccess: (data) => {
-      toast.success(data.message ?? "تم تحديث المادة بنجاح.");
-      queryClient.invalidateQueries({ queryKey: ["subjects"] });
-    },
-    onError: (error) => {
-      toast.error(getErrorMessage(error));
-    },
+    invalidateKeys: INVALIDATE_KEYS,
+    successMessage: "تم تحديث المادة بنجاح.",
   });
 }
 
 export function useDeleteSubject() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (id: number) => subjectsApi.deleteSubject(id),
-    onSuccess: (data) => {
-      toast.success(data.message ?? "تم حذف المادة بنجاح.");
-      queryClient.invalidateQueries({ queryKey: ["subjects"] });
-    },
-    onError: (error) => {
-      toast.error(getErrorMessage(error));
-    },
+  return useResourceMutation({
+    mutationFn: subjectsApi.deleteSubject,
+    invalidateKeys: INVALIDATE_KEYS,
+    successMessage: "تم حذف المادة بنجاح.",
   });
 }

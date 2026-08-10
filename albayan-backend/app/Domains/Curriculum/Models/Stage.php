@@ -2,6 +2,7 @@
 
 namespace App\Domains\Curriculum\Models;
 
+use App\Support\ClearsExploreCache;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -39,6 +40,8 @@ use Illuminate\Support\Carbon;
  */
 class Stage extends Model
 {
+    use ClearsExploreCache;
+
     protected $fillable = [
         'key',
         'name',

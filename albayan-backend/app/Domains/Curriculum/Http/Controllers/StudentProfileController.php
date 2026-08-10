@@ -6,6 +6,7 @@ use App\Domains\Curriculum\Http\Requests\StoreStudentProfileRequest;
 use App\Domains\Curriculum\Http\Requests\StoreUserContextRequest;
 use App\Domains\Curriculum\Models\Subject;
 use App\Http\Controllers\Controller;
+use App\Support\StudentHomeCache;
 use Illuminate\Http\JsonResponse;
 
 /**
@@ -30,6 +31,9 @@ class StudentProfileController extends Controller
             ],
         );
 
+        // تغيّرت مادة/فصل الطالب — كاش بيت الطالب خاص بفقرة كل طالب.
+        StudentHomeCache::forget($request->user()->id);
+
         return response()->json(['message' => 'تم ربط بياناتك الدراسية بنجاح.']);
     }
 
@@ -45,6 +49,9 @@ class StudentProfileController extends Controller
         $subject = Subject::where('slug', $request->input('subject_slug'))->firstOrFail();
 
         $profile->update(['last_subject_id' => $subject->id]);
+
+        // أولوية الترتيب تغيّرت — أزل كاش بيت الطالب لهذا الطالب.
+        StudentHomeCache::forget($request->user()->id);
 
         return response()->json(['message' => 'تم تحديث سياق التصفح.']);
     }

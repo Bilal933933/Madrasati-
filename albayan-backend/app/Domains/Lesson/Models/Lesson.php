@@ -6,6 +6,7 @@ use App\Domains\Assessment\Models\Assessment;
 use App\Domains\Curriculum\Models\Course;
 use App\Domains\Lesson\Enums\BlockKind;
 use App\Domains\Progress\Models\LessonCompletion;
+use App\Support\ClearsExploreCache;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -54,6 +55,8 @@ use Illuminate\Support\Carbon;
  */
 class Lesson extends Model
 {
+    use ClearsExploreCache;
+
     protected $fillable = [
         'course_id',
         'title',

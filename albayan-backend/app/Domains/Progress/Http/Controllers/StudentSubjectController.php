@@ -4,7 +4,7 @@ namespace App\Domains\Progress\Http\Controllers;
 
 use App\Domains\Progress\Http\Resources\StudentSubjectResource;
 use App\Domains\Progress\Queries\StudentSubjectQuery;
-use App\Domains\Progress\Services\ProgressService;
+use App\Domains\Progress\Services\ProgressAggregator;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
@@ -15,7 +15,7 @@ class StudentSubjectController extends Controller
 {
     public function __construct(
         private readonly StudentSubjectQuery $query,
-        private readonly ProgressService $progressService,
+        private readonly ProgressAggregator $progressAggregator,
     ) {}
 
     public function show(string $slug, Request $request)
@@ -24,7 +24,7 @@ class StudentSubjectController extends Controller
 
         return new StudentSubjectResource(
             $subject,
-            $this->progressService->snapshotForSubject($request->user(), $subject),
+            $this->progressAggregator->snapshotForSubject($request->user(), $subject),
         );
     }
 }

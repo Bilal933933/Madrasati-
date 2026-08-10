@@ -34,11 +34,11 @@ class StudentExamController extends Controller
     {
         $blueprints = $this->blueprintService->blueprintsForUser($request->user(), activeOnly: true);
 
-        return ExamBlueprintResource::collection(
-            $blueprints->map(function ($blueprint) {
-                $progress = $this->unlockService->progress(auth()->user(), $blueprint);
+        $progressMap = $this->unlockService->progressForBlueprints($request->user(), $blueprints);
 
-                $blueprint->unlock_progress = $progress;
+        return ExamBlueprintResource::collection(
+            $blueprints->map(function ($blueprint) use ($progressMap) {
+                $blueprint->unlock_progress = $progressMap[$blueprint->id];
 
                 return $blueprint;
             })

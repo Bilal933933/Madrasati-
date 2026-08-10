@@ -1,6 +1,5 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
-import { getErrorMessage } from "@/lib/apiErrors";
+import { useQuery, type QueryKey } from "@tanstack/react-query";
+import { useResourceMutation } from "@/lib/useCrudResource";
 import { semestersApi, type SemesterListFilters } from "../services/semestersApi";
 import type { SemesterPayload } from "../types/semester.types";
 
@@ -19,48 +18,29 @@ export function useNextSemesterOrder(enabled: boolean, gradeId?: number) {
   });
 }
 
-export function useCreateSemester() {
-  const queryClient = useQueryClient();
+const INVALIDATE_KEYS: QueryKey[] = [["semesters"]];
 
-  return useMutation({
-    mutationFn: (payload: SemesterPayload) => semestersApi.createSemester(payload),
-    onSuccess: (data) => {
-      toast.success(data.message ?? "تم إنشاء الفصل بنجاح.");
-      queryClient.invalidateQueries({ queryKey: ["semesters"] });
-    },
-    onError: (error) => {
-      toast.error(getErrorMessage(error));
-    },
+export function useCreateSemester() {
+  return useResourceMutation({
+    mutationFn: semestersApi.createSemester,
+    invalidateKeys: INVALIDATE_KEYS,
+    successMessage: "تم إنشاء الفصل بنجاح.",
   });
 }
 
 export function useUpdateSemester() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
+  return useResourceMutation({
     mutationFn: ({ id, payload }: { id: number; payload: SemesterPayload }) =>
       semestersApi.updateSemester(id, payload),
-    onSuccess: (data) => {
-      toast.success(data.message ?? "تم تحديث الفصل بنجاح.");
-      queryClient.invalidateQueries({ queryKey: ["semesters"] });
-    },
-    onError: (error) => {
-      toast.error(getErrorMessage(error));
-    },
+    invalidateKeys: INVALIDATE_KEYS,
+    successMessage: "تم تحديث الفصل بنجاح.",
   });
 }
 
 export function useDeleteSemester() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (id: number) => semestersApi.deleteSemester(id),
-    onSuccess: (data) => {
-      toast.success(data.message ?? "تم حذف الفصل بنجاح.");
-      queryClient.invalidateQueries({ queryKey: ["semesters"] });
-    },
-    onError: (error) => {
-      toast.error(getErrorMessage(error));
-    },
+  return useResourceMutation({
+    mutationFn: semestersApi.deleteSemester,
+    invalidateKeys: INVALIDATE_KEYS,
+    successMessage: "تم حذف الفصل بنجاح.",
   });
 }

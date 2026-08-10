@@ -2,6 +2,7 @@
 
 namespace App\Domains\Curriculum\Models;
 
+use App\Support\ClearsExploreCache;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -34,6 +35,8 @@ use Illuminate\Support\Carbon;
  */
 class Semester extends Model
 {
+    use ClearsExploreCache;
+
     protected $fillable = [
         'grade_id',
         'key',

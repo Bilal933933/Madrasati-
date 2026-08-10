@@ -1,6 +1,5 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
-import { getErrorMessage } from "@/lib/apiErrors";
+import { useQuery, type QueryKey } from "@tanstack/react-query";
+import { useResourceMutation } from "@/lib/useCrudResource";
 import { achievementsApi } from "../services/achievementsApi";
 import type { AchievementPayload } from "../types/achievement.types";
 
@@ -11,49 +10,34 @@ export function useAchievements() {
   });
 }
 
-export function useCreateAchievement() {
-  const queryClient = useQueryClient();
+const INVALIDATE_KEYS: QueryKey[] = [["achievements"]];
 
-  return useMutation({
-    mutationFn: (payload: AchievementPayload) =>
-      achievementsApi.create(payload),
-    onSuccess: (data) => {
-      toast.success(data.message ?? "تم إنشاء الإنجاز بنجاح.");
-      queryClient.invalidateQueries({ queryKey: ["achievements"] });
-    },
-    onError: (error) => {
-      toast.error(getErrorMessage(error));
-    },
+export function useCreateAchievement() {
+  return useResourceMutation({
+    mutationFn: achievementsApi.create,
+    invalidateKeys: INVALIDATE_KEYS,
+    successMessage: "تم إنشاء الإنجاز بنجاح.",
   });
 }
 
 export function useUpdateAchievement() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: ({ id, payload }: { id: number; payload: AchievementPayload }) =>
-      achievementsApi.update(id, payload),
-    onSuccess: (data) => {
-      toast.success(data.message ?? "تم تحديث الإنجاز بنجاح.");
-      queryClient.invalidateQueries({ queryKey: ["achievements"] });
-    },
-    onError: (error) => {
-      toast.error(getErrorMessage(error));
-    },
+  return useResourceMutation({
+    mutationFn: ({
+      id,
+      payload,
+    }: {
+      id: number;
+      payload: AchievementPayload;
+    }) => achievementsApi.update(id, payload),
+    invalidateKeys: INVALIDATE_KEYS,
+    successMessage: "تم تحديث الإنجاز بنجاح.",
   });
 }
 
 export function useDeleteAchievement() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (id: number) => achievementsApi.delete(id),
-    onSuccess: (data) => {
-      toast.success(data.message ?? "تم حذف الإنجاز بنجاح.");
-      queryClient.invalidateQueries({ queryKey: ["achievements"] });
-    },
-    onError: (error) => {
-      toast.error(getErrorMessage(error));
-    },
+  return useResourceMutation({
+    mutationFn: achievementsApi.delete,
+    invalidateKeys: INVALIDATE_KEYS,
+    successMessage: "تم حذف الإنجاز بنجاح.",
   });
 }

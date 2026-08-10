@@ -21,6 +21,10 @@ class LessonFlowService
     {
         return $lesson->load([
             'course.subject',
+            'course.lessons' => fn ($q) => $q
+                ->where('is_published', true)
+                ->orderBy('sort_order')
+                ->orderBy('id'),
             'blocks' => fn ($q) => $q
                 ->orderBy('sort_order')
                 ->orderBy('id')

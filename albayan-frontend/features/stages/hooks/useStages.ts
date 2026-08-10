@@ -1,6 +1,5 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
-import { getErrorMessage } from "@/lib/apiErrors";
+import { useQuery, type QueryKey } from "@tanstack/react-query";
+import { useResourceMutation } from "@/lib/useCrudResource";
 import { stagesApi } from "../services/stagesApi";
 import type { StagePayload } from "../types/stage.types";
 
@@ -19,48 +18,29 @@ export function useNextStageOrder(enabled: boolean) {
   });
 }
 
-export function useCreateStage() {
-  const queryClient = useQueryClient();
+const INVALIDATE_KEYS: QueryKey[] = [["stages"]];
 
-  return useMutation({
-    mutationFn: (payload: StagePayload) => stagesApi.createStage(payload),
-    onSuccess: (data) => {
-      toast.success(data.message ?? "تم إنشاء المرحلة بنجاح.");
-      queryClient.invalidateQueries({ queryKey: ["stages"] });
-    },
-    onError: (error) => {
-      toast.error(getErrorMessage(error));
-    },
+export function useCreateStage() {
+  return useResourceMutation({
+    mutationFn: stagesApi.createStage,
+    invalidateKeys: INVALIDATE_KEYS,
+    successMessage: "تم إنشاء المرحلة بنجاح.",
   });
 }
 
 export function useUpdateStage() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
+  return useResourceMutation({
     mutationFn: ({ id, payload }: { id: number; payload: StagePayload }) =>
       stagesApi.updateStage(id, payload),
-    onSuccess: (data) => {
-      toast.success(data.message ?? "تم تحديث المرحلة بنجاح.");
-      queryClient.invalidateQueries({ queryKey: ["stages"] });
-    },
-    onError: (error) => {
-      toast.error(getErrorMessage(error));
-    },
+    invalidateKeys: INVALIDATE_KEYS,
+    successMessage: "تم تحديث المرحلة بنجاح.",
   });
 }
 
 export function useDeleteStage() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (id: number) => stagesApi.deleteStage(id),
-    onSuccess: (data) => {
-      toast.success(data.message ?? "تم حذف المرحلة بنجاح.");
-      queryClient.invalidateQueries({ queryKey: ["stages"] });
-    },
-    onError: (error) => {
-      toast.error(getErrorMessage(error));
-    },
+  return useResourceMutation({
+    mutationFn: stagesApi.deleteStage,
+    invalidateKeys: INVALIDATE_KEYS,
+    successMessage: "تم حذف المرحلة بنجاح.",
   });
 }

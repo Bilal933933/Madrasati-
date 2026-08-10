@@ -40,6 +40,7 @@ class LessonFlowResource extends JsonResource
                     'title' => $lesson->lesson_exam->title,
                 ]
                 : null,
+            'unit' => $lesson->flow_unit ?? null,
             'blocks' => $lesson->blocks
                 ->map(fn (LessonBlock $block) => [
                     'id' => $block->id,

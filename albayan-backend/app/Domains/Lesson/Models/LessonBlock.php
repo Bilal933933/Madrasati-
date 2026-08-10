@@ -3,6 +3,7 @@
 namespace App\Domains\Lesson\Models;
 
 use App\Domains\Assessment\Models\Assessment;
+use App\Support\ClearsExploreCache;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -41,6 +42,8 @@ use Illuminate\Support\Carbon;
  */
 class LessonBlock extends Model
 {
+    use ClearsExploreCache;
+
     protected $fillable = [
         'lesson_id',
         'block_kind',

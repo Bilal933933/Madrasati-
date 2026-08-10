@@ -8,7 +8,9 @@ use App\Domains\Curriculum\Models\Semester;
 use App\Domains\Curriculum\Models\Stage;
 use App\Domains\Curriculum\Models\Subject;
 use App\Domains\Lesson\Services\LessonService;
+use App\Support\ExploreCache;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Cache;
 use Tests\TestCase;
 
 class ExploreDomainTest extends TestCase
@@ -118,5 +120,40 @@ class ExploreDomainTest extends TestCase
         $this->seedTree();
 
         $this->getJson('/api/explore/stages/unknown/grades')->assertStatus(404);
+    }
+
+    public function test_explore_response_is_cached_as_plain_arrays(): void
+    {
+        $this->seedTree();
+
+        $this->getJson('/api/explore/stages')->assertOk();
+
+        $key = ExploreCache::key('stages');
+        $this->assertTrue(Cache::has($key), 'يجب أن يُخزَّن خرج الاستكشاف في الكاش.');
+
+        $cached = Cache::get($key);
+        $this->assertIsArray($cached);
+        $this->assertSame('primary', $cached[0]['key'] ?? null);
+    }
+
+    public function test_explore_cache_is_invalidated_when_content_changes(): void
+    {
+        $this->seedTree();
+
+        $this->getJson('/api/explore/stages')->assertOk();
+        $generationBefore = (int) Cache::get('explore.generation', 0);
+
+        $stage = Stage::query()->firstOrFail();
+        $stage->update(['name' => 'المرحلة الابتدائية (محدث)']);
+
+        $this->assertGreaterThan(
+            $generationBefore,
+            (int) Cache::get('explore.generation'),
+            'تعديل المنهج يجب أن يرفع جيل الكاش.'
+        );
+
+        $this->getJson('/api/explore/stages')
+            ->assertOk()
+            ->assertJsonPath('data.0.name', 'المرحلة الابتدائية (محدث)');
     }
 }

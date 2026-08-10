@@ -47,6 +47,7 @@ export function mapLesson(flow: LessonFlow): LessonEngineData {
     summary: flow.lesson.summary ?? undefined,
     nextLesson: flow.next_lesson,
     lessonExam: flow.lesson_exam,
+    unit: flow.unit,
     flow: buildFlow(blocks),
   };
 }

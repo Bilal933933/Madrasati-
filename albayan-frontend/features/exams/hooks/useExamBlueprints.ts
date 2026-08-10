@@ -1,6 +1,5 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
-import { getErrorMessage } from "@/lib/apiErrors";
+import { useQuery, type QueryKey } from "@tanstack/react-query";
+import { useResourceMutation } from "@/lib/useCrudResource";
 import {
   examBlueprintsApi,
   type ExamBlueprintListFilters,
@@ -14,26 +13,18 @@ export function useExamBlueprints(filters?: ExamBlueprintListFilters) {
   });
 }
 
-export function useCreateExamBlueprint() {
-  const queryClient = useQueryClient();
+const INVALIDATE_KEYS: QueryKey[] = [["exam-blueprints"]];
 
-  return useMutation({
-    mutationFn: (payload: ExamBlueprintPayload) =>
-      examBlueprintsApi.createBlueprint(payload),
-    onSuccess: (data) => {
-      toast.success(data.message ?? "تم إنشاء تعريف الامتحان بنجاح.");
-      queryClient.invalidateQueries({ queryKey: ["exam-blueprints"] });
-    },
-    onError: (error) => {
-      toast.error(getErrorMessage(error));
-    },
+export function useCreateExamBlueprint() {
+  return useResourceMutation({
+    mutationFn: examBlueprintsApi.createBlueprint,
+    invalidateKeys: INVALIDATE_KEYS,
+    successMessage: "تم إنشاء تعريف الامتحان بنجاح.",
   });
 }
 
 export function useUpdateExamBlueprint() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
+  return useResourceMutation({
     mutationFn: ({
       id,
       payload,
@@ -41,27 +32,15 @@ export function useUpdateExamBlueprint() {
       id: number;
       payload: ExamBlueprintPayload;
     }) => examBlueprintsApi.updateBlueprint(id, payload),
-    onSuccess: (data) => {
-      toast.success(data.message ?? "تم تحديث تعريف الامتحان بنجاح.");
-      queryClient.invalidateQueries({ queryKey: ["exam-blueprints"] });
-    },
-    onError: (error) => {
-      toast.error(getErrorMessage(error));
-    },
+    invalidateKeys: INVALIDATE_KEYS,
+    successMessage: "تم تحديث تعريف الامتحان بنجاح.",
   });
 }
 
 export function useDeleteExamBlueprint() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (id: number) => examBlueprintsApi.deleteBlueprint(id),
-    onSuccess: (data) => {
-      toast.success(data.message ?? "تم حذف تعريف الامتحان بنجاح.");
-      queryClient.invalidateQueries({ queryKey: ["exam-blueprints"] });
-    },
-    onError: (error) => {
-      toast.error(getErrorMessage(error));
-    },
+  return useResourceMutation({
+    mutationFn: examBlueprintsApi.deleteBlueprint,
+    invalidateKeys: INVALIDATE_KEYS,
+    successMessage: "تم حذف تعريف الامتحان بنجاح.",
   });
 }

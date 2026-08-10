@@ -1,6 +1,5 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
-import { getErrorMessage } from "@/lib/apiErrors";
+import { useQuery, type QueryKey } from "@tanstack/react-query";
+import { useResourceMutation } from "@/lib/useCrudResource";
 import {
   assessmentsApi,
   type AssessmentListFilters,
@@ -30,48 +29,29 @@ export function useNextAssessmentOrder(enabled: boolean, lessonId?: number) {
   });
 }
 
-export function useCreateAssessment() {
-  const queryClient = useQueryClient();
+const INVALIDATE_KEYS: QueryKey[] = [["assessments"]];
 
-  return useMutation({
-    mutationFn: (payload: AssessmentPayload) => assessmentsApi.createAssessment(payload),
-    onSuccess: (data) => {
-      toast.success(data.message ?? "تم إنشاء التقييم بنجاح.");
-      queryClient.invalidateQueries({ queryKey: ["assessments"] });
-    },
-    onError: (error) => {
-      toast.error(getErrorMessage(error));
-    },
+export function useCreateAssessment() {
+  return useResourceMutation({
+    mutationFn: assessmentsApi.createAssessment,
+    invalidateKeys: INVALIDATE_KEYS,
+    successMessage: "تم إنشاء التقييم بنجاح.",
   });
 }
 
 export function useUpdateAssessment() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
+  return useResourceMutation({
     mutationFn: ({ id, payload }: { id: number; payload: AssessmentPayload }) =>
       assessmentsApi.updateAssessment(id, payload),
-    onSuccess: (data) => {
-      toast.success(data.message ?? "تم تحديث التقييم بنجاح.");
-      queryClient.invalidateQueries({ queryKey: ["assessments"] });
-    },
-    onError: (error) => {
-      toast.error(getErrorMessage(error));
-    },
+    invalidateKeys: INVALIDATE_KEYS,
+    successMessage: "تم تحديث التقييم بنجاح.",
   });
 }
 
 export function useDeleteAssessment() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (id: number) => assessmentsApi.deleteAssessment(id),
-    onSuccess: (data) => {
-      toast.success(data.message ?? "تم حذف التقييم بنجاح.");
-      queryClient.invalidateQueries({ queryKey: ["assessments"] });
-    },
-    onError: (error) => {
-      toast.error(getErrorMessage(error));
-    },
+  return useResourceMutation({
+    mutationFn: assessmentsApi.deleteAssessment,
+    invalidateKeys: INVALIDATE_KEYS,
+    successMessage: "تم حذف التقييم بنجاح.",
   });
 }

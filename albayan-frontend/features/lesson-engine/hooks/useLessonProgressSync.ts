@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import { useLessonEngineStore } from "../engine/lesson-engine-store";
 import { useLessonProgressStore } from "../state/lessonProgressStore";
 import { useLessonProgress } from "./useLessonProgress";
-import { lessonApi } from "../services/lessonApi";
+import { lessonApi, type LessonCompleteResponse } from "../services/lessonApi";
 import { notifyUnlockedAchievements } from "@/features/achievements/lib/achievementUnlocks";
 
 /**
@@ -16,7 +16,10 @@ import { notifyUnlockedAchievements } from "@/features/achievements/lib/achievem
  * - complete: عند بلوغ شاشة النهاية.
  * كلاهما fire-and-forget — فشل الشبكة لا يعطّل اللعب.
  */
-export function useLessonProgressSync(lessonSlug: string) {
+export function useLessonProgressSync(
+  lessonSlug: string,
+  options?: { onCompleted?: (data: LessonCompleteResponse) => void }
+) {
   const data = useLessonEngineStore((state) => state.data);
   const current = useLessonEngineStore((state) => state.current);
   const flow = useLessonEngineStore((state) => state.flow);
@@ -66,6 +69,11 @@ export function useLessonProgressSync(lessonSlug: string) {
 
   // مزامنة الباك: complete عند بلوغ شاشة النهاية.
   const completeSentRef = useRef(false);
+  const onCompletedRef = useRef(options?.onCompleted);
+
+  useEffect(() => {
+    onCompletedRef.current = options?.onCompleted;
+  }, [options?.onCompleted]);
 
   useEffect(() => {
     if (!lessonSlug || screen !== "finish" || completeSentRef.current) {
@@ -74,7 +82,10 @@ export function useLessonProgressSync(lessonSlug: string) {
     completeSentRef.current = true;
     lessonApi
       .complete(lessonSlug)
-      .then((data) => notifyUnlockedAchievements(data.unlocked_achievements))
+      .then((data) => {
+        notifyUnlockedAchievements(data.unlocked_achievements);
+        onCompletedRef.current?.(data);
+      })
       .catch(() => {});
   }, [lessonSlug, screen]);
 }

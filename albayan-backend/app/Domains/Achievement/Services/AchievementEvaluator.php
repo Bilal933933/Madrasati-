@@ -4,9 +4,9 @@ namespace App\Domains\Achievement\Services;
 
 use App\Domains\Achievement\Enums\AchievementMetric;
 use App\Domains\Auth\Models\User;
-use App\Domains\Curriculum\Models\Course;
 use App\Domains\Exam\Models\ExamAttempt;
 use App\Domains\Exam\Models\ExamAttemptQuestion;
+use App\Domains\Lesson\Models\Lesson;
 use App\Domains\Progress\Models\LessonCompletion;
 use Illuminate\Support\Carbon;
 
@@ -39,28 +39,39 @@ class AchievementEvaluator
 
     /**
      * عدد المقررات المكتملة: جميع دروسها المنشورة مكتملة للطالب.
+     *
+     * يُحسب بالاستعلام المُجمَّع بدل تحميل النماذج في الذاكرة:
+     * عدد الدروس المنشورة لكل مقرر مقابل عدد الدروس المكتملة للطالب — صفر كيانات.
      */
     public function coursesCompleted(User $user): int
     {
-        $completedLessonIds = LessonCompletion::query()
-            ->forUser($user)
-            ->completed()
-            ->pluck('lesson_id')
-            ->all();
+        // الدروس المنشورة مجمّعة بعدّها لكل مقرر.
+        $publishedPerCourse = Lesson::query()
+            ->where('is_published', true)
+            ->selectRaw('course_id, COUNT(id) as total')
+            ->groupBy('course_id')
+            ->pluck('total', 'course_id');
+
+        // المقررات التي أتم الطالب دروسها المنشورة كلها.
+        // استعلامان مجمعان: (المكتمل لكل مقرر) ثم مقارنة بالمنشور.
+        $completedPerCourse = Lesson::query()
+            ->selectRaw('lessons.course_id, COUNT(lesson_completions.id) as done')
+            ->join('lesson_completions', 'lesson_completions.lesson_id', '=', 'lessons.id')
+            ->where('lessons.is_published', true)
+            ->where('lesson_completions.user_id', $user->id)
+            ->whereNotNull('lesson_completions.completed_at')
+            ->groupBy('lessons.course_id')
+            ->pluck('done', 'course_id');
 
         $count = 0;
 
-        Course::query()
-            ->where('is_published', true)
-            ->with(['lessons' => fn ($q) => $q->where('is_published', true)])
-            ->get()
-            ->each(function (Course $course) use ($completedLessonIds, &$count) {
-                $ids = $course->lessons->pluck('id')->all();
+        foreach ($publishedPerCourse as $courseId => $total) {
+            $done = $completedPerCourse[$courseId] ?? 0;
 
-                if ($ids !== [] && array_diff($ids, $completedLessonIds) === []) {
-                    $count++;
-                }
-            });
+            if ($total > 0 && (int) $done >= (int) $total) {
+                $count++;
+            }
+        }
 
         return $count;
     }

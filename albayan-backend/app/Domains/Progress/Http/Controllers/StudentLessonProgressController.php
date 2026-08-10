@@ -4,7 +4,7 @@ namespace App\Domains\Progress\Http\Controllers;
 
 use App\Domains\Achievement\Http\Resources\AchievementResource;
 use App\Domains\Lesson\Services\LessonService;
-use App\Domains\Progress\Services\ProgressService;
+use App\Domains\Progress\Services\ProgressRecorder;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -16,12 +16,12 @@ class StudentLessonProgressController extends Controller
 {
     public function __construct(
         private readonly LessonService $lessonService,
-        private readonly ProgressService $progressService,
+        private readonly ProgressRecorder $progressRecorder,
     ) {}
 
     public function start(string $slug, Request $request): JsonResponse
     {
-        $this->progressService->markStarted(
+        $this->progressRecorder->markStarted(
             $request->user(),
             $this->lessonService->findPublishedLessonBySlug($slug),
         );
@@ -31,7 +31,7 @@ class StudentLessonProgressController extends Controller
 
     public function complete(string $slug, Request $request): JsonResponse
     {
-        $record = $this->progressService->markCompleted(
+        $record = $this->progressRecorder->markCompleted(
             $request->user(),
             $this->lessonService->findPublishedLessonBySlug($slug),
         );

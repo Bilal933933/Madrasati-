@@ -9,6 +9,7 @@ use App\Domains\Exam\Models\ExamBlueprint;
 use App\Domains\Exam\Policies\ExamAttemptPolicy;
 use App\Domains\Exam\Policies\ExamBlueprintPolicy;
 use App\Domains\Progress\Events\LessonCompletedEvent;
+use App\Support\StudentHomeCache;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
@@ -31,6 +32,9 @@ class AppServiceProvider extends ServiceProvider
         // لحظات فارقة تُنشر من Progress وExam — نظام الإنجازات يستمع لها.
         Event::listen(LessonCompletedEvent::class, [UnlockAchievementsListener::class, 'handleLessonCompleted']);
         Event::listen(ExamCompletedEvent::class, [UnlockAchievementsListener::class, 'handleExamCompleted']);
+
+        // إبطال كاش بيت الطالب عندما يتغيّر تقدمه (درس مكتمل) — التفاصيل في AchievementsHomeCard تُجلب مباشرة.
+        Event::listen(LessonCompletedEvent::class, fn (LessonCompletedEvent $event) => StudentHomeCache::forget($event->user->id));
 
         // سياسات صلاحيات الامتحانات (الموديلات داخل دومينات — تُسجَّل صراحةً).
         Gate::policy(ExamBlueprint::class, ExamBlueprintPolicy::class);

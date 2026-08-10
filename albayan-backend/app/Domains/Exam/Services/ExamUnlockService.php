@@ -46,6 +46,52 @@ class ExamUnlockService
     }
 
     /**
+     * تقدّم فتح كل الامتحانات دفعة واحدة — بجلب واحد لسجلات إكمال الطالب
+     * بدل استعلام لكل blueprint (يستأصل N+1 في قائمة الامتحانات).
+     *
+     * @param  \Illuminate\Support\Collection<int, ExamBlueprint>  $blueprints
+     * @return array<int, array{total: int, completed: int, unlocked: bool}>
+     */
+    public function progressForBlueprints(User $user, Collection $blueprints): array
+    {
+        $progress = [];
+
+        $idsByBlueprint = [];
+        $allRequired = collect();
+
+        foreach ($blueprints as $blueprint) {
+            $required = $this->requiredLessonIds($blueprint);
+            $idsByBlueprint[$blueprint->id] = $required;
+            $allRequired = $allRequired->merge($required);
+        }
+
+        $uniqueRequired = $allRequired->unique();
+
+        $completedIds = $uniqueRequired->isEmpty()
+            ? collect()
+            : LessonCompletion::query()
+                ->forUser($user)
+                ->completed()
+                ->inLessons($uniqueRequired)
+                ->pluck('lesson_id');
+
+        foreach ($blueprints as $blueprint) {
+            $required = $idsByBlueprint[$blueprint->id];
+            $completed = $required->isEmpty()
+                ? 0
+                : $completedIds->intersect($required->all())->count();
+
+            $progress[$blueprint->id] = [
+                'total' => $required->count(),
+                'completed' => $completed,
+                'unlocked' => $completed === $required->count(),
+            ];
+        }
+
+        return $progress;
+    }
+
+    /**
      * معرّفات دروس النطاق التي أكملها الطالب.
      */
     private function completedLessonIds(User $user, ExamBlueprint $blueprint): Collection

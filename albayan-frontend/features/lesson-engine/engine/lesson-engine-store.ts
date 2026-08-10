@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { LessonEngine } from "./lesson-engine";
-import type { LessonEngineData, LessonFlowStep } from "./types";
+import type { LessonEngineData, LessonFlowStep, LessonUnitFeed } from "./types";
 
 interface LessonEngineState {
   engine: LessonEngine | null;
@@ -14,6 +14,8 @@ interface LessonEngineState {
   back: () => void;
   /** قفز مباشرة إلى شاشة بمعرّفها (استئناف التقدم المحفوظ). */
   jumpTo: (stepId: string) => void;
+  /** تحديث ملخص الوحدة (بعد إكمال الدرس) دون إعادة بناء المحرك كاملًا. */
+  syncUnit: (unit: LessonUnitFeed | null) => void;
   reset: () => void;
 }
 
@@ -72,6 +74,14 @@ export const useLessonEngineStore = create<LessonEngineState>((set, get) => ({
       current: engine.current,
       currentIndex: engine.currentIndex,
     });
+  },
+
+  syncUnit: (unit) => {
+    const data = get().data;
+    if (!data) {
+      return;
+    }
+    set({ data: { ...data, unit } });
   },
 
   reset: () => {

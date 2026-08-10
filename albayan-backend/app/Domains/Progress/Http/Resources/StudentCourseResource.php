@@ -14,7 +14,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 class StudentCourseResource extends JsonResource
 {
     /**
-     * @param  array  $snapshot  مخرجات ProgressService::snapshotForCourse
+     * @param  array  $snapshot  مخرجات ProgressAggregator::snapshotForCourse
      */
     public function __construct(
         private readonly Course $course,

@@ -1,6 +1,5 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
-import { getErrorMessage } from "@/lib/apiErrors";
+import { useQuery, type QueryKey } from "@tanstack/react-query";
+import { useResourceMutation } from "@/lib/useCrudResource";
 import { paragraphsApi, type ParagraphListFilters } from "../services/paragraphsApi";
 import type { ParagraphPayload } from "../types/paragraph.types";
 
@@ -19,48 +18,29 @@ export function useNextParagraphOrder(enabled: boolean, lessonId?: number) {
   });
 }
 
-export function useCreateParagraph() {
-  const queryClient = useQueryClient();
+const INVALIDATE_KEYS: QueryKey[] = [["paragraphs"]];
 
-  return useMutation({
-    mutationFn: (payload: ParagraphPayload) => paragraphsApi.createParagraph(payload),
-    onSuccess: (data) => {
-      toast.success(data.message ?? "تم إنشاء الفقرة بنجاح.");
-      queryClient.invalidateQueries({ queryKey: ["paragraphs"] });
-    },
-    onError: (error) => {
-      toast.error(getErrorMessage(error));
-    },
+export function useCreateParagraph() {
+  return useResourceMutation({
+    mutationFn: paragraphsApi.createParagraph,
+    invalidateKeys: INVALIDATE_KEYS,
+    successMessage: "تم إنشاء الفقرة بنجاح.",
   });
 }
 
 export function useUpdateParagraph() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
+  return useResourceMutation({
     mutationFn: ({ id, payload }: { id: number; payload: ParagraphPayload }) =>
       paragraphsApi.updateParagraph(id, payload),
-    onSuccess: (data) => {
-      toast.success(data.message ?? "تم تحديث الفقرة بنجاح.");
-      queryClient.invalidateQueries({ queryKey: ["paragraphs"] });
-    },
-    onError: (error) => {
-      toast.error(getErrorMessage(error));
-    },
+    invalidateKeys: INVALIDATE_KEYS,
+    successMessage: "تم تحديث الفقرة بنجاح.",
   });
 }
 
 export function useDeleteParagraph() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (id: number) => paragraphsApi.deleteParagraph(id),
-    onSuccess: (data) => {
-      toast.success(data.message ?? "تم حذف الفقرة بنجاح.");
-      queryClient.invalidateQueries({ queryKey: ["paragraphs"] });
-    },
-    onError: (error) => {
-      toast.error(getErrorMessage(error));
-    },
+  return useResourceMutation({
+    mutationFn: paragraphsApi.deleteParagraph,
+    invalidateKeys: INVALIDATE_KEYS,
+    successMessage: "تم حذف الفقرة بنجاح.",
   });
 }

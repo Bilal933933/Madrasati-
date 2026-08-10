@@ -4,7 +4,7 @@ namespace App\Domains\Curriculum\Http\Resources\Public;
 
 use App\Domains\Auth\Models\StudentProfile;
 use App\Domains\Curriculum\Models\Subject;
-use App\Domains\Progress\Services\ProgressService;
+use App\Domains\Progress\Services\ProgressAggregator;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -16,7 +16,7 @@ class StudentHomeResource extends JsonResource
 {
     /**
      * @param  iterable  $subjects  مواد الفصل (محملة بالدروس المرتبة)
-     * @param  array<int, array>  $snapshots  مخرجات ProgressService::snapshotsForSubjects
+     * @param  array<int, array>  $snapshots  مخرجات ProgressAggregator::snapshotsForSubjects
      */
     public function __construct(
         private readonly StudentProfile $profile,
@@ -46,7 +46,7 @@ class StudentHomeResource extends JsonResource
                 'name' => $semester->name,
             ],
             'academic_year' => '2026 / 2027',
-            'overall_progress' => app(ProgressService::class)->overall($this->snapshots),
+            'overall_progress' => app(ProgressAggregator::class)->overall($this->snapshots),
             'subjects' => collect($this->subjects)->map(fn (Subject $subject) => [
                 'id' => $subject->id,
                 'slug' => $subject->slug,
@@ -68,7 +68,7 @@ class StudentHomeResource extends JsonResource
                 'last_lesson' => $this->lessonPreview($this->snapshots[$subject->id]['last_lesson'] ?? null, $this->snapshots[$subject->id]['completed_lesson_ids'] ?? []),
                 'next_lesson' => $this->lessonPreview($this->snapshots[$subject->id]['next_lesson'] ?? null, $this->snapshots[$subject->id]['completed_lesson_ids'] ?? []),
                 'last_visited_at' => $this->snapshots[$subject->id]['last_visited_at']?->toIso8601String(),
-            ])->values(),
+            ])->values()->all(),
         ];
     }
 
