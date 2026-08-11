@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service.js';
+import { MarkdownLoader } from './markdown-loader.js';
 
 export interface RagResult {
   lessons: { id: number; title: string; summary: string | null }[];
@@ -11,7 +12,10 @@ export interface RagResult {
 export class RagService {
   private static readonly MAX_CHARS = 12000;
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly markdown: MarkdownLoader,
+  ) {}
 
   /**
    * استرجاع نصي بسيط (بلا vector DB):
@@ -79,6 +83,18 @@ export class RagService {
       });
     }
 
+    // إضافة ملفات المعرفة Markdown المطابقة (الكتاب المدرسي والمراجع العامة).
+    const markdownDocs = this.markdown.matching({
+      subjectId: opts.subjectId,
+      gradeId: opts.gradeId,
+    });
+    for (const doc of markdownDocs) {
+      if (contentWindow.length >= RagService.MAX_CHARS) break;
+      const label = doc.type === 'reference' ? 'مرجع عام' : 'من الكتاب المدرسي';
+      const body = `### ${doc.title} — [${label}]\n${doc.body}`;
+      contentWindow += `${body}\n\n`;
+    }
+
     return {
       lessons: selected.map((s) => ({
         id: Number(s.lesson.id),
@@ -99,7 +115,11 @@ export class RagService {
   }
 
   private scoreLesson(
-    lesson: { title: string; summary: string | null; learning_objectives: unknown },
+    lesson: {
+      title: string;
+      summary: string | null;
+      learning_objectives: unknown;
+    },
     tokens: string[],
   ): number {
     const title = lesson.title.toLowerCase();

@@ -1,5 +1,6 @@
 "use client";
 
+import type { ReactNode } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
@@ -7,6 +8,32 @@ import rehypeKatex from "rehype-katex";
 import rehypeHighlight from "rehype-highlight";
 import "katex/dist/katex.min.css";
 import "highlight.js/styles/github-dark.css";
+import { DiagramBlock } from "./diagram-block";
+
+function isMermaidNode(node: unknown): boolean {
+  const children = (node as { children?: Array<{ properties?: { className?: unknown } }> })
+    ?.children;
+  const className = children?.[0]?.properties?.className;
+  return Array.isArray(className) && className.includes("language-mermaid");
+}
+
+function codeText(children: ReactNode): string {
+  if (typeof children === "string") return children;
+  if (Array.isArray(children)) {
+    return children.map((child) => codeText(child as ReactNode)).join("");
+  }
+  if (
+    children &&
+    typeof children === "object" &&
+    "props" in children &&
+    children.props &&
+    typeof children.props === "object" &&
+    "children" in children.props
+  ) {
+    return codeText((children.props as { children?: ReactNode }).children);
+  }
+  return "";
+}
 
 /**
  * يعرض رد المعلم الذكي كنص Markdown منسّق:
@@ -40,13 +67,28 @@ export function ChatMarkdown({ children }: { children: string }) {
           td: (props) => (
             <td className="border border-border px-3 py-1.5" {...props} />
           ),
-          pre: (props) => (
-            <pre
-              dir="ltr"
-              className="overflow-x-auto rounded-lg bg-[#0d1117] p-3 text-xs leading-relaxed"
-              {...props}
-            />
-          ),
+          pre: (props) => {
+            if (isMermaidNode(props.node)) {
+              return <>{props.children}</>;
+            }
+            return (
+              <pre
+                dir="ltr"
+                className="overflow-x-auto rounded-lg bg-[#0d1117] p-3 text-xs leading-relaxed"
+                {...props}
+              />
+            );
+          },
+          code: ({ className, children, ...props }) => {
+            if (className?.includes("language-mermaid")) {
+              return <DiagramBlock code={codeText(children)} />;
+            }
+            return (
+              <code className={className} {...props}>
+                {children}
+              </code>
+            );
+          },
         }}
       >
         {children}

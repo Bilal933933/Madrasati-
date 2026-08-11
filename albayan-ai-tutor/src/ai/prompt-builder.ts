@@ -16,7 +16,9 @@ export class PromptBuilder {
     const prog = context.progress;
 
     const weakAreas = context.weakAreas.length
-      ? context.weakAreas.map((w) => `${w.lessonTitle} (${w.errorCount} أخطاء)`).join('، ')
+      ? context.weakAreas
+          .map((w) => `${w.lessonTitle} (${w.errorCount} أخطاء)`)
+          .join('، ')
       : 'لا توجد حتى الآن';
 
     const lines = [
@@ -24,13 +26,17 @@ export class PromptBuilder {
       '',
       'معلومات الطالب:',
       `- الاسم: ${s.name}`,
-      p.gradeName ? `- المرحلة التعليمية: ${p.stageName ?? ''} - ${p.gradeName}` : '- المرحلة التعليمية: غير محددة',
+      p.gradeName
+        ? `- المرحلة التعليمية: ${p.stageName ?? ''} - ${p.gradeName}`
+        : '- المرحلة التعليمية: غير محددة',
       p.currentSubjectName ? `- المادة الحالية: ${p.currentSubjectName}` : null,
       `- عدد الدروس المكتملة: ${prog.completedCount}`,
       prog.perSubject.length
         ? `- المتابعة حسب المادة: ${prog.perSubject.map((x) => `${x.subjectName} (${x.completed})`).join('، ')}`
         : null,
-      prog.dailyStreak > 0 ? `- أيام الدراسة المتتالية: ${prog.dailyStreak}` : null,
+      prog.dailyStreak > 0
+        ? `- أيام الدراسة المتتالية: ${prog.dailyStreak}`
+        : null,
       `- متوسط درجات الاختبارات: ${perf.averageScore != null ? perf.averageScore.toFixed(1) + '%' : 'لا توجد إحصائيات بعد'}`,
       `- الاختبارات المنجزة: ${perf.attemptsCount} (نجح في ${perf.passedCount})`,
       `- نقاط الضعف: ${weakAreas}`,
@@ -47,6 +53,13 @@ export class PromptBuilder {
       '- اكتب المعادلات والرموز الرياضية بصيغة LaTeX: \\(...\\) للمضمّن و $$...$$ للمعادلة المستقلة.',
       '- عند عرض كود برمجي ضعه داخل كتلة محاطة بعلامات ``` مع تسمية اللغة (مثل ```typescript).',
       '- أبقِ الفقرات قصيرة ومباشرة، واجعل الإجابات واضحة وسهلة القراءة.',
+      '',
+      'قواعد الرسوم التوضيحية (Mermaid):',
+      '- عندما يضيف رسم توضيحي قيمة على النص وحده (خطوات عملية، تسلسل زمني، هرمية، بنية نظام)، ضع مخطط Mermaid داخل كتلة محاطة بعلامات ```mermaid.',
+      '- اجعل المخطط صغيرًا وبسيطًا: من 4 إلى 8 عناصر فقط، وعنوان نصي قصير لكل عنصر بالعربية داخل ["..."].',
+      '- استخدم flowchart LR للعمليات الأفقية و TD للهرمية، و sequenceDiagram عند الحاجة لتسلسل الأحداث.',
+      '- لا تُفرط في العناصر أو الأسهم؛ عنصر تمييز واحد كحد أقصى يكفي، واحذف أي عقدة لا تضيف فهمًا.',
+      '- اشرح المخطط بجملة أو جملتين بعده داخل الإجابة.',
       '',
       'قواعد الإجابة:',
       '- أجب عن سؤال الطالب بالاعتماد على المحتوى المقدَّم أولًا.',
