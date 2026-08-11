@@ -1,0 +1,526 @@
+generator client {
+  provider     = "prisma-client"
+  output       = "../src/generated/prisma"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model achievements {
+  id                BigInt              @id @default(autoincrement())
+  key               String              @unique(map: "achievements_key_unique") @db.VarChar(255)
+  metric            String              @db.VarChar(255)
+  threshold         Int
+  title             String              @db.VarChar(255)
+  description       String?             @db.VarChar(255)
+  icon              String?             @db.VarChar(255)
+  is_active         Boolean             @default(true)
+  sort_order        Int                 @default(0)
+  created_at        DateTime?           @db.Timestamp(0)
+  updated_at        DateTime?           @db.Timestamp(0)
+  user_achievements user_achievements[]
+}
+
+model assessments {
+  id            BigInt          @id @default(autoincrement())
+  lesson_id     BigInt
+  paragraph_id  BigInt?
+  type          String          @db.VarChar(255)
+  title         String?         @db.VarChar(255)
+  sort_order    Int             @default(0)
+  created_at    DateTime?       @db.Timestamp(0)
+  updated_at    DateTime?       @db.Timestamp(0)
+  lessons       lessons         @relation(fields: [lesson_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "assessments_lesson_id_foreign")
+  paragraphs    paragraphs?     @relation(fields: [paragraph_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "assessments_paragraph_id_foreign")
+  lesson_blocks lesson_blocks[]
+  questions     questions[]
+}
+
+model bank_question_options {
+  id               BigInt         @id @default(autoincrement())
+  bank_question_id BigInt
+  content          String         @db.VarChar(255)
+  is_correct       Boolean        @default(false)
+  sort_order       Int            @default(0)
+  created_at       DateTime?      @db.Timestamp(0)
+  updated_at       DateTime?      @db.Timestamp(0)
+  bank_questions   bank_questions @relation(fields: [bank_question_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "bank_question_options_bank_question_id_foreign")
+
+  @@index([bank_question_id], map: "bank_question_options_bank_question_id_index")
+}
+
+model bank_questions {
+  id                     BigInt                   @id @default(autoincrement())
+  lesson_id              BigInt
+  type                   String                   @db.VarChar(255)
+  content                String
+  explanation            String?
+  correct_answer         Boolean?
+  difficulty             String                   @default("medium") @db.VarChar(255)
+  is_active              Boolean                  @default(true)
+  created_at             DateTime?                @db.Timestamp(0)
+  updated_at             DateTime?                @db.Timestamp(0)
+  bank_question_options  bank_question_options[]
+  lessons                lessons                  @relation(fields: [lesson_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "bank_questions_lesson_id_foreign")
+  exam_attempt_questions exam_attempt_questions[]
+
+  @@index([difficulty, is_active], map: "bank_questions_difficulty_is_active_index")
+  @@index([lesson_id, is_active], map: "bank_questions_lesson_id_is_active_index")
+}
+
+model cache {
+  key        String @id @db.VarChar(255)
+  value      String
+  expiration BigInt
+
+  @@index([expiration], map: "cache_expiration_index")
+}
+
+model cache_locks {
+  key        String @id @db.VarChar(255)
+  owner      String @db.VarChar(255)
+  expiration BigInt
+
+  @@index([expiration], map: "cache_locks_expiration_index")
+}
+
+model chat_messages {
+  id         BigInt        @id @default(autoincrement())
+  thread_id  BigInt
+  sender     String        @default("USER") @db.VarChar(255)
+  kind       String        @default("text") @db.VarChar(255)
+  content    String        @db.Text
+  metadata   Json?
+  created_at DateTime      @default(now()) @db.Timestamp(0)
+  chat_threads chat_threads @relation(fields: [thread_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "chat_messages_thread_id_foreign")
+
+  @@index([thread_id, created_at], map: "chat_messages_thread_id_created_at_index")
+  @@index([thread_id, sender], map: "chat_messages_thread_id_sender_index")
+}
+
+model chat_threads {
+  id         BigInt         @id @default(autoincrement())
+  user_id    BigInt
+  subject_id BigInt?
+  lesson_id  BigInt?
+  title      String?        @db.VarChar(255)
+  created_at DateTime?      @db.Timestamp(0)
+  updated_at DateTime?      @db.Timestamp(0)
+  chat_messages chat_messages[]
+  lessons      lessons?       @relation(fields: [lesson_id], references: [id], onUpdate: NoAction, map: "chat_threads_lesson_id_foreign")
+  subjects     subjects?      @relation(fields: [subject_id], references: [id], onUpdate: NoAction, map: "chat_threads_subject_id_foreign")
+  users        users          @relation(fields: [user_id], references: [id], onUpdate: NoAction, map: "chat_threads_user_id_foreign")
+
+  @@index([user_id, subject_id], map: "chat_threads_user_id_subject_id_index")
+  @@index([updated_at], map: "chat_threads_updated_at_index")
+}
+
+model courses {
+  id              BigInt            @id @default(autoincrement())
+  subject_id      BigInt
+  name            String            @db.VarChar(255)
+  slug            String?           @unique(map: "courses_slug_unique") @db.VarChar(255)
+  description     String?
+  image           String?           @db.VarChar(255)
+  icon            String?           @db.VarChar(255)
+  color           String?           @db.VarChar(255)
+  sort_order      Int               @default(0)
+  is_published    Boolean           @default(true)
+  created_at      DateTime?         @db.Timestamp(0)
+  updated_at      DateTime?         @db.Timestamp(0)
+  subjects        subjects          @relation(fields: [subject_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "courses_subject_id_foreign")
+  exam_blueprints exam_blueprints[]
+  lessons         lessons[]
+}
+
+model exam_attempt_questions {
+  id                 BigInt          @id @default(autoincrement())
+  exam_attempt_id    BigInt
+  bank_question_id   BigInt?
+  question_snapshot  Json            @db.Json
+  selected_option_id BigInt?
+  selected_boolean   Boolean?
+  is_correct         Boolean?
+  sort_order         Int             @default(0)
+  created_at         DateTime?       @db.Timestamp(0)
+  updated_at         DateTime?       @db.Timestamp(0)
+  bank_questions     bank_questions? @relation(fields: [bank_question_id], references: [id], onUpdate: NoAction, map: "exam_attempt_questions_bank_question_id_foreign")
+  exam_attempts      exam_attempts   @relation(fields: [exam_attempt_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "exam_attempt_questions_exam_attempt_id_foreign")
+
+  @@index([exam_attempt_id, sort_order], map: "exam_attempt_questions_exam_attempt_id_sort_order_index")
+}
+
+model exam_attempts {
+  id                     BigInt                   @id @default(autoincrement())
+  blueprint_id           BigInt
+  user_id                BigInt
+  attempt_number         Int                      @default(1)
+  status                 String                   @default("in_progress") @db.VarChar(255)
+  started_at             DateTime?                @db.Timestamp(0)
+  deadline_at            DateTime?                @db.Timestamp(0)
+  submitted_at           DateTime?                @db.Timestamp(0)
+  total_questions        Int                      @default(0)
+  correct_count          Int                      @default(0)
+  score_percentage       Float?                   @db.Real
+  passed                 Boolean?
+  created_at             DateTime?                @db.Timestamp(0)
+  updated_at             DateTime?                @db.Timestamp(0)
+  exam_attempt_questions exam_attempt_questions[]
+  exam_blueprints        exam_blueprints          @relation(fields: [blueprint_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "exam_attempts_blueprint_id_foreign")
+  users                  users                    @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "exam_attempts_user_id_foreign")
+  exam_progress          exam_progress?
+
+  @@unique([blueprint_id, user_id, attempt_number], map: "exam_attempts_blueprint_id_user_id_attempt_number_unique")
+  @@index([status, deadline_at], map: "exam_attempts_status_deadline_at_index")
+  @@index([user_id, status], map: "exam_attempts_user_id_status_index")
+}
+
+model exam_blueprints {
+  id                       BigInt          @id @default(autoincrement())
+  exam_type                String          @db.VarChar(255)
+  title                    String          @db.VarChar(255)
+  description              String?
+  lesson_id                BigInt?
+  course_id                BigInt?
+  subject_id               BigInt?
+  grade_id                 BigInt?
+  stage_id                 BigInt?
+  month_no                 Int?            @db.SmallInt
+  duration_minutes         Int             @default(30)
+  attempts_allowed         Int             @default(2)
+  easy_count               Int             @default(0)
+  medium_count             Int             @default(0)
+  hard_count               Int             @default(0)
+  pass_threshold_percent   Int             @default(60) @db.SmallInt
+  show_review_after_submit Boolean         @default(true)
+  is_active                Boolean         @default(true)
+  created_at               DateTime?       @db.Timestamp(0)
+  updated_at               DateTime?       @db.Timestamp(0)
+  exam_attempts            exam_attempts[]
+  courses                  courses?        @relation(fields: [course_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "exam_blueprints_course_id_foreign")
+  grades                   grades?         @relation(fields: [grade_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "exam_blueprints_grade_id_foreign")
+  lessons                  lessons?        @relation(fields: [lesson_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "exam_blueprints_lesson_id_foreign")
+  stages                   stages?         @relation(fields: [stage_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "exam_blueprints_stage_id_foreign")
+  subjects                 subjects?       @relation(fields: [subject_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "exam_blueprints_subject_id_foreign")
+
+  @@index([exam_type, is_active], map: "exam_blueprints_exam_type_is_active_index")
+}
+
+model exam_progress {
+  id                   BigInt        @id @default(autoincrement())
+  user_id              BigInt
+  exam_attempt_id      BigInt        @unique(map: "exam_progress_exam_attempt_id_unique")
+  current_index        Int           @default(0)
+  flagged_question_ids Json?         @db.Json
+  created_at           DateTime?     @db.Timestamp(0)
+  updated_at           DateTime?     @db.Timestamp(0)
+  exam_attempts        exam_attempts @relation(fields: [exam_attempt_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "exam_progress_exam_attempt_id_foreign")
+  users                users         @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "exam_progress_user_id_foreign")
+
+  @@index([user_id], map: "exam_progress_user_id_index")
+}
+
+model failed_jobs {
+  id         BigInt   @id @default(autoincrement())
+  uuid       String   @unique(map: "failed_jobs_uuid_unique") @db.VarChar(255)
+  connection String   @db.VarChar(255)
+  queue      String   @db.VarChar(255)
+  payload    String
+  exception  String
+  failed_at  DateTime @default(now()) @db.Timestamp(0)
+
+  @@index([connection, queue, failed_at], map: "failed_jobs_connection_queue_failed_at_index")
+}
+
+model grades {
+  id               BigInt             @id @default(autoincrement())
+  stage_id         BigInt
+  key              String?            @db.VarChar(255)
+  name             String             @db.VarChar(255)
+  slug             String?            @unique(map: "grades_slug_unique") @db.VarChar(255)
+  image            String?            @db.VarChar(255)
+  icon             String?            @db.VarChar(255)
+  color            String?            @db.VarChar(255)
+  sort_order       Int                @default(0)
+  is_published     Boolean            @default(true)
+  created_at       DateTime?          @db.Timestamp(0)
+  updated_at       DateTime?          @db.Timestamp(0)
+  exam_blueprints  exam_blueprints[]
+  stages           stages             @relation(fields: [stage_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "grades_stage_id_foreign")
+  semesters        semesters[]
+  student_profiles student_profiles[]
+  subjects         subjects[]
+
+  @@unique([stage_id, key], map: "grades_stage_id_key_unique")
+}
+
+model job_batches {
+  id             String  @id @db.VarChar(255)
+  name           String  @db.VarChar(255)
+  total_jobs     Int
+  pending_jobs   Int
+  failed_jobs    Int
+  failed_job_ids String
+  options        String?
+  cancelled_at   Int?
+  created_at     Int
+  finished_at    Int?
+}
+
+model jobs {
+  id           BigInt @id @default(autoincrement())
+  queue        String @db.VarChar(255)
+  payload      String
+  attempts     Int    @db.SmallInt
+  reserved_at  Int?
+  available_at Int
+  created_at   Int
+
+  @@index([queue], map: "jobs_queue_index")
+}
+
+model lesson_blocks {
+  id            BigInt       @id @default(autoincrement())
+  lesson_id     BigInt
+  block_kind    String       @db.VarChar(255)
+  paragraph_id  BigInt?
+  assessment_id BigInt?
+  sort_order    Int          @default(0)
+  is_published  Boolean      @default(true)
+  created_at    DateTime?    @db.Timestamp(0)
+  updated_at    DateTime?    @db.Timestamp(0)
+  assessments   assessments? @relation(fields: [assessment_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "lesson_blocks_assessment_id_foreign")
+  lessons       lessons      @relation(fields: [lesson_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "lesson_blocks_lesson_id_foreign")
+  paragraphs    paragraphs?  @relation(fields: [paragraph_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "lesson_blocks_paragraph_id_foreign")
+
+  @@index([lesson_id, sort_order], map: "lesson_blocks_lesson_id_sort_order_index")
+}
+
+model lesson_completions {
+  id           BigInt    @id @default(autoincrement())
+  user_id      BigInt
+  lesson_id    BigInt
+  started_at   DateTime? @db.Timestamp(0)
+  completed_at DateTime? @db.Timestamp(0)
+  created_at   DateTime? @db.Timestamp(0)
+  updated_at   DateTime? @db.Timestamp(0)
+  lessons      lessons   @relation(fields: [lesson_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "lesson_completions_lesson_id_foreign")
+  users        users     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "lesson_completions_user_id_foreign")
+
+  @@unique([user_id, lesson_id], map: "lesson_completions_user_id_lesson_id_unique")
+}
+
+model lessons {
+  id                  BigInt               @id @default(autoincrement())
+  course_id           BigInt
+  title               String               @db.VarChar(255)
+  slug                String?              @unique(map: "lessons_slug_unique") @db.VarChar(255)
+  summary             String?
+  learning_objectives Json?                @db.Json
+  image               String?              @db.VarChar(255)
+  video               String?              @db.VarChar(255)
+  icon                String?              @db.VarChar(255)
+  color               String?              @db.VarChar(255)
+  sort_order          Int                  @default(0)
+  is_published        Boolean              @default(true)
+  created_at          DateTime?            @db.Timestamp(0)
+  updated_at          DateTime?            @db.Timestamp(0)
+  month_no            Int?                 @db.SmallInt
+  assessments         assessments[]
+  bank_questions      bank_questions[]
+  exam_blueprints     exam_blueprints[]
+  lesson_blocks       lesson_blocks[]
+  lesson_completions  lesson_completions[]
+  courses             courses              @relation(fields: [course_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "lessons_course_id_foreign")
+  paragraphs          paragraphs[]
+  chat_threads        chat_threads[]
+
+  @@index([month_no], map: "lessons_month_no_index")
+}
+
+model migrations {
+  id        Int    @id @default(autoincrement())
+  migration String @db.VarChar(255)
+  batch     Int
+}
+
+model options {
+  id          BigInt    @id @default(autoincrement())
+  question_id BigInt
+  content     String    @db.VarChar(255)
+  is_correct  Boolean   @default(false)
+  sort_order  Int       @default(0)
+  created_at  DateTime? @db.Timestamp(0)
+  updated_at  DateTime? @db.Timestamp(0)
+  questions   questions @relation(fields: [question_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "options_question_id_foreign")
+}
+
+model paragraphs {
+  id            BigInt          @id @default(autoincrement())
+  lesson_id     BigInt
+  title         String          @db.VarChar(255)
+  type          String          @default("text") @db.VarChar(255)
+  slug          String?         @unique(map: "paragraphs_slug_unique") @db.VarChar(255)
+  image         String?         @db.VarChar(255)
+  video         String?         @db.VarChar(255)
+  icon          String?         @db.VarChar(255)
+  color         String?         @db.VarChar(255)
+  content       String
+  sort_order    Int             @default(0)
+  created_at    DateTime?       @db.Timestamp(0)
+  updated_at    DateTime?       @db.Timestamp(0)
+  assessments   assessments[]
+  lesson_blocks lesson_blocks[]
+  lessons       lessons         @relation(fields: [lesson_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "paragraphs_lesson_id_foreign")
+}
+
+model password_reset_tokens {
+  email      String    @id @db.VarChar(255)
+  token      String    @db.VarChar(255)
+  created_at DateTime? @db.Timestamp(0)
+}
+
+model personal_access_tokens {
+  id             BigInt    @id @default(autoincrement())
+  tokenable_type String    @db.VarChar(255)
+  tokenable_id   BigInt
+  name           String
+  token          String    @unique(map: "personal_access_tokens_token_unique") @db.VarChar(64)
+  abilities      String?
+  last_used_at   DateTime? @db.Timestamp(0)
+  expires_at     DateTime? @db.Timestamp(0)
+  created_at     DateTime? @db.Timestamp(0)
+  updated_at     DateTime? @db.Timestamp(0)
+
+  @@index([expires_at], map: "personal_access_tokens_expires_at_index")
+  @@index([tokenable_type, tokenable_id], map: "personal_access_tokens_tokenable_type_tokenable_id_index")
+}
+
+model questions {
+  id             BigInt      @id @default(autoincrement())
+  assessment_id  BigInt
+  type           String      @default("mcq") @db.VarChar(255)
+  content        String
+  explanation    String?
+  correct_answer Boolean?
+  sort_order     Int         @default(0)
+  created_at     DateTime?   @db.Timestamp(0)
+  updated_at     DateTime?   @db.Timestamp(0)
+  options        options[]
+  assessments    assessments @relation(fields: [assessment_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "questions_assessment_id_foreign")
+}
+
+model semesters {
+  id               BigInt             @id @default(autoincrement())
+  grade_id         BigInt
+  key              String?            @db.VarChar(255)
+  name             String             @db.VarChar(255)
+  sort_order       Int                @default(0)
+  created_at       DateTime?          @db.Timestamp(0)
+  updated_at       DateTime?          @db.Timestamp(0)
+  grades           grades             @relation(fields: [grade_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "semesters_grade_id_foreign")
+  student_profiles student_profiles[]
+  subjects         subjects[]
+
+  @@unique([grade_id, key], map: "semesters_grade_id_key_unique")
+}
+
+model sessions {
+  id            String  @id @db.VarChar(255)
+  user_id       BigInt?
+  ip_address    String? @db.VarChar(45)
+  user_agent    String?
+  payload       String
+  last_activity Int
+
+  @@index([last_activity], map: "sessions_last_activity_index")
+  @@index([user_id], map: "sessions_user_id_index")
+}
+
+model stages {
+  id              BigInt            @id @default(autoincrement())
+  key             String?           @unique(map: "stages_key_unique") @db.VarChar(255)
+  name            String            @db.VarChar(255)
+  slug            String?           @unique(map: "stages_slug_unique") @db.VarChar(255)
+  image           String?           @db.VarChar(255)
+  icon            String?           @db.VarChar(255)
+  color           String?           @db.VarChar(255)
+  sort_order      Int               @default(0)
+  is_published    Boolean           @default(true)
+  created_at      DateTime?         @db.Timestamp(0)
+  updated_at      DateTime?         @db.Timestamp(0)
+  exam_blueprints exam_blueprints[]
+  grades          grades[]
+}
+
+model student_profiles {
+  id              BigInt    @id @default(autoincrement())
+  user_id         BigInt    @unique(map: "student_profiles_user_id_unique")
+  grade_id        BigInt
+  semester_id     BigInt
+  last_subject_id BigInt?
+  created_at      DateTime? @db.Timestamp(0)
+  updated_at      DateTime? @db.Timestamp(0)
+  grades          grades    @relation(fields: [grade_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "student_profiles_grade_id_foreign")
+  subjects        subjects? @relation(fields: [last_subject_id], references: [id], onUpdate: NoAction, map: "student_profiles_last_subject_id_foreign")
+  semesters       semesters @relation(fields: [semester_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "student_profiles_semester_id_foreign")
+  users           users     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "student_profiles_user_id_foreign")
+}
+
+model subjects {
+  id               BigInt             @id @default(autoincrement())
+  grade_id         BigInt
+  semester_id      BigInt?
+  name             String             @db.VarChar(255)
+  slug             String?            @unique(map: "subjects_slug_unique") @db.VarChar(255)
+  image            String?            @db.VarChar(255)
+  icon             String?            @db.VarChar(255)
+  color            String?            @db.VarChar(255)
+  sort_order       Int                @default(0)
+  is_published     Boolean            @default(true)
+  created_at       DateTime?          @db.Timestamp(0)
+  updated_at       DateTime?          @db.Timestamp(0)
+  courses          courses[]
+  exam_blueprints  exam_blueprints[]
+  student_profiles student_profiles[]
+  grades           grades             @relation(fields: [grade_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "subjects_grade_id_foreign")
+  semesters        semesters?         @relation(fields: [semester_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "subjects_semester_id_foreign")
+  chat_threads     chat_threads[]
+}
+
+model user_achievements {
+  id             BigInt       @id @default(autoincrement())
+  user_id        BigInt
+  achievement_id BigInt
+  unlocked_at    DateTime     @db.Timestamp(0)
+  created_at     DateTime?    @db.Timestamp(0)
+  updated_at     DateTime?    @db.Timestamp(0)
+  achievements   achievements @relation(fields: [achievement_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "user_achievements_achievement_id_foreign")
+  users          users        @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "user_achievements_user_id_foreign")
+
+  @@unique([user_id, achievement_id], map: "user_achievements_user_id_achievement_id_unique")
+  @@index([user_id], map: "user_achievements_user_id_index")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model users {
+  id                 BigInt               @id @default(autoincrement())
+  name               String               @db.VarChar(255)
+  email              String               @unique(map: "users_email_unique") @db.VarChar(255)
+  password           String?              @db.VarChar(255)
+  google_id          String?              @unique(map: "users_google_id_unique") @db.VarChar(255)
+  avatar             String?              @db.VarChar(255)
+  email_verified_at  DateTime?            @db.Timestamp(0)
+  role               String               @default("student") @db.VarChar(255)
+  remember_token     String?              @db.VarChar(100)
+  created_at         DateTime?            @db.Timestamp(0)
+  updated_at         DateTime?            @db.Timestamp(0)
+  exam_attempts      exam_attempts[]
+  exam_progress      exam_progress[]
+  lesson_completions lesson_completions[]
+  student_profiles   student_profiles?
+  user_achievements  user_achievements[]
+  chat_threads       chat_threads[]
+}

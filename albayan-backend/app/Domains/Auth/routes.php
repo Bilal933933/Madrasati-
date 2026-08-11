@@ -1,6 +1,7 @@
 <?php
 
 use App\Domains\Auth\Http\Controllers\CurrentUserController;
+use App\Domains\Auth\Http\Controllers\AiSessionController;
 use App\Domains\Auth\Http\Controllers\LoginController;
 use App\Domains\Auth\Http\Controllers\LogoutController;
 use App\Domains\Auth\Http\Controllers\PasswordResetController;
@@ -25,4 +26,5 @@ Route::post('/reset-password', [PasswordResetController::class, 'reset']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', CurrentUserController::class);
     Route::post('/logout', LogoutController::class);
+    Route::post('/ai/session', AiSessionController::class);
 });

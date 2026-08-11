@@ -1,0 +1,11 @@
+# التبعيات والمخرجات
+node_modules/
+dist/
+coverage/
+
+# الإعدادات المحلية
+.env
+.env.local
+
+# Prisma Client المولّد — يولّد من جديد عبر `npx prisma generate`
+src/generated/prisma/

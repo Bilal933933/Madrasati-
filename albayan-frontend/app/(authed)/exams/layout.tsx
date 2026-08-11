@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { Loader } from "@/components/shared/loader";
 import { SiteNavbar, type NavItem } from "@/components/shared/site-navbar";
+import { ThemeToggle } from "@/components/shared/theme-toggle";
 import { useAuthStore } from "@/features/auth/store/authStore";
 import { useLogout } from "@/features/auth/hooks/useLogout";
 import { StudentDock } from "@/features/student/components/student-dock";
@@ -86,7 +87,7 @@ export default function ExamsLayout({
 
   return (
     <div className="flex min-h-dvh flex-col">
-      <SiteNavbar brandHref="/home" links={links} actions={<UserMenu />} />
+      <SiteNavbar brandHref="/home" links={links} actions={<><ThemeToggle /><UserMenu /></>} />
 
       <main className="flex-1 pb-28">{children}</main>
 

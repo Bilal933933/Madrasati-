@@ -41,4 +41,13 @@ return [
         'redirect' => env('GOOGLE_REDIRECT_URI'),
     ],
 
+    'ai' => [
+        // سر مشترك بين Laravel و NestJS لتوقيع/فحص تذكرة AI session.
+        'service_secret' => env('AI_SERVICE_SECRET', ''),
+        // مدة صلاحية التذكرة بالدقائق.
+        'ticket_ttl_minutes' => (int) env('AI_SESSION_TTL_MINUTES', 15),
+        // عنوان خدمة الـ AI Tutor (شارة إعلامية — تُستخدم لاحقًا لسجلات الدردشة).
+        'tutor_url' => env('AI_TUTOR_URL'),
+    ],
+
 ];

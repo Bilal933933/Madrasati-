@@ -8,13 +8,13 @@ import {
   GraduationCap,
   Home as HomeIcon,
   LayoutDashboard,
-  LogOut,
   Medal,
+  Sparkles,
 } from "lucide-react";
 import { Loader } from "@/components/shared/loader";
 import { SiteNavbar } from "@/components/shared/site-navbar";
+import { ThemeToggle } from "@/components/shared/theme-toggle";
 import { useAuthStore } from "@/features/auth/store/authStore";
-import { useLogout } from "@/features/auth/hooks/useLogout";
 import { StudentDock } from "@/features/student/components/student-dock";
 import { UserMenu } from "@/features/student/components/UserMenu";
 import { LandingFooter } from "@/features/landing/components/footer";
@@ -31,7 +31,6 @@ export default function StudentLayout({
   const router = useRouter();
   const user = useAuthStore((state) => state.user);
   const isInitialized = useAuthStore((state) => state.isInitialized);
-  const logout = useLogout();
 
   const dockItems = [
     {
@@ -55,6 +54,11 @@ export default function StudentLayout({
       onClick: () => router.push("/achievements"),
     },
     {
+      icon: <Sparkles size={16} />,
+      label: "المعلم الذكي",
+      onClick: () => router.push("/ai-tutor"),
+    },
+    {
       icon: <BarChart3 size={16} />,
       label: "نتائجي",
       onClick: () => router.push("/results"),
@@ -68,11 +72,6 @@ export default function StudentLayout({
           },
         ]
       : []),
-    {
-      icon: <LogOut size={16} />,
-      label: "تسجيل الخروج",
-      onClick: () => logout.mutate(),
-    },
   ];
 
   useEffect(() => {
@@ -92,7 +91,7 @@ export default function StudentLayout({
 
   return (
     <div className="flex min-h-dvh flex-col">
-      <SiteNavbar brandHref="/home" actions={<UserMenu />} />
+      <SiteNavbar brandHref="/home" actions={<><ThemeToggle /><UserMenu /></>} />
 
       <main className="flex-1 pb-28 lg:pb-0 lg:pe-28">{children}</main>
 

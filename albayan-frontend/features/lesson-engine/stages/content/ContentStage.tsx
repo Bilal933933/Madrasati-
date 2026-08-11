@@ -62,16 +62,16 @@ function ParagraphContent({
 
   return (
     <article className="flex flex-1 flex-col">
-      {/* العنوان يعتلي كلًا من الوسيط والنص */}
+      {/* العنوان يعتلي الوسيط والنص */}
       {title && (
         <h2 className="mb-6 text-2xl font-bold leading-tight tracking-tight text-foreground lg:text-3xl">
           {title}
         </h2>
       )}
 
-      <div className="grid flex-1 gap-6 lg:grid-cols-[0.95fr_1.05fr] lg:items-start lg:gap-10">
-        {/* الوسيط — صورة/فيديو قابل للتغيير، بأبعاد ثابتة داخل حاوية محصورة */}
-        <div className="relative order-2 aspect-[4/3] w-full overflow-hidden rounded-xl border border-border/60 bg-muted lg:order-1 lg:top-24 lg:sticky lg:aspect-square">
+      <div className="flex flex-1 flex-col gap-6 lg:gap-8">
+        {/* الوسيط — صورة/فيديو قابل للتغيير بعرض كامل وبارتفاع أقصى محسوب */}
+        <div className="relative aspect-[16/9] w-full overflow-hidden rounded-xl border border-border/60 bg-muted lg:max-h-[28rem]">
           {hasVideo && media === "video" ? (
             <EmbedFrame url={url} embed={embed} />
           ) : (
@@ -88,30 +88,41 @@ function ParagraphContent({
             />
           )}
 
-          {/* زر التبديل بين الصورة والفيديو أسفل الوسيط */}
+          {/* تاب صغير للتبديل بين الصورة والفيديو أسفل الوسيط */}
           {hasVideo && (
-            <button
-              type="button"
-              onClick={() => setMedia((value) => (value === "image" ? "video" : "image"))}
-              className="absolute inset-x-3 bottom-3 flex h-10 items-center justify-center gap-2 rounded-lg border border-border/60 bg-background/85 text-xs font-bold text-foreground backdrop-blur transition-colors hover:bg-background"
-            >
-              {media === "image" ? (
-                <>
-                  <Play className="size-4 text-primary" aria-hidden />
-                  مشاهدة الفيديو
-                </>
-              ) : (
-                <>
-                  <ImageIcon className="size-4 text-primary" aria-hidden />
-                  عرض الصورة
-                </>
-              )}
-            </button>
+            <div className="absolute bottom-3 right-3 flex items-center gap-1 rounded-full border border-border/60 bg-background/85 p-1 shadow-sm backdrop-blur">
+              <button
+                type="button"
+                onClick={() => setMedia("image")}
+                aria-pressed={media === "image"}
+                className={`flex h-7 items-center gap-1.5 rounded-full px-2.5 text-xs font-semibold transition-colors ${
+                  media === "image"
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                <ImageIcon className="size-3.5" aria-hidden />
+                صورة
+              </button>
+              <button
+                type="button"
+                onClick={() => setMedia("video")}
+                aria-pressed={media === "video"}
+                className={`flex h-7 items-center gap-1.5 rounded-full px-2.5 text-xs font-semibold transition-colors ${
+                  media === "video"
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                <Play className="size-3.5" aria-hidden />
+                فيديو
+              </button>
+            </div>
           )}
         </div>
 
-        {/* النص */}
-        <div className="order-1 flex flex-col gap-5 lg:order-2">
+        {/* النص — بعرض كامل */}
+        <div className="flex flex-col gap-5">
           <RichLessonContent doc={doc ?? null} className="text-base leading-relaxed" />
         </div>
       </div>
