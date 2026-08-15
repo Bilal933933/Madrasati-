@@ -18,6 +18,11 @@ export interface PerformanceMetrics {
   itemsProcessed?: number;
 }
 
+/** فوقها تُسجَّل العملية كـ warn (بطيء فعلاً). */
+const SLOW_OP_MS = 2000;
+/** فوقها تُسجَّل العملية كـ info (ملحوظة — خط أساس يظهر في production). */
+const NOTABLE_OP_MS = 500;
+
 /** غلاف منظم حول Winston — كل سجل يحمل event + سياق (userId/threadId/requestId). */
 @Injectable()
 export class LoggerService {
@@ -57,7 +62,7 @@ export class LoggerService {
   }
 
   performance(context: LogContext, metrics: PerformanceMetrics): void {
-    this.logger.info(`Performance: ${metrics.operation}`, {
+    const meta = {
       ...context,
       operation: metrics.operation,
       duration: metrics.duration,
@@ -65,7 +70,15 @@ export class LoggerService {
       ...(metrics.itemsProcessed !== undefined
         ? { itemsProcessed: metrics.itemsProcessed }
         : {}),
-    });
+    };
+    const message = `Performance: ${metrics.operation}`;
+    if (metrics.duration > SLOW_OP_MS) {
+      this.logger.warn(message, meta);
+    } else if (metrics.duration > NOTABLE_OP_MS) {
+      this.logger.info(message, meta);
+    } else {
+      this.logger.debug(message, meta);
+    }
   }
 
   private metaOf(context: LogContext, data?: unknown): Record<string, unknown> {

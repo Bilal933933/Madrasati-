@@ -106,6 +106,11 @@ function wsUserIdOf(client: Socket): number | undefined {
   return data?.userId;
 }
 
+function wsRequestIdOf(client: Socket): string | undefined {
+  const data = client.data as unknown as { requestId?: string } | undefined;
+  return data?.requestId;
+}
+
 /* getRequest() في أنواع NestJS تُرجع any — cast مزدوج يتجاوز no-unnecessary-type-assertion ويبقى ثابتًا تحت --fix. */
 /* eslint-disable @typescript-eslint/no-unnecessary-type-assertion */
 function httpUserIdOf(host: ArgumentsHost): number | undefined {
@@ -142,12 +147,15 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     const userId = isWs
       ? wsUserIdOf(host.switchToWs().getClient<Socket>())
       : httpUserIdOf(host);
+    const requestId = isWs
+      ? wsRequestIdOf(host.switchToWs().getClient<Socket>())
+      : httpRequestIdOf(host);
 
     this.loggerService.error(
       {
         event: `${isWs ? 'ws' : 'http'}_error`,
         userId,
-        requestId: isWs ? undefined : httpRequestIdOf(host),
+        requestId,
       },
       `Error [${body.code}] transport=${isWs ? 'ws' : 'http'} status=${body.statusCode}`,
       error,

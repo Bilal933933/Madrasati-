@@ -62,14 +62,14 @@ describe('LoggerService', () => {
     );
   });
 
-  it('يسجل performance مع قيم العمليات', () => {
+  it('يسجل العمليات السريعة (<500ms) عند مستوى debug', () => {
     const { service, logger } = createService();
     service.performance(context, {
       operation: 'rag.retrieveKnowledge',
       duration: 12,
       status: 'success',
     });
-    expect(logger.info).toHaveBeenCalledWith(
+    expect(logger.debug).toHaveBeenCalledWith(
       'Performance: rag.retrieveKnowledge',
       expect.objectContaining({
         operation: 'rag.retrieveKnowledge',
@@ -77,6 +77,35 @@ describe('LoggerService', () => {
         status: 'success',
         event: 'test_event',
       }),
+    );
+    expect(logger.info).not.toHaveBeenCalled();
+    expect(logger.warn).not.toHaveBeenCalled();
+  });
+
+  it('يسجل العمليات الملحوظة (>500ms) عند مستوى info', () => {
+    const { service, logger } = createService();
+    service.performance(context, {
+      operation: 'rag.retrieveKnowledge',
+      duration: 600,
+      status: 'success',
+    });
+    expect(logger.info).toHaveBeenCalledWith(
+      'Performance: rag.retrieveKnowledge',
+      expect.objectContaining({ duration: 600 }),
+    );
+  });
+
+  it('يسجل العمليات البطيئة (>2000ms) عند مستوى warn', () => {
+    const { service, logger } = createService();
+    service.performance(context, {
+      operation: 'rag.retrieveKnowledge',
+      duration: 5000,
+      status: 'failure',
+      itemsProcessed: 0,
+    });
+    expect(logger.warn).toHaveBeenCalledWith(
+      'Performance: rag.retrieveKnowledge',
+      expect.objectContaining({ duration: 5000, itemsProcessed: 0 }),
     );
   });
 });

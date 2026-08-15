@@ -5,6 +5,7 @@ import { format, transports, type LoggerOptions } from 'winston';
 export interface WinstonConfigOptions {
   nodeEnv?: string;
   logDir?: string;
+  logLevel?: string;
 }
 
 /** يبني تطبيق تحكم Winston (levels + formats + console + ملفات دوّارة). */
@@ -13,6 +14,8 @@ export const getWinstonConfig = (
 ): LoggerOptions => {
   const isDev = (options.nodeEnv ?? process.env.NODE_ENV) !== 'production';
   const logDir = path.resolve(options.logDir ?? process.env.LOG_DIR ?? 'logs');
+  const level =
+    options.logLevel ?? process.env.LOG_LEVEL ?? (isDev ? 'debug' : 'info');
 
   const fileTransports = [
     new DailyRotateFile({
@@ -48,7 +51,7 @@ export const getWinstonConfig = (
       });
 
   return {
-    level: isDev ? 'debug' : 'info',
+    level,
     format: format.combine(
       format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
       format.errors({ stack: true }),
@@ -70,8 +73,13 @@ function consoleLine(info: {
   delete rest.message;
   delete rest.timestamp;
   if (rest.service === 'ai-tutor') delete rest.service;
+  const message = Array.from(String(info.message))
+    .map((ch) =>
+      (ch.codePointAt(0) ?? 0) <= 0x1f || ch === '\u007f' ? ' ' : ch,
+    )
+    .join('');
   const tail = Object.keys(rest).length
     ? ` ${JSON.stringify(rest, null, 2)}`
     : '';
-  return `${info.timestamp ?? ''} [${info.level}] ${String(info.message)}${tail}`;
+  return `${info.timestamp ?? ''} [${info.level}] ${message}${tail}`;
 }

@@ -1,4 +1,5 @@
 import { UseGuards } from '@nestjs/common';
+import { randomUUID } from 'node:crypto';
 import {
   ConnectedSocket,
   MessageBody,
@@ -34,9 +35,11 @@ export class ChatGateway {
     const userId = (client.data as { userId: number }).userId;
     const { threadId, question } = payload;
     const start = Date.now();
+    const requestId = randomUUID();
+    (client.data as { requestId?: string }).requestId = requestId;
 
     this.loggerService.debug(
-      { event: 'question_received', userId, threadId },
+      { event: 'question_received', userId, threadId, requestId },
       'Student sent a question',
       { questionLength: question.length },
     );
@@ -59,7 +62,7 @@ export class ChatGateway {
       const ragStart = Date.now();
       const rag = await this.chatService.retrieveKnowledge(question, context);
       this.loggerService.performance(
-        { event: 'rag_retrieval', userId, threadId },
+        { event: 'rag_retrieval', userId, threadId, requestId },
         {
           operation: 'rag.retrieveKnowledge',
           duration: Date.now() - ragStart,
@@ -94,7 +97,7 @@ export class ChatGateway {
       );
 
       this.loggerService.info(
-        { event: 'question_answered', userId, threadId },
+        { event: 'question_answered', userId, threadId, requestId },
         'Question answered',
         {
           durationMs: Date.now() - start,
@@ -110,7 +113,7 @@ export class ChatGateway {
       });
     } catch (error) {
       this.loggerService.error(
-        { event: 'question_failed', userId, threadId },
+        { event: 'question_failed', userId, threadId, requestId },
         'Failed to answer question',
         error,
       );
@@ -126,9 +129,11 @@ export class ChatGateway {
     const userId = (client.data as { userId: number }).userId;
     const { threadId } = payload;
     const start = Date.now();
+    const requestId = randomUUID();
+    (client.data as { requestId?: string }).requestId = requestId;
 
     this.loggerService.debug(
-      { event: 'quiz_generate_received', userId, threadId },
+      { event: 'quiz_generate_received', userId, threadId, requestId },
       'Student requested a quiz question',
     );
 
@@ -149,7 +154,7 @@ export class ChatGateway {
       );
 
       this.loggerService.info(
-        { event: 'quiz_generate_done', userId, threadId },
+        { event: 'quiz_generate_done', userId, threadId, requestId },
         'Quiz question generated',
         { durationMs: Date.now() - start },
       );
@@ -158,7 +163,7 @@ export class ChatGateway {
       client.emit('response-complete', { success: true });
     } catch (error) {
       this.loggerService.error(
-        { event: 'quiz_generate_failed', userId, threadId },
+        { event: 'quiz_generate_failed', userId, threadId, requestId },
         'Failed to generate quiz question',
         error,
       );
