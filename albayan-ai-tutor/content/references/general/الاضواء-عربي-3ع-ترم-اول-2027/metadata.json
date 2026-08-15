@@ -1,0 +1,485 @@
+{
+  "id": "aladwa-arabi-3i-t1-2027",
+  "title": "الأضواء — اللغة العربية للصف الثالث الإعدادي — الفصل الدراسي الأول 2027",
+  "author": "",
+  "publisher": "دار نهضة مصر للنشر",
+  "stage": "general",
+  "subject": "اللغة العربية",
+  "branch": "منهج",
+  "total_pages": 370,
+  "parts": [
+    {
+      "file": "part-01.md",
+      "pages": [
+        1,
+        40
+      ],
+      "chapter": null,
+      "sections": [
+        {
+          "id": "aladwa-arabi-3i-t1-noise-front",
+          "title": "الغلاف وتوزيع المنهج",
+          "kind": "noise",
+          "page": 1,
+          "endPage": 6,
+          "concepts": []
+        },
+        {
+          "id": "aladwa-arabi-3i-t1-c001",
+          "title": "الغطاء والمقدمة والخطة",
+          "kind": "content",
+          "page": 1,
+          "concepts": []
+        },
+        {
+          "id": "aladwa-arabi-3i-t1-c002",
+          "title": "أولاً: عناصر تحليل النصوص وتذوقها",
+          "kind": "content",
+          "page": 7,
+          "concepts": []
+        },
+        {
+          "id": "aladwa-arabi-3i-t1-c003",
+          "title": "عناصر التحليل",
+          "kind": "content",
+          "page": 7,
+          "concepts": []
+        },
+        {
+          "id": "aladwa-arabi-3i-t1-c004",
+          "title": "عناصر التذوق",
+          "kind": "content",
+          "page": 18,
+          "concepts": []
+        },
+        {
+          "id": "aladwa-arabi-3i-t1-c005",
+          "title": "تدريبات شاملة على تحليل النصوص وتذوقها",
+          "kind": "content",
+          "page": 30,
+          "concepts": []
+        },
+        {
+          "id": "aladwa-arabi-3i-t1-c006",
+          "title": "الوحدة الأولى: قيم تحمي شبابنا",
+          "kind": "content",
+          "page": 37,
+          "concepts": []
+        },
+        {
+          "id": "aladwa-arabi-3i-t1-c007",
+          "title": "الدرس الأول: نص الاستماع — آداب التعامل مع الوالدين",
+          "kind": "content",
+          "page": 37,
+          "concepts": []
+        }
+      ]
+    },
+    {
+      "file": "part-02.md",
+      "pages": [
+        41,
+        80
+      ],
+      "chapter": null,
+      "sections": [
+        {
+          "id": "aladwa-arabi-3i-t1-c008",
+          "title": "الدرس الثاني: القراءة — أغلى من الذهب",
+          "kind": "content",
+          "page": 44,
+          "concepts": []
+        },
+        {
+          "id": "aladwa-arabi-3i-t1-c009",
+          "title": "الدرس الثالث: القراءة — الصداقة (شوقي ضيف)",
+          "kind": "content",
+          "page": 58,
+          "concepts": []
+        },
+        {
+          "id": "aladwa-arabi-3i-t1-c010",
+          "title": "الدرس الرابع: النص الشعري — تحية للشباب (أحمد شوقي)",
+          "kind": "content",
+          "page": 72,
+          "concepts": []
+        }
+      ]
+    },
+    {
+      "file": "part-03.md",
+      "pages": [
+        81,
+        120
+      ],
+      "chapter": null,
+      "sections": [
+        {
+          "id": "aladwa-arabi-3i-t1-c011",
+          "title": "مراجعة الأضواء — الوحدة الأولى",
+          "kind": "content",
+          "page": 88,
+          "concepts": []
+        },
+        {
+          "id": "aladwa-arabi-3i-t1-c012",
+          "title": "اختبارات الأضواء — الوحدة الأولى",
+          "kind": "content",
+          "page": 93,
+          "concepts": []
+        },
+        {
+          "id": "aladwa-arabi-3i-t1-c013",
+          "title": "الوحدة الثانية: نحو تفكير سليم",
+          "kind": "content",
+          "page": 102,
+          "concepts": []
+        },
+        {
+          "id": "aladwa-arabi-3i-t1-c014",
+          "title": "الدرس الأول: نص الاستماع — ثمرة القراءة",
+          "kind": "content",
+          "page": 102,
+          "concepts": []
+        },
+        {
+          "id": "aladwa-arabi-3i-t1-c015",
+          "title": "الدرس الثاني: القراءة — أفضل النعم",
+          "kind": "content",
+          "page": 109,
+          "concepts": []
+        }
+      ]
+    },
+    {
+      "file": "part-04.md",
+      "pages": [
+        121,
+        160
+      ],
+      "chapter": null,
+      "sections": [
+        {
+          "id": "aladwa-arabi-3i-t1-c016",
+          "title": "الدرس الثالث: القراءة — خير جليس (أحمد زكي)",
+          "kind": "content",
+          "page": 122,
+          "concepts": []
+        },
+        {
+          "id": "aladwa-arabi-3i-t1-c017",
+          "title": "الدرس الرابع: النص الشعري — تاج الفضائل (علي بن أبي طالب)",
+          "kind": "content",
+          "page": 136,
+          "concepts": []
+        },
+        {
+          "id": "aladwa-arabi-3i-t1-c018",
+          "title": "مراجعة الأضواء — الوحدة الثانية",
+          "kind": "content",
+          "page": 151,
+          "concepts": []
+        },
+        {
+          "id": "aladwa-arabi-3i-t1-c019",
+          "title": "اختبارات الأضواء — الوحدة الثانية",
+          "kind": "content",
+          "page": 156,
+          "concepts": []
+        }
+      ]
+    },
+    {
+      "file": "part-05.md",
+      "pages": [
+        161,
+        200
+      ],
+      "chapter": null,
+      "sections": [
+        {
+          "id": "aladwa-arabi-3i-t1-c020",
+          "title": "الوحدة الثالثة: أنا والمستقبل",
+          "kind": "content",
+          "page": 164,
+          "concepts": []
+        },
+        {
+          "id": "aladwa-arabi-3i-t1-c021",
+          "title": "الدرس الأول: نص الاستماع — بناء المستقبل في عصر الآلة",
+          "kind": "content",
+          "page": 164,
+          "concepts": []
+        },
+        {
+          "id": "aladwa-arabi-3i-t1-c022",
+          "title": "الدرس الثاني: القراءة — حرفتك بين يديك",
+          "kind": "content",
+          "page": 171,
+          "concepts": []
+        },
+        {
+          "id": "aladwa-arabi-3i-t1-c023",
+          "title": "الدرس الثالث: القراءة — مستقبل مصر في الزراعة",
+          "kind": "content",
+          "page": 185,
+          "concepts": []
+        },
+        {
+          "id": "aladwa-arabi-3i-t1-c024",
+          "title": "الدرس الرابع: النص الشعري — اصنع بيدك مجدك (معروف الرصافي)",
+          "kind": "content",
+          "page": 199,
+          "concepts": []
+        }
+      ]
+    },
+    {
+      "file": "part-06.md",
+      "pages": [
+        201,
+        240
+      ],
+      "chapter": null,
+      "sections": [
+        {
+          "id": "aladwa-arabi-3i-t1-c025",
+          "title": "مراجعة الأضواء — الوحدة الثالثة",
+          "kind": "content",
+          "page": 215,
+          "concepts": []
+        },
+        {
+          "id": "aladwa-arabi-3i-t1-c026",
+          "title": "اختبارات الأضواء — الوحدة الثالثة",
+          "kind": "content",
+          "page": 218,
+          "concepts": []
+        },
+        {
+          "id": "aladwa-arabi-3i-t1-c027",
+          "title": "ثالثاً: القواعد النحوية",
+          "kind": "content",
+          "page": 225,
+          "concepts": []
+        },
+        {
+          "id": "aladwa-arabi-3i-t1-c028",
+          "title": "من مفاتيح الإعراب",
+          "kind": "content",
+          "page": 225,
+          "concepts": []
+        },
+        {
+          "id": "aladwa-arabi-3i-t1-c029",
+          "title": "مراجعة على ما سبق",
+          "kind": "content",
+          "page": 227,
+          "concepts": []
+        },
+        {
+          "id": "aladwa-arabi-3i-t1-c030",
+          "title": "موضوعات المنهج",
+          "kind": "content",
+          "page": 239,
+          "concepts": []
+        }
+      ]
+    },
+    {
+      "file": "part-07.md",
+      "pages": [
+        241,
+        280
+      ],
+      "chapter": null,
+      "sections": [
+        {
+          "id": "aladwa-arabi-3i-t1-c031",
+          "title": "الدرس الأول: اسم الفاعل",
+          "kind": "content",
+          "page": 241,
+          "concepts": []
+        },
+        {
+          "id": "aladwa-arabi-3i-t1-c032",
+          "title": "الدرس الثاني: اسم المفعول",
+          "kind": "content",
+          "page": 250,
+          "concepts": []
+        },
+        {
+          "id": "aladwa-arabi-3i-t1-c033",
+          "title": "الدرس الثالث: صيغ المبالغة",
+          "kind": "content",
+          "page": 259,
+          "concepts": []
+        },
+        {
+          "id": "aladwa-arabi-3i-t1-c034",
+          "title": "الدرس الرابع: اسم المكان",
+          "kind": "content",
+          "page": 266,
+          "concepts": []
+        },
+        {
+          "id": "aladwa-arabi-3i-t1-c035",
+          "title": "الدرس الخامس: اسم الزمان",
+          "kind": "content",
+          "page": 275,
+          "concepts": []
+        }
+      ]
+    },
+    {
+      "file": "part-08.md",
+      "pages": [
+        281,
+        320
+      ],
+      "chapter": null,
+      "sections": [
+        {
+          "id": "aladwa-arabi-3i-t1-c036",
+          "title": "الدرس السادس: اسم الآلة",
+          "kind": "content",
+          "page": 284,
+          "concepts": []
+        },
+        {
+          "id": "aladwa-arabi-3i-t1-c037",
+          "title": "تدريبات القواعد النحوية الشاملة",
+          "kind": "content",
+          "page": 291,
+          "concepts": []
+        },
+        {
+          "id": "aladwa-arabi-3i-t1-c038",
+          "title": "رابعاً: القواعد الإملائية",
+          "kind": "content",
+          "page": 318,
+          "concepts": []
+        },
+        {
+          "id": "aladwa-arabi-3i-t1-c039",
+          "title": "مراجعة على ما سبق",
+          "kind": "content",
+          "page": 318,
+          "concepts": []
+        }
+      ]
+    },
+    {
+      "file": "part-09.md",
+      "pages": [
+        321,
+        360
+      ],
+      "chapter": null,
+      "sections": [
+        {
+          "id": "aladwa-arabi-3i-t1-c040",
+          "title": "موضوعات المنهج",
+          "kind": "content",
+          "page": 324,
+          "concepts": []
+        },
+        {
+          "id": "aladwa-arabi-3i-t1-c041",
+          "title": "الدرس الأول: الألف اللينة (الأسماء والأفعال والحروف)",
+          "kind": "content",
+          "page": 324,
+          "concepts": []
+        },
+        {
+          "id": "aladwa-arabi-3i-t1-c042",
+          "title": "الدرس الثاني: كتابة الهمزة في بداية الكلمة",
+          "kind": "content",
+          "page": 328,
+          "concepts": []
+        },
+        {
+          "id": "aladwa-arabi-3i-t1-c043",
+          "title": "الدرس الثالث: كتابة الهمزة في وسط الكلمة",
+          "kind": "content",
+          "page": 333,
+          "concepts": []
+        },
+        {
+          "id": "aladwa-arabi-3i-t1-c044",
+          "title": "الدرس الرابع: كتابة الهمزة المتطرفة",
+          "kind": "content",
+          "page": 337,
+          "concepts": []
+        },
+        {
+          "id": "aladwa-arabi-3i-t1-c045",
+          "title": "تدريبات القواعد الإملائية الشاملة",
+          "kind": "content",
+          "page": 341,
+          "concepts": []
+        },
+        {
+          "id": "aladwa-arabi-3i-t1-c046",
+          "title": "خامساً: التعبير الكتابي",
+          "kind": "content",
+          "page": 344,
+          "concepts": []
+        },
+        {
+          "id": "aladwa-arabi-3i-t1-c047",
+          "title": "الدرس الأول: كتابة نص إقناعي",
+          "kind": "content",
+          "page": 344,
+          "concepts": []
+        },
+        {
+          "id": "aladwa-arabi-3i-t1-c048",
+          "title": "الدرس الثاني: كتابة تقرير صحفي",
+          "kind": "content",
+          "page": 352,
+          "concepts": []
+        }
+      ]
+    },
+    {
+      "file": "part-10.md",
+      "pages": [
+        361,
+        370
+      ],
+      "chapter": null,
+      "sections": [
+        {
+          "id": "aladwa-arabi-3i-t1-c049",
+          "title": "تدريبات التعبير الكتابي الشاملة",
+          "kind": "content",
+          "page": 361,
+          "concepts": []
+        },
+        {
+          "id": "aladwa-arabi-3i-t1-c050",
+          "title": "سادساً: التحدث",
+          "kind": "content",
+          "page": 364,
+          "concepts": []
+        },
+        {
+          "id": "aladwa-arabi-3i-t1-c051",
+          "title": "التحدث",
+          "kind": "content",
+          "page": 364,
+          "concepts": []
+        },
+        {
+          "id": "aladwa-arabi-3i-t1-noise-back",
+          "title": "بيانات النشر والغلاف الخلفي",
+          "kind": "noise",
+          "page": 367,
+          "endPage": 370,
+          "concepts": []
+        }
+      ]
+    }
+  ]
+}

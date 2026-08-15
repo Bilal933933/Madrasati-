@@ -1,0 +1,425 @@
+{
+  "id": "arabic-3i-t1-2027-ministry",
+  "title": "اللغة العربية — الصف الثالث الإعدادي — الفصل الدراسي الأول 2027 (كتاب الوزارة)",
+  "author": "وزارة التربية والتعليم والتعليم الفني — شركة GPS للطبع والنشر والتوزيع",
+  "publisher": "الإدارة المركزية لتطوير المناهج (CACD)",
+  "stage": "general",
+  "subject": "اللغة العربية",
+  "branch": "منهج",
+  "total_pages": 155,
+  "parts": [
+    {
+      "file": "part-01.md",
+      "pages": [
+        1,
+        40
+      ],
+      "chapter": null,
+      "sections": [
+        {
+          "id": "arabic-3i-t1-2027-ministry-noise-front",
+          "title": "المحتويات (الفهرس)",
+          "kind": "noise",
+          "page": 1,
+          "endPage": 3,
+          "concepts": []
+        },
+        {
+          "id": "arabic-3i-t1-2027-ministry-c001",
+          "title": "مراجعة عامة",
+          "kind": "content",
+          "page": 4,
+          "concepts": []
+        },
+        {
+          "id": "arabic-3i-t1-2027-ministry-c002",
+          "title": "الوحدة الأولى: قيم تحمي شبابنا — الدرس الأول: نص استماع (آداب التعامل مع الوالدين)",
+          "kind": "content",
+          "page": 12,
+          "concepts": []
+        },
+        {
+          "id": "arabic-3i-t1-2027-ministry-c003",
+          "title": "الدرس الثاني: نص قراءة (أغلى من الذهب)",
+          "kind": "content",
+          "page": 17,
+          "concepts": []
+        },
+        {
+          "id": "arabic-3i-t1-2027-ministry-c004",
+          "title": "القواعد النحوية (اسم الفاعل)",
+          "kind": "content",
+          "page": 24,
+          "concepts": []
+        },
+        {
+          "id": "arabic-3i-t1-2027-ministry-c005",
+          "title": "القواعد الإملائية (الألف اللينة في الأسماء والأفعال والحروف)",
+          "kind": "content",
+          "page": 26,
+          "concepts": []
+        },
+        {
+          "id": "arabic-3i-t1-2027-ministry-c006",
+          "title": "التحدث (موضوعات وقضايا مرتبطة بموضوع الدرس)",
+          "kind": "content",
+          "page": 28,
+          "concepts": []
+        },
+        {
+          "id": "arabic-3i-t1-2027-ministry-c007",
+          "title": "التعبير الكتابي (كتابة نص إقناعي)",
+          "kind": "content",
+          "page": 29,
+          "concepts": []
+        },
+        {
+          "id": "arabic-3i-t1-2027-ministry-c008",
+          "title": "تقييم على الدرس",
+          "kind": "content",
+          "page": 31,
+          "concepts": []
+        },
+        {
+          "id": "arabic-3i-t1-2027-ministry-c009",
+          "title": "الدرس الثالث: نص قراءة (الصداقة) للدكتور: شوقي ضيف",
+          "kind": "content",
+          "page": 33,
+          "concepts": []
+        },
+        {
+          "id": "arabic-3i-t1-2027-ministry-c010",
+          "title": "القواعد النحوية (اسم المفعول)",
+          "kind": "content",
+          "page": 39,
+          "concepts": []
+        }
+      ]
+    },
+    {
+      "file": "part-02.md",
+      "pages": [
+        41,
+        80
+      ],
+      "chapter": null,
+      "sections": [
+        {
+          "id": "arabic-3i-t1-2027-ministry-c011",
+          "title": "القواعد الإملائية (تطبيقات على الألف اللينة)",
+          "kind": "content",
+          "page": 41,
+          "concepts": []
+        },
+        {
+          "id": "arabic-3i-t1-2027-ministry-c012",
+          "title": "التحدث (موضوعات وقضايا مرتبطة بموضوع الدرس)",
+          "kind": "content",
+          "page": 42,
+          "concepts": []
+        },
+        {
+          "id": "arabic-3i-t1-2027-ministry-c013",
+          "title": "التعبير الكتابي (تطبيقات على كتابة نص إقناعي)",
+          "kind": "content",
+          "page": 43,
+          "concepts": []
+        },
+        {
+          "id": "arabic-3i-t1-2027-ministry-c014",
+          "title": "تقييم على الدرس",
+          "kind": "content",
+          "page": 44,
+          "concepts": []
+        },
+        {
+          "id": "arabic-3i-t1-2027-ministry-c015",
+          "title": "الدرس الرابع: نص شعري (تحية للشباب) لأحمد شوقي",
+          "kind": "content",
+          "page": 46,
+          "concepts": []
+        },
+        {
+          "id": "arabic-3i-t1-2027-ministry-c016",
+          "title": "تقييم على الوحدة الأولى",
+          "kind": "content",
+          "page": 51,
+          "concepts": []
+        },
+        {
+          "id": "arabic-3i-t1-2027-ministry-c017",
+          "title": "حصاد الوحدة",
+          "kind": "content",
+          "page": 55,
+          "concepts": []
+        },
+        {
+          "id": "arabic-3i-t1-2027-ministry-c018",
+          "title": "الوحدة الثانية: نحو تفكير سليم — الدرس الأول: نص استماع (ثمرة القراءة)",
+          "kind": "content",
+          "page": 57,
+          "concepts": []
+        },
+        {
+          "id": "arabic-3i-t1-2027-ministry-c019",
+          "title": "الدرس الثاني: نص قراءة (أفضل النعم)",
+          "kind": "content",
+          "page": 60,
+          "concepts": []
+        },
+        {
+          "id": "arabic-3i-t1-2027-ministry-c020",
+          "title": "القواعد النحوية (صيغ المبالغة)",
+          "kind": "content",
+          "page": 67,
+          "concepts": []
+        },
+        {
+          "id": "arabic-3i-t1-2027-ministry-c021",
+          "title": "القواعد الإملائية (كتابة الهمزة في بداية الكلمة ووسطها)",
+          "kind": "content",
+          "page": 69,
+          "concepts": []
+        },
+        {
+          "id": "arabic-3i-t1-2027-ministry-c022",
+          "title": "التحدث (موضوعات وقضايا مرتبطة بموضوع الدرس)",
+          "kind": "content",
+          "page": 71,
+          "concepts": []
+        },
+        {
+          "id": "arabic-3i-t1-2027-ministry-c023",
+          "title": "التعبير الكتابي (كتابة تقرير صحفي)",
+          "kind": "content",
+          "page": 72,
+          "concepts": []
+        },
+        {
+          "id": "arabic-3i-t1-2027-ministry-c024",
+          "title": "تقييم على الدرس",
+          "kind": "content",
+          "page": 75,
+          "concepts": []
+        },
+        {
+          "id": "arabic-3i-t1-2027-ministry-c025",
+          "title": "الدرس الثالث: نص قراءة (خير جليس) للدكتور: أحمد زكي",
+          "kind": "content",
+          "page": 77,
+          "concepts": []
+        }
+      ]
+    },
+    {
+      "file": "part-03.md",
+      "pages": [
+        81,
+        120
+      ],
+      "chapter": null,
+      "sections": [
+        {
+          "id": "arabic-3i-t1-2027-ministry-c026",
+          "title": "القواعد النحوية (اسم المكان)",
+          "kind": "content",
+          "page": 83,
+          "concepts": []
+        },
+        {
+          "id": "arabic-3i-t1-2027-ministry-c027",
+          "title": "القواعد الإملائية (تطبيقات على كتابة الهمزة في بداية الكلمة ووسطها)",
+          "kind": "content",
+          "page": 86,
+          "concepts": []
+        },
+        {
+          "id": "arabic-3i-t1-2027-ministry-c028",
+          "title": "التحدث (موضوعات وقضايا مرتبطة بموضوع الدرس)",
+          "kind": "content",
+          "page": 87,
+          "concepts": []
+        },
+        {
+          "id": "arabic-3i-t1-2027-ministry-c029",
+          "title": "التعبير الكتابي (تطبيقات على كتابة تقرير صحفي)",
+          "kind": "content",
+          "page": 88,
+          "concepts": []
+        },
+        {
+          "id": "arabic-3i-t1-2027-ministry-c030",
+          "title": "تقييم على الدرس",
+          "kind": "content",
+          "page": 90,
+          "concepts": []
+        },
+        {
+          "id": "arabic-3i-t1-2027-ministry-c031",
+          "title": "الدرس الرابع: نص شعري (تاج الفضائل) للإمام علي بن أبي طالب (ع)",
+          "kind": "content",
+          "page": 92,
+          "concepts": []
+        },
+        {
+          "id": "arabic-3i-t1-2027-ministry-c032",
+          "title": "تقييم على الوحدة الثانية",
+          "kind": "content",
+          "page": 98,
+          "concepts": []
+        },
+        {
+          "id": "arabic-3i-t1-2027-ministry-c033",
+          "title": "حصاد الوحدة",
+          "kind": "content",
+          "page": 101,
+          "concepts": []
+        },
+        {
+          "id": "arabic-3i-t1-2027-ministry-c034",
+          "title": "الوحدة الثالثة: أنا والمستقبل — الدرس الأول: نص استماع (بناء المستقبل في عصر الآلة)",
+          "kind": "content",
+          "page": 103,
+          "concepts": []
+        },
+        {
+          "id": "arabic-3i-t1-2027-ministry-c035",
+          "title": "الدرس الثاني: نص قراءة (حرفتك بين يديك)",
+          "kind": "content",
+          "page": 107,
+          "concepts": []
+        },
+        {
+          "id": "arabic-3i-t1-2027-ministry-c036",
+          "title": "القواعد النحوية (اسم الزمان)",
+          "kind": "content",
+          "page": 113,
+          "concepts": []
+        },
+        {
+          "id": "arabic-3i-t1-2027-ministry-c037",
+          "title": "القواعد الإملائية (كتابة الهمزة المتطرفة)",
+          "kind": "content",
+          "page": 116,
+          "concepts": []
+        },
+        {
+          "id": "arabic-3i-t1-2027-ministry-c038",
+          "title": "التحدث (موضوعات وقضايا مرتبطة بموضوع الدرس)",
+          "kind": "content",
+          "page": 118,
+          "concepts": []
+        },
+        {
+          "id": "arabic-3i-t1-2027-ministry-c039",
+          "title": "التعبير الكتابي (تطبيقات على كتابة نص إقناعي)",
+          "kind": "content",
+          "page": 119,
+          "concepts": []
+        },
+        {
+          "id": "arabic-3i-t1-2027-ministry-c040",
+          "title": "تقييم على الدرس",
+          "kind": "content",
+          "page": 120,
+          "concepts": []
+        }
+      ]
+    },
+    {
+      "file": "part-04.md",
+      "pages": [
+        121,
+        155
+      ],
+      "chapter": null,
+      "sections": [
+        {
+          "id": "arabic-3i-t1-2027-ministry-c041",
+          "title": "الدرس الثالث: نص قراءة (مستقبل مصر في الزراعة)",
+          "kind": "content",
+          "page": 122,
+          "concepts": []
+        },
+        {
+          "id": "arabic-3i-t1-2027-ministry-c042",
+          "title": "القواعد النحوية (اسم الآلة)",
+          "kind": "content",
+          "page": 128,
+          "concepts": []
+        },
+        {
+          "id": "arabic-3i-t1-2027-ministry-c043",
+          "title": "القواعد الإملائية (تطبيقات على كتابة الهمزة المتطرفة)",
+          "kind": "content",
+          "page": 130,
+          "concepts": []
+        },
+        {
+          "id": "arabic-3i-t1-2027-ministry-c044",
+          "title": "التحدث (موضوعات وقضايا مرتبطة بموضوع الدرس)",
+          "kind": "content",
+          "page": 131,
+          "concepts": []
+        },
+        {
+          "id": "arabic-3i-t1-2027-ministry-c045",
+          "title": "التعبير الكتابي (تطبيقات على كتابة تقرير صحفي)",
+          "kind": "content",
+          "page": 132,
+          "concepts": []
+        },
+        {
+          "id": "arabic-3i-t1-2027-ministry-c046",
+          "title": "تقييم على الدرس",
+          "kind": "content",
+          "page": 133,
+          "concepts": []
+        },
+        {
+          "id": "arabic-3i-t1-2027-ministry-c047",
+          "title": "الدرس الرابع: نص شعري (اصنع بيدك مجدك) لمعروف الرصافي",
+          "kind": "content",
+          "page": 135,
+          "concepts": []
+        },
+        {
+          "id": "arabic-3i-t1-2027-ministry-c048",
+          "title": "تقييم على الوحدة الثالثة",
+          "kind": "content",
+          "page": 141,
+          "concepts": []
+        },
+        {
+          "id": "arabic-3i-t1-2027-ministry-c049",
+          "title": "حصاد الوحدة",
+          "kind": "content",
+          "page": 144,
+          "concepts": []
+        },
+        {
+          "id": "arabic-3i-t1-2027-ministry-c050",
+          "title": "نصوص الاستماع",
+          "kind": "content",
+          "page": 145,
+          "concepts": []
+        },
+        {
+          "id": "arabic-3i-t1-2027-ministry-c051",
+          "title": "نصوص الاستماع في تقييم الوحدات",
+          "kind": "content",
+          "page": 149,
+          "concepts": []
+        },
+        {
+          "id": "arabic-3i-t1-2027-ministry-noise-back",
+          "title": "بيانات النشر والحقوق والغلاف الخلفي",
+          "kind": "noise",
+          "page": 154,
+          "endPage": 155,
+          "concepts": []
+        }
+      ]
+    }
+  ]
+}
