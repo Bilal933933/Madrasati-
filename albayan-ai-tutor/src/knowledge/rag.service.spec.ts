@@ -483,6 +483,233 @@ describe('RagService', () => {
     });
   });
 
+  describe('بوابة الكفاية والكسب الهامشي', () => {
+    const doc = (title: string, body: string) => ({
+      path: 'textbook/primary/primary_4/اللغة العربية/النحو/lesson.md',
+      type: 'textbook' as const,
+      stageKey: 'primary',
+      gradeKey: 'primary_4',
+      subjectName: 'اللغة العربية',
+      courseName: 'النحو',
+      title,
+      body,
+      subjectId: 5,
+      gradeId: 8,
+    });
+
+    const lessonRow = (id: bigint, title: string) => ({
+      id,
+      title,
+      summary: `${title} — ملخص`,
+      learning_objectives: [],
+    });
+
+    const tipTap = (text: string) =>
+      `{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"${text}"}]}]}`;
+
+    it('تكفي الطبقة 1 وحدها فلا تُبنى الطبقة 3 (بوابة كفاية)', async () => {
+      const longText =
+        'المبتدأ اسم مرفوع يقع أول الكلام، والخبر يتمم معنى المبتدأ، والمبتدأ والخبر معًا جملة مفيدة كاملة. '.repeat(
+          2,
+        );
+      prismaMock.lessons.findMany.mockResolvedValue([
+        lessonRow(1n, 'المبتدأ والخبر'),
+      ]);
+      prismaMock.paragraphs.findMany.mockResolvedValue([
+        {
+          id: 1n,
+          lesson_id: 1n,
+          title: '',
+          content: tipTap(longText),
+        },
+      ]);
+      markdownMock.matching.mockReturnValue([]);
+      markdownMock.matchingGeneral.mockReturnValue([
+        {
+          id: 'book1',
+          title: 'المرجع العام',
+          author: null,
+          subjectName: 'اللغة العربية',
+          totalPages: 100,
+          rootPath: '/books/b1',
+          subjectIds: [5],
+          gradeIds: [4],
+          parts: [
+            {
+              file: 'p1.md',
+              pages: [1, 50],
+              chapter: null,
+              sections: [
+                {
+                  id: 's1',
+                  title: 'المبحث الأول المبْتَدَأُ',
+                  kind: 'content',
+                  page: 10,
+                  concepts: ['مبتدأ', 'مرفوع'],
+                },
+              ],
+            },
+          ],
+        },
+      ]);
+      markdownMock.readSection.mockImplementation(
+        (_b: GeneralBookDoc, s: BookSection) => `محتوى ${s.title}`,
+      );
+
+      const result = await rag.retrieve('ما المبتدأ؟', {
+        subjectId: 5,
+        gradeId: null,
+      });
+
+      expect(result.contentWindow).toContain('## الطبقة 1');
+      expect(result.contentWindow).not.toContain('## الطبقة 3');
+      expect(markdownMock.readSection).not.toHaveBeenCalled();
+    });
+
+    it('نقص التغطية الجوهرية يستدعي الطبقة 3 (بوابة كفاية تعمل)', async () => {
+      // سؤال بمفردتين جوهرية: الطبقة 1 تغطي "المبتدأ" فقط دون "الخبر".
+      prismaMock.lessons.findMany.mockResolvedValue([lessonRow(1n, 'المبتدأ')]);
+      prismaMock.paragraphs.findMany.mockResolvedValue([
+        {
+          id: 1n,
+          lesson_id: 1n,
+          title: '',
+          content: tipTap('المبتدأ اسم مرفوع يقع أول الجملة'),
+        },
+      ]);
+      markdownMock.matching.mockReturnValue([]);
+      markdownMock.matchingGeneral.mockReturnValue([
+        {
+          id: 'book2',
+          title: 'كيف تتقن النحو؟',
+          author: null,
+          subjectName: 'اللغة العربية',
+          totalPages: 553,
+          rootPath: '/books/b2',
+          subjectIds: [5],
+          gradeIds: [4],
+          parts: [
+            {
+              file: 'p1.md',
+              pages: [1, 60],
+              chapter: null,
+              sections: [
+                {
+                  id: 's1',
+                  title: 'الْخَبَرِ وأنواعه',
+                  kind: 'content',
+                  page: 12,
+                  concepts: ['خبر', 'مفرد'],
+                },
+              ],
+            },
+          ],
+        },
+      ]);
+      markdownMock.readSection.mockImplementation(
+        (_b: GeneralBookDoc, s: BookSection) => `محتوى ${s.title}`,
+      );
+
+      const result = await rag.retrieve('ما المبتدأ والخبر؟', {
+        subjectId: 5,
+        gradeId: null,
+      });
+
+      expect(result.contentWindow).toContain('## الطبقة 1');
+      expect(result.contentWindow).toContain('## الطبقة 3');
+      expect(markdownMock.readSection).toHaveBeenCalled();
+    });
+
+    it('أغلفة الكسب الهامشي: يُستبعد مكرر الطبقة 1 ويُضم مقطع يضيف توكن جوهرية جديدًا', async () => {
+      const longText =
+        'المبتدأ اسم مرفوع يقع أول الكلام في الجملة الاسمية، وعلامة رفعه الضمة الظاهرة أو المقدرة. '.repeat(
+          2,
+        );
+      prismaMock.lessons.findMany.mockResolvedValue([lessonRow(1n, 'المبتدأ')]);
+      prismaMock.paragraphs.findMany.mockResolvedValue([
+        {
+          id: 1n,
+          lesson_id: 1n,
+          title: '',
+          content: tipTap(longText),
+        },
+      ]);
+      // ملفان: الأول يعيد نص الطبقة 1 (لا توكن جديد) فيُستبعد؛
+      // الثاني يضيف "الخبر" فيُضم.
+      markdownMock.matching.mockReturnValue([
+        doc(
+          'مرجع مكرر',
+          '## المبتدأ\nالمبتدأ اسم مرفوع يقع أول الكلام في الجملة الاسمية، وعلامة رفعه الضمة الظاهرة أو المقدرة.',
+        ),
+        doc(
+          'مرجع مثري',
+          '## الخبر\nالخبر يتمم معنى المبتدأ ويكمل الفائدة كاملة.',
+        ),
+      ]);
+      markdownMock.matchingGeneral.mockReturnValue([]);
+
+      const result = await rag.retrieve('ما المبتدأ والخبر؟', {
+        subjectId: 5,
+        gradeId: null,
+      });
+
+      // مكرر الطبقة 1 مستبعد، والمثري بالخبر مضموم.
+      expect(result.contentWindow).not.toContain('### مرجع مكرر —');
+      expect(result.contentWindow).toContain('### مرجع مثري —');
+      expect(result.contentWindow).toContain('الخبر يتمم معنى المبتدأ');
+    });
+
+    it('لا مصدر بلا نص فعلي داخل النافذة', async () => {
+      prismaMock.lessons.findMany.mockResolvedValue([
+        lessonRow(1n, 'المبتدأ'),
+        lessonRow(2n, 'الفرق بين المبتدأ والخبر'),
+      ]);
+      // الدرس 2 لا فقرات له (أو لم تُستخرج) → لا مصدر.
+      prismaMock.paragraphs.findMany.mockResolvedValue([
+        {
+          id: 1n,
+          lesson_id: 1n,
+          title: '',
+          content: tipTap('المبتدأ اسم مرفوع يقع أول الجملة'),
+        },
+      ]);
+      markdownMock.matching.mockReturnValue([]);
+      markdownMock.matchingGeneral.mockReturnValue([]);
+
+      const result = await rag.retrieve('ما المبتدأ؟', {
+        subjectId: 5,
+        gradeId: null,
+      });
+
+      expect(result.sources).toEqual([{ lessonId: 1, lessonTitle: 'المبتدأ' }]);
+      expect(result.contentWindow).not.toContain(
+        '### الفرق بين المبتدأ والخبر',
+      );
+    });
+
+    it('فشل DB في الطبقة 1 لا يفشل الطلب ويكمل من الطبقة 2', async () => {
+      prismaMock.lessons.findMany.mockRejectedValue(new Error('db down'));
+      prismaMock.paragraphs.findMany.mockResolvedValue([]);
+      markdownMock.matching.mockReturnValue([
+        doc(
+          'درس المبتدأ والخبر',
+          '## المبتدأ\nالمبتدأ اسم مرفوع يقع أول الجملة.',
+        ),
+      ]);
+      markdownMock.matchingGeneral.mockReturnValue([]);
+
+      const result = await rag.retrieve('ما المبتدأ والخبر؟', {
+        subjectId: 5,
+        gradeId: null,
+      });
+
+      expect(result.contentWindow).toContain('## الطبقة 2');
+      expect(result.contentWindow).toContain('المبتدأ اسم مرفوع');
+      expect(result.lessons).toEqual([]);
+      expect(result.sources).toEqual([]);
+    });
+  });
+
   describe('scoreChunk', () => {
     const chunk = (heading: string, text: string): Chunk => ({
       id: 'c-001',
