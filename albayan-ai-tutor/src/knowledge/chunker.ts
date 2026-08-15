@@ -152,7 +152,11 @@ function splitOverlongSection(
     while (start < words.length) {
       const end = Math.min(words.length, start + targetWords);
       result.push(words.slice(start, end).join(' '));
-      start = Math.min(words.length, end - overlapWords);
+      if (end === words.length) {
+        start = words.length;
+        break;
+      }
+      start = end - overlapWords;
     }
   }
 

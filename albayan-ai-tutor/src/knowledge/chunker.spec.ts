@@ -111,5 +111,39 @@ describe('chunker', () => {
       expect(chunks[0].startPage).toBeNull();
       expect(chunks[0].endPage).toBe(3);
     });
+
+    it('ينهي فقرة مفردة متجاوزة الهدف بالتداخل الافتراضي دون حلقة لا نهائية (900 كلمة)', () => {
+      const body = `## صفحة 1\n\n${words(900)}`;
+      const chunks = splitMarkdown(body);
+
+      expect(chunks.length).toBeGreaterThan(1);
+
+      const lastChunkWords = chunks[chunks.length - 1].text
+        .split(/\s+/)
+        .filter((w) => w.length > 0);
+      expect(lastChunkWords[lastChunkWords.length - 1]).toBe('كلمة899');
+
+      const merged = chunks.map((c) => c.text).join(' ');
+      for (let i = 0; i < 900; i++) {
+        expect(merged).toContain(`كلمة${i}`);
+      }
+    }, 1000);
+
+    it('يتوسع إلى فقرة مفردة ضخمة دون فقدان كلمات (5000 كلمة)', () => {
+      const body = `## صفحة 1\n\n${words(5000)}`;
+      const chunks = splitMarkdown(body);
+
+      expect(chunks.length).toBeGreaterThan(6);
+
+      const lastChunkWords = chunks[chunks.length - 1].text
+        .split(/\s+/)
+        .filter((w) => w.length > 0);
+      expect(lastChunkWords[lastChunkWords.length - 1]).toBe('كلمة4999');
+
+      const merged = chunks.map((c) => c.text).join(' ');
+      for (let i = 0; i < 5000; i++) {
+        expect(merged).toContain(`كلمة${i}`);
+      }
+    }, 1000);
   });
 });

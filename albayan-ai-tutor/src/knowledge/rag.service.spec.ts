@@ -4,7 +4,7 @@ import {
   GeneralBookDoc,
   MarkdownLoader,
 } from './markdown-loader.js';
-import { splitMarkdown, type Chunk } from './chunker.js';
+import { type Chunk } from './chunker.js';
 import { normalizeArabic, RagService, scoreChunk } from './rag.service.js';
 
 describe('RagService', () => {
