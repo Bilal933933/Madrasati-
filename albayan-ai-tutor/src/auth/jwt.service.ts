@@ -1,5 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { ErrorCode } from '../common/errors/error-codes.js';
 
 export interface AiSessionClaims {
   /** معرف الطالب (user.id) — المصدر الوحيد الموثوق، لا يُقبل من الفرونت */
@@ -26,8 +27,15 @@ export class AiTicketService {
     let payload: AiSessionClaims;
     try {
       payload = this.jwt.verify<AiSessionClaims>(token);
-    } catch {
-      throw new UnauthorizedException('Invalid or expired AI session token');
+    } catch (error) {
+      const expired =
+        error instanceof Error && error.name === 'TokenExpiredError';
+      throw new UnauthorizedException({
+        code: expired ? ErrorCode.TOKEN_EXPIRED : ErrorCode.UNAUTHORIZED,
+        message: expired
+          ? 'AI session token expired'
+          : 'Invalid AI session token',
+      });
     }
 
     if (!payload.sub || payload.role !== 'student') {

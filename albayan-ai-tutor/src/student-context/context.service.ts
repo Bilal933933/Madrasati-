@@ -1,4 +1,6 @@
 import { Injectable } from '@nestjs/common';
+import { AppError } from '../common/errors/app-error.js';
+import { ErrorCode } from '../common/errors/error-codes.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 import type { StudentContext } from './context.types.js';
 import { PerformanceService } from './performance.service.js';
@@ -61,7 +63,12 @@ export class ContextService {
     ]);
 
     if (!user || user.role !== 'student') {
-      throw new Error('Student not found');
+      throw new AppError({
+        code: ErrorCode.NOT_FOUND,
+        status: 404,
+        userMessage: 'لم يتم العثور على حساب الطالب.',
+        details: `Student not found or wrong role (id=${userId})`,
+      });
     }
 
     const [completedCount, perSubject, lastLesson, dailyStreak] = progress;

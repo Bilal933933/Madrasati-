@@ -23,8 +23,9 @@ export class AiSessionGuard implements CanActivate {
 
     try {
       const claims = this.tickets.verify(token ?? '');
-      client.data.userId = claims.sub;
-      client.data.role = claims.role;
+      const session = client.data as { userId?: number; role?: string };
+      session.userId = claims.sub;
+      session.role = claims.role;
       return true;
     } catch (error) {
       if (error instanceof UnauthorizedException) {

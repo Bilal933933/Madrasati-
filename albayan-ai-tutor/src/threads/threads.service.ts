@@ -1,4 +1,6 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+import { AppError } from '../common/errors/app-error.js';
+import { ErrorCode } from '../common/errors/error-codes.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 import type {
   chat_messagesModel,
@@ -162,7 +164,12 @@ export class ThreadsService {
     });
 
     if (!thread || thread.user_id !== BigInt(userId)) {
-      throw new NotFoundException('Thread not found');
+      throw new AppError({
+        code: ErrorCode.NOT_FOUND,
+        status: 404,
+        userMessage: 'لا يوجد محادثة بهذا المعرف.',
+        details: `thread=${threadId} not owned by user=${userId}`,
+      });
     }
     return thread;
   }

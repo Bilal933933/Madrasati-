@@ -119,7 +119,7 @@ describe('ContextService', () => {
     performanceMock.weakAreas.mockResolvedValue([]);
 
     await expect(service.getStudentContext(1)).rejects.toThrow(
-      'Student not found',
+      'لم يتم العثور على حساب الطالب.',
     );
   });
 });

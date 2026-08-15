@@ -49,7 +49,7 @@ describe('PerformanceService', () => {
       expect(result.weakestExamType).toBe('monthly');
       expect(prismaMock.exam_attempts.findMany).toHaveBeenCalledWith({
         where: { user_id: 42, status: 'completed' },
-        select: expect.anything(),
+        select: expect.any(Object), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
       });
     });
 
@@ -84,7 +84,7 @@ describe('PerformanceService', () => {
           is_correct: false,
           exam_attempts: { user_id: 42, status: 'completed' },
         },
-        select: expect.anything(),
+        select: expect.any(Object), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
       });
     });
   });

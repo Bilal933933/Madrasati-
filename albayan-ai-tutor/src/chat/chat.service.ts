@@ -2,6 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { AiTicketService } from '../auth/jwt.service.js';
 import { GeminiService, type ChatTurn } from '../ai/gemini.service.js';
 import { PromptBuilder } from '../ai/prompt-builder.js';
+import { AppError } from '../common/errors/app-error.js';
+import { ErrorCode } from '../common/errors/error-codes.js';
+import { ValidationError } from '../common/errors/validation-error.js';
 import { RagService } from '../knowledge/rag.service.js';
 import { ContextService } from '../student-context/context.service.js';
 import type { StudentContext } from '../student-context/context.types.js';
@@ -41,7 +44,12 @@ export class ChatService {
     );
 
     if (timestamps.length >= this.maxQuestionsPerWindow) {
-      throw new Error('لقد أرسلت عددًا كبيرًا من الأسئلة. حاول بعد قليل.');
+      throw new AppError({
+        code: ErrorCode.RATE_LIMIT,
+        status: 429,
+        userMessage: 'لقد أرسلت عددًا كبيرًا من الأسئلة. حاول بعد قليل.',
+        details: `rate limit ${this.maxQuestionsPerWindow}/${this.windowMs}ms exceeded`,
+      });
     }
 
     timestamps.push(now);
@@ -152,7 +160,7 @@ export class ChatService {
       !Array.isArray(question.options) ||
       question.options.length < 2
     ) {
-      throw new Error('تعذّر توليد سؤال صالح. حاول مجددًا.');
+      throw new ValidationError('تعذّر توليد سؤال صالح. حاول مجددًا.');
     }
 
     const index = Number(question.correctAnswerIndex);
