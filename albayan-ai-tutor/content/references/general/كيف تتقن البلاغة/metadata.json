@@ -1,0 +1,2446 @@
+{
+  "id": "kayf-tataqan-balagha",
+  "title": "كيف تتقن البلاغة؟",
+  "author": "أحمد إسكندر",
+  "publisher": "دار اللؤلؤة",
+  "stage": "general",
+  "subject": "اللغة العربية",
+  "branch": "بلاغة",
+  "total_pages": 528,
+  "parts": [
+    {
+      "file": "part-01.md",
+      "pages": [
+        1,
+        40
+      ],
+      "chapter": null,
+      "sections": [
+        {
+          "id": "kayf-tataqan-balagha-noise-front",
+          "title": "الغلاف والاعتمادات",
+          "kind": "noise",
+          "page": 1,
+          "endPage": 5,
+          "concepts": []
+        },
+        {
+          "id": "kayf-tataqan-balagha-n000",
+          "title": "الْمُقَدِّمَةُ",
+          "kind": "noise",
+          "page": 6,
+          "concepts": []
+        },
+        {
+          "id": "kayf-tataqan-balagha-c001",
+          "title": "خَرِيطَةٌ ذِهْنِيَّةٌ لِكِتَابِ كَيْفَ تُتْقِنُ الْبَلَاغَةَ",
+          "kind": "content",
+          "page": 7,
+          "concepts": [
+            "خريطة",
+            "ذهنية",
+            "بلاغة"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c002",
+          "title": "تَمْهِيدٌ",
+          "kind": "content",
+          "page": 8,
+          "concepts": [
+            "تمهيد"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c003",
+          "title": "الْبَلَاغَةُ",
+          "kind": "content",
+          "page": 9,
+          "concepts": [
+            "بلاغة"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c004",
+          "title": "الْفَصَاحَةُ",
+          "kind": "content",
+          "page": 10,
+          "concepts": [
+            "فصاحة"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c005",
+          "title": "شُرُوطُ فَصَاحَةِ الْكَلِمَةِ",
+          "kind": "content",
+          "page": 11,
+          "concepts": [
+            "فصاحة",
+            "كلمة"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c006",
+          "title": "مُلَخَّصُ فَصَاحَةِ الْكَلِمَةِ",
+          "kind": "content",
+          "page": 14,
+          "concepts": [
+            "فصاحة",
+            "كلمة"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c007",
+          "title": "شُرُوطُ فَصَاحَةِ الْكَلَامِ",
+          "kind": "content",
+          "page": 15,
+          "concepts": [
+            "فصاحة",
+            "كلام"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c008",
+          "title": "مُلَخَّصُ فَصَاحَةِ الْكَلَامِ",
+          "kind": "content",
+          "page": 18,
+          "concepts": [
+            "فصاحة",
+            "كلام"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c009",
+          "title": "تَدْرِيبٌ مُجَابٌ عَنْهُ",
+          "kind": "content",
+          "page": 19,
+          "concepts": [
+            "تدريب",
+            "مجاب",
+            "عنه"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c010",
+          "title": "الْفَصْلُ الْأَوَّلُ عِلْمُ الْمَعَانِي",
+          "kind": "content",
+          "page": 20,
+          "concepts": [
+            "فصل",
+            "اول",
+            "علم"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c011",
+          "title": "الْمَبْحَثُ الْأَوَّلُ الْخَبَرُ وَالْإِنْشَاءُ",
+          "kind": "content",
+          "page": 21,
+          "concepts": [
+            "مبحث",
+            "اول",
+            "خبر",
+            "انشاء"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c012",
+          "title": "الْخَبَرُ وَالْإِنْشَاءُ",
+          "kind": "content",
+          "page": 22,
+          "concepts": [
+            "خبر",
+            "انشاء"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c013",
+          "title": "الْخَبَرُ",
+          "kind": "content",
+          "page": 23,
+          "concepts": [
+            "خبر"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c014",
+          "title": "أَضْرُبُ الْخَبَرِ",
+          "kind": "content",
+          "page": 25,
+          "concepts": [
+            "اضرب",
+            "خبر"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c015",
+          "title": "جَرَيَانُ الْخَبَرِ عَلَى خِلَافِ مَا يَقْتَضِيهِ الظَّاهِرُ عَلَى خِلَافِ الْأَصْلِ",
+          "kind": "content",
+          "page": 26,
+          "concepts": [
+            "جريان",
+            "خبر",
+            "خلاف",
+            "يقتضيه",
+            "ظاهر"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c016",
+          "title": "مُلَخَّصُ الْخَبَرِ",
+          "kind": "content",
+          "page": 28,
+          "concepts": [
+            "خبر"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c017",
+          "title": "تَدْرِيبٌ عَلَى أَضْرُبِ الْخَبَرِ مُجَابٌ عَنْهُ",
+          "kind": "content",
+          "page": 29,
+          "concepts": [
+            "اضرب",
+            "خبر"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c018",
+          "title": "الْإِنْشَاءُ الطَّلَبِيُّ وَغَيْرُ الطَّلَبِيِّ",
+          "kind": "content",
+          "page": 32,
+          "concepts": [
+            "انشاء",
+            "طلبي"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c019",
+          "title": "الْأَمْرُ وَصِيغُهُ",
+          "kind": "content",
+          "page": 33,
+          "concepts": [
+            "امر",
+            "صيغه"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c020",
+          "title": "الْمَعَانِي الْمَجَازِيَّةُ لِصِيغِ الْأَمْرِ",
+          "kind": "content",
+          "page": 34,
+          "concepts": [
+            "مجازية",
+            "لصيغ",
+            "امر"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "part-02.md",
+      "pages": [
+        41,
+        80
+      ],
+      "chapter": null,
+      "sections": [
+        {
+          "id": "kayf-tataqan-balagha-c021",
+          "title": "مُلَخَّصُ الْمَعَانِي الْمَجَازِيَّةِ لِصِيغِ الْأَمْرِ",
+          "kind": "content",
+          "page": 42,
+          "concepts": [
+            "مجازية",
+            "لصيغ",
+            "امر"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c022",
+          "title": "النَّهْيُ",
+          "kind": "content",
+          "page": 43,
+          "concepts": [
+            "نهي"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c023",
+          "title": "الْمَعَانِي الْمَجَازِيَّةُ لِصِيغِ النَّهْيِ",
+          "kind": "content",
+          "page": 43,
+          "concepts": [
+            "مجازية",
+            "لصيغ",
+            "نهي"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c024",
+          "title": "مُلَخَّصُ الْمَعَانِي الْمَجَازِيَّةِ لِصِيغِ النَّهْيِ",
+          "kind": "content",
+          "page": 48,
+          "concepts": [
+            "مجازية",
+            "لصيغ",
+            "نهي"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c025",
+          "title": "الِاسْتِفْهَامُ",
+          "kind": "content",
+          "page": 49,
+          "concepts": [
+            "استفهام"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c026",
+          "title": "مُلَخَّصُ أَدَوَاتِ الِاسْتِفْهَامِ",
+          "kind": "content",
+          "page": 56,
+          "concepts": [
+            "ادوات",
+            "استفهام"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c027",
+          "title": "الْمَعَانِي الْمَجَازِيَّةُ لِلِاسْتِفْهَامِ",
+          "kind": "content",
+          "page": 57,
+          "concepts": [
+            "مجازية",
+            "للاستفهام"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c028",
+          "title": "أَقْسَامُ الْإِنْكَارِ التَّوْبِيخِيُّ وَالتَّكْذِيبِيُّ",
+          "kind": "content",
+          "page": 62,
+          "concepts": [
+            "اقسام",
+            "انكار",
+            "توبيخي",
+            "تكذيبي"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c029",
+          "title": "مُلَخَّصُ الْمَعَانِي الْمَجَازِيَّةُ لِلِاسْتِفْهَامِ",
+          "kind": "content",
+          "page": 63,
+          "concepts": [
+            "مجازية",
+            "للاستفهام"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c030",
+          "title": "التَّمَنِّي",
+          "kind": "content",
+          "page": 64,
+          "concepts": [
+            "تمني"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c031",
+          "title": "النِّدَاءُ",
+          "kind": "content",
+          "page": 65,
+          "concepts": [
+            "نداء"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c032",
+          "title": "اسْتِعْمَالُ حُرُوفِ النِّدَاءِ بِخِلَافِ الْأَصْلِ",
+          "kind": "content",
+          "page": 65,
+          "concepts": [
+            "استعمال",
+            "نداء",
+            "بخلاف",
+            "اصل"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c033",
+          "title": "مُلَخَّصُ اسْتِعْمَالِ حُرُوفِ النِّدَاءِ بِخِلَافِ الْأَصْلِ",
+          "kind": "content",
+          "page": 69,
+          "concepts": [
+            "استعمال",
+            "نداء",
+            "بخلاف",
+            "اصل"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c034",
+          "title": "الْإِنْشَاءُ غَيْرُ الطَّلَبِيِّ",
+          "kind": "content",
+          "page": 70,
+          "concepts": [
+            "انشاء",
+            "طلبي"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c035",
+          "title": "تَدْرِيبٌ عَلَى الْإِنْشَاءِ مِنَ الْقُرْآنِ الْكَرِيمِ مُجَابٌ عَنْهُ",
+          "kind": "content",
+          "page": 71,
+          "concepts": [
+            "انشاء",
+            "قران",
+            "كريم"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c036",
+          "title": "تَدْرِيبُ عَلَى الْإِنْشَاءِ مِنَ الْحَدِيثِ الشَّرِيفِ مُجَابٌ عَنْهُ",
+          "kind": "content",
+          "page": 77,
+          "concepts": [
+            "انشاء",
+            "حديث",
+            "شريف"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c037",
+          "title": "تَدْرِيبُ عَلَى الْإِنْشَاءِ مِنَ الشِّعْرِ الْعَرَبِيِّ مُجَابٌ عَنْهُ",
+          "kind": "content",
+          "page": 79,
+          "concepts": [
+            "انشاء",
+            "شعر",
+            "عربي"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "part-03.md",
+      "pages": [
+        81,
+        120
+      ],
+      "chapter": null,
+      "sections": [
+        {
+          "id": "kayf-tataqan-balagha-c038",
+          "title": "الْمَبْحَثُ الثَّانِي أَحْوَالُ الْمُسْنَدِ إِلَيْهِ وَالْمُسْنَدِ",
+          "kind": "content",
+          "page": 82,
+          "concepts": [
+            "مبحث",
+            "ثاني",
+            "احوال",
+            "مسند",
+            "يه"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c039",
+          "title": "أَحْوَالُ الْمُسْنَدِ إِلَيْهِ",
+          "kind": "content",
+          "page": 83,
+          "concepts": [
+            "احوال",
+            "مسند",
+            "يه"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c040",
+          "title": "ذِكْرُ الْمُسْنَدِ إِلَيْهِ",
+          "kind": "content",
+          "page": 84,
+          "concepts": [
+            "ذكر",
+            "مسند",
+            "يه"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c041",
+          "title": "مُلَخَّصُ دَوَاعِي ذِكْرِ الْمُسْنَدِ إِلَيْهِ",
+          "kind": "content",
+          "page": 89,
+          "concepts": [
+            "دواعي",
+            "ذكر",
+            "مسند",
+            "يه"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c042",
+          "title": "حَذْفُ الْمُسْنَدِ إِلَيْهِ",
+          "kind": "content",
+          "page": 90,
+          "concepts": [
+            "حذف",
+            "مسند",
+            "يه"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c043",
+          "title": "مُلَخَّصُ دَوَاعِي حَذْفِ الْمُسْنَدِ إِلَيْهِ",
+          "kind": "content",
+          "page": 95,
+          "concepts": [
+            "دواعي",
+            "حذف",
+            "مسند",
+            "يه"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c044",
+          "title": "تَعْرِيفُ الْمُسْنَدِ إِلَيْهِ",
+          "kind": "content",
+          "page": 96,
+          "concepts": [
+            "تعريف",
+            "مسند",
+            "يه"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c045",
+          "title": "تَعْرِيفُ الْمُسْنَدِ إِلَيْهِ بِالْمَوْصُولِيَّةِ",
+          "kind": "content",
+          "page": 96,
+          "concepts": [
+            "تعريف",
+            "مسند",
+            "يه",
+            "بالموصولية"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c046",
+          "title": "تَعْرِيفُ الْمُسْنَدِ إِلَيْهِ بِالْإِشَارَةِ",
+          "kind": "content",
+          "page": 100,
+          "concepts": [
+            "تعريف",
+            "مسند",
+            "يه",
+            "بالاشارة"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c047",
+          "title": "مُلَخَّصُ تَعْرِيفِ الْمُسْنَدِ إِلَيْهِ",
+          "kind": "content",
+          "page": 102,
+          "concepts": [
+            "تعريف",
+            "مسند",
+            "يه"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c048",
+          "title": "تَنْكِيرُ الْمُسْنَدِ إِلَيْهِ",
+          "kind": "content",
+          "page": 103,
+          "concepts": [
+            "تنكير",
+            "مسند",
+            "يه"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c049",
+          "title": "تَقْدِيمُ الْمُسْنَدِ إِلَيْهِ",
+          "kind": "content",
+          "page": 104,
+          "concepts": [
+            "تقديم",
+            "مسند",
+            "يه"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c050",
+          "title": "مُلَخَّصُ تَقْدِيمِ الْمُسْنَدِ إِلَيْهِ",
+          "kind": "content",
+          "page": 108,
+          "concepts": [
+            "تقديم",
+            "مسند",
+            "يه"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c051",
+          "title": "أَحْوَالُ الْمُسْنَدِ",
+          "kind": "content",
+          "page": 109,
+          "concepts": [
+            "احوال",
+            "مسند"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c052",
+          "title": "مُتَعَلِّقَاتُ الْفِعْلِ",
+          "kind": "content",
+          "page": 113,
+          "concepts": [
+            "متعلقات",
+            "فعل"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c053",
+          "title": "الْالْتِفَاتُ",
+          "kind": "content",
+          "page": 115,
+          "concepts": [
+            "التفات"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c054",
+          "title": "تَدْرِيبٌ عَلَى أَحْوَالِ الْمُسْنَدِ إِلَيْهِ مِنَ الْقُرْآنِ الْكَرِيمِ مُجَابٌ عَنْهُ",
+          "kind": "content",
+          "page": 118,
+          "concepts": [
+            "احوال",
+            "مسند",
+            "يه",
+            "قران",
+            "كريم"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "part-04.md",
+      "pages": [
+        121,
+        160
+      ],
+      "chapter": null,
+      "sections": [
+        {
+          "id": "kayf-tataqan-balagha-c055",
+          "title": "تَدْرِيبٌ عَلَى أَحْوَالِ الْمُسْنَدِ إِلَيْهِ مِنَ الْحَدِيثِ الشَّرِيفِ مُجَابٌ عَنْهُ",
+          "kind": "content",
+          "page": 121,
+          "concepts": [
+            "احوال",
+            "مسند",
+            "يه",
+            "حديث",
+            "شريف"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c056",
+          "title": "تَدْرِيبٌ عَلَى أَحْوَالِ الْمُسْنَدِ إِلَيْهِ مِنَ الشِّعْرِ الْعَرَبِيِّ مُجَابٌ عَنْهُ",
+          "kind": "content",
+          "page": 122,
+          "concepts": [
+            "احوال",
+            "مسند",
+            "يه",
+            "شعر",
+            "عربي"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c057",
+          "title": "الْمَبْحَثُ الثَّالِثُ الْقَصْرُ",
+          "kind": "content",
+          "page": 125,
+          "concepts": [
+            "مبحث",
+            "ثالث",
+            "قصر"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c058",
+          "title": "الْقَصْرُ",
+          "kind": "content",
+          "page": 126,
+          "concepts": [
+            "قصر"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c059",
+          "title": "طُرُقُ الْقَصْرِ",
+          "kind": "content",
+          "page": 127,
+          "concepts": [
+            "طرق",
+            "قصر"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c060",
+          "title": "أَقْسَامُ الْقَصْرِ بِاعْتِبَارِ الْحَقِيقَةِ وَالْوَاقِعِ",
+          "kind": "content",
+          "page": 129,
+          "concepts": [
+            "اقسام",
+            "قصر",
+            "باعتبار",
+            "حقيقة",
+            "واقع"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c061",
+          "title": "أَقْسَامُ الْقَصْرِ بِاعْتِبَارِ عِلْمِ الْمُخَاطَبِ",
+          "kind": "content",
+          "page": 131,
+          "concepts": [
+            "اقسام",
+            "قصر",
+            "باعتبار",
+            "علم",
+            "مخاطب"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c062",
+          "title": "أَقْسَامُ الْقَصْرِ بِاعْتِبَارِ الطَّرَفَيْنِ",
+          "kind": "content",
+          "page": 133,
+          "concepts": [
+            "اقسام",
+            "قصر",
+            "باعتبار",
+            "طرفين"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c063",
+          "title": "مُلَخَّصُ الْقَصْرِ",
+          "kind": "content",
+          "page": 134,
+          "concepts": [
+            "قصر"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c064",
+          "title": "تَدْرِيبٌ عَلَى الْقَصْرِ مِنَ الْقُرْآنِ الْكَرِيمِ مُجَابٌ عَنْهُ",
+          "kind": "content",
+          "page": 136,
+          "concepts": [
+            "قصر",
+            "قران",
+            "كريم"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c065",
+          "title": "تَدْرِيبٌ عَلَى الْقَصْرِ مِنَ الْحَدِيثِ الشَّرِيفِ مُجَابٌ عَنْهُ",
+          "kind": "content",
+          "page": 140,
+          "concepts": [
+            "قصر",
+            "حديث",
+            "شريف"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c066",
+          "title": "تَدْرِيبٌ عَلَى الْقَصْرِ مِنَ الشِّعْرِ الْعَرَبِيِّ مُجَابٌ عَنْهُ",
+          "kind": "content",
+          "page": 143,
+          "concepts": [
+            "قصر",
+            "شعر",
+            "عربي"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c068",
+          "title": "الْوَصْلُ وَالْفَصْلُ",
+          "kind": "content",
+          "page": 147,
+          "concepts": [
+            "وصل",
+            "فصل"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c069",
+          "title": "مَوَاضِعُ الْفَصْلِ",
+          "kind": "content",
+          "page": 148,
+          "concepts": [
+            "فصل"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c067",
+          "title": "الْمَبْحَثُ الرَّابِعُ الْوَصْلُ وَالْفَصْلُ",
+          "kind": "content",
+          "page": 155,
+          "concepts": [
+            "مبحث",
+            "رابع",
+            "وصل",
+            "فصل"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c070",
+          "title": "مُلَخَّصُ مَوَاضِعِ الْفَصْلِ",
+          "kind": "content",
+          "page": 156,
+          "concepts": [
+            "فصل"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c071",
+          "title": "مَوَاضِعُ الْوَصْلِ",
+          "kind": "content",
+          "page": 157,
+          "concepts": [
+            "وصل"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c072",
+          "title": "مُلَخَّصُ مَوَاضِعِ الْوَصْلِ",
+          "kind": "content",
+          "page": 160,
+          "concepts": [
+            "وصل"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "part-05.md",
+      "pages": [
+        161,
+        200
+      ],
+      "chapter": null,
+      "sections": [
+        {
+          "id": "kayf-tataqan-balagha-c073",
+          "title": "تَدْرِيبٌ عَلَى مَوَاضِعِ الْفَصْلِ وَالْوَصْلِ مِنَ الْقُرْآنِ الْكَرِيمِ مُجَابٌ عَنْهُ",
+          "kind": "content",
+          "page": 161,
+          "concepts": [
+            "فصل",
+            "وصل",
+            "قران",
+            "كريم"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c074",
+          "title": "تَدْرِيبٌ عَلَى مَوَاضِعِ الْفَصْلِ وَالْوَصْلِ مِنَ الْحَدِيثِ الشَّرِيفِ مُجَابٌ عَنْهُ",
+          "kind": "content",
+          "page": 165,
+          "concepts": [
+            "فصل",
+            "وصل",
+            "حديث",
+            "شريف"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c075",
+          "title": "تَدْرِيبٌ عَلَى مَوَاضِعِ الْفَصْلِ وَالْوَصْلِ مِنَ الشِّعْرِ الْعَرَبِيِّ مُجَابٌ عَنْهُ",
+          "kind": "content",
+          "page": 167,
+          "concepts": [
+            "فصل",
+            "وصل",
+            "شعر",
+            "عربي"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c076",
+          "title": "المَبْحَثُ الْخَامِسُ الْإِيجَازُ وَالْإِطْنَابُ وَالْمُسَاوَاةُ",
+          "kind": "content",
+          "page": 170,
+          "concepts": [
+            "مبحث",
+            "خامس",
+            "ايجاز",
+            "اطناب",
+            "مساواة"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c086",
+          "title": "تَدْرِيبٌ عَلَى الْإِيجَازِ وَالْإِطْنَابِ وَالْمُسَاوَاةِ مِنَ الْحَدِيثِ مُجَابٌ عَنْهُ",
+          "kind": "content",
+          "page": 170,
+          "concepts": [
+            "ايجاز",
+            "اطناب",
+            "مساواة",
+            "حديث"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c077",
+          "title": "الْإِيجَازُ",
+          "kind": "content",
+          "page": 172,
+          "concepts": [
+            "ايجاز"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c078",
+          "title": "إِيجَازُ الْقَصْرِ",
+          "kind": "content",
+          "page": 172,
+          "concepts": [
+            "ايجاز",
+            "قصر"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c079",
+          "title": "إِيجَازُ الْحَذْفِ",
+          "kind": "content",
+          "page": 174,
+          "concepts": [
+            "ايجاز",
+            "حذف"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c080",
+          "title": "مُلَخَّصُ الْإِيجَازِ بِالْحَذْفِ",
+          "kind": "content",
+          "page": 177,
+          "concepts": [
+            "ايجاز",
+            "بالحذف"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c081",
+          "title": "الْإِطْنَابُ",
+          "kind": "content",
+          "page": 178,
+          "concepts": [
+            "اطناب"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c082",
+          "title": "صُوَرُ الْإِطْنَابِ",
+          "kind": "content",
+          "page": 180,
+          "concepts": [
+            "اطناب"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c083",
+          "title": "الْمُسَاوَاةُ",
+          "kind": "content",
+          "page": 190,
+          "concepts": [
+            "مساواة"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c084",
+          "title": "مُلَخَّصُ صُوَرِ الْإِطْنَابِ",
+          "kind": "content",
+          "page": 191,
+          "concepts": [
+            "اطناب"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c085",
+          "title": "تَدْرِيبٌ عَلَى الْإِيجَازِ وَالْإِطْنَابِ وَالْمُسَاوَاةِ مِنَ الْقُرْآنِ الْكَرِيمِ مُجَابٌ عَنْهُ",
+          "kind": "content",
+          "page": 192,
+          "concepts": [
+            "ايجاز",
+            "اطناب",
+            "مساواة",
+            "قران",
+            "كريم"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c087",
+          "title": "تَدْرِيبٌ عَلَى الْإِيجَازِ وَالْإِطْنَابِ وَالْمُسَاوَاةِ مِنَ الشِّعْرِ الْعَرَبِيِّ مُجَابٌ عَنْهُ",
+          "kind": "content",
+          "page": 199,
+          "concepts": [
+            "ايجاز",
+            "اطناب",
+            "مساواة",
+            "شعر",
+            "عربي"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "part-06.md",
+      "pages": [
+        201,
+        240
+      ],
+      "chapter": null,
+      "sections": [
+        {
+          "id": "kayf-tataqan-balagha-c088",
+          "title": "الْفَصْلُ الثَّانِي عِلْمُ الْبَيَانِ",
+          "kind": "content",
+          "page": 202,
+          "concepts": [
+            "فصل",
+            "ثاني",
+            "علم",
+            "بيان"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c089",
+          "title": "المَبْحَثُ الْأَوَّلُ التَّشْبِيهُ",
+          "kind": "content",
+          "page": 203,
+          "concepts": [
+            "مبحث",
+            "اول",
+            "تشبيه"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c090",
+          "title": "التَّشْبِيهُ",
+          "kind": "content",
+          "page": 204,
+          "concepts": [
+            "تشبيه"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c091",
+          "title": "التَّشْبِيهُ الْمُفْرَدُ",
+          "kind": "content",
+          "page": 205,
+          "concepts": [
+            "تشبيه",
+            "مفرد"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c092",
+          "title": "أَقْسَامُ التَّشْبِيهِ الْمُفْرَدِ",
+          "kind": "content",
+          "page": 206,
+          "concepts": [
+            "اقسام",
+            "تشبيه",
+            "مفرد"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c093",
+          "title": "صُوَرُ التَّشْبِيهِ الْبَلِيغِ",
+          "kind": "content",
+          "page": 215,
+          "concepts": [
+            "تشبيه",
+            "بليغ"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c094",
+          "title": "مُلَخَّصُ التَّشْبِيهِ الْمُفْرَدِ",
+          "kind": "content",
+          "page": 218,
+          "concepts": [
+            "تشبيه",
+            "مفرد"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c095",
+          "title": "التَّشْبِيهُ الْمُرَكَّبُ",
+          "kind": "content",
+          "page": 219,
+          "concepts": [
+            "تشبيه",
+            "مركب"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c096",
+          "title": "التَّشْبِيهُ التَّمْثِيلِيُّ",
+          "kind": "content",
+          "page": 220,
+          "concepts": [
+            "تشبيه",
+            "تمثيلي"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c097",
+          "title": "التَّشْبِيهُ الضِّمْنِيُّ",
+          "kind": "content",
+          "page": 227,
+          "concepts": [
+            "تشبيه",
+            "ضمني"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c098",
+          "title": "الفَرْقُ بَيْنَ التَّشْبِيهِ التَّمْثِيلِيِّ وَالتَّشْبِيهِ الضِّمْنِيِّ",
+          "kind": "content",
+          "page": 231,
+          "concepts": [
+            "فرق",
+            "تشبيه",
+            "تمثيلي",
+            "ضمني"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c099",
+          "title": "التَّشْبِيهُ المَحْسُوسُ وَالمَعْقُولُ",
+          "kind": "content",
+          "page": 232,
+          "concepts": [
+            "تشبيه",
+            "محسوس",
+            "معقول"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c100",
+          "title": "التَّشْبِيهُ المُتَعَدِّدُ الأَطْرَافِ",
+          "kind": "content",
+          "page": 235,
+          "concepts": [
+            "تشبيه",
+            "متعدد",
+            "اطراف"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c101",
+          "title": "التَّشْبِيهُ المَقْلُوبُ",
+          "kind": "content",
+          "page": 237,
+          "concepts": [
+            "تشبيه",
+            "مقلوب"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c102",
+          "title": "مُلَخَّصُ التَّشْبِيهِ",
+          "kind": "content",
+          "page": 238,
+          "concepts": [
+            "تشبيه"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c103",
+          "title": "تَدْرِيبٌ عَلَى التَّشْبِيهِ مِنَ القُرْآنِ الكَرِيمِ مُجَابٌ عَنْهُ",
+          "kind": "content",
+          "page": 239,
+          "concepts": [
+            "تشبيه",
+            "قران",
+            "كريم"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "part-07.md",
+      "pages": [
+        241,
+        280
+      ],
+      "chapter": null,
+      "sections": [
+        {
+          "id": "kayf-tataqan-balagha-c104",
+          "title": "تَدْرِيبٌ عَلَى التَّشْبِيهِ مِنَ الحَدِيثِ الشَّرِيفِ مُجَابٌ عَنْهُ",
+          "kind": "content",
+          "page": 242,
+          "concepts": [
+            "تشبيه",
+            "حديث",
+            "شريف"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c105",
+          "title": "تَدْرِيبٌ عَلَى التَّشْبِيهِ مِنَ الشِّعْرِ العَرَبِيِّ مُجَابٌ عَنْهُ",
+          "kind": "content",
+          "page": 245,
+          "concepts": [
+            "تشبيه",
+            "شعر",
+            "عربي"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c106",
+          "title": "المَبْحَثُ الثَّانِي المَجَازُ",
+          "kind": "content",
+          "page": 251,
+          "concepts": [
+            "مبحث",
+            "ثاني",
+            "مجاز"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c107",
+          "title": "المَجَازُ وَأَقْسَامُهُ",
+          "kind": "content",
+          "page": 252,
+          "concepts": [
+            "مجاز",
+            "واقسامه"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c108",
+          "title": "المَجَازُ اللُّغَوِيُّ وَأَقْسَامُهُ",
+          "kind": "content",
+          "page": 253,
+          "concepts": [
+            "مجاز",
+            "لغوي",
+            "واقسامه"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c109",
+          "title": "المَجَازُ وَعَلَاقَتُهُ",
+          "kind": "content",
+          "page": 254,
+          "concepts": [
+            "مجاز",
+            "علاقته"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c110",
+          "title": "العَلَاقَاتُ فِي المَجَازِ المُرْسَلِ",
+          "kind": "content",
+          "page": 255,
+          "concepts": [
+            "علاقات",
+            "مجاز",
+            "مرسل"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c111",
+          "title": "مُلَخَّصُ عَلَاقَاتِ المَجَازِ المُرْسَلِ",
+          "kind": "content",
+          "page": 269,
+          "concepts": [
+            "علاقات",
+            "مجاز",
+            "مرسل"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c112",
+          "title": "تَدْرِيبٌ عَلَى المَجَازِ المُرْسَلِ مِنَ القُرْآنِ الكَرِيمِ مُجَابٌ عَنْهُ",
+          "kind": "content",
+          "page": 270,
+          "concepts": [
+            "مجاز",
+            "مرسل",
+            "قران",
+            "كريم"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c113",
+          "title": "تَدْرِيبٌ عَلَى المَجَازِ المُرْسَلِ مِنَ الحَدِيثِ الشَّرِيفِ مُجَابٌ عَنْهُ",
+          "kind": "content",
+          "page": 273,
+          "concepts": [
+            "مجاز",
+            "مرسل",
+            "حديث",
+            "شريف"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c114",
+          "title": "تَدْرِيبٌ عَلَى المَجَازِ المُرْسَلِ مِنَ الشِّعْرِ العَرَبِيِّ مُجَابٌ عَنْهُ",
+          "kind": "content",
+          "page": 275,
+          "concepts": [
+            "مجاز",
+            "مرسل",
+            "شعر",
+            "عربي"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c115",
+          "title": "المَجَازُ العَقْلِيُّ",
+          "kind": "content",
+          "page": 277,
+          "concepts": [
+            "مجاز",
+            "عقلي"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c116",
+          "title": "الْفَرْقُ بَيْنَ الْمَجَازِ اللُّغَوِيِّ وَالْمَجَازِ الْعَقْلِيِّ",
+          "kind": "content",
+          "page": 277,
+          "concepts": [
+            "فرق",
+            "مجاز",
+            "لغوي",
+            "عقلي"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c117",
+          "title": "عَلَاقَاتُ الْمَجَازِ الْعَقْلِيِّ",
+          "kind": "content",
+          "page": 278,
+          "concepts": [
+            "علاقات",
+            "مجاز",
+            "عقلي"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "part-08.md",
+      "pages": [
+        281,
+        320
+      ],
+      "chapter": null,
+      "sections": [
+        {
+          "id": "kayf-tataqan-balagha-c118",
+          "title": "مُلَخَّصُ عَلَاقَاتِ الْمَجَازِ الْعَقْلِيِّ",
+          "kind": "content",
+          "page": 284,
+          "concepts": [
+            "علاقات",
+            "مجاز",
+            "عقلي"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c119",
+          "title": "تَدْرِيبٌ عَلَى الْمَجَازِ الْعَقْلِيِّ مُجَابٌ عَنْهُ",
+          "kind": "content",
+          "page": 285,
+          "concepts": [
+            "مجاز",
+            "عقلي"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c120",
+          "title": "الِاسْتِعَارَةُ",
+          "kind": "content",
+          "page": 288,
+          "concepts": [
+            "استعارة"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c121",
+          "title": "أَرْكَانُ الِاسْتِعَارَةِ",
+          "kind": "content",
+          "page": 289,
+          "concepts": [
+            "اركان",
+            "استعارة"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c122",
+          "title": "الِاسْتِعَارَةُ التَّصْرِيحِيَّةُ",
+          "kind": "content",
+          "page": 290,
+          "concepts": [
+            "استعارة",
+            "تصريحية"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c123",
+          "title": "قَرِينَةُ الِاسْتِعَارَةِ",
+          "kind": "content",
+          "page": 295,
+          "concepts": [
+            "قرينة",
+            "استعارة"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c124",
+          "title": "مُلَخَّصُ قَرِينَةِ الِاسْتِعَارَةِ",
+          "kind": "content",
+          "page": 297,
+          "concepts": [
+            "قرينة",
+            "استعارة"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c125",
+          "title": "الِاسْتِعَارَةُ الْمَكْنِيَّةُ",
+          "kind": "content",
+          "page": 298,
+          "concepts": [
+            "استعارة",
+            "مكنية"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c126",
+          "title": "الِاسْتِعَارَةُ التَّمْثِيلِيَّةُ",
+          "kind": "content",
+          "page": 305,
+          "concepts": [
+            "استعارة",
+            "تمثيلية"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c127",
+          "title": "أَقْسَامُ الِاسْتِعَارَةِ بِاعْتِبَارِ الطَّرَفَيْنِ",
+          "kind": "content",
+          "page": 310,
+          "concepts": [
+            "اقسام",
+            "استعارة",
+            "باعتبار",
+            "طرفين"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c128",
+          "title": "أَقْسَامُ الِاسْتِعَارَةِ بِحَسَبِ اللَّفْظِ الْمُسْتَعَارِ",
+          "kind": "content",
+          "page": 311,
+          "concepts": [
+            "اقسام",
+            "استعارة",
+            "بحسب",
+            "لفظ",
+            "مستعار"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c129",
+          "title": "الِاسْتِعَارَةُ الْأَصْلِيَّةُ",
+          "kind": "content",
+          "page": 311,
+          "concepts": [
+            "استعارة",
+            "اصلية"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c130",
+          "title": "الِاسْتِعَارَةُ التَّبَعِيَّةُ",
+          "kind": "content",
+          "page": 313,
+          "concepts": [
+            "استعارة",
+            "تبعية"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c131",
+          "title": "تَقْسِيمُ الِاسْتِعَارَةِ بِحَسَبِ الْمُلَائِمِ",
+          "kind": "content",
+          "page": 316,
+          "concepts": [
+            "تقسيم",
+            "استعارة",
+            "بحسب",
+            "ملايم"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c132",
+          "title": "الِاسْتِعَارَةُ الْمُرَشَّحَةُ",
+          "kind": "content",
+          "page": 316,
+          "concepts": [
+            "استعارة",
+            "مرشحة"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c133",
+          "title": "الِاسْتِعَارَةُ الْمُجَرَّدَةُ",
+          "kind": "content",
+          "page": 319,
+          "concepts": [
+            "استعارة",
+            "مجردة"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "part-09.md",
+      "pages": [
+        321,
+        360
+      ],
+      "chapter": null,
+      "sections": [
+        {
+          "id": "kayf-tataqan-balagha-c134",
+          "title": "الِاسْتِعَارَةُ الْمُطْلَقَةُ",
+          "kind": "content",
+          "page": 321,
+          "concepts": [
+            "استعارة",
+            "مطلقة"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c135",
+          "title": "تَقْسِيمُ الِاسْتِعَارَةِ بِحَسَبِ الْمُلَائِمِ",
+          "kind": "content",
+          "page": 324,
+          "concepts": [
+            "تقسيم",
+            "استعارة",
+            "بحسب",
+            "ملايم"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c136",
+          "title": "تَقْسِيمُ الِاسْتِعَارَةِ بِاعْتِبَارِ الطَّرَفَيْنِ وَالْجَامِعِ",
+          "kind": "content",
+          "page": 325,
+          "concepts": [
+            "تقسيم",
+            "استعارة",
+            "باعتبار",
+            "طرفين",
+            "جامع"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c137",
+          "title": "الْفَرْقُ بَيْنَ الِاسْتِعَارَةِ التَّصْرِيحِيَّةِ وَالِاسْتِعَارَةِ التَّمْثِيلِيَّةِ",
+          "kind": "content",
+          "page": 328,
+          "concepts": [
+            "فرق",
+            "استعارة",
+            "تصريحية",
+            "تمثيلية"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c138",
+          "title": "الْفَرْقُ بَيْنَ التَّشْبِيهِ التَّمْثِيلِيِّ وَالِاسْتِعَارَةِ التَّمْثِيلِيَّةِ",
+          "kind": "content",
+          "page": 329,
+          "concepts": [
+            "فرق",
+            "تشبيه",
+            "تمثيلي",
+            "استعارة",
+            "تمثيلية"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c139",
+          "title": "الْفَرْقُ بَيْنَ التَّشْبِيهِ الضِّمْنِيِّ وَالِاسْتِعَارَةِ التَّمْثِيلِيَّةِ",
+          "kind": "content",
+          "page": 330,
+          "concepts": [
+            "فرق",
+            "تشبيه",
+            "ضمني",
+            "استعارة",
+            "تمثيلية"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c140",
+          "title": "مُلَخَّصُ أَقْسَامِ الِاسْتِعَارَةِ",
+          "kind": "content",
+          "page": 331,
+          "concepts": [
+            "اقسام",
+            "استعارة"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c141",
+          "title": "تَدْرِيبٌ عَلَى الِاسْتِعَارَةِ مِنَ الْقُرْآنِ الْكَرِيمِ مُجَابٌ عَنْهُ",
+          "kind": "content",
+          "page": 332,
+          "concepts": [
+            "استعارة",
+            "قران",
+            "كريم"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c142",
+          "title": "تَدْرِيبٌ عَلَى الِاسْتِعَارَةِ مِنَ الْحَدِيثِ الشَّرِيفِ مُجَابٌ عَنْهُ",
+          "kind": "content",
+          "page": 335,
+          "concepts": [
+            "استعارة",
+            "حديث",
+            "شريف"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c143",
+          "title": "تَدْرِيبٌ عَلَى الِاسْتِعَارَةِ مِنَ الشِّعْرِ الْعَرَبِيِّ مُجَابٌ عَنْهُ",
+          "kind": "content",
+          "page": 339,
+          "concepts": [
+            "استعارة",
+            "شعر",
+            "عربي"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c144",
+          "title": "تَدْرِيبٌ عَلَى أَقْسَامِ الِاسْتِعَارَةِ مُجَابٌ عَنْهُ",
+          "kind": "content",
+          "page": 342,
+          "concepts": [
+            "اقسام",
+            "استعارة"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c145",
+          "title": "الْمَبْحَثُ الثَّالِثُ الْكِنَايَةُ",
+          "kind": "content",
+          "page": 347,
+          "concepts": [
+            "مبحث",
+            "ثالث",
+            "كناية"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c146",
+          "title": "الْكِنَايَةُ",
+          "kind": "content",
+          "page": 348,
+          "concepts": [
+            "كناية"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c147",
+          "title": "الْفَرْقُ بَيْنَ قَرِينَةِ الْمَجَازِ وَقَرِينَةِ الْكِنَايَةِ",
+          "kind": "content",
+          "page": 349,
+          "concepts": [
+            "فرق",
+            "قرينة",
+            "مجاز",
+            "كناية"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c148",
+          "title": "أَقْسَامُ الْكِنَايَةِ",
+          "kind": "content",
+          "page": 350,
+          "concepts": [
+            "اقسام",
+            "كناية"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c149",
+          "title": "الْكِنَايَةُ عَنْ صِفَةٍ",
+          "kind": "content",
+          "page": 350,
+          "concepts": [
+            "كناية",
+            "صفة"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c150",
+          "title": "الْكِنَايَةُ عَنْ مَوْصُوفٍ",
+          "kind": "content",
+          "page": 354,
+          "concepts": [
+            "كناية",
+            "موصوف"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c151",
+          "title": "الْكِنَايَةُ عَنْ نِسْبَةٍ",
+          "kind": "content",
+          "page": 357,
+          "concepts": [
+            "كناية",
+            "نسبة"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c152",
+          "title": "مُلَخَّصُ الْكِنَايَةِ",
+          "kind": "content",
+          "page": 359,
+          "concepts": [
+            "كناية"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "part-10.md",
+      "pages": [
+        361,
+        400
+      ],
+      "chapter": null,
+      "sections": [
+        {
+          "id": "kayf-tataqan-balagha-c153",
+          "title": "تَدْرِيبٌ عَلَى الْكِنَايَةِ مِنَ الْقُرْآنِ الْكَرِيمِ مُجَابٌ عَنْهُ",
+          "kind": "content",
+          "page": 361,
+          "concepts": [
+            "كناية",
+            "قران",
+            "كريم"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c154",
+          "title": "تَدْرِيبٌ عَلَى الْكِنَايَةِ مِنَ الْحَدِيثِ الشَّرِيفِ مُجَابٌ عَنْهُ",
+          "kind": "content",
+          "page": 364,
+          "concepts": [
+            "كناية",
+            "حديث",
+            "شريف"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c155",
+          "title": "تَدْرِيبٌ عَلَى الْكِنَايَةِ مِنَ الشِّعْرِ الْعَرَبِيِّ مُجَابٌ عَنْهُ",
+          "kind": "content",
+          "page": 367,
+          "concepts": [
+            "كناية",
+            "شعر",
+            "عربي"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c156",
+          "title": "تَدْرِيبٌ مُجَابٌ عَنْهُ عَلَى فَصْلِ عِلْمِ البَيَانِ",
+          "kind": "content",
+          "page": 371,
+          "concepts": [
+            "فصل",
+            "علم",
+            "بيان"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c157",
+          "title": "الفَصْلُ الثَّالِثُ عِلْمُ البَدِيعِ",
+          "kind": "content",
+          "page": 382,
+          "concepts": [
+            "فصل",
+            "ثالث",
+            "علم",
+            "بديع"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c158",
+          "title": "المَبْحَثُ الأَوَّلُ المُحَسِّنَاتُ المَعْنَوِيَّةُ",
+          "kind": "content",
+          "page": 383,
+          "concepts": [
+            "مبحث",
+            "اول",
+            "محسنات",
+            "معنوية"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c159",
+          "title": "الطِّبَاقُ وَأَقْسَامُهُ",
+          "kind": "content",
+          "page": 384,
+          "concepts": [
+            "طباق",
+            "واقسامه"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c160",
+          "title": "مُلَخَّصُ الطِّبَاقِ",
+          "kind": "content",
+          "page": 387,
+          "concepts": [
+            "طباق"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c161",
+          "title": "المُقَابَلَةُ",
+          "kind": "content",
+          "page": 388,
+          "concepts": [
+            "مقابلة"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c162",
+          "title": "الفَرْقُ بَيْنَ الطِّبَاقِ وَالمُقَابَلَةِ",
+          "kind": "content",
+          "page": 389,
+          "concepts": [
+            "فرق",
+            "طباق",
+            "مقابلة"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c163",
+          "title": "صُوَرُ المُقَابَلَةِ",
+          "kind": "content",
+          "page": 390,
+          "concepts": [
+            "مقابلة"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c164",
+          "title": "مُلَخَّصُ المُقَابَلَةِ",
+          "kind": "content",
+          "page": 393,
+          "concepts": [
+            "مقابلة"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c165",
+          "title": "مُرَاعَاةُ النَّظِيرِ",
+          "kind": "content",
+          "page": 394,
+          "concepts": [
+            "مراعاة",
+            "نظير"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c166",
+          "title": "مُلَخَّصُ مُرَاعَاةِ النَّظِيرِ",
+          "kind": "content",
+          "page": 397,
+          "concepts": [
+            "مراعاة",
+            "نظير"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c167",
+          "title": "حُسْنُ التَّعْلِيلِ",
+          "kind": "content",
+          "page": 398,
+          "concepts": [
+            "حسن",
+            "تعليل"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c168",
+          "title": "المُشَاكَلَةُ",
+          "kind": "content",
+          "page": 400,
+          "concepts": [
+            "مشاكلة"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "part-11.md",
+      "pages": [
+        401,
+        440
+      ],
+      "chapter": null,
+      "sections": [
+        {
+          "id": "kayf-tataqan-balagha-c169",
+          "title": "التَّوْرِيَةُ",
+          "kind": "content",
+          "page": 402,
+          "concepts": [
+            "تورية"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c171",
+          "title": "أَقْسَامُ التَّوْرِيَةِ",
+          "kind": "content",
+          "page": 404,
+          "concepts": [
+            "اقسام",
+            "تورية"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c170",
+          "title": "مُلَخَّصُ التَّوْرِيَةِ",
+          "kind": "content",
+          "page": 405,
+          "concepts": [
+            "تورية"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c172",
+          "title": "المُبَالَغَةُ",
+          "kind": "content",
+          "page": 406,
+          "concepts": [
+            "مبالغة"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c173",
+          "title": "أَقْسَامُ المُبَالَغَةِ",
+          "kind": "content",
+          "page": 407,
+          "concepts": [
+            "اقسام",
+            "مبالغة"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c174",
+          "title": "مُلَخَّصُ المُبَالَغَةِ",
+          "kind": "content",
+          "page": 408,
+          "concepts": [
+            "مبالغة"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c175",
+          "title": "تَأْكِيدُ المَدْحِ بِمَا يُشْبِهُ الذَّمَّ",
+          "kind": "content",
+          "page": 409,
+          "concepts": [
+            "تاكيد",
+            "مدح",
+            "بما",
+            "يشبه",
+            "ذم"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c176",
+          "title": "تأكيدُ الذَّمِّ بِما يُشبِهُ المَدحَ",
+          "kind": "content",
+          "page": 411,
+          "concepts": [
+            "تاكيد",
+            "ذم",
+            "بما",
+            "يشبه",
+            "مدح"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c177",
+          "title": "اللَّفُّ والنَّشرُ",
+          "kind": "content",
+          "page": 414,
+          "concepts": [
+            "لف",
+            "نشر"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c178",
+          "title": "مُلخَّصُ اللَّفِّ والنَّشرِ",
+          "kind": "content",
+          "page": 416,
+          "concepts": [
+            "لف",
+            "نشر"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c179",
+          "title": "الجَمعُ",
+          "kind": "content",
+          "page": 417,
+          "concepts": [
+            "جمع"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c180",
+          "title": "التَّفريقُ",
+          "kind": "content",
+          "page": 418,
+          "concepts": [
+            "تفريق"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c181",
+          "title": "الجَمعُ مَعَ التَّفريقِ",
+          "kind": "content",
+          "page": 419,
+          "concepts": [
+            "جمع",
+            "تفريق"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c182",
+          "title": "الجَمعُ مَعَ التَّقسيمِ",
+          "kind": "content",
+          "page": 420,
+          "concepts": [
+            "جمع",
+            "تقسيم"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c183",
+          "title": "الجَمعُ مَعَ التَّفريقِ والتَّقسيمِ",
+          "kind": "content",
+          "page": 421,
+          "concepts": [
+            "جمع",
+            "تفريق",
+            "تقسيم"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c184",
+          "title": "الإرصادُ",
+          "kind": "content",
+          "page": 423,
+          "concepts": [
+            "ارصاد"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c185",
+          "title": "تَدريبٌ مِنَ المُحسِّناتِ البَديعيَّةِ مِنَ القُرآنِ الكَريمِ مُجابٌ عَنهُ",
+          "kind": "content",
+          "page": 425,
+          "concepts": [
+            "محسنات",
+            "بديعية",
+            "قران",
+            "كريم"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c186",
+          "title": "تَدريبٌ مِنَ المُحسِّناتِ البَديعيَّةِ مِنَ الحَديثِ الشَّريفِ مُجابٌ عَنهُ",
+          "kind": "content",
+          "page": 432,
+          "concepts": [
+            "محسنات",
+            "بديعية",
+            "حديث",
+            "شريف"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c187",
+          "title": "تَدريبٌ مِنَ المُحسِّناتِ البَديعيَّةِ مِنَ الشِّعرِ العَرَبيِّ مُجابٌ عَنهُ",
+          "kind": "content",
+          "page": 436,
+          "concepts": [
+            "محسنات",
+            "بديعية",
+            "شعر",
+            "عربي"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "part-12.md",
+      "pages": [
+        441,
+        480
+      ],
+      "chapter": null,
+      "sections": [
+        {
+          "id": "kayf-tataqan-balagha-c188",
+          "title": "المَبحَثُ الثَّاني المُحسِّناتُ اللَّفظيَّةُ",
+          "kind": "content",
+          "page": 446,
+          "concepts": [
+            "مبحث",
+            "ثاني",
+            "محسنات",
+            "لفظية"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c189",
+          "title": "الجِناسُ",
+          "kind": "content",
+          "page": 447,
+          "concepts": [
+            "جناس"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c190",
+          "title": "أنواعُ الجِناسِ",
+          "kind": "content",
+          "page": 449,
+          "concepts": [
+            "انواع",
+            "جناس"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c191",
+          "title": "مُلخَّصُ الجِناسِ",
+          "kind": "content",
+          "page": 451,
+          "concepts": [
+            "جناس"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c192",
+          "title": "السَّجعُ",
+          "kind": "content",
+          "page": 452,
+          "concepts": [
+            "سجع"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c193",
+          "title": "أقسامُ السَّجعِ",
+          "kind": "content",
+          "page": 453,
+          "concepts": [
+            "اقسام",
+            "سجع"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c194",
+          "title": "مُلخَّصُ السَّجعِ",
+          "kind": "content",
+          "page": 454,
+          "concepts": [
+            "سجع"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c195",
+          "title": "رَدُّ العَجُزِ عَلى الصَّدرِ",
+          "kind": "content",
+          "page": 455,
+          "concepts": [
+            "رد",
+            "عجز",
+            "صدر"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c196",
+          "title": "مُلَخَّصُ رَدِّ الْعَجُزِ عَلَى الصَّدْرِ",
+          "kind": "content",
+          "page": 457,
+          "concepts": [
+            "رد",
+            "عجز",
+            "صدر"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c197",
+          "title": "الِاقْتِبَاسُ",
+          "kind": "content",
+          "page": 458,
+          "concepts": [
+            "اقتباس"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c198",
+          "title": "أَنْوَاعُ الِاقْتِبَاسِ",
+          "kind": "content",
+          "page": 459,
+          "concepts": [
+            "انواع",
+            "اقتباس"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c199",
+          "title": "مُلَخَّصُ الِاقْتِبَاسِ",
+          "kind": "content",
+          "page": 460,
+          "concepts": [
+            "اقتباس"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c200",
+          "title": "التَّضْمِينُ",
+          "kind": "content",
+          "page": 461,
+          "concepts": [
+            "تضمين"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c201",
+          "title": "الْفَرْقُ بَيْنَ الِاقْتِبَاسِ وَالتَّضْمِينِ",
+          "kind": "content",
+          "page": 462,
+          "concepts": [
+            "فرق",
+            "اقتباس",
+            "تضمين"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c202",
+          "title": "الْمُوَارَبَةُ",
+          "kind": "content",
+          "page": 463,
+          "concepts": [
+            "مواربة"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c203",
+          "title": "حُسْنُ التَّقْسِيمِ",
+          "kind": "content",
+          "page": 464,
+          "concepts": [
+            "حسن",
+            "تقسيم"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c204",
+          "title": "الْأَزْوَاجُ",
+          "kind": "content",
+          "page": 465,
+          "concepts": [
+            "ازواج"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c205",
+          "title": "التَّصْرِيعُ",
+          "kind": "content",
+          "page": 466,
+          "concepts": [
+            "تصريع"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c206",
+          "title": "الْفَرْقُ بَيْنَ حُسْنِ التَّقْسِيمِ وَالْأَزْوَاجِ وَالسَّجْعِ وَالتَّرْصِيعِ",
+          "kind": "content",
+          "page": 467,
+          "concepts": [
+            "فرق",
+            "حسن",
+            "تقسيم",
+            "ازواج",
+            "سجع"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c207",
+          "title": "تَدْرِيبٌ عَلَى الْمُحَسِّنَاتِ اللَّفْظِيَّةِ مِنَ الْقُرْآنِ الْكَرِيمِ مُجَابٌ عَنْهُ",
+          "kind": "content",
+          "page": 468,
+          "concepts": [
+            "محسنات",
+            "لفظية",
+            "قران",
+            "كريم"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c208",
+          "title": "تَدْرِيبٌ عَلَى الْمُحَسِّنَاتِ اللَّفْظِيَّةِ مِنَ الْحَدِيثِ الشَّرِيفِ مُجَابٌ عَنْهُ",
+          "kind": "content",
+          "page": 471,
+          "concepts": [
+            "محسنات",
+            "لفظية",
+            "حديث",
+            "شريف"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c209",
+          "title": "تَدْرِيبٌ عَلَى الْمُحَسِّنَاتِ اللَّفْظِيَّةِ مِنَ الشِّعْرِ الْعَرَبِيِّ مُجَابٌ عَنْهُ",
+          "kind": "content",
+          "page": 474,
+          "concepts": [
+            "محسنات",
+            "لفظية",
+            "شعر",
+            "عربي"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c210",
+          "title": "التَّجْرِبَةُ الشِّعْرِيَّةُ",
+          "kind": "content",
+          "page": 477,
+          "concepts": [
+            "تجربة",
+            "شعرية"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "part-13.md",
+      "pages": [
+        481,
+        520
+      ],
+      "chapter": null,
+      "sections": [
+        {
+          "id": "kayf-tataqan-balagha-c211",
+          "title": "مُلَخَّصُ التَّجْرِبَةِ الشِّعْرِيَّةِ",
+          "kind": "content",
+          "page": 494,
+          "concepts": [
+            "تجربة",
+            "شعرية"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c212",
+          "title": "الْوَحْدَةُ الْفَنِّيَّةُ",
+          "kind": "content",
+          "page": 496,
+          "concepts": [
+            "وحدة",
+            "فنية"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-c213",
+          "title": "مُعْجَمُ الْبَلَاغَةِ",
+          "kind": "content",
+          "page": 497,
+          "concepts": [
+            "معجم",
+            "بلاغة"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-balagha-n001",
+          "title": "الْخَاتِمَةُ",
+          "kind": "noise",
+          "page": 508,
+          "concepts": []
+        },
+        {
+          "id": "kayf-tataqan-balagha-n002",
+          "title": "الْمَصَادِرُ وَالْمَرَاجِعُ",
+          "kind": "noise",
+          "page": 509,
+          "concepts": []
+        },
+        {
+          "id": "kayf-tataqan-balagha-noise-back",
+          "title": "الفهرس والمسرد",
+          "kind": "noise",
+          "page": 511,
+          "endPage": 520,
+          "concepts": []
+        }
+      ]
+    },
+    {
+      "file": "part-14.md",
+      "pages": [
+        521,
+        528
+      ],
+      "chapter": null,
+      "sections": [
+        {
+          "id": "kayf-tataqan-balagha-n004",
+          "title": "الغلاف الخلفي والمسرد المتكمل",
+          "kind": "noise",
+          "page": 521,
+          "endPage": 528,
+          "concepts": []
+        }
+      ]
+    }
+  ]
+}

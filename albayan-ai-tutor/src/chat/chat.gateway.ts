@@ -58,33 +58,57 @@ export class ChatGateway {
     try {
       this.chatService.assertWithinLimit(userId);
 
-      client.emit('status', { status: 'aggregating_context', message: 'جاري جمع سياقك الدراسي...' });
-      await this.chatService.saveUserQuestion(userId, Number(threadId), question);
+      client.emit('status', {
+        status: 'aggregating_context',
+        message: 'جاري جمع سياقك الدراسي...',
+      });
+      await this.chatService.saveUserQuestion(
+        userId,
+        Number(threadId),
+        question,
+      );
 
       const context = await this.chatService.getContext(userId);
 
-      client.emit('status', { status: 'searching_knowledge', message: 'جاري البحث في محتوى المادة...' });
+      client.emit('status', {
+        status: 'searching_knowledge',
+        message: 'جاري البحث في محتوى المادة...',
+      });
       const rag = await this.chatService.retrieveKnowledge(question, context);
 
-      client.emit('status', { status: 'generating', message: 'جاري إنشاء الإجابة...' });
+      client.emit('status', {
+        status: 'generating',
+        message: 'جاري إنشاء الإجابة...',
+      });
 
       const systemPrompt = this.chatService.buildPrompt(context, rag);
       const history = await this.chatService.getHistory(Number(threadId));
 
       let fullResponse = '';
-      for await (const chunk of this.chatService.stream(systemPrompt, history, question)) {
+      for await (const chunk of this.chatService.stream(
+        systemPrompt,
+        history,
+        question,
+      )) {
         fullResponse += chunk;
         client.emit('response-chunk', { chunk });
       }
 
-      await this.chatService.saveAssistantReply(Number(threadId), fullResponse, rag.sources);
+      await this.chatService.saveAssistantReply(
+        Number(threadId),
+        fullResponse,
+        rag.sources,
+      );
 
       client.emit('response-complete', {
         success: true,
         sources: rag.sources,
       });
     } catch (error) {
-      this.logger.error(`Question failed for student ${userId}`, (error as Error).stack);
+      this.logger.error(
+        `Question failed for student ${userId}`,
+        (error as Error).stack,
+      );
       const message =
         error instanceof Error && error.message
           ? error.message
@@ -109,7 +133,10 @@ export class ChatGateway {
     try {
       this.chatService.assertWithinLimit(userId);
 
-      client.emit('status', { status: 'generating_question', message: 'جاري إنشاء سؤال اختبار...' });
+      client.emit('status', {
+        status: 'generating_question',
+        message: 'جاري إنشاء سؤال اختبار...',
+      });
       const question = await this.chatService.generateQuizQuestion(userId);
 
       await this.chatService.threads.saveMessage(
@@ -122,7 +149,10 @@ export class ChatGateway {
       client.emit('quiz-question', { question });
       client.emit('response-complete', { success: true });
     } catch (error) {
-      this.logger.error(`Quiz question failed for student ${userId}`, (error as Error).stack);
+      this.logger.error(
+        `Quiz question failed for student ${userId}`,
+        (error as Error).stack,
+      );
       const message =
         error instanceof Error && error.message
           ? error.message

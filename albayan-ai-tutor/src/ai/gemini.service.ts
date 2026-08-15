@@ -37,7 +37,11 @@ export class GeminiService {
    * يستقبل تاريخ المحادثة متعدد الأدوار (user/model) مع السؤال الحالي
    * في آخر element — لا يُحمَّل الرد كاملًا في الذاكرة.
    */
-  async *stream(system: string, history: ChatTurn[], currentQuestion: string): AsyncGenerator<string> {
+  async *stream(
+    system: string,
+    history: ChatTurn[],
+    currentQuestion: string,
+  ): AsyncGenerator<string> {
     const contents: Content[] = history.map((turn) => ({
       role: turn.role,
       parts: [{ text: turn.text }],

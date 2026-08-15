@@ -11,7 +11,11 @@ import {
 } from '@nestjs/common';
 import { Request } from 'express';
 import { AiRestGuard } from '../auth/ai-rest.guard.js';
-import { ThreadsService, type ThreadDetailDto, type ThreadSummaryDto } from './threads.service.js';
+import {
+  ThreadsService,
+  type ThreadDetailDto,
+  type ThreadSummaryDto,
+} from './threads.service.js';
 
 interface AuthedRequest extends Request {
   user: { userId: number; role: string };
@@ -29,7 +33,10 @@ export class ThreadsController {
   ): Promise<ThreadDetailDto> {
     const subjectId = Number(body?.subjectId) || undefined;
     const lessonId = Number(body?.lessonId) || undefined;
-    const thread = await this.threads.createThread(req.user.userId, { subjectId, lessonId });
+    const thread = await this.threads.createThread(req.user.userId, {
+      subjectId,
+      lessonId,
+    });
     return this.threads.getThread(Number(thread.id), req.user.userId);
   }
 

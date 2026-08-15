@@ -79,7 +79,11 @@ export class ChatService {
   }
 
   /** يحفظ سؤال الطالب فورًا ويقتطع عنوان الجلسة من أول سؤال. */
-  async saveUserQuestion(userId: number, threadId: number, question: string): Promise<void> {
+  async saveUserQuestion(
+    userId: number,
+    threadId: number,
+    question: string,
+  ): Promise<void> {
     const thread = await this.threads.findOwnedThread(threadId, userId);
     if (!thread.title) {
       await this.threads.setTitleFromQuestion(threadId, question);
@@ -93,7 +97,9 @@ export class ChatService {
     text: string,
     sources: { lessonId: number; lessonTitle: string }[],
   ): Promise<void> {
-    await this.threads.saveMessage(threadId, 'ASSISTANT', 'text', text, { sources });
+    await this.threads.saveMessage(threadId, 'ASSISTANT', 'text', text, {
+      sources,
+    });
   }
 
   async *stream(
@@ -124,7 +130,8 @@ export class ChatService {
       `الطالب: ${s.name} في ${p.gradeName ?? 'مرحلة غير محددة'} (المادة الحالية: ${p.currentSubjectName ?? 'غير محددة'}).`,
       '',
       'المحتوى الدراسي المرفق هو المرجع الوحيد للسؤال:',
-      rag.contentWindow || '(لا يوجد محتوى مطابق — أنشئ سؤالًا عامًا مناسبًا للمرحلة.)',
+      rag.contentWindow ||
+        '(لا يوجد محتوى مطابق — أنشئ سؤالًا عامًا مناسبًا للمرحلة.)',
       '',
       'قواعد السؤال:',
       '- سؤال واحد فقط، واضح ومناسب لمستوى الطالب، مبني على المحتوى المرفق أولًا.',
@@ -149,9 +156,10 @@ export class ChatService {
     }
 
     const index = Number(question.correctAnswerIndex);
-    question.correctAnswerIndex = Number.isInteger(index) && index >= 0 && index < question.options.length
-      ? index
-      : 0;
+    question.correctAnswerIndex =
+      Number.isInteger(index) && index >= 0 && index < question.options.length
+        ? index
+        : 0;
 
     return question;
   }

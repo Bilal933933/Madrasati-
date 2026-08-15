@@ -24,9 +24,21 @@ describe('PerformanceService', () => {
   describe('summary', () => {
     it('يعدّ الناجحين ويحسب المتوسط والأضعف', async () => {
       prismaMock.exam_attempts.findMany.mockResolvedValue([
-        { score_percentage: 80, passed: true, exam_blueprints: { exam_type: 'lesson' } },
-        { score_percentage: 60, passed: true, exam_blueprints: { exam_type: 'lesson' } },
-        { score_percentage: 40, passed: false, exam_blueprints: { exam_type: 'monthly' } },
+        {
+          score_percentage: 80,
+          passed: true,
+          exam_blueprints: { exam_type: 'lesson' },
+        },
+        {
+          score_percentage: 60,
+          passed: true,
+          exam_blueprints: { exam_type: 'lesson' },
+        },
+        {
+          score_percentage: 40,
+          passed: false,
+          exam_blueprints: { exam_type: 'monthly' },
+        },
       ]);
 
       const result = await service.summary(42);

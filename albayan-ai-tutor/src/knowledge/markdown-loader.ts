@@ -42,17 +42,63 @@ interface RawDoc {
   body: string;
 }
 
+/** قسم من فهرس كتاب عام — موضوع على مرساة صفحة. */
+export interface BookSection {
+  id: string;
+  title: string;
+  kind: 'content' | 'noise';
+  page: number;
+  endPage?: number;
+  concepts: string[];
+}
+
+/** جزء من كتاب عام — ملف markdown يحوي مراسي ## صفحة. */
+export interface BookPart {
+  file: string;
+  pages: [number, number];
+  chapter: string | null;
+  sections: BookSection[];
+}
+
+/** فهرس كتاب عام (references/general/{book}/metadata.json). */
+export interface GeneralBookDoc {
+  id: string;
+  title: string;
+  author: string | null;
+  subjectName: string;
+  totalPages: number;
+  /** المسار المطلق لمجلد الكتاب. */
+  rootPath: string;
+  parts: BookPart[];
+  /** معرفات مواد اللغة العربية بعد الحل — يطابق أي صف. */
+  subjectIds: number[];
+  /** معرفات الصفوف التي تدرس مادة الكتاب — للمطابقة حين لا يحدد الطالب مادة. */
+  gradeIds: number[];
+}
+
+interface BookMetadata {
+  id: string;
+  title: string;
+  author?: string | null;
+  subject?: string;
+  total_pages?: number;
+  parts?: BookPart[];
+}
+
 /**
  * يقرأ ملفات المعرفة من مجلد `content/{textbook,references}` عند إقلاع الخدمة:
  * - يقرأ الملفات تكراريًا ويحلّل front-matter (عنوان/مفتاح الصف/المادة/الوحدة).
  * - يستنتج المرحلة والصف والمادة والوحدة والنوع من بنية المسار نفسه.
  * - يحوّل مفتاحي الصف/المرحلة واسم المادة إلى معرفات قاعدة البيانات عبر Prisma.
+ * - الكتب العامة (references/general/*) تُفهرس من metadata.json ولا تُحمَّل
+ *   أجسامها كاملة؛ تُقرأ أقسامها كسولة عبر readSection() عند الحاجة.
  * - يوفر `matching()` لنافذة الـ RAG مع سياق الطالب.
  */
 @Injectable()
 export class MarkdownLoader implements OnModuleInit {
   private readonly logger = new Logger(MarkdownLoader.name);
   private readonly docs: MarkdownDoc[] = [];
+  private generalBooks: GeneralBookDoc[] = [];
 
   constructor(private readonly prisma: PrismaService) {}
 
@@ -61,21 +107,30 @@ export class MarkdownLoader implements OnModuleInit {
     if (raw.length > 0) {
       this.docs.push(...(await this.resolve(raw)));
     }
-    this.logger.log(`تم تحميل ${this.docs.length} ملف معرفة Markdown`);
+    const books = this.loadGeneralBooks();
+    if (books.length > 0) {
+      this.generalBooks = await this.resolveGeneralBooks(books);
+    }
+    this.logger.log(
+      `تم تحميل ${this.docs.length} ملف معرفة Markdown و${this.generalBooks.length} كتابًا عامًا مفهرسًا`,
+    );
   }
 
-  /** يقرأ كل ملفات .md داخل مجلد content (مجلدا textbook و references). */
+  /** يقرأ كل ملفات .md داخل مجلد content (مجلدا textbook و references دون general). */
   private readAll(): RawDoc[] {
     const files: string[] = [];
     for (const type of ['textbook', 'references'] as const) {
       const root = path.join(CONTENT_DIR, type);
       if (!fs.existsSync(root)) continue;
-      files.push(
-        ...fs
-          .readdirSync(root, { recursive: true, encoding: 'utf8' })
-          .filter((f) => typeof f === 'string' && f.endsWith('.md'))
-          .map((f) => path.join(type, f)),
-      );
+      const rels = fs
+        .readdirSync(root, { recursive: true, encoding: 'utf8' })
+        .filter((f): f is string => typeof f === 'string' && f.endsWith('.md'));
+      for (const rel of rels) {
+        if (type === 'references' && rel.split(/[\\/]/).includes('general')) {
+          continue;
+        }
+        files.push(path.join(type, rel));
+      }
     }
 
     const mapped: (RawDoc | null)[] = files.map((relative): RawDoc | null => {
@@ -100,6 +155,57 @@ export class MarkdownLoader implements OnModuleInit {
     });
 
     return mapped.filter((doc): doc is RawDoc => doc !== null);
+  }
+
+  /** يقرأ فهارس الكتب العامة من مجلد references/general. */
+  private loadGeneralBooks(): GeneralBookDoc[] {
+    const root = path.join(CONTENT_DIR, 'references', 'general');
+    if (!fs.existsSync(root)) return [];
+
+    const books: GeneralBookDoc[] = [];
+    for (const entry of fs.readdirSync(root, { withFileTypes: true })) {
+      if (!entry.isDirectory()) continue;
+      const metaPath = path.join(root, entry.name, 'metadata.json');
+      if (!fs.existsSync(metaPath)) continue;
+      try {
+        const meta = JSON.parse(
+          fs.readFileSync(metaPath, 'utf8'),
+        ) as BookMetadata;
+        if (!meta.title || !Array.isArray(meta.parts)) continue;
+        books.push({
+          id: meta.id || entry.name,
+          title: meta.title,
+          author: meta.author ?? null,
+          subjectName: meta.subject ?? 'اللغة العربية',
+          totalPages: meta.total_pages ?? 0,
+          rootPath: path.join(root, entry.name),
+          parts: meta.parts,
+          subjectIds: [],
+          gradeIds: [],
+        });
+      } catch {
+        this.logger.warn(`metadata.json غير صالح في ${metaPath}`);
+      }
+    }
+    return books;
+  }
+
+  /** يحل أسماء مواد الكتب العامة إلى معرفات — مادة واحدة قد تتكرر عبر صفوف. */
+  private async resolveGeneralBooks(
+    books: GeneralBookDoc[],
+  ): Promise<GeneralBookDoc[]> {
+    const names = [...new Set(books.map((b) => b.subjectName))];
+    const subjects = await this.prisma.subjects.findMany({
+      where: { name: { in: names } },
+      select: { id: true, grade_id: true },
+    });
+    const ids = subjects.map((s) => Number(s.id));
+    const gradeIds = [...new Set(subjects.map((s) => Number(s.grade_id)))];
+    return books.map((b) => ({
+      ...b,
+      subjectIds: ids,
+      gradeIds,
+    }));
   }
 
   /** يحل مفتاحي المرحلة/الصف واسم المادة إلى معرفات DB لكل ملف. */
@@ -177,9 +283,72 @@ export class MarkdownLoader implements OnModuleInit {
     });
   }
 
+  /**
+   * يرجّع الكتب العامة المطابقة للمادة أو للصف:
+   * - بالمادة الحالية للطالب (مثلًا مادة لغة عربية في الصف 4).
+   * - أو بالصف نفسه حين لا يحدد الطالب مادة حاليًا.
+   * (مثل كيف تتقن النحو تخدم كل صفوف اللغة العربية).
+   */
+  matchingGeneral(opts: {
+    subjectId?: number | null;
+    gradeId?: number | null;
+  }): GeneralBookDoc[] {
+    const subjectId = opts.subjectId;
+    if (subjectId != null) {
+      return this.generalBooks.filter((book) =>
+        book.subjectIds.includes(subjectId),
+      );
+    }
+    const gradeId = opts.gradeId;
+    if (gradeId != null) {
+      return this.generalBooks.filter((book) =>
+        book.gradeIds.includes(gradeId),
+      );
+    }
+    return [];
+  }
+
+  /**
+   * يقرأ نصّ قسم واحد من ملف الجزء المعني كسولة:
+   * يجد مرساة `## صفحة N` المطابقة لصفحة القسم ويأخذ حتى المرساة التالية.
+   */
+  readSection(book: GeneralBookDoc, section: BookSection): string | null {
+    const part = book.parts.find(
+      (p) => section.page >= p.pages[0] && section.page <= p.pages[1],
+    );
+    if (!part) return null;
+
+    const text = fs.readFileSync(path.join(book.rootPath, part.file), 'utf8');
+    const lines = text.split(/\r?\n/);
+
+    let start = -1;
+    for (let i = 0; i < lines.length; i++) {
+      const m = /^##\s*صفحة\s+(\d+)/.exec(lines[i].trim());
+      if (m && Number(m[1]) === section.page) {
+        start = i + 1;
+        break;
+      }
+    }
+    if (start === -1) return null;
+
+    const body: string[] = [];
+    for (let i = start; i < lines.length; i++) {
+      if (/^##\s*صفحة\s+\d+/.test(lines[i].trim())) break;
+      body.push(lines[i]);
+    }
+
+    const content = body.join('\n').trim();
+    return content.length > 0 ? content : null;
+  }
+
   /** كل الملفات المحمّلة (للاختبارات والتصحيح). */
   all(): MarkdownDoc[] {
     return this.docs;
+  }
+
+  /** كل الكتب العامة المفهرسة (للاختبارات والتصحيح). */
+  allGeneralBooks(): GeneralBookDoc[] {
+    return this.generalBooks;
   }
 }
 

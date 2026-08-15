@@ -27,7 +27,12 @@ export class ProgressService {
       select: {
         lessons: {
           select: {
-            courses: { select: { subject_id: true, subjects: { select: { name: true } } } },
+            courses: {
+              select: {
+                subject_id: true,
+                subjects: { select: { name: true } },
+              },
+            },
           },
         },
       },

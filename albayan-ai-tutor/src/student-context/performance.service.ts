@@ -66,7 +66,9 @@ export class PerformanceService {
     }
 
     const averageScore =
-      scores.length > 0 ? scores.reduce((acc, s) => acc + s, 0) / scores.length : null;
+      scores.length > 0
+        ? scores.reduce((acc, s) => acc + s, 0) / scores.length
+        : null;
 
     return {
       attemptsCount: attempts.length,

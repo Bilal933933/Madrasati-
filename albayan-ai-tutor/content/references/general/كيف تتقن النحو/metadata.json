@@ -1,0 +1,3301 @@
+{
+  "id": "kayf-tataqan-nahw",
+  "title": "كيف تتقن النحو؟",
+  "author": "أحمد إسكندر",
+  "publisher": "دار اللؤلؤة",
+  "stage": "general",
+  "subject": "اللغة العربية",
+  "branch": "نحو",
+  "total_pages": 553,
+  "parts": [
+    {
+      "file": "part-01.md",
+      "pages": [
+        1,
+        40
+      ],
+      "chapter": null,
+      "sections": [
+        {
+          "id": "kayf-tataqan-nahw-noise-front",
+          "title": "الغلاف والاعتمادات",
+          "kind": "noise",
+          "page": 1,
+          "endPage": 5,
+          "concepts": []
+        },
+        {
+          "id": "kayf-tataqan-nahw-n000",
+          "title": "الْمُقَدِّمَةُ",
+          "kind": "noise",
+          "page": 6,
+          "concepts": []
+        },
+        {
+          "id": "kayf-tataqan-nahw-c001",
+          "title": "خَرِيطَةٌ ذِهْنِيَّةٌ لِكِتَابِ كَيْفَ تُتْقِنُ النَّحْوُ",
+          "kind": "content",
+          "page": 8,
+          "concepts": [
+            "خريطة",
+            "ذهنية",
+            "نحو"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c002",
+          "title": "كَيْفَ أَعْرِبُ",
+          "kind": "content",
+          "page": 10,
+          "concepts": [
+            "اعرب"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c003",
+          "title": "الْكَلِمَةُ وَ أَقْسَامُهَا",
+          "kind": "content",
+          "page": 11,
+          "concepts": [
+            "كلمة",
+            "اقسامها"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c004",
+          "title": "أَقْسَامُ عَلَامَاتِ الْإِعْرَابِ الرَّفْعُ وَالنَّصْبُ وَالْجَرُّ وَالْجَزْمُ",
+          "kind": "content",
+          "page": 14,
+          "concepts": [
+            "اقسام",
+            "اعراب",
+            "رفع",
+            "نصب",
+            "جر"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c005",
+          "title": "أَقْسَامُ الِاسْمِ الظَّاهِرُ وَالْمُضْمَرُ وَالْمُبْهَمُ",
+          "kind": "content",
+          "page": 15,
+          "concepts": [
+            "اقسام",
+            "اسم",
+            "ظاهر",
+            "مضمر",
+            "مبهم"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c006",
+          "title": "الْفَصْلُ الْأَوَّلُ إِعْرَابُ الِاسْمِ الظَّاهِرِ",
+          "kind": "content",
+          "page": 16,
+          "concepts": [
+            "فصل",
+            "اول",
+            "اعراب",
+            "اسم",
+            "ظاهر"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c007",
+          "title": "الِاسْمُ الْمُفْرَدُ",
+          "kind": "content",
+          "page": 17,
+          "concepts": [
+            "اسم",
+            "مفرد"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c008",
+          "title": "الْمُثَنَّى",
+          "kind": "content",
+          "page": 18,
+          "concepts": [
+            "مثني"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c009",
+          "title": "الْمُلْحَقُ بِالْمُثَنَّى",
+          "kind": "content",
+          "page": 19,
+          "concepts": [
+            "ملحق",
+            "بالمثني"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c010",
+          "title": "جَمْعُ الْمُذَكَّرِ السَّالِمِ",
+          "kind": "content",
+          "page": 21,
+          "concepts": [
+            "جمع",
+            "مذكر",
+            "سالم"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c011",
+          "title": "الْمُلْحَقُ بِجَمْعِ الْمُذَكَّرِ السَّالِمِ",
+          "kind": "content",
+          "page": 22,
+          "concepts": [
+            "ملحق",
+            "بجمع",
+            "مذكر",
+            "سالم"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c012",
+          "title": "جَمْعُ الْمُؤَنَّثِ السَّالِمِ",
+          "kind": "content",
+          "page": 24,
+          "concepts": [
+            "جمع",
+            "مونث",
+            "سالم"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c013",
+          "title": "الْمُلْحَقُ بِجَمْعِ الْمُؤَنَّثِ السَّالِمِ",
+          "kind": "content",
+          "page": 25,
+          "concepts": [
+            "ملحق",
+            "بجمع",
+            "مونث",
+            "سالم"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c014",
+          "title": "جَمْعُ التَّكْسِيرِ",
+          "kind": "content",
+          "page": 26,
+          "concepts": [
+            "جمع",
+            "تكسير"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c015",
+          "title": "مَلَخَّصُ إِعْرَابِ الِاسْمِ الظَّاهِرِ",
+          "kind": "content",
+          "page": 28,
+          "concepts": [
+            "اعراب",
+            "اسم",
+            "ظاهر"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c016",
+          "title": "تَدْرِيبَاتٌ عَلَى الْمَبْحَثِ الْأَوَّلِ",
+          "kind": "content",
+          "page": 29,
+          "concepts": [
+            "مبحث",
+            "اول"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c017",
+          "title": "الْأَسْمَاءُ الْخَمْسَةُ",
+          "kind": "content",
+          "page": 32,
+          "concepts": [
+            "اسماء",
+            "خمسة"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c018",
+          "title": "ملخص إعراب الأسماء الخمسة",
+          "kind": "content",
+          "page": 39,
+          "concepts": [
+            "اعراب",
+            "اسماء",
+            "خمسة"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c019",
+          "title": "تَدْرِيبَاتٌ عَلَى الْمَبْحَثِ الثَّانِي الْأَسْمَاءُ الْخَمْسَة",
+          "kind": "content",
+          "page": 40,
+          "concepts": [
+            "مبحث",
+            "ثاني",
+            "اسماء",
+            "خمسة"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "part-02.md",
+      "pages": [
+        41,
+        80
+      ],
+      "chapter": null,
+      "sections": [
+        {
+          "id": "kayf-tataqan-nahw-c020",
+          "title": "الْمَبْحَثُ الثَّالِثُ الِاسْمُ الْمُعْتَلّ",
+          "kind": "content",
+          "page": 43,
+          "concepts": [
+            "مبحث",
+            "ثالث",
+            "اسم",
+            "معتل"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c021",
+          "title": "الِاسْمُ الْمَقْصُورُ",
+          "kind": "content",
+          "page": 43,
+          "concepts": [
+            "اسم",
+            "مقصور"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c022",
+          "title": "الِاسْمُ الْمَنْقُوصُ",
+          "kind": "content",
+          "page": 44,
+          "concepts": [
+            "اسم",
+            "منقوص"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c023",
+          "title": "حذف ياء الاسم المنقوص",
+          "kind": "content",
+          "page": 45,
+          "concepts": [
+            "حذف",
+            "ياء",
+            "اسم",
+            "منقوص"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c024",
+          "title": "ملخص الْمَبْحَثِ الثَّالِث الِاسْمُ الْمُعْتَلّ",
+          "kind": "content",
+          "page": 46,
+          "concepts": [
+            "مبحث",
+            "ثالث",
+            "اسم",
+            "معتل"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c025",
+          "title": "مُلَخَّصُ إِعْرَابِ الْأَسْمَاءِ الظَّاهِرَةِ فِي صَفْحَةٍ وَاحِدَةٍ",
+          "kind": "content",
+          "page": 47,
+          "concepts": [
+            "اعراب",
+            "اسماء",
+            "ظاهرة",
+            "صفحة",
+            "واحدة"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c026",
+          "title": "الْمَمْنُوعُ مِنَ الصَّرْفِ",
+          "kind": "content",
+          "page": 48,
+          "concepts": [
+            "ممنوع",
+            "صرف"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c027",
+          "title": "ملخص الْمَمْنُوعِ مِنَ الصَّرْفِ",
+          "kind": "content",
+          "page": 56,
+          "concepts": [
+            "ممنوع",
+            "صرف"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c028",
+          "title": "تَدْرِيبَاتٌ عَلَى الْمَبْحَثِ الثَّالِث وَالرَّابِع الاسم المعتل والممنوع من الصرف",
+          "kind": "content",
+          "page": 57,
+          "concepts": [
+            "مبحث",
+            "ثالث",
+            "رابع",
+            "اسم",
+            "معتل"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c029",
+          "title": "الْفَصْلُ الثَّانِي الْمَبْنِيَّاتُ",
+          "kind": "content",
+          "page": 61,
+          "concepts": [
+            "فصل",
+            "ثاني",
+            "مبنيات"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c030",
+          "title": "الْإِعْرَابُ وَالْبِنَاءُ",
+          "kind": "content",
+          "page": 62,
+          "concepts": [
+            "اعراب",
+            "بناء"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c031",
+          "title": "أنواع الإعراب",
+          "kind": "content",
+          "page": 64,
+          "concepts": [
+            "انواع",
+            "اعراب"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c032",
+          "title": "البناء وما يدخله من أنواع الكلم",
+          "kind": "content",
+          "page": 65,
+          "concepts": [
+            "بناء",
+            "وما",
+            "يدخله",
+            "انواع",
+            "كلم"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c033",
+          "title": "ملخص البناء والإعراب",
+          "kind": "content",
+          "page": 67,
+          "concepts": [
+            "بناء",
+            "اعراب"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c034",
+          "title": "المبحث الأول الْمَبْنِيُّ مِنَ الْأَسْمَاءِ",
+          "kind": "content",
+          "page": 68,
+          "concepts": [
+            "مبحث",
+            "اول",
+            "مبني",
+            "اسماء"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c035",
+          "title": "الضَّمَائِرُ المتصلة والمنفصلة",
+          "kind": "content",
+          "page": 68,
+          "concepts": [
+            "ضماير",
+            "متصلة",
+            "منفصلة"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c036",
+          "title": "ملخص الضمائر",
+          "kind": "content",
+          "page": 75,
+          "concepts": [
+            "ضماير"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c037",
+          "title": "الْأَسْمَاءُ الْمَوْصُولَةُ",
+          "kind": "content",
+          "page": 76,
+          "concepts": [
+            "اسماء",
+            "موصولة"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c038",
+          "title": "أَسْمَاءُ الْإِشَارَةِ",
+          "kind": "content",
+          "page": 79,
+          "concepts": [
+            "اسماء",
+            "اشارة"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "part-03.md",
+      "pages": [
+        81,
+        120
+      ],
+      "chapter": null,
+      "sections": [
+        {
+          "id": "kayf-tataqan-nahw-c039",
+          "title": "أَسْمَاءُ الِاسْتِفْهَامِ",
+          "kind": "content",
+          "page": 82,
+          "concepts": [
+            "اسماء",
+            "استفهام"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c040",
+          "title": "إعراب متى أين أيان أنى",
+          "kind": "content",
+          "page": 84,
+          "concepts": [
+            "اعراب",
+            "متي",
+            "اين",
+            "ايان",
+            "اني"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c041",
+          "title": "إعراب من ما",
+          "kind": "content",
+          "page": 85,
+          "concepts": [
+            "اعراب"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c042",
+          "title": "إعراب كيف",
+          "kind": "content",
+          "page": 86,
+          "concepts": [
+            "اعراب"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c043",
+          "title": "إعراب كم",
+          "kind": "content",
+          "page": 87,
+          "concepts": [
+            "اعراب",
+            "كم"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c044",
+          "title": "إعراب أي",
+          "kind": "content",
+          "page": 88,
+          "concepts": [
+            "اعراب",
+            "اي"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c045",
+          "title": "ملخص إعراب أدوات الاستفهام",
+          "kind": "content",
+          "page": 90,
+          "concepts": [
+            "اعراب",
+            "ادوات",
+            "استفهام"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c046",
+          "title": "أَسْمَاءُ الشَّرْطِ الْجَازِمَةِ",
+          "kind": "content",
+          "page": 91,
+          "concepts": [
+            "اسماء",
+            "شرط",
+            "جازمة"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c047",
+          "title": "إعراب من ما مهما",
+          "kind": "content",
+          "page": 91,
+          "concepts": [
+            "اعراب",
+            "مهما"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c048",
+          "title": "إعراب متى أيان أنى أينما حيثما",
+          "kind": "content",
+          "page": 92,
+          "concepts": [
+            "اعراب",
+            "متي",
+            "ايان",
+            "اني",
+            "اينما"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c049",
+          "title": "الْمَبْنِيِّ مِنَ الظُّرُوفِ",
+          "kind": "content",
+          "page": 93,
+          "concepts": [
+            "مبني",
+            "ظروف"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c050",
+          "title": "حيث منذ قط الآن أيان ثم ثمة بينما ريثما",
+          "kind": "content",
+          "page": 93,
+          "concepts": [
+            "حيث",
+            "منذ",
+            "قط",
+            "ان",
+            "ايان"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c051",
+          "title": "إذ مذ لدى إذا أمس",
+          "kind": "content",
+          "page": 94,
+          "concepts": [
+            "اذ",
+            "مذ",
+            "لدي",
+            "اذا",
+            "امس"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c052",
+          "title": "أَسْمَاءُ الْأَفْعَالِ",
+          "kind": "content",
+          "page": 95,
+          "concepts": [
+            "اسماء",
+            "افعال"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c053",
+          "title": "أقسام اسم الفعل وصياغته",
+          "kind": "content",
+          "page": 97,
+          "concepts": [
+            "اقسام",
+            "اسم",
+            "فعل",
+            "صياغته"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c054",
+          "title": "الْمَبْنِيُّ مِنَ الْأَفْعَالِ",
+          "kind": "content",
+          "page": 98,
+          "concepts": [
+            "مبني",
+            "افعال"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c055",
+          "title": "الْفِعْلُ الْمَاضِي",
+          "kind": "content",
+          "page": 98,
+          "concepts": [
+            "فعل",
+            "ماضي"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c056",
+          "title": "ملخص الفعل الماضي",
+          "kind": "content",
+          "page": 101,
+          "concepts": [
+            "فعل",
+            "ماضي"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c057",
+          "title": "الْفِعْلُ الْأَمْرُ",
+          "kind": "content",
+          "page": 102,
+          "concepts": [
+            "فعل",
+            "امر"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c058",
+          "title": "ملخص الفعل الأمر",
+          "kind": "content",
+          "page": 105,
+          "concepts": [
+            "فعل",
+            "امر"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c059",
+          "title": "بِنَاءُ الْفِعْلِ الْمُضَارِعِ",
+          "kind": "content",
+          "page": 106,
+          "concepts": [
+            "بناء",
+            "فعل",
+            "مضارع"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c060",
+          "title": "الْحُرُوف وأنواعها",
+          "kind": "content",
+          "page": 108,
+          "concepts": [
+            "وانواعها"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c061",
+          "title": "مُلَخَّصُ جميع الْمَبْنِيَّات",
+          "kind": "content",
+          "page": 109,
+          "concepts": [
+            "جميع",
+            "مبنيات"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c062",
+          "title": "تَدْرِيبَات عَلَى الْفَصْلِ الثَّانِي المبنيات",
+          "kind": "content",
+          "page": 110,
+          "concepts": [
+            "فصل",
+            "ثاني",
+            "مبنيات"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c063",
+          "title": "الْفَصْلُ الثَّالِثُ إِعْرَابُ الْفِعْلِ الْمُضَارِعِ",
+          "kind": "content",
+          "page": 118,
+          "concepts": [
+            "فصل",
+            "ثالث",
+            "اعراب",
+            "فعل",
+            "مضارع"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c064",
+          "title": "إعراب الفعل المضارع الصحيح",
+          "kind": "content",
+          "page": 119,
+          "concepts": [
+            "اعراب",
+            "فعل",
+            "مضارع",
+            "صحيح"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c065",
+          "title": "إعراب المضارع المعتل الآخر",
+          "kind": "content",
+          "page": 120,
+          "concepts": [
+            "اعراب",
+            "مضارع",
+            "معتل",
+            "اخر"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "part-04.md",
+      "pages": [
+        121,
+        160
+      ],
+      "chapter": null,
+      "sections": [
+        {
+          "id": "kayf-tataqan-nahw-c066",
+          "title": "علامات رَفْعِ الْفِعْلِ الْمُضَارِعِ",
+          "kind": "content",
+          "page": 121,
+          "concepts": [
+            "رفع",
+            "فعل",
+            "مضارع"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c067",
+          "title": "علامات نَصْبِ الْفِعْلِ الْمُضَارِعِ",
+          "kind": "content",
+          "page": 123,
+          "concepts": [
+            "نصب",
+            "فعل",
+            "مضارع"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c068",
+          "title": "حروف نصب الفعل المضارع",
+          "kind": "content",
+          "page": 124,
+          "concepts": [
+            "نصب",
+            "فعل",
+            "مضارع"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c069",
+          "title": "النَّصْب ب أن المضمرة وجوبا",
+          "kind": "content",
+          "page": 127,
+          "concepts": [
+            "نصب",
+            "ان",
+            "مضمرة",
+            "جوبا"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c070",
+          "title": "النَّصْب ب أن المضمرة جوازا بعد لام التعليل",
+          "kind": "content",
+          "page": 131,
+          "concepts": [
+            "نصب",
+            "ان",
+            "مضمرة",
+            "جوازا",
+            "بعد"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c071",
+          "title": "ملخص نواصب الفعل المضارع",
+          "kind": "content",
+          "page": 132,
+          "concepts": [
+            "نواصب",
+            "فعل",
+            "مضارع"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c072",
+          "title": "علامات جَزْمِ الْفِعْلِ الْمُضَارِعِ",
+          "kind": "content",
+          "page": 133,
+          "concepts": [
+            "جزم",
+            "فعل",
+            "مضارع"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c073",
+          "title": "أدوات تجزم فعلا واحدًا",
+          "kind": "content",
+          "page": 135,
+          "concepts": [
+            "ادوات",
+            "تجزم",
+            "فعلا",
+            "واحدا"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c074",
+          "title": "الفرق بين لا الناهية ولا النافية",
+          "kind": "content",
+          "page": 136,
+          "concepts": [
+            "فرق",
+            "ناهية",
+            "ولا",
+            "نافية"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c075",
+          "title": "أدوات تجزم فعلين أدوات الشرط",
+          "kind": "content",
+          "page": 137,
+          "concepts": [
+            "ادوات",
+            "تجزم",
+            "فعلين",
+            "شرط"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c076",
+          "title": "إعراب أي الشرطية",
+          "kind": "content",
+          "page": 140,
+          "concepts": [
+            "اعراب",
+            "اي",
+            "شرطية"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c077",
+          "title": "ملخص أدوات الشرط",
+          "kind": "content",
+          "page": 141,
+          "concepts": [
+            "ادوات",
+            "شرط"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c078",
+          "title": "مواضع وجوب اقتران جواب الشرط بالفاء",
+          "kind": "content",
+          "page": 142,
+          "concepts": [
+            "جوب",
+            "اقتران",
+            "جواب",
+            "شرط",
+            "بالفاء"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c079",
+          "title": "جزم المضارع الواقع في جواب الطلب",
+          "kind": "content",
+          "page": 145,
+          "concepts": [
+            "جزم",
+            "مضارع",
+            "واقع",
+            "جواب",
+            "طلب"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c080",
+          "title": "جزم المضارع المعطوف على فعل مجزوم قبله",
+          "kind": "content",
+          "page": 147,
+          "concepts": [
+            "جزم",
+            "مضارع",
+            "معطوف",
+            "فعل",
+            "مجزوم"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c081",
+          "title": "الأَفْعَالُ الْخَمْسَةُ",
+          "kind": "content",
+          "page": 148,
+          "concepts": [
+            "افعال",
+            "خمسة"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c097",
+          "title": "المبحث الثالث الْمُبْتَدَأُ",
+          "kind": "content",
+          "page": 148,
+          "concepts": [
+            "مبحث",
+            "ثالث",
+            "مبتدا"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c082",
+          "title": "مُلَخَّصُ الأَفْعَالِ الخمسة وعلامات إعراب الفعل المضارع",
+          "kind": "content",
+          "page": 150,
+          "concepts": [
+            "افعال",
+            "خمسة",
+            "اعراب",
+            "فعل",
+            "مضارع"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c083",
+          "title": "ملخص إعراب جميع الأفعال في اللغة العربية الأمر المضارع الماضي",
+          "kind": "content",
+          "page": 151,
+          "concepts": [
+            "اعراب",
+            "جميع",
+            "افعال",
+            "لغة",
+            "عربية"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c084",
+          "title": "تَدْرِيبٌ عَلَى الفصل الثالث الْفِعْلُ الْمُضَارِعُ",
+          "kind": "content",
+          "page": 152,
+          "concepts": [
+            "فصل",
+            "ثالث",
+            "فعل",
+            "مضارع"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c102",
+          "title": "الْخَبَرِ وأنواعه",
+          "kind": "content",
+          "page": 154,
+          "concepts": [
+            "خبر",
+            "وانواعه"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c085",
+          "title": "تَدْرِيبٌ عَلَى الفصول السابقة الأول والثاني والثالث",
+          "kind": "content",
+          "page": 157,
+          "concepts": [
+            "فصول",
+            "سابقة",
+            "اول",
+            "ثاني",
+            "ثالث"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "part-05.md",
+      "pages": [
+        161,
+        200
+      ],
+      "chapter": null,
+      "sections": [
+        {
+          "id": "kayf-tataqan-nahw-c086",
+          "title": "الْفَصْلُ الرَّابِعُ الْمَرْفُوعَاتُ",
+          "kind": "content",
+          "page": 162,
+          "concepts": [
+            "فصل",
+            "رابع",
+            "مرفوعات"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c087",
+          "title": "المبحث الأول الْفَاعِلُ",
+          "kind": "content",
+          "page": 163,
+          "concepts": [
+            "مبحث",
+            "اول",
+            "فاعل"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c088",
+          "title": "عامل الفاعل",
+          "kind": "content",
+          "page": 169,
+          "concepts": [
+            "عامل",
+            "فاعل"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c089",
+          "title": "أحكام الفاعل",
+          "kind": "content",
+          "page": 170,
+          "concepts": [
+            "احكام",
+            "فاعل"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c090",
+          "title": "ملخص الفاعل",
+          "kind": "content",
+          "page": 172,
+          "concepts": [
+            "فاعل"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c091",
+          "title": "تَدْرِيبٌ عَلَى الْمَبْحَثِ الأَوَّلِ الْفَاعِلُ",
+          "kind": "content",
+          "page": 173,
+          "concepts": [
+            "مبحث",
+            "اول",
+            "فاعل"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c092",
+          "title": "المبحث الثاني نَائِبُ الْفَاعِلُ",
+          "kind": "content",
+          "page": 176,
+          "concepts": [
+            "مبحث",
+            "ثاني",
+            "نايب",
+            "فاعل"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c093",
+          "title": "كيفية بناء الفعل للمجهول",
+          "kind": "content",
+          "page": 177,
+          "concepts": [
+            "كيفية",
+            "بناء",
+            "فعل",
+            "للمجهول"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c094",
+          "title": "ما ينوب عن الفاعل بعد حذفه",
+          "kind": "content",
+          "page": 179,
+          "concepts": [
+            "ينوب",
+            "فاعل",
+            "بعد",
+            "حذفه"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c095",
+          "title": "ملخص نائب الفاعل",
+          "kind": "content",
+          "page": 183,
+          "concepts": [
+            "نايب",
+            "فاعل"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c096",
+          "title": "تَدْرِيبٌ عَلَى نَائِبِ الْفَاعِلِ",
+          "kind": "content",
+          "page": 184,
+          "concepts": [
+            "نايب",
+            "فاعل"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c098",
+          "title": "مواضع حذف المبتدأ وجوبا",
+          "kind": "content",
+          "page": 189,
+          "concepts": [
+            "حذف",
+            "مبتدا",
+            "جوبا"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c099",
+          "title": "مواضع جواز الابتداء بالنكرة",
+          "kind": "content",
+          "page": 190,
+          "concepts": [
+            "جواز",
+            "ابتداء",
+            "بالنكرة"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c100",
+          "title": "المبتدأ الذي لا يحتاج إلى خبر يكتفي بمرفوعه",
+          "kind": "content",
+          "page": 191,
+          "concepts": [
+            "مبتدا",
+            "ذي",
+            "يحتاج",
+            "الي",
+            "خبر"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c101",
+          "title": "ملخص المبتدأ",
+          "kind": "content",
+          "page": 193,
+          "concepts": [
+            "مبتدا"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c103",
+          "title": "تقديم الخبر على المبتدأ",
+          "kind": "content",
+          "page": 198,
+          "concepts": [
+            "تقديم",
+            "خبر",
+            "مبتدا"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c104",
+          "title": "حذف الخبر وجوبا",
+          "kind": "content",
+          "page": 199,
+          "concepts": [
+            "حذف",
+            "خبر",
+            "جوبا"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "part-06.md",
+      "pages": [
+        201,
+        240
+      ],
+      "chapter": null,
+      "sections": [
+        {
+          "id": "kayf-tataqan-nahw-c105",
+          "title": "ملخص الْخَبَرِ وأنواعه",
+          "kind": "content",
+          "page": 201,
+          "concepts": [
+            "خبر",
+            "وانواعه"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c106",
+          "title": "ملخص المبتدأ والخبر في صفحة واحدة",
+          "kind": "content",
+          "page": 202,
+          "concepts": [
+            "مبتدا",
+            "خبر",
+            "صفحة",
+            "واحدة"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c107",
+          "title": "تَدْرِيبٌ عَلَى المبحث الثالث المبتدأ والخبر",
+          "kind": "content",
+          "page": 203,
+          "concepts": [
+            "مبحث",
+            "ثالث",
+            "مبتدا",
+            "خبر"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c108",
+          "title": "تَدْرِيبٌ عَلَى الفصل الرابع من الحديث النبوي الشريف",
+          "kind": "content",
+          "page": 207,
+          "concepts": [
+            "فصل",
+            "رابع",
+            "حديث",
+            "نبوي",
+            "شريف"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c109",
+          "title": "الْفَصْلُ الْخَامِسُ النَّوَاسِخ",
+          "kind": "content",
+          "page": 210,
+          "concepts": [
+            "فصل",
+            "خامس",
+            "نواسخ"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c110",
+          "title": "كَانَ وَأَخَوَاتُهَا",
+          "kind": "content",
+          "page": 211,
+          "concepts": [
+            "واخواتها"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c111",
+          "title": "الحروف التي تعمل عمل ليس",
+          "kind": "content",
+          "page": 219,
+          "concepts": [
+            "تي",
+            "تعمل",
+            "عمل"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c112",
+          "title": "ما الحجازية العاملة عمل ليس",
+          "kind": "content",
+          "page": 219,
+          "concepts": [
+            "حجازية",
+            "عاملة",
+            "عمل"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c113",
+          "title": "لا النافية العاملة عمل ليس",
+          "kind": "content",
+          "page": 222,
+          "concepts": [
+            "نافية",
+            "عاملة",
+            "عمل"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c114",
+          "title": "لات العاملة عمل ليس",
+          "kind": "content",
+          "page": 224,
+          "concepts": [
+            "لات",
+            "عاملة",
+            "عمل"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c115",
+          "title": "إِنْ العاملة عمل ليس",
+          "kind": "content",
+          "page": 225,
+          "concepts": [
+            "ان",
+            "عاملة",
+            "عمل"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c116",
+          "title": "ملخص كَانَ وَأَخَوَاتُهَا",
+          "kind": "content",
+          "page": 226,
+          "concepts": [
+            "واخواتها"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c117",
+          "title": "كَادَ وَأَخَوَاتُهَا",
+          "kind": "content",
+          "page": 227,
+          "concepts": [
+            "كاد",
+            "واخواتها"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c118",
+          "title": "حكم دخول أن على خبر كاد وأخواتها",
+          "kind": "content",
+          "page": 230,
+          "concepts": [
+            "حكم",
+            "دخول",
+            "ان",
+            "خبر",
+            "كاد"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c119",
+          "title": "ملخص كَادَ وَأَخَوَاتُهَا",
+          "kind": "content",
+          "page": 231,
+          "concepts": [
+            "كاد",
+            "واخواتها"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c120",
+          "title": "إِنَّ وَأَخَوَاتُهَا",
+          "kind": "content",
+          "page": 232,
+          "concepts": [
+            "ان",
+            "واخواتها"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c121",
+          "title": "ملخص إِنَّ وأخواتها",
+          "kind": "content",
+          "page": 237,
+          "concepts": [
+            "ان",
+            "واخواتها"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c122",
+          "title": "لَا النَّافِيَةُ لِلْجِنْسِ",
+          "kind": "content",
+          "page": 238,
+          "concepts": [
+            "نافية",
+            "للجنس"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c123",
+          "title": "صور اسم لا النافية للجنس وخبرها",
+          "kind": "content",
+          "page": 240,
+          "concepts": [
+            "اسم",
+            "نافية",
+            "للجنس",
+            "خبرها"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "part-07.md",
+      "pages": [
+        241,
+        280
+      ],
+      "chapter": null,
+      "sections": [
+        {
+          "id": "kayf-tataqan-nahw-c166",
+          "title": "تدريب على المبحث الثاني الاستثناء",
+          "kind": "content",
+          "page": 243,
+          "concepts": [
+            "مبحث",
+            "ثاني",
+            "استثناء"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c124",
+          "title": "ملخص لَا النَّافِيَةُ لِلْجِنْسِ",
+          "kind": "content",
+          "page": 244,
+          "concepts": [
+            "نافية",
+            "للجنس"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c125",
+          "title": "ظَنَّ وَأَخَوَاتُهَا",
+          "kind": "content",
+          "page": 245,
+          "concepts": [
+            "ظن",
+            "واخواتها"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c126",
+          "title": "أَفْعَال تَنْصِبُ مَفْعُولَيْنِ وأفعال تنصب ثلاثة مفاعيل",
+          "kind": "content",
+          "page": 248,
+          "concepts": [
+            "افعال",
+            "تنصب",
+            "مفعولين",
+            "وافعال",
+            "ثلاثة"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c127",
+          "title": "ملخص ظن وأخواتها",
+          "kind": "content",
+          "page": 249,
+          "concepts": [
+            "ظن",
+            "واخواتها"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c128",
+          "title": "مُلَخَّصُ النَّوَاسِخِ فِي صَفْحَةٍ وَاحِدَةٍ",
+          "kind": "content",
+          "page": 250,
+          "concepts": [
+            "نواسخ",
+            "صفحة",
+            "واحدة"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c129",
+          "title": "تَدْرِيبُ عَلَى الْفَصْلِ الْخَامِسُ النَّوَاسِخِ",
+          "kind": "content",
+          "page": 251,
+          "concepts": [
+            "فصل",
+            "خامس",
+            "نواسخ"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c130",
+          "title": "تدريب على الفصل الخامس من الحديث الشريف والقرآن",
+          "kind": "content",
+          "page": 255,
+          "concepts": [
+            "فصل",
+            "خامس",
+            "حديث",
+            "شريف",
+            "قران"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c131",
+          "title": "الْفَصْلُ السَّادِسُ الْمَنْصُوبَاتُ",
+          "kind": "content",
+          "page": 258,
+          "concepts": [
+            "فصل",
+            "سادس",
+            "منصوبات"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c132",
+          "title": "الْمَفْعُولُ بِهِ",
+          "kind": "content",
+          "page": 259,
+          "concepts": [
+            "مفعول",
+            "به"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c133",
+          "title": "صور المفعول به",
+          "kind": "content",
+          "page": 260,
+          "concepts": [
+            "مفعول",
+            "به"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c134",
+          "title": "ملخص المفعول به",
+          "kind": "content",
+          "page": 263,
+          "concepts": [
+            "مفعول",
+            "به"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c135",
+          "title": "تدريب على المفعول به",
+          "kind": "content",
+          "page": 264,
+          "concepts": [
+            "مفعول",
+            "به"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c136",
+          "title": "الْمَفْعُولُ الْمُطْلَقُ",
+          "kind": "content",
+          "page": 267,
+          "concepts": [
+            "مفعول",
+            "مطلق"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c137",
+          "title": "ما ينوب عن المفعول المطلق",
+          "kind": "content",
+          "page": 269,
+          "concepts": [
+            "ينوب",
+            "مفعول",
+            "مطلق"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c138",
+          "title": "حذف عامل المفعول المطلق",
+          "kind": "content",
+          "page": 272,
+          "concepts": [
+            "حذف",
+            "عامل",
+            "مفعول",
+            "مطلق"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c139",
+          "title": "ملخص المفعول المطلق",
+          "kind": "content",
+          "page": 273,
+          "concepts": [
+            "مفعول",
+            "مطلق"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c140",
+          "title": "تدريب على المفعول المطلق",
+          "kind": "content",
+          "page": 274,
+          "concepts": [
+            "مفعول",
+            "مطلق"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c141",
+          "title": "المَفْعُولُ لِأَجْلِهِ",
+          "kind": "content",
+          "page": 276,
+          "concepts": [
+            "مفعول",
+            "لاجله"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c142",
+          "title": "ملخص المفعول لأجله",
+          "kind": "content",
+          "page": 278,
+          "concepts": [
+            "مفعول",
+            "لاجله"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c143",
+          "title": "المَفْعُولُ مَعَهُ",
+          "kind": "content",
+          "page": 279,
+          "concepts": [
+            "مفعول",
+            "معه"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "part-08.md",
+      "pages": [
+        281,
+        320
+      ],
+      "chapter": null,
+      "sections": [
+        {
+          "id": "kayf-tataqan-nahw-c144",
+          "title": "ملخص المفعول معه",
+          "kind": "content",
+          "page": 281,
+          "concepts": [
+            "مفعول",
+            "معه"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c145",
+          "title": "تدريب على المفعول لأجله والمفعول معه",
+          "kind": "content",
+          "page": 282,
+          "concepts": [
+            "مفعول",
+            "لاجله",
+            "معه"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c146",
+          "title": "المَفْعُولُ فِيهِ الظَّرْفُ",
+          "kind": "content",
+          "page": 284,
+          "concepts": [
+            "مفعول",
+            "فيه",
+            "ظرف"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c147",
+          "title": "الظرف من حيث التصرف وعدمه",
+          "kind": "content",
+          "page": 285,
+          "concepts": [
+            "ظرف",
+            "حيث",
+            "تصرف",
+            "عدمه"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c148",
+          "title": "الظرف المبهم والمختص",
+          "kind": "content",
+          "page": 287,
+          "concepts": [
+            "ظرف",
+            "مبهم",
+            "مختص"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c149",
+          "title": "النائب عن الظرف",
+          "kind": "content",
+          "page": 287,
+          "concepts": [
+            "نايب",
+            "ظرف"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c150",
+          "title": "تعلق الظرف",
+          "kind": "content",
+          "page": 288,
+          "concepts": [
+            "تعلق",
+            "ظرف"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c151",
+          "title": "ملخص المَفْعُولِ فِيهِ الظَّرْفُ",
+          "kind": "content",
+          "page": 290,
+          "concepts": [
+            "مفعول",
+            "فيه",
+            "ظرف"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c152",
+          "title": "تدريب على المَفْعُولِ فِيهِ الظَّرْفُ",
+          "kind": "content",
+          "page": 291,
+          "concepts": [
+            "مفعول",
+            "فيه",
+            "ظرف"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c153",
+          "title": "مُلَخَّصُ المَفَاعِيلِ فِي صَفْحَةٍ وَاحِدَةٍ",
+          "kind": "content",
+          "page": 293,
+          "concepts": [
+            "مفاعيل",
+            "صفحة",
+            "واحدة"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c154",
+          "title": "الحَالُ",
+          "kind": "content",
+          "page": 294,
+          "concepts": [
+            "حال"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c155",
+          "title": "شروط الحال",
+          "kind": "content",
+          "page": 295,
+          "concepts": [
+            "حال"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c156",
+          "title": "أنواع الحال",
+          "kind": "content",
+          "page": 297,
+          "concepts": [
+            "انواع",
+            "حال"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c157",
+          "title": "تنبيهات على الحال",
+          "kind": "content",
+          "page": 300,
+          "concepts": [
+            "حال"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c158",
+          "title": "ملخص الحال",
+          "kind": "content",
+          "page": 302,
+          "concepts": [
+            "حال"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c159",
+          "title": "تدريب على المبحث الأول الحال",
+          "kind": "content",
+          "page": 303,
+          "concepts": [
+            "مبحث",
+            "اول",
+            "حال"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c160",
+          "title": "الاسْتِثْنَاء",
+          "kind": "content",
+          "page": 305,
+          "concepts": [
+            "استثناء"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c161",
+          "title": "إعراب المستثنى بعد إلا",
+          "kind": "content",
+          "page": 307,
+          "concepts": [
+            "اعراب",
+            "مستثني",
+            "بعد",
+            "الا"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c162",
+          "title": "الاستثناء ب غير سوى",
+          "kind": "content",
+          "page": 309,
+          "concepts": [
+            "استثناء",
+            "سوي"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c163",
+          "title": "الاستثناء ب خلا عدا حاشا",
+          "kind": "content",
+          "page": 310,
+          "concepts": [
+            "استثناء",
+            "خلا",
+            "عدا",
+            "حاشا"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c164",
+          "title": "تنبيهات خاصة ب ليس",
+          "kind": "content",
+          "page": 312,
+          "concepts": [
+            "خاصة"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c165",
+          "title": "ملخص الاستثناء",
+          "kind": "content",
+          "page": 313,
+          "concepts": [
+            "استثناء"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c167",
+          "title": "المبحث الثالث التَّمْيِيزُ",
+          "kind": "content",
+          "page": 317,
+          "concepts": [
+            "مبحث",
+            "ثالث",
+            "تمييز"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c168",
+          "title": "أنواع تمييز النسبة",
+          "kind": "content",
+          "page": 319,
+          "concepts": [
+            "انواع",
+            "تمييز",
+            "نسبة"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c169",
+          "title": "كم الاستفهامية",
+          "kind": "content",
+          "page": 320,
+          "concepts": [
+            "كم",
+            "استفهامية"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "part-09.md",
+      "pages": [
+        321,
+        360
+      ],
+      "chapter": null,
+      "sections": [
+        {
+          "id": "kayf-tataqan-nahw-c170",
+          "title": "تَمْييز كم الخبرية",
+          "kind": "content",
+          "page": 321,
+          "concepts": [
+            "تمييز",
+            "كم",
+            "خبرية"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c171",
+          "title": "ملخص التمييز",
+          "kind": "content",
+          "page": 322,
+          "concepts": [
+            "تمييز"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c172",
+          "title": "العَدَد وَتَمْيِيزُه",
+          "kind": "content",
+          "page": 323,
+          "concepts": [
+            "عدد",
+            "تمييزه"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c173",
+          "title": "العددان",
+          "kind": "content",
+          "page": 323,
+          "concepts": [
+            "عددان"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c174",
+          "title": "الأعداد المفردة من",
+          "kind": "content",
+          "page": 324,
+          "concepts": [
+            "اعداد",
+            "مفردة"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c176",
+          "title": "ألفاظ العقود",
+          "kind": "content",
+          "page": 324,
+          "concepts": [
+            "فاظ",
+            "عقود"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c175",
+          "title": "الأعداد المركبة من",
+          "kind": "content",
+          "page": 325,
+          "concepts": [
+            "اعداد",
+            "مركبة"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c177",
+          "title": "الأعداد المعطوفة من",
+          "kind": "content",
+          "page": 329,
+          "concepts": [
+            "اعداد",
+            "معطوفة"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c178",
+          "title": "الأعداد ومضاعفاتهما",
+          "kind": "content",
+          "page": 331,
+          "concepts": [
+            "اعداد",
+            "مضاعفاتهما"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c179",
+          "title": "تنبيهات خاصة بالأعداد",
+          "kind": "content",
+          "page": 332,
+          "concepts": [
+            "خاصة",
+            "بالاعداد"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c180",
+          "title": "أحكام العدد ثمانية",
+          "kind": "content",
+          "page": 333,
+          "concepts": [
+            "احكام",
+            "عدد",
+            "ثمانية"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c181",
+          "title": "ملخص أحكام العدد وتمييزه وتذكير العدد وتأنيثه في صفحة واحدة",
+          "kind": "content",
+          "page": 336,
+          "concepts": [
+            "احكام",
+            "عدد",
+            "تمييزه",
+            "تذكير",
+            "تانيثه"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c182",
+          "title": "ملخص أَقسام العَدَد وَتَمْيِيزه",
+          "kind": "content",
+          "page": 337,
+          "concepts": [
+            "اقسام",
+            "عدد",
+            "تمييزه"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c183",
+          "title": "تَدْرِيب على التمييز المبحث الثالث وَالعَدَد وَتَمْيِيزه",
+          "kind": "content",
+          "page": 338,
+          "concepts": [
+            "تمييز",
+            "مبحث",
+            "ثالث",
+            "عدد",
+            "تمييزه"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c184",
+          "title": "تَدْرِيبٌ عَلَى الْفَصْلِ السَّادِسِ من الحديث الشريف",
+          "kind": "content",
+          "page": 340,
+          "concepts": [
+            "فصل",
+            "سادس",
+            "حديث",
+            "شريف"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c185",
+          "title": "الْفَصْلُ السَّابِعُ التَّوَابِعُ",
+          "kind": "content",
+          "page": 343,
+          "concepts": [
+            "فصل",
+            "سابع",
+            "توابع"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c186",
+          "title": "النَّعْتُ الصفة",
+          "kind": "content",
+          "page": 344,
+          "concepts": [
+            "نعت",
+            "صفة"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c187",
+          "title": "مطابقة النعت للمنعوت",
+          "kind": "content",
+          "page": 345,
+          "concepts": [
+            "مطابقة",
+            "نعت",
+            "للمنعوت"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c188",
+          "title": "أقسام النعت الحقيقي والسببي",
+          "kind": "content",
+          "page": 346,
+          "concepts": [
+            "اقسام",
+            "نعت",
+            "حقيقي",
+            "سببي"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c189",
+          "title": "إعراب الاسم الواقع بعد النعت السبي",
+          "kind": "content",
+          "page": 347,
+          "concepts": [
+            "اعراب",
+            "اسم",
+            "واقع",
+            "بعد",
+            "نعت"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c190",
+          "title": "أقسام النعت باعتبار لفظه",
+          "kind": "content",
+          "page": 348,
+          "concepts": [
+            "اقسام",
+            "نعت",
+            "باعتبار",
+            "لفظه"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c191",
+          "title": "ملخص النعت",
+          "kind": "content",
+          "page": 353,
+          "concepts": [
+            "نعت"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c192",
+          "title": "التَّوْكِيدُ المعنوي",
+          "kind": "content",
+          "page": 354,
+          "concepts": [
+            "توكيد",
+            "معنوي"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c193",
+          "title": "التوكيد اللفظي",
+          "kind": "content",
+          "page": 357,
+          "concepts": [
+            "توكيد",
+            "لفظي"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c194",
+          "title": "ملخص التوكيد",
+          "kind": "content",
+          "page": 358,
+          "concepts": [
+            "توكيد"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c195",
+          "title": "الْبَدَل",
+          "kind": "content",
+          "page": 359,
+          "concepts": [
+            "بدل"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c196",
+          "title": "إعراب البدل والمبدل منه",
+          "kind": "content",
+          "page": 359,
+          "concepts": [
+            "اعراب",
+            "بدل",
+            "مبدل",
+            "منه"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c197",
+          "title": "أقسام البدل",
+          "kind": "content",
+          "page": 360,
+          "concepts": [
+            "اقسام",
+            "بدل"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "part-10.md",
+      "pages": [
+        361,
+        400
+      ],
+      "chapter": null,
+      "sections": [
+        {
+          "id": "kayf-tataqan-nahw-c198",
+          "title": "ملخص البدل",
+          "kind": "content",
+          "page": 364,
+          "concepts": [
+            "بدل"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c199",
+          "title": "الْعَطْفُ",
+          "kind": "content",
+          "page": 365,
+          "concepts": [
+            "عطف"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c200",
+          "title": "حروف العطف وشروطها",
+          "kind": "content",
+          "page": 365,
+          "concepts": [
+            "عطف",
+            "شروطها"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c201",
+          "title": "أقسام العطف",
+          "kind": "content",
+          "page": 371,
+          "concepts": [
+            "اقسام",
+            "عطف"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c202",
+          "title": "ملخص العطف",
+          "kind": "content",
+          "page": 374,
+          "concepts": [
+            "عطف"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c203",
+          "title": "مَلَخَّصُ التَّوَابِعِ فِي صَفْحَةٍ وَاحِدَةٍ",
+          "kind": "content",
+          "page": 375,
+          "concepts": [
+            "توابع",
+            "صفحة",
+            "واحدة"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c204",
+          "title": "تَدْرِيبٌ عَلَى الْفَصْلِ السَّابِعِ التَّوَابِعِ",
+          "kind": "content",
+          "page": 376,
+          "concepts": [
+            "فصل",
+            "سابع",
+            "توابع"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c205",
+          "title": "الْفَصْلُ الثَّامِنُ الْمَجْرُورَاتِ",
+          "kind": "content",
+          "page": 381,
+          "concepts": [
+            "فصل",
+            "ثامن",
+            "مجرورات"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c206",
+          "title": "حُرُوفُ الْجَرِّ أَوِ الْخَفْضِ",
+          "kind": "content",
+          "page": 382,
+          "concepts": [
+            "جر",
+            "او",
+            "خفض"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c207",
+          "title": "أَقسَام حروف الجر",
+          "kind": "content",
+          "page": 388,
+          "concepts": [
+            "اقسام",
+            "جر"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c208",
+          "title": "حروف الجر الزائدة",
+          "kind": "content",
+          "page": 389,
+          "concepts": [
+            "جر",
+            "زايدة"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c209",
+          "title": "ملخص حروف الجر",
+          "kind": "content",
+          "page": 392,
+          "concepts": [
+            "جر"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c210",
+          "title": "الْإِضَافَةُ",
+          "kind": "content",
+          "page": 393,
+          "concepts": [
+            "اضافة"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c211",
+          "title": "ما يحذف من المضاف لأجل الإضافة",
+          "kind": "content",
+          "page": 393,
+          "concepts": [
+            "يحذف",
+            "مضاف",
+            "لاجل",
+            "اضافة"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c212",
+          "title": "معاني الإضافة",
+          "kind": "content",
+          "page": 395,
+          "concepts": [
+            "اضافة"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c213",
+          "title": "ما يلزم الإضافة ولا ينفك عنها",
+          "kind": "content",
+          "page": 396,
+          "concepts": [
+            "يلزم",
+            "اضافة",
+            "ولا",
+            "ينفك"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c214",
+          "title": "ملخص الإضافة",
+          "kind": "content",
+          "page": 398,
+          "concepts": [
+            "اضافة"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c215",
+          "title": "مَلَخَّصُ الْمَجْرُورَاتِ فِي صَفْحَةٍ وَاحِدَةٍ",
+          "kind": "content",
+          "page": 399,
+          "concepts": [
+            "مجرورات",
+            "صفحة",
+            "واحدة"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c216",
+          "title": "تَدْرِيبٌ عَلَى الْفَصْلِ الثَّامِنِ المجرورات",
+          "kind": "content",
+          "page": 400,
+          "concepts": [
+            "فصل",
+            "ثامن",
+            "مجرورات"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "part-11.md",
+      "pages": [
+        401,
+        440
+      ],
+      "chapter": null,
+      "sections": [
+        {
+          "id": "kayf-tataqan-nahw-c217",
+          "title": "الْفَصْلُ التَّاسِعُ الْأَسَالِيبُ",
+          "kind": "content",
+          "page": 404,
+          "concepts": [
+            "فصل",
+            "تاسع",
+            "اساليب"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c218",
+          "title": "النِّدَاءُ",
+          "kind": "content",
+          "page": 405,
+          "concepts": [
+            "نداء"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c219",
+          "title": "أحكام إعراب المنادى",
+          "kind": "content",
+          "page": 405,
+          "concepts": [
+            "احكام",
+            "اعراب",
+            "منادي"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c220",
+          "title": "أقسام المنادى",
+          "kind": "content",
+          "page": 406,
+          "concepts": [
+            "اقسام",
+            "منادي"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c221",
+          "title": "الفرق بين المنادى المضاف والشبيه بالمضاف",
+          "kind": "content",
+          "page": 410,
+          "concepts": [
+            "فرق",
+            "منادي",
+            "مضاف",
+            "شبيه",
+            "بالمضاف"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c222",
+          "title": "إعراب المنادى المضاف إلى ياء المتكلم",
+          "kind": "content",
+          "page": 410,
+          "concepts": [
+            "اعراب",
+            "منادي",
+            "مضاف",
+            "الي",
+            "ياء"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c223",
+          "title": "صور ياء المتكلم بعد المنادى",
+          "kind": "content",
+          "page": 411,
+          "concepts": [
+            "ياء",
+            "متكلم",
+            "بعد",
+            "منادي"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c224",
+          "title": "نداء الاسم المتصل ب أل",
+          "kind": "content",
+          "page": 412,
+          "concepts": [
+            "نداء",
+            "اسم",
+            "متصل"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c225",
+          "title": "ملخص النداء",
+          "kind": "content",
+          "page": 414,
+          "concepts": [
+            "نداء"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c226",
+          "title": "الْمَدْحُ وَالذَّمُّ",
+          "kind": "content",
+          "page": 415,
+          "concepts": [
+            "مدح",
+            "ذم"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c227",
+          "title": "أفعال المدح والذم نِعْمَ بِئْسَ حَبَّذَا لا حَبَّذَا",
+          "kind": "content",
+          "page": 416,
+          "concepts": [
+            "افعال",
+            "مدح",
+            "ذم",
+            "نعم",
+            "بيس"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c228",
+          "title": "صور فاعل نِعْمَ بِئْسَ",
+          "kind": "content",
+          "page": 417,
+          "concepts": [
+            "فاعل",
+            "نعم",
+            "بيس"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c229",
+          "title": "إعراب المخصوص بالمدح أو الذم",
+          "kind": "content",
+          "page": 419,
+          "concepts": [
+            "اعراب",
+            "مخصوص",
+            "بالمدح",
+            "او",
+            "ذم"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c230",
+          "title": "ملخص المدح والذم",
+          "kind": "content",
+          "page": 421,
+          "concepts": [
+            "مدح",
+            "ذم"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c231",
+          "title": "التَّعَجُّبُ",
+          "kind": "content",
+          "page": 422,
+          "concepts": [
+            "تعجب"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c232",
+          "title": "صيغتي التعجب القياسي مَا أَفْعَلَ وَأَفْعِلْ بِ",
+          "kind": "content",
+          "page": 423,
+          "concepts": [
+            "صيغتي",
+            "تعجب",
+            "قياسي",
+            "افعل",
+            "وافعل"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c233",
+          "title": "شروط الفعل الذي يتعجب منه",
+          "kind": "content",
+          "page": 424,
+          "concepts": [
+            "فعل",
+            "ذي",
+            "يتعجب",
+            "منه"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c234",
+          "title": "ملخص التعجب",
+          "kind": "content",
+          "page": 425,
+          "concepts": [
+            "تعجب"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c235",
+          "title": "الاختصاص",
+          "kind": "content",
+          "page": 426,
+          "concepts": [
+            "اختصاص"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c236",
+          "title": "صور الاسم المختص",
+          "kind": "content",
+          "page": 427,
+          "concepts": [
+            "اسم",
+            "مختص"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c237",
+          "title": "التحذير",
+          "kind": "content",
+          "page": 429,
+          "concepts": [
+            "تحذير"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c238",
+          "title": "الإغراء",
+          "kind": "content",
+          "page": 432,
+          "concepts": [
+            "اغراء"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c239",
+          "title": "مَلَخَّصُ الأَسَالِيبِ الاخْتِصَاصِ وَالتَّحْذِيرِ وَالإِغْرَاءِ فِي صَفْحَةٍ وَاحِدَةٍ",
+          "kind": "content",
+          "page": 434,
+          "concepts": [
+            "اساليب",
+            "اختصاص",
+            "تحذير",
+            "اغراء",
+            "صفحة"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c240",
+          "title": "تَدْرِيبٌ عَلَى الْفَصْلِ التَّاسِع",
+          "kind": "content",
+          "page": 435,
+          "concepts": [
+            "فصل",
+            "تاسع"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c241",
+          "title": "تَدْرِيبٌ عَلَى الْفَصْلِ الثَّامِنِ وَالتَّاسِع",
+          "kind": "content",
+          "page": 438,
+          "concepts": [
+            "فصل",
+            "ثامن",
+            "تاسع"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c242",
+          "title": "الْفَصْلُ الْعَاشِرُ إعمال المشتقات",
+          "kind": "content",
+          "page": 439,
+          "concepts": [
+            "فصل",
+            "عاشر",
+            "اعمال",
+            "مشتقات"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c243",
+          "title": "إعمال المصدر",
+          "kind": "content",
+          "page": 440,
+          "concepts": [
+            "اعمال",
+            "مصدر"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "part-12.md",
+      "pages": [
+        441,
+        480
+      ],
+      "chapter": null,
+      "sections": [
+        {
+          "id": "kayf-tataqan-nahw-c244",
+          "title": "شروط إعمال المصدر",
+          "kind": "content",
+          "page": 441,
+          "concepts": [
+            "اعمال",
+            "مصدر"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c245",
+          "title": "إعمال اسم المصدر",
+          "kind": "content",
+          "page": 442,
+          "concepts": [
+            "اعمال",
+            "اسم",
+            "مصدر"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c246",
+          "title": "إعمال اسم الفاعل",
+          "kind": "content",
+          "page": 443,
+          "concepts": [
+            "اعمال",
+            "اسم",
+            "فاعل"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c247",
+          "title": "شروط إعمال اسم الفاعل",
+          "kind": "content",
+          "page": 443,
+          "concepts": [
+            "اعمال",
+            "اسم",
+            "فاعل"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c248",
+          "title": "إعمال اسم المفعول",
+          "kind": "content",
+          "page": 447,
+          "concepts": [
+            "اعمال",
+            "اسم",
+            "مفعول"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c249",
+          "title": "شروط إعمال اسم المفعول",
+          "kind": "content",
+          "page": 447,
+          "concepts": [
+            "اعمال",
+            "اسم",
+            "مفعول"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c250",
+          "title": "إعمال صيغة المبالغة",
+          "kind": "content",
+          "page": 450,
+          "concepts": [
+            "اعمال",
+            "صيغة",
+            "مبالغة"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c251",
+          "title": "شروط إعمال صيغة المبالغة",
+          "kind": "content",
+          "page": 450,
+          "concepts": [
+            "اعمال",
+            "صيغة",
+            "مبالغة"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c252",
+          "title": "إعمال الصفة المشبهة",
+          "kind": "content",
+          "page": 453,
+          "concepts": [
+            "اعمال",
+            "صفة",
+            "مشبهة"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c253",
+          "title": "حالات إعراب معمول الصفة المشبهة",
+          "kind": "content",
+          "page": 454,
+          "concepts": [
+            "اعراب",
+            "معمول",
+            "صفة",
+            "مشبهة"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c254",
+          "title": "أفعل التفضيل",
+          "kind": "content",
+          "page": 455,
+          "concepts": [
+            "افعل",
+            "تفضيل"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c255",
+          "title": "شروط صياغة أفعل التفضيل وشروط عمله",
+          "kind": "content",
+          "page": 455,
+          "concepts": [
+            "افعل",
+            "تفضيل",
+            "عمله"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c256",
+          "title": "إعراب الاسم الواقع بعد أفعل التفضيل",
+          "kind": "content",
+          "page": 457,
+          "concepts": [
+            "اعراب",
+            "اسم",
+            "واقع",
+            "بعد",
+            "افعل"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c257",
+          "title": "ملخص إعمال المصدر واسم الفاعل",
+          "kind": "content",
+          "page": 459,
+          "concepts": [
+            "اعمال",
+            "مصدر",
+            "واسم",
+            "فاعل"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c258",
+          "title": "ملخص إعمال اسم المفعول والصفة المشبهة",
+          "kind": "content",
+          "page": 460,
+          "concepts": [
+            "اعمال",
+            "اسم",
+            "مفعول",
+            "صفة",
+            "مشبهة"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c259",
+          "title": "ملخص إعمال صيغ المبالغة واسم التفضيل",
+          "kind": "content",
+          "page": 461,
+          "concepts": [
+            "اعمال",
+            "مبالغة",
+            "واسم",
+            "تفضيل"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c260",
+          "title": "تدريب على إعمال المشتقات",
+          "kind": "content",
+          "page": 462,
+          "concepts": [
+            "اعمال",
+            "مشتقات"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c261",
+          "title": "مَفَاتِيحُ الإِعْرَابِ",
+          "kind": "content",
+          "page": 465,
+          "concepts": [
+            "مفاتيح",
+            "اعراب"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c262",
+          "title": "أنواع أن المخففة",
+          "kind": "content",
+          "page": 465,
+          "concepts": [
+            "انواع",
+            "ان",
+            "مخففة"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c263",
+          "title": "أنواع إن المخففة",
+          "kind": "content",
+          "page": 466,
+          "concepts": [
+            "انواع",
+            "ان",
+            "مخففة"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c264",
+          "title": "أنواع أي الاسمية والحرفية",
+          "kind": "content",
+          "page": 467,
+          "concepts": [
+            "انواع",
+            "اي",
+            "اسمية",
+            "حرفية"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c265",
+          "title": "إعراب ألا أما إمَّا",
+          "kind": "content",
+          "page": 468,
+          "concepts": [
+            "اعراب",
+            "الا",
+            "اما"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c266",
+          "title": "الفرق بين أمس الأمس",
+          "kind": "content",
+          "page": 469,
+          "concepts": [
+            "فرق",
+            "امس"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c267",
+          "title": "إعراب لفظ أوَّل",
+          "kind": "content",
+          "page": 469,
+          "concepts": [
+            "اعراب",
+            "لفظ",
+            "اول"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c268",
+          "title": "إعراب بضع بيد لَمَّ ثَمَّ ثَمَّةَ",
+          "kind": "content",
+          "page": 470,
+          "concepts": [
+            "اعراب",
+            "بضع",
+            "بيد",
+            "لم",
+            "ثمة"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c269",
+          "title": "أنواع حتى وإعراب ما بعدها",
+          "kind": "content",
+          "page": 471,
+          "concepts": [
+            "انواع",
+            "حتي",
+            "واعراب",
+            "بعدها"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c270",
+          "title": "إعراب حسب دون دونك",
+          "kind": "content",
+          "page": 472,
+          "concepts": [
+            "اعراب",
+            "حسب",
+            "دون",
+            "دونك"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c271",
+          "title": "إعراب ذَوَا ذَوَاتَا ذَاتَ ذَوُو ذَوِي",
+          "kind": "content",
+          "page": 473,
+          "concepts": [
+            "اعراب",
+            "ذوا",
+            "ذواتا",
+            "ذات",
+            "ذوو"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c272",
+          "title": "أنواع الفاء",
+          "kind": "content",
+          "page": 474,
+          "concepts": [
+            "انواع",
+            "فاء"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c273",
+          "title": "أنواع اللام",
+          "kind": "content",
+          "page": 475,
+          "concepts": [
+            "انواع",
+            "لام"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c274",
+          "title": "أنواع لا",
+          "kind": "content",
+          "page": 476,
+          "concepts": [
+            "انواع"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c275",
+          "title": "أنواع ما",
+          "kind": "content",
+          "page": 477,
+          "concepts": [
+            "انواع"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c276",
+          "title": "أنواع الواو",
+          "kind": "content",
+          "page": 479,
+          "concepts": [
+            "انواع",
+            "واو"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c277",
+          "title": "إعراب لا سيما والاسم بعدها",
+          "kind": "content",
+          "page": 480,
+          "concepts": [
+            "اعراب",
+            "سيما",
+            "اسم",
+            "بعدها"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "part-13.md",
+      "pages": [
+        481,
+        520
+      ],
+      "chapter": null,
+      "sections": [
+        {
+          "id": "kayf-tataqan-nahw-c278",
+          "title": "الجمل التي لها محل من الإعراب",
+          "kind": "content",
+          "page": 482,
+          "concepts": [
+            "جمل",
+            "تي",
+            "لها",
+            "محل",
+            "اعراب"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c279",
+          "title": "الجمل التي لا محل لها من الإعراب",
+          "kind": "content",
+          "page": 485,
+          "concepts": [
+            "جمل",
+            "تي",
+            "محل",
+            "لها",
+            "اعراب"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c280",
+          "title": "إعراب المبني من الظروف",
+          "kind": "content",
+          "page": 488,
+          "concepts": [
+            "اعراب",
+            "مبني",
+            "ظروف"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c281",
+          "title": "إعراب مذ منذ الآن",
+          "kind": "content",
+          "page": 488,
+          "concepts": [
+            "اعراب",
+            "مذ",
+            "منذ",
+            "ان"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c282",
+          "title": "إعراب حيث قط",
+          "kind": "content",
+          "page": 489,
+          "concepts": [
+            "اعراب",
+            "حيث",
+            "قط"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c283",
+          "title": "إعراب إذا أيان عوض",
+          "kind": "content",
+          "page": 490,
+          "concepts": [
+            "اعراب",
+            "اذا",
+            "ايان",
+            "عوض"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c284",
+          "title": "إِعْرَابُ حَدِيثٍ نَبويّ",
+          "kind": "content",
+          "page": 516,
+          "concepts": [
+            "اعراب",
+            "حديث",
+            "نبوي"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-c285",
+          "title": "إِعْرَابُ بَعْضِ أَبْيَاتٍ مِنْ شِعْرِ الْمُعَلَّقَاتِ",
+          "kind": "content",
+          "page": 518,
+          "concepts": [
+            "اعراب",
+            "بعض",
+            "ابيات",
+            "شعر",
+            "معلقات"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "part-14.md",
+      "pages": [
+        521,
+        553
+      ],
+      "chapter": null,
+      "sections": [
+        {
+          "id": "kayf-tataqan-nahw-c286",
+          "title": "إِعْرَابُ بَعْضِ أَبْيَاتِ نَهْجِ الْبُرْدَةِ لِلْبُوصِيرِي",
+          "kind": "content",
+          "page": 522,
+          "concepts": [
+            "اعراب",
+            "بعض",
+            "ابيات",
+            "نهج",
+            "بردة"
+          ]
+        },
+        {
+          "id": "kayf-tataqan-nahw-n001",
+          "title": "الْخَاتِمَةُ",
+          "kind": "noise",
+          "page": 527,
+          "concepts": []
+        },
+        {
+          "id": "kayf-tataqan-nahw-n002",
+          "title": "الْمَصَادِرُ وَالْمَرَاجِعُ",
+          "kind": "noise",
+          "page": 528,
+          "concepts": []
+        },
+        {
+          "id": "kayf-tataqan-nahw-n003",
+          "title": "الْفَهْرِسُ",
+          "kind": "noise",
+          "page": 531,
+          "concepts": []
+        },
+        {
+          "id": "kayf-tataqan-nahw-noise-back",
+          "title": "الفهرس والمسرد",
+          "kind": "noise",
+          "page": 531,
+          "endPage": 553,
+          "concepts": []
+        }
+      ]
+    }
+  ]
+}

@@ -31,7 +31,9 @@ export class AiTicketService {
     }
 
     if (!payload.sub || payload.role !== 'student') {
-      throw new UnauthorizedException('AI session is not authorized for this user');
+      throw new UnauthorizedException(
+        'AI session is not authorized for this user',
+      );
     }
 
     return payload;

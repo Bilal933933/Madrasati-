@@ -118,6 +118,8 @@ describe('ContextService', () => {
     });
     performanceMock.weakAreas.mockResolvedValue([]);
 
-    await expect(service.getStudentContext(1)).rejects.toThrow('Student not found');
+    await expect(service.getStudentContext(1)).rejects.toThrow(
+      'Student not found',
+    );
   });
 });

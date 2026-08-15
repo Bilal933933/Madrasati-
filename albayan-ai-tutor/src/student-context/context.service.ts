@@ -33,7 +33,9 @@ export class ContextService {
           grade_id: true,
           semester_id: true,
           last_subject_id: true,
-          grades: { select: { name: true, stages: { select: { name: true } } } },
+          grades: {
+            select: { name: true, stages: { select: { name: true } } },
+          },
           semesters: { select: { name: true } },
           subjects: { select: { name: true } },
         },
@@ -78,7 +80,9 @@ export class ContextService {
         stageName: profile?.grades?.stages?.name ?? null,
         semesterName: profile?.semesters?.name ?? null,
         currentSubjectId:
-          profile?.last_subject_id != null ? Number(profile.last_subject_id) : null,
+          profile?.last_subject_id != null
+            ? Number(profile.last_subject_id)
+            : null,
         currentSubjectName: profile?.subjects?.name ?? null,
       },
       progress: {

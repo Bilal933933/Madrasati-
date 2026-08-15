@@ -28,7 +28,9 @@ export class AiSessionGuard implements CanActivate {
       return true;
     } catch (error) {
       if (error instanceof UnauthorizedException) {
-        client.emit('error', { message: 'مصادقة AI Tutor مرفوضة. أعد تسجيل الدخول.' });
+        client.emit('error', {
+          message: 'مصادقة AI Tutor مرفوضة. أعد تسجيل الدخول.',
+        });
         client.disconnect();
         return false;
       }

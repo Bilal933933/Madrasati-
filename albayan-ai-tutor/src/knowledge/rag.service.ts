@@ -1,6 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service.js';
-import { MarkdownLoader } from './markdown-loader.js';
+import {
+  BookSection,
+  GeneralBookDoc,
+  MarkdownLoader,
+} from './markdown-loader.js';
 
 export interface RagResult {
   lessons: { id: number; title: string; summary: string | null }[];
@@ -10,12 +14,15 @@ export interface RagResult {
 
 @Injectable()
 export class RagService {
-  private static readonly MAX_CHARS = 12000;
+  private readonly maxChars: number;
 
   constructor(
     private readonly prisma: PrismaService,
     private readonly markdown: MarkdownLoader,
-  ) {}
+  ) {
+    const parsed = Number.parseInt(process.env.AI_RAG_MAX_CHARS ?? '', 10);
+    this.maxChars = Number.isFinite(parsed) && parsed > 0 ? parsed : 120000;
+  }
 
   /**
    * استرجاع نصي بسيط (بلا vector DB):
@@ -54,7 +61,8 @@ export class RagService {
       }))
       .sort((a, b) => b.score - a.score);
 
-    const selected = scored.slice(0, 4);
+    // استبعاد الدروس عديمة الصلة تمامًا (score=0) حتى لا تُزحم النافذة.
+    const selected = scored.filter((s) => s.score > 0).slice(0, 4);
 
     const paragraphs = await this.prisma.paragraphs.findMany({
       where: {
@@ -70,29 +78,91 @@ export class RagService {
       byLesson.set(Number(p.lesson_id), list);
     }
 
-    let contentWindow = '';
+    const lessonsBlock: string[] = [];
     const sources: RagResult['sources'] = [];
     for (const entry of selected) {
-      if (contentWindow.length >= RagService.MAX_CHARS) break;
       const texts = byLesson.get(Number(entry.lesson.id)) ?? [];
-      const body = `### ${entry.lesson.title}\n${texts.join('\n\n')}`;
-      contentWindow += `${body}\n\n`;
+      if (texts.length > 0) {
+        lessonsBlock.push(`### ${entry.lesson.title}\n${texts.join('\n\n')}`);
+      }
       sources.push({
         lessonId: Number(entry.lesson.id),
         lessonTitle: entry.lesson.title,
       });
     }
 
-    // إضافة ملفات المعرفة Markdown المطابقة (الكتاب المدرسي والمراجع العامة).
+    const layers: string[] = [];
+
+    // الطبقة 1: الدروس المطابقة من المنصة.
+    if (lessonsBlock.length > 0) {
+      layers.push(
+        `## الطبقة 1: الدرس على المنصة\n${lessonsBlock.join('\n\n')}`,
+      );
+    }
+
+    // الطبقة 2: ملفات المعرفة Markdown المطابقة (الكتاب المدرسي والمراجع العام).
     const markdownDocs = this.markdown.matching({
       subjectId: opts.subjectId,
       gradeId: opts.gradeId,
     });
+    const markdownBlock: string[] = [];
     for (const doc of markdownDocs) {
-      if (contentWindow.length >= RagService.MAX_CHARS) break;
       const label = doc.type === 'reference' ? 'مرجع عام' : 'من الكتاب المدرسي';
-      const body = `### ${doc.title} — [${label}]\n${doc.body}`;
-      contentWindow += `${body}\n\n`;
+      markdownBlock.push(`### ${doc.title} — [${label}]\n${doc.body}`);
+    }
+    if (markdownBlock.length > 0) {
+      layers.push(
+        `## الطبقة 2: من الكتاب المدرسي والمراجع\n${markdownBlock.join('\n\n')}`,
+      );
+    }
+
+    // الطبقة 3: الكتب العامة المفهرسة — قراءة كل الأقسام المطابقة للسؤال،
+    // مرتّبة بالنتيجة (الأعلى صلة أولًا) وضمن ميزانية الحروف المتبقية بعد
+    // الطبقتين 1 و2. بذلك تُقرأ كل التفاصيل ذات الصلة (أنواع، أشكال، حالات)
+    // ولو توزّعت على أقسام كثيرة أو مصادر متعددة، بأقسام كاملة لا قصّ وسطها.
+    const generalBooks = this.markdown.matchingGeneral({
+      subjectId: opts.subjectId,
+      gradeId: opts.gradeId,
+    });
+    const tokenWeights = this.computeTokenWeights(generalBooks, tokens);
+    const candidates: {
+      section: BookSection;
+      book: GeneralBookDoc;
+      score: number;
+    }[] = [];
+    for (const book of generalBooks) {
+      for (const cand of this.candidateSections(book, tokens, tokenWeights)) {
+        candidates.push({ ...cand, book });
+      }
+    }
+    candidates.sort((a, b) => b.score - a.score);
+
+    const usedBefore = layers.reduce(
+      (sum, l) => sum + l.length + '\n\n'.length,
+      0,
+    );
+    const budget = Math.max(0, this.maxChars - usedBefore);
+
+    const generalBlock: string[] = [];
+    let used = 0;
+    for (const cand of candidates) {
+      const text = this.markdown.readSection(cand.book, cand.section);
+      if (!text) continue;
+      const block = `### ${cand.section.title} — [${cand.book.title}: ${cand.section.page}]\n${text}`;
+      // يقرأ أول قسم مهما كان حجمه، ثم يتوقف عند تجاوز الميزانية بأقسام كاملة.
+      if (generalBlock.length > 0 && used + block.length > budget) break;
+      generalBlock.push(block);
+      used += block.length;
+    }
+    if (generalBlock.length > 0) {
+      layers.push(
+        `## الطبقة 3: من المراجع العامة\n${generalBlock.join('\n\n')}`,
+      );
+    }
+
+    let contentWindow = layers.join('\n\n');
+    if (contentWindow.length > this.maxChars) {
+      contentWindow = contentWindow.slice(0, this.maxChars);
     }
 
     return {
@@ -101,17 +171,92 @@ export class RagService {
         title: s.lesson.title,
         summary: s.lesson.summary,
       })),
-      contentWindow: contentWindow.slice(0, RagService.MAX_CHARS),
+      contentWindow: contentWindow,
       sources,
     };
   }
 
   private tokenize(text: string): string[] {
-    return text
-      .toLowerCase()
+    return normalizeArabic(text)
       .replace(/[^\p{L}\p{N}]+/gu, ' ')
       .split(/\s+/)
-      .filter((t) => t.length > 1);
+      .filter((t) => t.length > 1 && !STOPWORDS.has(t));
+  }
+
+  /**
+   * يزن التوكنز عكسيًا مع تواترها في كتالوج الأقسام كافة (idf):
+   * المفردة النادرة (المبتدأ) تُرجَّح فوق الكلمة العامة المتكررة (الفرق، بين)
+   * فيعلو القسم المطابق للموضوع الحقيقي على المقارنات العامة.
+   * الصيغة (total+1)/(df+1) تضمن وزنًا موجبًا حتى في الكتالوجات الصغيرة.
+   */
+  private computeTokenWeights(
+    books: GeneralBookDoc[],
+    tokens: string[],
+  ): Map<string, number> {
+    const sections: string[] = [];
+    for (const book of books) {
+      for (const part of book.parts) {
+        for (const section of part.sections) {
+          if (section.kind !== 'content') continue;
+          sections.push(
+            `${section.title} ${(section.concepts ?? []).join(' ')}`,
+          );
+        }
+      }
+    }
+    const total = Math.max(sections.length, 1);
+    const weights = new Map<string, number>();
+    for (const token of tokens) {
+      let df = 0;
+      for (const text of sections) {
+        if (textMatchesToken(text, token)) df += 1;
+      }
+      // حد أدنى للوزن (0.5) حتى لا ينعدم وزن المفردة الشائعة في كتالوج صغير
+      // يكون فيه df قريبًا من total، فلا يُسقط قسمٌ صحيح لمجرد شيوع لفظة فيه.
+      weights.set(token, Math.max(0.5, Math.log((total + 1) / (df + 1))));
+    }
+    return weights;
+  }
+
+  /**
+   * يرصد كل أقسام الكتاب المجتازة لبوابة الصلة: تطابق توكنز السؤال مع
+   * العنوان أو المفاهيم، مع إمّا مفردة جوهرية على الأقل (contentMatch).
+   * تُرجع المرشّحين بنتائجهم مرتّبة تنازليًا لتُرَتَّب على مستوى الكتب كافة
+   * وتُقتطع حسب الميزانية في retrieve.
+   */
+  private candidateSections(
+    book: GeneralBookDoc,
+    tokens: string[],
+    weights: Map<string, number>,
+  ): { section: BookSection; score: number }[] {
+    if (tokens.length === 0) return [];
+
+    const scored: { section: BookSection; score: number }[] = [];
+    for (const part of book.parts) {
+      for (const section of part.sections) {
+        if (section.kind !== 'content') continue;
+        const title = normalizeArabic(section.title).toLowerCase();
+        const concepts = normalizeArabic(
+          (section.concepts ?? []).join(' '),
+        ).toLowerCase();
+
+        let score = 0;
+        let contentMatch = false;
+        for (const token of tokens) {
+          const tMatch = textMatchesToken(title, token);
+          const cMatch = textMatchesToken(concepts, token);
+          if (!tMatch && !cMatch) continue;
+          if (!MINOR_TOKENS.has(token)) contentMatch = true;
+          const w = MINOR_TOKENS.has(token) ? 0.5 : (weights.get(token) ?? 1);
+          if (tMatch) score += 3 * w;
+          if (cMatch) score += 2 * w;
+        }
+        // الأقسام التي لا تطابق أي مفردة جوهرية (مثل "الفرق بين...") خارج السباق.
+        if (score > 0 && contentMatch) scored.push({ section, score });
+      }
+    }
+
+    return scored.sort((a, b) => b.score - a.score);
   }
 
   private scoreLesson(
@@ -130,10 +275,92 @@ export class RagService {
 
     let score = 0;
     for (const token of tokens) {
-      if (title.includes(token)) score += 3;
-      if (summary.includes(token)) score += 2;
-      if (objectives.includes(token)) score += 1;
+      if (textMatchesToken(title, token)) score += 3;
+      if (textMatchesToken(summary, token)) score += 2;
+      if (textMatchesToken(objectives, token)) score += 1;
     }
     return score;
   }
+}
+
+/**
+ * يطبّع النص العربي للمطابقة: يجرّد التشكيل وعلامات الإعراب والتطويل
+ * ويوحّد الألف المقصورة والتاء المربوطة والهمزات. ضروري لأن عناوين
+ * الفهارس مشكولة بينما أسئلة الطالب غير مشكولة عادة.
+ */
+export function normalizeArabic(text: string): string {
+  return text
+    .replace(/[\u064B-\u0652\u0670\u0640]/g, '')
+    .replace(/\u0649/g, '\u064A')
+    .replace(/\u0629/g, '\u0647')
+    .replace(/[\u0623\u0622\u0625]/g, '\u0627');
+}
+
+/** كلمات استفهام/ربط عامة تُستبعد من التوكنز حتى لا تلوّث المطابقة. */
+const STOPWORDS = new Set([
+  'ما',
+  'ماذا',
+  'ماهو',
+  'ماهي',
+  'لماذا',
+  'كيف',
+  'هل',
+  'متي',
+  'اين',
+  'هو',
+  'هي',
+  'هذا',
+  'هذه',
+  'ذلك',
+  'تلك',
+  'ان',
+  'ثم',
+  'قد',
+  'انت',
+  'نحن',
+]);
+
+/**
+ * توكنز مقارنة عامة شائعة في العناوين (الفرق بين...) — تُمنح وزنًا منخفضًا
+ * ولا ينهض قسمٌ بها وحدها ليُقرأ.
+ */
+const MINOR_TOKENS = new Set(['الفرق', 'بين']);
+
+/**
+ * يوسّع الكلمة إلى أشكالها الاحتمالية بعد تطبيعها: يجرّد حروف الجر/العطف
+ * المفردة (و ف ب ك ل) وأداة التعريف (ال) المتكررة على شكل و/ف/ب/ك/ل + ال.
+ * مثال: «والخبر» ← { والخبر, الخبر, خبر }.
+ */
+function expandWord(word: string): Set<string> {
+  const out = new Set<string>();
+  if (!word) return out;
+  out.add(word);
+  let w = word;
+  while (w.length > 2 && 'وفبكل'.includes(w[0])) {
+    w = w.slice(1);
+    out.add(w);
+  }
+  if (w.startsWith('ال') && w.length - 2 >= 3) {
+    out.add(w.slice(2));
+  }
+  return out;
+}
+
+/**
+ * يتحقق من أن التوكن يطابق كلمة كاملة في النص مع مراعاة البادئات —
+ * لا مطابقة جزئية: «بين» لا تطابق «بينما»، و«والخبر» تطابق «الخبر».
+ */
+function textMatchesToken(text: string, token: string): boolean {
+  const tokenCands = expandWord(normalizeArabic(token).toLowerCase());
+  const words = normalizeArabic(text)
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N}]+/gu, ' ')
+    .split(/\s+/)
+    .filter(Boolean);
+  for (const w of words) {
+    for (const c of expandWord(w)) {
+      if (tokenCands.has(c)) return true;
+    }
+  }
+  return false;
 }

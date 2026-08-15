@@ -1,6 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service.js';
-import type { chat_messagesModel, chat_threadsModel } from '../generated/prisma/models.js';
+import type {
+  chat_messagesModel,
+  chat_threadsModel,
+} from '../generated/prisma/models.js';
 
 export interface MessageDto {
   id: string;
@@ -138,7 +141,10 @@ export class ThreadsService {
   }
 
   /** العنوان يُقتطع من أول سؤال (يُستدعى مرة واحدة عند أول رسالة). */
-  async setTitleFromQuestion(threadId: number, question: string): Promise<void> {
+  async setTitleFromQuestion(
+    threadId: number,
+    question: string,
+  ): Promise<void> {
     await this.prisma.chat_threads.update({
       where: { id: BigInt(threadId) },
       data: {
@@ -147,7 +153,10 @@ export class ThreadsService {
     });
   }
 
-  async findOwnedThread(threadId: number, userId: number): Promise<chat_threadsModel> {
+  async findOwnedThread(
+    threadId: number,
+    userId: number,
+  ): Promise<chat_threadsModel> {
     const thread = await this.prisma.chat_threads.findUnique({
       where: { id: BigInt(threadId) },
     });
@@ -169,7 +178,9 @@ export class ThreadsService {
     };
   }
 
-  private preview(message: { content: string; kind: string } | undefined): string | null {
+  private preview(
+    message: { content: string; kind: string } | undefined,
+  ): string | null {
     if (!message) return null;
     if (message.kind === 'quiz') return '[سؤال اختبار]';
     const text = message.content.replace(/\s+/g, ' ').trim();

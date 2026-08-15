@@ -28,10 +28,11 @@ export class AiRestGuard implements CanActivate {
     const token = header.substring(7);
     try {
       const claims = this.tickets.verify(token);
-      (request as Request & { user?: { userId: number; role: string } }).user = {
-        userId: claims.sub,
-        role: claims.role,
-      };
+      (request as Request & { user?: { userId: number; role: string } }).user =
+        {
+          userId: claims.sub,
+          role: claims.role,
+        };
       return true;
     } catch {
       throw new UnauthorizedException('Invalid or expired AI session token');

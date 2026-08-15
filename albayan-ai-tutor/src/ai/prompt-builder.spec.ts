@@ -6,7 +6,12 @@ describe('PromptBuilder', () => {
   const builder = new PromptBuilder();
 
   const context: StudentContext = {
-    student: { id: 42, name: 'أحمد محمد', email: 'ahmed@school.com', role: 'student' },
+    student: {
+      id: 42,
+      name: 'أحمد محمد',
+      email: 'ahmed@school.com',
+      role: 'student',
+    },
     placement: {
       gradeId: 8,
       gradeName: 'ثالث ثانوي',
@@ -33,7 +38,9 @@ describe('PromptBuilder', () => {
   };
 
   const rag: RagResult = {
-    lessons: [{ id: 15, title: 'التمثيل الضوئي', summary: 'تحويل الضوء لطاقة' }],
+    lessons: [
+      { id: 15, title: 'التمثيل الضوئي', summary: 'تحويل الضوء لطاقة' },
+    ],
     contentWindow: 'محتوى عن التمثيل الضوئي',
     sources: [{ lessonId: 15, lessonTitle: 'التمثيل الضوئي' }],
   };
@@ -50,5 +57,25 @@ describe('PromptBuilder', () => {
     expect(prompt).toContain('5');
     expect(prompt).toContain('التمثيل الضوئي');
     expect(prompt).toContain('لا تخترع معلومات');
+  });
+
+  it('يأمر بالتدرّج عبر الطبقات وذكر المصدر', () => {
+    const prompt = builder.build(context, rag);
+
+    expect(prompt).toContain('ثلاث طبقات');
+    expect(prompt).toContain('الدرس على المنصة');
+    expect(prompt).toContain('الكتاب المدرسي');
+    expect(prompt).toContain('المراجع العامة');
+    expect(prompt).toContain('(من كتاب كيف تتقن النحو)');
+    expect(prompt).toContain('(من الكتاب المدرسي)');
+  });
+
+  it('يأمر بإبراز التفاصيل الإضافية في قسم منفصل', () => {
+    const prompt = builder.build(context, rag);
+
+    expect(prompt).toContain('تفاصيل إضافية عن موضوع السؤال');
+    expect(prompt).toContain('أشكاله، أقسامه من حيث الإعراب');
+    expect(prompt).toContain('قسم منفصل');
+    expect(prompt).toContain('اشرحها');
   });
 });

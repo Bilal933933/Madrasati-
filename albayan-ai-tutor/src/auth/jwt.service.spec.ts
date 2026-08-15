@@ -30,7 +30,9 @@ describe('AiTicketService', () => {
 
   it('يرفض التذكرة المزورة', () => {
     const token = jwt.sign({ sub: 42, role: 'student' }, { expiresIn: '15m' });
-    expect(() => service.verify(`${token}forged`)).toThrow(UnauthorizedException);
+    expect(() => service.verify(`${token}forged`)).toThrow(
+      UnauthorizedException,
+    );
   });
 
   it('يرفض تذكرة غير طالب (admin)', () => {
