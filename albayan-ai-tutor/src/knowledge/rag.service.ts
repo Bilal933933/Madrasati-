@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service.js';
+import { splitMarkdown, type Chunk } from './chunker.js';
 import {
   BookSection,
   GeneralBookDoc,
+  MarkdownDoc,
   MarkdownLoader,
 } from './markdown-loader.js';
 
@@ -100,15 +102,49 @@ export class RagService {
       );
     }
 
-    // الطبقة 2: ملفات المعرفة Markdown المطابقة (الكتاب المدرسي والمراجع العام).
-    const markdownDocs = this.markdown.matching({
+    const layersLength = (ls: string[]): number =>
+      ls.reduce((sum, l) => sum + l.length + 2, 0);
+
+    // الأوزان IDF تُحسب مرة واحدة وتُشارك بين الطبقتين 2 و3 لاتساق الصلة.
+    const generalBooks = this.markdown.matchingGeneral({
       subjectId: opts.subjectId,
       gradeId: opts.gradeId,
     });
+    const tokenWeights = this.computeTokenWeights(generalBooks, tokens);
+
+    // الطبقة 2: ملفات المعرفة Markdown (الكتاب المدرسي والمراجع).
+    // تُقطَّع نصوصها عبر chunker ثم تُقيَّم بنفس أوزان الطبقة 3 بدل ضخ كامل
+    // الملف — فلا تدخل الملفات غير المطابقة، ويُختار أنسب المقاطع فقط.
+    const chunkCandidates: {
+      doc: MarkdownDoc;
+      chunk: Chunk;
+      score: number;
+    }[] = [];
+    for (const doc of this.markdown.matching({
+      subjectId: opts.subjectId,
+      gradeId: opts.gradeId,
+    })) {
+      for (const chunk of splitMarkdown(doc.body)) {
+        const { score, contentMatch } = scoreChunk(chunk, tokens, tokenWeights);
+        if (score > 0 && contentMatch) {
+          chunkCandidates.push({ doc, chunk, score });
+        }
+      }
+    }
+    chunkCandidates.sort((a, b) => b.score - a.score);
+
+    const budget2 = Math.max(0, this.maxChars - layersLength(layers));
     const markdownBlock: string[] = [];
-    for (const doc of markdownDocs) {
-      const label = doc.type === 'reference' ? 'مرجع عام' : 'من الكتاب المدرسي';
-      markdownBlock.push(`### ${doc.title} — [${label}]\n${doc.body}`);
+    let used2 = 0;
+    for (const cand of chunkCandidates) {
+      const label =
+        cand.doc.type === 'reference' ? 'مرجع عام' : 'من الكتاب المدرسي';
+      const heading = cand.chunk.heading.trim();
+      const block = `### ${cand.doc.title} — [${label}]${heading ? ` — ${heading}` : ''}\n${cand.chunk.text}`;
+      // يقرأ أول مقطع مهما كان حجمه، ثم يتوقف عند تجاوز الميزانية بمقاطع كاملة.
+      if (markdownBlock.length > 0 && used2 + block.length > budget2) break;
+      markdownBlock.push(block);
+      used2 += block.length;
     }
     if (markdownBlock.length > 0) {
       layers.push(
@@ -120,11 +156,6 @@ export class RagService {
     // مرتّبة بالنتيجة (الأعلى صلة أولًا) وضمن ميزانية الحروف المتبقية بعد
     // الطبقتين 1 و2. بذلك تُقرأ كل التفاصيل ذات الصلة (أنواع، أشكال، حالات)
     // ولو توزّعت على أقسام كثيرة أو مصادر متعددة، بأقسام كاملة لا قصّ وسطها.
-    const generalBooks = this.markdown.matchingGeneral({
-      subjectId: opts.subjectId,
-      gradeId: opts.gradeId,
-    });
-    const tokenWeights = this.computeTokenWeights(generalBooks, tokens);
     const candidates: {
       section: BookSection;
       book: GeneralBookDoc;
@@ -137,11 +168,7 @@ export class RagService {
     }
     candidates.sort((a, b) => b.score - a.score);
 
-    const usedBefore = layers.reduce(
-      (sum, l) => sum + l.length + '\n\n'.length,
-      0,
-    );
-    const budget = Math.max(0, this.maxChars - usedBefore);
+    const budget = Math.max(0, this.maxChars - layersLength(layers));
 
     const generalBlock: string[] = [];
     let used = 0;
@@ -160,7 +187,14 @@ export class RagService {
       );
     }
 
+    // حماية قصوى بلا قصّ وسط المعرفة: تُسقط طبقات كاملة من النهاية عند
+    // تجاوز السقف، فلا يُقطع قسم في منتصفه إلا في الحالة النظرية الوحيدة
+    // التي تتفوق فيها الطبقة 1 وحدها على السقف.
     let contentWindow = layers.join('\n\n');
+    while (contentWindow.length > this.maxChars && layers.length > 1) {
+      layers.pop();
+      contentWindow = layers.join('\n\n');
+    }
     if (contentWindow.length > this.maxChars) {
       contentWindow = contentWindow.slice(0, this.maxChars);
     }
@@ -281,6 +315,37 @@ export class RagService {
     }
     return score;
   }
+}
+
+/**
+ * يقيّم مقطعًا من الطبقة 2 (نص ملف مدرسي/مرجع) بنفس أوزان الطبقة 3:
+ * تطابق العنوان أعلى (3w) من تطابق النص (2w)، مع وزن الندرة IDF.
+ * يُرفض المقطع إن لم يطابق أي مفردة جوهرية (contentMatch) — فلا تدخل
+ * الملفات غير ذات الصلة نافذة السياق.
+ */
+export function scoreChunk(
+  chunk: Chunk,
+  tokens: string[],
+  weights: Map<string, number>,
+): { score: number; contentMatch: boolean } {
+  if (tokens.length === 0) return { score: 0, contentMatch: false };
+
+  const heading = normalizeArabic(chunk.heading).toLowerCase();
+  const text = normalizeArabic(chunk.text).toLowerCase();
+
+  let score = 0;
+  let contentMatch = false;
+  for (const token of tokens) {
+    const tMatch = textMatchesToken(heading, token);
+    const cMatch = textMatchesToken(text, token);
+    if (!tMatch && !cMatch) continue;
+    if (!MINOR_TOKENS.has(token)) contentMatch = true;
+    const w = MINOR_TOKENS.has(token) ? 0.5 : (weights.get(token) ?? 1);
+    if (tMatch) score += 3 * w;
+    if (cMatch) score += 2 * w;
+  }
+
+  return { score: score > 0 && contentMatch ? score : 0, contentMatch };
 }
 
 /**

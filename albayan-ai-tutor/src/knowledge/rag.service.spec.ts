@@ -4,7 +4,8 @@ import {
   GeneralBookDoc,
   MarkdownLoader,
 } from './markdown-loader.js';
-import { RagService, normalizeArabic } from './rag.service.js';
+import { splitMarkdown, type Chunk } from './chunker.js';
+import { normalizeArabic, RagService, scoreChunk } from './rag.service.js';
 
 describe('RagService', () => {
   const prismaMock = {
@@ -376,6 +377,138 @@ describe('RagService', () => {
             'المُبْتَدَأُ وَالْخَبَرُ فِي صَفْحَةٍ وَاحِدَةٍ',
           );
         });
+    });
+  });
+
+  describe('الطبقة 2 — تقييم ملفات المدرسي/المراجع بالسؤال بدل ضخها كاملة', () => {
+    const doc = (title: string, body: string) => ({
+      path: 'textbook/primary/primary_4/اللغة العربية/النحو/lesson.md',
+      type: 'textbook' as const,
+      stageKey: 'primary',
+      gradeKey: 'primary_4',
+      subjectName: 'اللغة العربية',
+      courseName: 'النحو',
+      title,
+      body,
+      subjectId: 5,
+      gradeId: 8,
+    });
+
+    it('يختار مقطع الملف المطابق ويسقط الملف غير ذي الصلة', async () => {
+      markdownMock.matching.mockReturnValue([
+        doc(
+          'درس المبتدأ والخبر',
+          '## المبتدأ\nالمبتدأ اسم مرفوع يقع أول الجملة.\n\n## الخبر\nالخبر يتمم معنى المبتدأ.',
+        ),
+        doc('درس التنوين', '## التنوين\nالتنوين نون ساكنة تلحق آخر الاسم.'),
+      ]);
+      markdownMock.matchingGeneral.mockReturnValue([]);
+      prismaMock.lessons.findMany.mockResolvedValue([]);
+      prismaMock.paragraphs.findMany.mockResolvedValue([]);
+
+      const result = await rag.retrieve('ما المبتدأ والخبر؟', {
+        subjectId: 5,
+        gradeId: null,
+      });
+
+      expect(result.contentWindow).toContain('المبتدأ اسم مرفوع');
+      expect(result.contentWindow).not.toContain('التنوين نون ساكنة');
+    });
+
+    it('بسقف ضيق يُسقط الطبقة الزائدة كاملة ولا يقطع وسط النص', async () => {
+      const original = process.env.AI_RAG_MAX_CHARS;
+      process.env.AI_RAG_MAX_CHARS = '180';
+      try {
+        rag = new RagService(
+          prismaMock as unknown as PrismaService,
+          markdownMock as unknown as MarkdownLoader,
+        );
+        prismaMock.lessons.findMany.mockResolvedValue([
+          {
+            id: 1n,
+            title: 'المبتدأ',
+            summary: 'مبتدأ مرفوع يقع أول الجملة.',
+            learning_objectives: [],
+          },
+        ]);
+        prismaMock.paragraphs.findMany.mockResolvedValue([
+          { lesson_id: 1n, title: 'المبتدأ', content: 'مبتدأ مرفوع' },
+        ]);
+        markdownMock.matching.mockReturnValue([
+          doc('درس طويل', `## المبتدأ\n${'كلمة '.repeat(60)}`),
+        ]);
+        markdownMock.matchingGeneral.mockReturnValue([]);
+
+        const result = await rag.retrieve('ما المبتدأ؟', {
+          subjectId: 5,
+          gradeId: null,
+        });
+
+        expect(result.contentWindow.length).toBeLessThanOrEqual(180);
+        expect(result.contentWindow).toContain('مبتدأ مرفوع');
+        expect(result.contentWindow).not.toContain('كلمة');
+      } finally {
+        if (original === undefined) delete process.env.AI_RAG_MAX_CHARS;
+        else process.env.AI_RAG_MAX_CHARS = original;
+      }
+    });
+
+    it('في مستند يتجاوز هدف التقطيع يُسقط قسم غير مطابق إلى قطعة مستقلة', async () => {
+      const words = (n: number, seed: number) =>
+        Array.from({ length: n }, (_, i) => `كلمة${seed + i}`).join(' ');
+      markdownMock.matching.mockReturnValue([
+        doc(
+          'درس مرجعي',
+          `## الميزان الصرفي\n${words(600, 1000)}\n\n## القاعدة العامة\n${words(600, 2000)}`,
+        ),
+      ]);
+      markdownMock.matchingGeneral.mockReturnValue([]);
+      prismaMock.lessons.findMany.mockResolvedValue([]);
+      prismaMock.paragraphs.findMany.mockResolvedValue([]);
+
+      const result = await rag.retrieve('ما الميزان الصرفي؟', {
+        subjectId: 5,
+        gradeId: null,
+      });
+
+      expect(result.contentWindow).toContain('كلمة1000');
+      expect(result.contentWindow).not.toContain('القاعدة العامة');
+      expect(result.contentWindow).not.toContain('كلمة2000');
+    });
+  });
+
+  describe('scoreChunk', () => {
+    const chunk = (heading: string, text: string): Chunk => ({
+      id: 'c-001',
+      heading,
+      text,
+      startPage: 1,
+      endPage: 1,
+      wordCount: text.split(/\s+/).length,
+    });
+
+    it('يمنح تطابق العنوان وزنًا أعلى من النص ويشترط مفردة جوهرية', () => {
+      const weights = new Map([
+        ['مبتدا', 2],
+        ['مرفوع', 1.5],
+      ]);
+      const s = scoreChunk(
+        chunk('المبتدأ', 'المبتدأ اسم مرفوع يقع أول الجملة.'),
+        ['مبتدا', 'مرفوع'],
+        weights,
+      );
+      expect(s.contentMatch).toBe(true);
+      expect(s.score).toBeGreaterThan(0);
+    });
+
+    it('يرفض المقطع بلا أي تطابق مضموني', () => {
+      const s = scoreChunk(
+        chunk('التنوين', 'التنوين نون ساكنة تلحق آخر الاسم.'),
+        ['مبتدا'],
+        new Map(),
+      );
+      expect(s.score).toBe(0);
+      expect(s.contentMatch).toBe(false);
     });
   });
 });
