@@ -3,10 +3,10 @@ import {
   Catch,
   ExceptionFilter,
   HttpException,
-  Logger,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { Socket } from 'socket.io';
+import { LoggerService } from '../logger/logger.service.js';
 import { AppError } from './app-error.js';
 import { ErrorCode } from './error-codes.js';
 
@@ -114,6 +114,13 @@ function httpUserIdOf(host: ArgumentsHost): number | undefined {
   };
   return request?.user?.userId;
 }
+
+function httpRequestIdOf(host: ArgumentsHost): string | undefined {
+  const request = host.switchToHttp().getRequest() as unknown as {
+    requestId?: string;
+  };
+  return request?.requestId;
+}
 /* eslint-enable @typescript-eslint/no-unnecessary-type-assertion */
 
 /**
@@ -126,7 +133,7 @@ function httpUserIdOf(host: ArgumentsHost): number | undefined {
  */
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
-  private readonly logger = new Logger(GlobalExceptionFilter.name);
+  constructor(private readonly loggerService: LoggerService) {}
 
   catch(error: unknown, host: ArgumentsHost): void {
     const body = resolveErrorBody(error);
@@ -136,9 +143,19 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       ? wsUserIdOf(host.switchToWs().getClient<Socket>())
       : httpUserIdOf(host);
 
-    this.logger.error(
-      `[${isWs ? 'ws' : 'http'}] userId=${userId ?? '-'} code=${body.code} status=${body.statusCode} detail=${detailsOf(error)}`,
-      error instanceof Error ? error.stack : undefined,
+    this.loggerService.error(
+      {
+        event: `${isWs ? 'ws' : 'http'}_error`,
+        userId,
+        requestId: isWs ? undefined : httpRequestIdOf(host),
+      },
+      `Error [${body.code}] transport=${isWs ? 'ws' : 'http'} status=${body.statusCode}`,
+      error,
+      {
+        statusCode: body.statusCode,
+        code: body.code,
+        detail: detailsOf(error),
+      },
     );
 
     if (isWs) {

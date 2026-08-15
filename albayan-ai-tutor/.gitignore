@@ -9,3 +9,6 @@ coverage/
 
 # Prisma Client المولّد — يولّد من جديد عبر `npx prisma generate`
 src/generated/prisma/
+
+# سجلات Winston
+logs/

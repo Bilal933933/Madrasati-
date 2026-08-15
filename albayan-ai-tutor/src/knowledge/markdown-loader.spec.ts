@@ -1,6 +1,7 @@
 ﻿import * as fs from 'node:fs';
 import * as os from 'node:os';
 import * as path from 'node:path';
+import type { LoggerService } from '../common/logger/logger.service.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 import {
   GeneralBookDoc,
@@ -15,11 +16,21 @@ describe('MarkdownLoader', () => {
     subjects: { findFirst: jest.fn(), findMany: jest.fn() },
   };
 
+  const loggerMock: Partial<LoggerService> = {
+    info: jest.fn(),
+    warn: jest.fn(),
+    debug: jest.fn(),
+    error: jest.fn(),
+  };
+
   let loader: MarkdownLoader;
 
   beforeEach(() => {
     jest.clearAllMocks();
-    loader = new MarkdownLoader(prismaMock as unknown as PrismaService);
+    loader = new MarkdownLoader(
+      prismaMock as unknown as PrismaService,
+      loggerMock as unknown as LoggerService,
+    );
   });
 
   describe('parseFrontMatter', () => {

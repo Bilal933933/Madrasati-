@@ -1,6 +1,7 @@
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
+import { LoggerService } from '../common/logger/logger.service.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 
 /**
@@ -96,11 +97,13 @@ interface BookMetadata {
  */
 @Injectable()
 export class MarkdownLoader implements OnModuleInit {
-  private readonly logger = new Logger(MarkdownLoader.name);
   private readonly docs: MarkdownDoc[] = [];
   private generalBooks: GeneralBookDoc[] = [];
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly logger: LoggerService,
+  ) {}
 
   async onModuleInit(): Promise<void> {
     const raw = this.readAll();
@@ -111,7 +114,8 @@ export class MarkdownLoader implements OnModuleInit {
     if (books.length > 0) {
       this.generalBooks = await this.resolveGeneralBooks(books);
     }
-    this.logger.log(
+    this.logger.info(
+      { event: 'knowledge_loaded' },
       `تم تحميل ${this.docs.length} ملف معرفة Markdown و${this.generalBooks.length} كتابًا عامًا مفهرسًا`,
     );
   }
@@ -184,7 +188,11 @@ export class MarkdownLoader implements OnModuleInit {
           gradeIds: [],
         });
       } catch {
-        this.logger.warn(`metadata.json غير صالح في ${metaPath}`);
+        this.logger.warn(
+          { event: 'metadata_invalid' },
+          `metadata.json غير صالح في ${metaPath}`,
+          { book: entry.name },
+        );
       }
     }
     return books;
