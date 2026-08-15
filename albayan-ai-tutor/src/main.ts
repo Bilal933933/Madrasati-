@@ -1,12 +1,15 @@
 import { NestFactory } from '@nestjs/core';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import helmet from 'helmet';
 import { AppModule } from './app.module.js';
+import { corsOptions } from './common/security/cors.config.js';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
-  app.enableCors({
-    origin: process.env.FRONTEND_URL ?? 'http://localhost:3000',
-  });
+  app.useBodyParser('json', { limit: '64kb' });
+  app.use(helmet());
+  app.enableCors(corsOptions());
 
   // TODO(logging backlog): ربط LoggerService كـ NestLogger عبر app.useLogger()
   // لتوحيد سجلات إقلاع Nest الداخلية مع Winston (مؤجل — ليست أولوية حاليًا).

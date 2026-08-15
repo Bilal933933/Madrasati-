@@ -1,6 +1,12 @@
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import {
+  ExecutionContext,
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+} from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { APP_FILTER } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD } from '@nestjs/core';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { AiModule } from './ai/ai.module.js';
 import { AuthModule } from './auth/auth.module.js';
 import { ChatModule } from './chat/chat.module.js';
@@ -16,6 +22,12 @@ import { ThreadsModule } from './threads/threads.module.js';
   imports: [
     LoggerModule,
     ConfigModule.forRoot({ isGlobal: true }),
+    ThrottlerModule.forRoot({
+      throttlers: [{ name: 'default', ttl: 60_000, limit: 100 }],
+      // ThrottlerGuard مخصص HTTP — نتخطاه للـ WebSocket حتى لا يكسر الدردشة
+      // (حارس الـ WS الحقيقي هو assertWithinLimit في ChatService).
+      skipIf: (context: ExecutionContext) => context.getType() === 'ws',
+    }),
     PrismaModule,
     AuthModule,
     StudentContextModule,
@@ -28,6 +40,10 @@ import { ThreadsModule } from './threads/threads.module.js';
     {
       provide: APP_FILTER,
       useClass: GlobalExceptionFilter,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
     },
   ],
 })

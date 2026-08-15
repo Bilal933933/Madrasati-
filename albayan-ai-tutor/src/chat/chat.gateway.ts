@@ -10,6 +10,7 @@ import { Socket } from 'socket.io';
 import { AiSessionGuard } from '../auth/ai-session.guard.js';
 import { LoggerService } from '../common/logger/logger.service.js';
 import { CustomValidationPipe } from '../common/pipes/validation.pipe.js';
+import { corsOrigins } from '../common/security/cors.config.js';
 import { ChatService } from './chat.service.js';
 import { GenerateQuestionDto } from './dto/generate-question.dto.js';
 import { SendQuestionDto } from './dto/send-question.dto.js';
@@ -17,7 +18,7 @@ import { SendQuestionDto } from './dto/send-question.dto.js';
 @WebSocketGateway({
   namespace: 'chat',
   cors: {
-    origin: process.env.FRONTEND_URL ?? 'http://localhost:3000',
+    origin: corsOrigins(),
   },
 })
 @UseGuards(AiSessionGuard)

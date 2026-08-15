@@ -1,4 +1,5 @@
 import { NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { ThrottlerException } from '@nestjs/throttler';
 import { AiUpstreamError } from './ai-upstream-error.js';
 import { AppError } from './app-error.js';
 import { ErrorCode } from './error-codes.js';
@@ -95,6 +96,17 @@ describe('errors', () => {
         error: 'Internal Server Error',
       });
       expect(statusOf('not-an-error')).toBe(500);
+    });
+
+    it('يمرّر ThrottlerException (429) عبر الفلتر إلى RATE_LIMIT عربي', () => {
+      const err = new ThrottlerException('Too Many Requests');
+      expect(resolveErrorBody(err)).toEqual({
+        success: false,
+        statusCode: 429,
+        error: 'ThrottlerException',
+        code: ErrorCode.RATE_LIMIT,
+        message: 'تم تجاوز عدد الطلبات المسموح. حاول بعد قليل.',
+      });
     });
   });
 });
