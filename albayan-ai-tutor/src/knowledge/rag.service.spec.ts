@@ -432,7 +432,13 @@ describe('RagService', () => {
           },
         ]);
         prismaMock.paragraphs.findMany.mockResolvedValue([
-          { lesson_id: 1n, title: 'المبتدأ', content: 'مبتدأ مرفوع' },
+          {
+            id: 1n,
+            lesson_id: 1n,
+            title: 'المبتدأ',
+            content:
+              '{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"مبتدأ مرفوع يقع أول الجملة."}]}]}',
+          },
         ]);
         markdownMock.matching.mockReturnValue([
           doc('درس طويل', `## المبتدأ\n${'كلمة '.repeat(60)}`),

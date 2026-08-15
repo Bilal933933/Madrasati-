@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Optional } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { splitMarkdown, type Chunk } from './chunker.js';
 import {
@@ -7,6 +7,8 @@ import {
   MarkdownDoc,
   MarkdownLoader,
 } from './markdown-loader.js';
+import { extractTipTapText } from './tiptap.js';
+import { LoggerService } from '../common/logger/logger.service.js';
 
 export interface RagResult {
   lessons: { id: number; title: string; summary: string | null }[];
@@ -21,6 +23,7 @@ export class RagService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly markdown: MarkdownLoader,
+    @Optional() private readonly logger?: LoggerService,
   ) {
     const parsed = Number.parseInt(process.env.AI_RAG_MAX_CHARS ?? '', 10);
     this.maxChars = Number.isFinite(parsed) && parsed > 0 ? parsed : 120000;
@@ -70,13 +73,30 @@ export class RagService {
       where: {
         lesson_id: { in: selected.map((s) => s.lesson.id) },
       },
-      select: { lesson_id: true, title: true, content: true },
+      select: { id: true, lesson_id: true, title: true, content: true },
     });
 
     const byLesson = new Map<number, string[]>();
     for (const p of paragraphs) {
+      const extracted = extractTipTapText(p.content);
+      if (!extracted.ok) {
+        this.logger?.warn(
+          { event: 'rag.paragraph_extract_failed' },
+          'فشل استخراج نص فقرة من JSON تيبتاب',
+          {
+            lessonId: Number(p.lesson_id),
+            paragraphId: Number(p.id),
+            paragraphTitle: p.title,
+            contentPreview: p.content.slice(0, 120),
+          },
+        );
+        continue;
+      }
+      if (extracted.text.length === 0) {
+        continue;
+      }
       const list = byLesson.get(Number(p.lesson_id)) ?? [];
-      list.push(p.content);
+      list.push(extracted.text);
       byLesson.set(Number(p.lesson_id), list);
     }
 
