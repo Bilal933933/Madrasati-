@@ -708,6 +708,392 @@ describe('RagService', () => {
       expect(result.lessons).toEqual([]);
       expect(result.sources).toEqual([]);
     });
+
+    it('سؤال بمقام جوهرية=2 ("الفرق بين المبتدأ والخبر") تُغطيهما الطبقة 1 فلا تُبنى L3', async () => {
+      const longText =
+        'المبتدأ اسم مرفوع يقع أول الكلام، والخبر يتمم معنى المبتدأ ويكمل الجملة المفيدة، والمبتدأ والخبر معًا أصل الجملة الاسمية. '.repeat(
+          2,
+        );
+      prismaMock.lessons.findMany.mockResolvedValue([
+        lessonRow(1n, 'المبتدأ والخبر'),
+      ]);
+      prismaMock.paragraphs.findMany.mockResolvedValue([
+        {
+          id: 1n,
+          lesson_id: 1n,
+          title: '',
+          content: tipTap(longText),
+        },
+      ]);
+      markdownMock.matching.mockReturnValue([]);
+      markdownMock.matchingGeneral.mockReturnValue([]);
+
+      const result = await rag.retrieve('ما الفرق بين المبتدأ والخبر؟', {
+        subjectId: 5,
+        gradeId: null,
+      });
+
+      expect(result.contentWindow).toContain('## الطبقة 1');
+      expect(result.contentWindow).not.toContain('## الطبقة 3');
+      expect(markdownMock.readSection).not.toHaveBeenCalled();
+    });
+
+    it('سؤال MINOR-فقط ("ما الفرق بين؟") لا يمر البوابة ويُستدعى L3 دون قراءة قسم', async () => {
+      prismaMock.lessons.findMany.mockResolvedValue([]);
+      prismaMock.paragraphs.findMany.mockResolvedValue([]);
+      markdownMock.matching.mockReturnValue([]);
+      markdownMock.matchingGeneral.mockReturnValue([
+        {
+          id: 'book-minor',
+          title: 'مرجع مقارنات عامة',
+          author: null,
+          subjectName: 'اللغة العربية',
+          totalPages: 100,
+          rootPath: '/books/b-minor',
+          subjectIds: [5],
+          gradeIds: [4],
+          parts: [
+            {
+              file: 'p1.md',
+              pages: [1, 50],
+              chapter: null,
+              sections: [
+                {
+                  id: 's-minor',
+                  title: 'الفرق بين كذا وكذا',
+                  kind: 'content',
+                  page: 10,
+                  concepts: ['فرق', 'بين'],
+                },
+              ],
+            },
+          ],
+        },
+      ]);
+      markdownMock.readSection.mockImplementation(
+        (_b: GeneralBookDoc, s: BookSection) => `محتوى ${s.title}`,
+      );
+
+      const result = await rag.retrieve('ما الفرق بين؟', {
+        subjectId: 5,
+        gradeId: null,
+      });
+
+      // يُستدعى L3 فعلًا (مطابقة عامة دُعيت مرتين: للأوزان ثم لبناء L3)،
+      // لكن لا قسم يجتاز contentMatch بمقارنة MINOR وحدها.
+      expect(markdownMock.matchingGeneral).toHaveBeenCalledTimes(2);
+      expect(markdownMock.readSection).not.toHaveBeenCalled();
+      expect(result.contentWindow).not.toContain('## الطبقة 3');
+      expect(result.contentWindow).not.toContain('الفرق بين كذا وكذا');
+    });
+
+    it('env منعدم: يستقر على عتبة 0.6 — تغطية 0.5 تستدعي L3', async () => {
+      const prevCoverage = process.env.RAG_SUFFICIENCY_COVERAGE;
+      const prevChars = process.env.RAG_MIN_CONTENT_CHARS;
+      delete process.env.RAG_SUFFICIENCY_COVERAGE;
+      delete process.env.RAG_MIN_CONTENT_CHARS;
+      try {
+        rag = new RagService(
+          prismaMock as unknown as PrismaService,
+          markdownMock as unknown as MarkdownLoader,
+        );
+        const longText =
+          'المبتدأ اسم مرفوع يقع أول الجملة، ويرفع بالضمة الظاهرة، والمبتدأ دائم التصدير في الجملة الاسمية المكتملة المعنى والفائدة. '.repeat(
+            2,
+          );
+        prismaMock.lessons.findMany.mockResolvedValue([
+          lessonRow(1n, 'المبتدأ'),
+        ]);
+        prismaMock.paragraphs.findMany.mockResolvedValue([
+          {
+            id: 1n,
+            lesson_id: 1n,
+            title: '',
+            content: tipTap(longText),
+          },
+        ]);
+        markdownMock.matching.mockReturnValue([]);
+        markdownMock.matchingGeneral.mockReturnValue([
+          {
+            id: 'book-env1',
+            title: 'كيف تتقن النحو؟',
+            author: null,
+            subjectName: 'اللغة العربية',
+            totalPages: 553,
+            rootPath: '/books/b-env1',
+            subjectIds: [5],
+            gradeIds: [4],
+            parts: [
+              {
+                file: 'p1.md',
+                pages: [1, 60],
+                chapter: null,
+                sections: [
+                  {
+                    id: 's1',
+                    title: 'الْخَبَرِ وأنواعه',
+                    kind: 'content',
+                    page: 12,
+                    concepts: ['خبر', 'مفرد'],
+                  },
+                ],
+              },
+            ],
+          },
+        ]);
+        markdownMock.readSection.mockImplementation(
+          (_b: GeneralBookDoc, s: BookSection) => `محتوى ${s.title}`,
+        );
+
+        const result = await rag.retrieve('ما المبتدأ والخبر؟', {
+          subjectId: 5,
+          gradeId: null,
+        });
+
+        expect(result.contentWindow).toContain('## الطبقة 3');
+      } finally {
+        if (prevCoverage === undefined) {
+          delete process.env.RAG_SUFFICIENCY_COVERAGE;
+        } else {
+          process.env.RAG_SUFFICIENCY_COVERAGE = prevCoverage;
+        }
+        if (prevChars === undefined) {
+          delete process.env.RAG_MIN_CONTENT_CHARS;
+        } else {
+          process.env.RAG_MIN_CONTENT_CHARS = prevChars;
+        }
+      }
+    });
+
+    it('env مخصصة: RAG_SUFFICIENCY_COVERAGE=0.4 تُقرأ وتُطبَّق — تغطية 0.5 تكفي بلا L3', async () => {
+      const prevCoverage = process.env.RAG_SUFFICIENCY_COVERAGE;
+      const prevChars = process.env.RAG_MIN_CONTENT_CHARS;
+      process.env.RAG_SUFFICIENCY_COVERAGE = '0.4';
+      delete process.env.RAG_MIN_CONTENT_CHARS;
+      try {
+        rag = new RagService(
+          prismaMock as unknown as PrismaService,
+          markdownMock as unknown as MarkdownLoader,
+        );
+        const longText =
+          'المبتدأ اسم مرفوع يقع أول الجملة، ويرفع بالضمة الظاهرة، والمبتدأ دائم التصدير في الجملة الاسمية المكتملة المعنى والفائدة. '.repeat(
+            2,
+          );
+        prismaMock.lessons.findMany.mockResolvedValue([
+          lessonRow(1n, 'المبتدأ'),
+        ]);
+        prismaMock.paragraphs.findMany.mockResolvedValue([
+          {
+            id: 1n,
+            lesson_id: 1n,
+            title: '',
+            content: tipTap(longText),
+          },
+        ]);
+        markdownMock.matching.mockReturnValue([]);
+        markdownMock.matchingGeneral.mockReturnValue([
+          {
+            id: 'book-env2',
+            title: 'كيف تتقن النحو؟',
+            author: null,
+            subjectName: 'اللغة العربية',
+            totalPages: 553,
+            rootPath: '/books/b-env2',
+            subjectIds: [5],
+            gradeIds: [4],
+            parts: [
+              {
+                file: 'p1.md',
+                pages: [1, 60],
+                chapter: null,
+                sections: [
+                  {
+                    id: 's1',
+                    title: 'الْخَبَرِ وأنواعه',
+                    kind: 'content',
+                    page: 12,
+                    concepts: ['خبر', 'مفرد'],
+                  },
+                ],
+              },
+            ],
+          },
+        ]);
+        markdownMock.readSection.mockImplementation(
+          (_b: GeneralBookDoc, s: BookSection) => `محتوى ${s.title}`,
+        );
+
+        const result = await rag.retrieve('ما المبتدأ والخبر؟', {
+          subjectId: 5,
+          gradeId: null,
+        });
+
+        expect(result.contentWindow).not.toContain('## الطبقة 3');
+        expect(markdownMock.readSection).not.toHaveBeenCalled();
+      } finally {
+        if (prevCoverage === undefined) {
+          delete process.env.RAG_SUFFICIENCY_COVERAGE;
+        } else {
+          process.env.RAG_SUFFICIENCY_COVERAGE = prevCoverage;
+        }
+        if (prevChars === undefined) {
+          delete process.env.RAG_MIN_CONTENT_CHARS;
+        } else {
+          process.env.RAG_MIN_CONTENT_CHARS = prevChars;
+        }
+      }
+    });
+
+    it('env منعدم: يستقر على سور 120 حرفًا — نافذة قصيرة تغطّي 2 من 3 تستدعي L3', async () => {
+      const prevCoverage = process.env.RAG_SUFFICIENCY_COVERAGE;
+      const prevChars = process.env.RAG_MIN_CONTENT_CHARS;
+      delete process.env.RAG_SUFFICIENCY_COVERAGE;
+      delete process.env.RAG_MIN_CONTENT_CHARS;
+      try {
+        rag = new RagService(
+          prismaMock as unknown as PrismaService,
+          markdownMock as unknown as MarkdownLoader,
+        );
+        // 3 توكنز جوهرية: المبتدأ+الخبر مغطيان من L1 (تغطية 0.667 ≥ 0.6)
+        // لكن النافذة قصيرة (< 120) فيفشل السور وحده ويُستدعى L3 ليضيف "العلامة".
+        prismaMock.lessons.findMany.mockResolvedValue([
+          lessonRow(1n, 'المبتدأ والخبر'),
+        ]);
+        prismaMock.paragraphs.findMany.mockResolvedValue([
+          {
+            id: 1n,
+            lesson_id: 1n,
+            title: '',
+            content: tipTap('المبتدأ والخبر جملة مفيدة'),
+          },
+        ]);
+        markdownMock.matching.mockReturnValue([]);
+        markdownMock.matchingGeneral.mockReturnValue([
+          {
+            id: 'book-env3',
+            title: 'كيف تتقن النحو؟',
+            author: null,
+            subjectName: 'اللغة العربية',
+            totalPages: 553,
+            rootPath: '/books/b-env3',
+            subjectIds: [5],
+            gradeIds: [4],
+            parts: [
+              {
+                file: 'p1.md',
+                pages: [1, 60],
+                chapter: null,
+                sections: [
+                  {
+                    id: 's1',
+                    title: 'علامات رفع الاسم والخبر',
+                    kind: 'content',
+                    page: 12,
+                    concepts: ['علامة', 'رفع'],
+                  },
+                ],
+              },
+            ],
+          },
+        ]);
+        markdownMock.readSection.mockImplementation(
+          (_b: GeneralBookDoc, s: BookSection) => `محتوى ${s.title}`,
+        );
+
+        const result = await rag.retrieve('ما علامة الخبر والمبتدأ؟', {
+          subjectId: 5,
+          gradeId: null,
+        });
+
+        expect(result.contentWindow).toContain('## الطبقة 3');
+      } finally {
+        if (prevCoverage === undefined) {
+          delete process.env.RAG_SUFFICIENCY_COVERAGE;
+        } else {
+          process.env.RAG_SUFFICIENCY_COVERAGE = prevCoverage;
+        }
+        if (prevChars === undefined) {
+          delete process.env.RAG_MIN_CONTENT_CHARS;
+        } else {
+          process.env.RAG_MIN_CONTENT_CHARS = prevChars;
+        }
+      }
+    });
+
+    it('env مخصصة: RAG_MIN_CONTENT_CHARS=50 تُقرأ وتُطبَّق — نفس النافذة القصيرة تكفي بلا L3', async () => {
+      const prevCoverage = process.env.RAG_SUFFICIENCY_COVERAGE;
+      const prevChars = process.env.RAG_MIN_CONTENT_CHARS;
+      delete process.env.RAG_SUFFICIENCY_COVERAGE;
+      process.env.RAG_MIN_CONTENT_CHARS = '50';
+      try {
+        rag = new RagService(
+          prismaMock as unknown as PrismaService,
+          markdownMock as unknown as MarkdownLoader,
+        );
+        prismaMock.lessons.findMany.mockResolvedValue([
+          lessonRow(1n, 'المبتدأ والخبر'),
+        ]);
+        prismaMock.paragraphs.findMany.mockResolvedValue([
+          {
+            id: 1n,
+            lesson_id: 1n,
+            title: '',
+            content: tipTap('المبتدأ والخبر جملة مفيدة'),
+          },
+        ]);
+        markdownMock.matching.mockReturnValue([]);
+        markdownMock.matchingGeneral.mockReturnValue([
+          {
+            id: 'book-env4',
+            title: 'كيف تتقن النحو؟',
+            author: null,
+            subjectName: 'اللغة العربية',
+            totalPages: 553,
+            rootPath: '/books/b-env4',
+            subjectIds: [5],
+            gradeIds: [4],
+            parts: [
+              {
+                file: 'p1.md',
+                pages: [1, 60],
+                chapter: null,
+                sections: [
+                  {
+                    id: 's1',
+                    title: 'علامات رفع الاسم والخبر',
+                    kind: 'content',
+                    page: 12,
+                    concepts: ['علامة', 'رفع'],
+                  },
+                ],
+              },
+            ],
+          },
+        ]);
+        markdownMock.readSection.mockImplementation(
+          (_b: GeneralBookDoc, s: BookSection) => `محتوى ${s.title}`,
+        );
+
+        const result = await rag.retrieve('ما علامة الخبر والمبتدأ؟', {
+          subjectId: 5,
+          gradeId: null,
+        });
+
+        expect(result.contentWindow).not.toContain('## الطبقة 3');
+        expect(markdownMock.readSection).not.toHaveBeenCalled();
+      } finally {
+        if (prevCoverage === undefined) {
+          delete process.env.RAG_SUFFICIENCY_COVERAGE;
+        } else {
+          process.env.RAG_SUFFICIENCY_COVERAGE = prevCoverage;
+        }
+        if (prevChars === undefined) {
+          delete process.env.RAG_MIN_CONTENT_CHARS;
+        } else {
+          process.env.RAG_MIN_CONTENT_CHARS = prevChars;
+        }
+      }
+    });
   });
 
   describe('scoreChunk', () => {
