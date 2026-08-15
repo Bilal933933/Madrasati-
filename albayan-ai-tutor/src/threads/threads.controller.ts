@@ -8,9 +8,12 @@ import {
   Post,
   Req,
   UseGuards,
+  UsePipes,
 } from '@nestjs/common';
 import { Request } from 'express';
 import { AiRestGuard } from '../auth/ai-rest.guard.js';
+import { CustomValidationPipe } from '../common/pipes/validation.pipe.js';
+import { CreateThreadDto } from './dto/create-thread.dto.js';
 import {
   ThreadsService,
   type ThreadDetailDto,
@@ -23,19 +26,18 @@ interface AuthedRequest extends Request {
 
 @Controller('api/threads')
 @UseGuards(AiRestGuard)
+@UsePipes(CustomValidationPipe)
 export class ThreadsController {
   constructor(private readonly threads: ThreadsService) {}
 
   @Post()
   async create(
     @Req() req: AuthedRequest,
-    @Body() body: { subjectId?: number; lessonId?: number },
+    @Body() dto: CreateThreadDto,
   ): Promise<ThreadDetailDto> {
-    const subjectId = Number(body?.subjectId) || undefined;
-    const lessonId = Number(body?.lessonId) || undefined;
     const thread = await this.threads.createThread(req.user.userId, {
-      subjectId,
-      lessonId,
+      subjectId: dto.subjectId,
+      lessonId: dto.lessonId,
     });
     return this.threads.getThread(Number(thread.id), req.user.userId);
   }

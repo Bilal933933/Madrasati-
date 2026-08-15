@@ -7,18 +7,10 @@ import {
 } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
 import { AiSessionGuard } from '../auth/ai-session.guard.js';
-import { ValidationError } from '../common/errors/validation-error.js';
+import { CustomValidationPipe } from '../common/pipes/validation.pipe.js';
 import { ChatService } from './chat.service.js';
-
-interface QuestionPayload {
-  threadId?: number;
-  question?: string;
-  subjectId?: number;
-}
-
-interface QuizPayload {
-  threadId?: number;
-}
+import { GenerateQuestionDto } from './dto/generate-question.dto.js';
+import { SendQuestionDto } from './dto/send-question.dto.js';
 
 @WebSocketGateway({
   namespace: 'chat',
@@ -32,24 +24,11 @@ export class ChatGateway {
 
   @SubscribeMessage('question')
   async handleQuestion(
-    @MessageBody() payload: QuestionPayload,
+    @MessageBody(CustomValidationPipe) payload: SendQuestionDto,
     @ConnectedSocket() client: Socket,
   ): Promise<void> {
     const userId = (client.data as { userId: number }).userId;
-    const threadId = payload?.threadId;
-    const question = payload?.question?.trim();
-
-    if (!threadId || !Number.isInteger(Number(threadId))) {
-      throw new ValidationError('معرّف الجلسة مفقود أو غير صالح.');
-    }
-
-    if (!question || question.length < 2) {
-      throw new ValidationError('السؤال فارغ أو قصير جدًا.');
-    }
-
-    if (question.length > 2000) {
-      throw new ValidationError('السؤال أطول من المسموح (2000 حرف).');
-    }
+    const { threadId, question } = payload;
 
     this.chatService.assertWithinLimit(userId);
 
@@ -57,7 +36,7 @@ export class ChatGateway {
       status: 'aggregating_context',
       message: 'جاري جمع سياقك الدراسي...',
     });
-    await this.chatService.saveUserQuestion(userId, Number(threadId), question);
+    await this.chatService.saveUserQuestion(userId, threadId, question);
 
     const context = await this.chatService.getContext(userId);
 
@@ -73,7 +52,7 @@ export class ChatGateway {
     });
 
     const systemPrompt = this.chatService.buildPrompt(context, rag);
-    const history = await this.chatService.getHistory(Number(threadId));
+    const history = await this.chatService.getHistory(threadId);
 
     let fullResponse = '';
     for await (const chunk of this.chatService.stream(
@@ -86,7 +65,7 @@ export class ChatGateway {
     }
 
     await this.chatService.saveAssistantReply(
-      Number(threadId),
+      threadId,
       fullResponse,
       rag.sources,
     );
@@ -99,15 +78,11 @@ export class ChatGateway {
 
   @SubscribeMessage('generate-question')
   async handleGenerateQuestion(
-    @MessageBody() payload: QuizPayload,
+    @MessageBody(CustomValidationPipe) payload: GenerateQuestionDto,
     @ConnectedSocket() client: Socket,
   ): Promise<void> {
     const userId = (client.data as { userId: number }).userId;
-    const threadId = payload?.threadId;
-
-    if (!threadId || !Number.isInteger(Number(threadId))) {
-      throw new ValidationError('معرّف الجلسة مفقود أو غير صالح.');
-    }
+    const { threadId } = payload;
 
     this.chatService.assertWithinLimit(userId);
 
@@ -118,7 +93,7 @@ export class ChatGateway {
     const question = await this.chatService.generateQuizQuestion(userId);
 
     await this.chatService.threads.saveMessage(
-      Number(threadId),
+      threadId,
       'ASSISTANT',
       'quiz',
       JSON.stringify(question),
