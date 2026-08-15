@@ -1094,6 +1094,121 @@ describe('RagService', () => {
         }
       }
     });
+
+    // ---- Baseline لسلوك scoreLesson الحالي (يُكتب ويُشغَّل قبل تعديل الأوزان) ----
+    it('Baseline L1: مطابقة العنوان تعلو على مطابقة الملخص في ترتيب الدروس', async () => {
+      prismaMock.lessons.findMany.mockResolvedValue([
+        lessonRow(1n, 'المبتدأ والخبر'),
+        {
+          id: 2n,
+          title: 'الجملة الاسمية',
+          summary: 'نحدّد المبتدأ في الجملة الاسمية وركنيها',
+          learning_objectives: [],
+        },
+      ]);
+      prismaMock.paragraphs.findMany.mockResolvedValue([
+        {
+          id: 1n,
+          lesson_id: 1n,
+          title: '',
+          content: tipTap('المبتدأ اسم مرفوع يقع أول الجملة الاسمية'),
+        },
+        {
+          id: 2n,
+          lesson_id: 2n,
+          title: '',
+          content: tipTap('الجملة الاسمية تبدأ بمبتدأ مرفوع'),
+        },
+      ]);
+      markdownMock.matching.mockReturnValue([]);
+      markdownMock.matchingGeneral.mockReturnValue([]);
+
+      const result = await rag.retrieve('ما المبتدأ؟', {
+        subjectId: 5,
+        gradeId: null,
+      });
+
+      // درس العنوان (الوزن 3) يسبق درس الملخص (الوزن 2) في ترتيب المصادر.
+      expect(result.sources.map((s) => s.lessonTitle)).toEqual([
+        'المبتدأ والخبر',
+        'الجملة الاسمية',
+      ]);
+    });
+
+    it('L1 بموحّد الأوزان: درس بعنوان MINOR-محور ("الفرق بين...") يُرفض ولا يدخل النافذة', async () => {
+      // نفس سيناريو الـ Baseline الذي وثّق السلوك القديم (انتخاب درس MINOR-فقط).
+      prismaMock.lessons.findMany.mockResolvedValue([
+        lessonRow(1n, 'الفرق بين كذا وكذا'),
+      ]);
+      prismaMock.paragraphs.findMany.mockResolvedValue([
+        {
+          id: 1n,
+          lesson_id: 1n,
+          title: '',
+          content: tipTap('نوضح الفرق بين كذا وكذا في هذا الدرس'),
+        },
+      ]);
+      markdownMock.matching.mockReturnValue([]);
+      markdownMock.matchingGeneral.mockReturnValue([]);
+
+      const result = await rag.retrieve('ما الفرق بين؟', {
+        subjectId: 5,
+        gradeId: null,
+      });
+
+      expect(result.contentWindow).not.toContain('### الفرق بين كذا وكذا');
+      expect(result.lessons).toEqual([]);
+    });
+
+    it('درس المفردة النادرة يعلو على درس اللفظ العام في ترتيب L1 (idf)', async () => {
+      // كتالوج من 4 دروس: "المبتدأ" يظهر في درس واحد (df=1 → وزن idf مرتفع)،
+      // و"الخبر" يتكرر في 3 دروس (df=3 → وزن idf منخفض، يهبط إلى 0.5).
+      // السؤال "ما المبتدأ والخبر؟" توكنز: المبتدا + والخبر.
+      prismaMock.lessons.findMany.mockResolvedValue([
+        lessonRow(1n, 'المبتدأ'),
+        lessonRow(2n, 'الخبر'),
+        lessonRow(3n, 'الخبر والفاعل'),
+        lessonRow(4n, 'الخبر والمفعول'),
+      ]);
+      prismaMock.paragraphs.findMany.mockResolvedValue([
+        {
+          id: 1n,
+          lesson_id: 1n,
+          title: '',
+          content: tipTap('المبتدأ اسم مرفوع يقع أول الجملة'),
+        },
+        {
+          id: 2n,
+          lesson_id: 2n,
+          title: '',
+          content: tipTap('الخبر يتمم معنى المبتدأ'),
+        },
+        {
+          id: 3n,
+          lesson_id: 3n,
+          title: '',
+          content: tipTap('الخبر والفاعل في الجملة الفعلية'),
+        },
+        {
+          id: 4n,
+          lesson_id: 4n,
+          title: '',
+          content: tipTap('الخبر والمفعول كليهما معمولان'),
+        },
+      ]);
+      markdownMock.matching.mockReturnValue([]);
+      markdownMock.matchingGeneral.mockReturnValue([]);
+
+      const result = await rag.retrieve('ما المبتدأ والخبر؟', {
+        subjectId: 5,
+        gradeId: null,
+      });
+
+      const titles = result.sources.map((s) => s.lessonTitle);
+      // بالموحّد: درس المبتدأ (نادر/أعلى idf) يترشح أولًا فوق دروس اللفظ العام.
+      expect(titles[0]).toBe('المبتدأ');
+      expect(titles.slice(1)).toContain('الخبر');
+    });
   });
 
   describe('scoreChunk', () => {

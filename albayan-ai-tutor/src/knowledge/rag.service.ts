@@ -209,10 +209,12 @@ export class RagService {
       orderBy: { sort_order: 'asc' },
     });
 
+    const lessonWeights = this.computeLessonTokenWeights(lessons, tokens);
+
     const scored = lessons
       .map((lesson) => ({
         lesson,
-        score: this.scoreLesson(lesson, tokens),
+        score: this.scoreLesson(lesson, tokens, lessonWeights),
       }))
       .sort((a, b) => b.score - a.score);
 
@@ -522,6 +524,39 @@ export class RagService {
     return scored.sort((a, b) => b.score - a.score);
   }
 
+  /**
+   * يزن توكنز السؤال عكسيًا مع تواترها في كتالوج الدروس المرشّحة (idf):
+   * المفردة النادرة (المبتدأ) تُرجَّح فوق الكلمة العامة المتكررة في العناوين
+   * (الفرق، بين، اللغة...) فيعلو درس الموضوع الحقيقي على دروس الصلة العامة.
+   * كتالوج الدروس يختلف عن كتالوج أقسام الكتب العامة فلا تُعيد استخدام
+   * computeTokenWeights بل يرجّح كل طبقة على مجتمعها الإحصائي.
+   */
+  private computeLessonTokenWeights(
+    lessons: {
+      title: string;
+      summary: string | null;
+      learning_objectives: unknown;
+    }[],
+    tokens: string[],
+  ): Map<string, number> {
+    const texts = lessons.map((lesson) => {
+      const objectives = Array.isArray(lesson.learning_objectives)
+        ? lesson.learning_objectives.join(' ')
+        : '';
+      return `${lesson.title} ${lesson.summary ?? ''} ${objectives}`;
+    });
+    const total = Math.max(texts.length, 1);
+    const weights = new Map<string, number>();
+    for (const token of tokens) {
+      let df = 0;
+      for (const text of texts) {
+        if (textMatchesToken(text, token)) df += 1;
+      }
+      weights.set(token, Math.max(0.5, Math.log((total + 1) / (df + 1))));
+    }
+    return weights;
+  }
+
   private scoreLesson(
     lesson: {
       title: string;
@@ -529,6 +564,7 @@ export class RagService {
       learning_objectives: unknown;
     },
     tokens: string[],
+    weights: Map<string, number>,
   ): number {
     const title = lesson.title.toLowerCase();
     const summary = (lesson.summary ?? '').toLowerCase();
@@ -537,12 +573,24 @@ export class RagService {
       : '';
 
     let score = 0;
+    let contentMatch = false;
     for (const token of tokens) {
-      if (textMatchesToken(title, token)) score += 3;
-      if (textMatchesToken(summary, token)) score += 2;
-      if (textMatchesToken(objectives, token)) score += 1;
+      // الوزن: MINOR_TOKENS تُمنح وزنًا منخفضًا ثابتًا حتى لا يرفع درس
+      // "الفرق بين..." فوق دروس التوكنز الجوهرية، ويُحسب الباقي بـ idf.
+      const w = MINOR_TOKENS.has(token) ? 0.5 : (weights.get(token) ?? 1);
+      const tMatch = textMatchesToken(title, token);
+      const sMatch = textMatchesToken(summary, token);
+      const oMatch = textMatchesToken(objectives, token);
+      if (tMatch) score += 3 * w;
+      if (sMatch) score += 2 * w;
+      if (oMatch) score += 1 * w;
+      if ((tMatch || sMatch || oMatch) && !MINOR_TOKENS.has(token)) {
+        contentMatch = true;
+      }
     }
-    return score;
+    // درسٌ لا يطابق أي مفردة جوهرية (title/summary/objectives) لا يُنتخب
+    // لـ L1 — يستبعد دروس المقارنات العامة التي تصل بتوكنز MINOR وحدها.
+    return contentMatch ? score : 0;
   }
 }
 
