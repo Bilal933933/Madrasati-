@@ -1,0 +1,138 @@
+{
+  "id": "dirasat-saff-thalith-iadaei-2027-t1",
+  "title": "دراسات الصف الثالث الإعدادي 2027 ترم أول",
+  "author": "إدارة المحتوى التعليمي — سلاح التلميذ",
+  "publisher": "وزارة التربية والتعليم والتعليم الفني",
+  "stage": "general",
+  "subject": "الدراسات الاجتماعية",
+  "branch": "دراسات اجتماعية",
+  "total_pages": 112,
+  "parts": [
+    {
+      "file": "part-01.md",
+      "pages": [
+        1,
+        40
+      ],
+      "chapter": null,
+      "sections": [
+        {
+          "id": "dirasat-3prep-t1-noise-1",
+          "title": "الغلاف والهداية",
+          "kind": "noise",
+          "page": 1,
+          "endPage": 2,
+          "concepts": []
+        },
+        {
+          "id": "dirasat-3prep-t1-c1",
+          "title": "المقدمة وخريطة المنهج",
+          "kind": "content",
+          "page": 3,
+          "endPage": 9,
+          "concepts": ["منهج", "دراسات", "مصر", "العالم"]
+        },
+        {
+          "id": "dirasat-3prep-t1-c2",
+          "title": "الوحدة الأولى: موقع ومظاهر سطح قارات العالم الجديد",
+          "kind": "content",
+          "page": 10,
+          "endPage": 19,
+          "concepts": ["موقع", "مظاهر", "سطح", "قارات", "العالم الجديد"]
+        },
+        {
+          "id": "dirasat-3prep-t1-c3",
+          "title": "الوحدة الأولى: الحضارات القديمة في الأمريكتين",
+          "kind": "content",
+          "page": 20,
+          "endPage": 25,
+          "concepts": ["حضارات", "قديمة", "الأمريكتين"]
+        },
+        {
+          "id": "dirasat-3prep-t1-c4",
+          "title": "الوحدة الأولى: الكشوف الجغرافية لقارات العالم الجديد وتقييم الوحدة",
+          "kind": "content",
+          "page": 26,
+          "endPage": 40,
+          "concepts": ["كشوف", "جغرافية", "تقييم"]
+        }
+      ]
+    },
+    {
+      "file": "part-02.md",
+      "pages": [
+        41,
+        80
+      ],
+      "chapter": null,
+      "sections": [
+        {
+          "id": "dirasat-3prep-t1-c5",
+          "title": "الوحدة الثانية: مصر في عصر محمد علي وخلفائه (الدرس الأول والثاني)",
+          "kind": "content",
+          "page": 41,
+          "endPage": 51,
+          "concepts": ["محمد علي", "مصر", "تاريخ"]
+        },
+        {
+          "id": "dirasat-3prep-t1-c6",
+          "title": "الوحدة الثانية: مصر في عصر محمد علي وخلفائه (الدرس الثالث وتقييم الوحدة)",
+          "kind": "content",
+          "page": 52,
+          "endPage": 63,
+          "concepts": ["محمد علي", "خلفائه", "تاريخ"]
+        },
+        {
+          "id": "dirasat-3prep-t1-c7",
+          "title": "الوحدة الثالثة: النظم البيئية في قارات العالم الجديد (الدرس الأول والثاني)",
+          "kind": "content",
+          "page": 64,
+          "endPage": 79,
+          "concepts": ["نظم", "بيئية", "قارات"]
+        },
+        {
+          "id": "dirasat-3prep-t1-c8",
+          "title": "الوحدة الثالثة: النظم البيئية في قارات العالم الجديد (الدرس الثالث وتقييم الوحدة)",
+          "kind": "content",
+          "page": 80,
+          "endPage": 80,
+          "concepts": ["بيئة", "تقييم"]
+        }
+      ]
+    },
+    {
+      "file": "part-03.md",
+      "pages": [
+        81,
+        112
+      ],
+      "chapter": null,
+      "sections": [
+        {
+          "id": "dirasat-3prep-t1-c9",
+          "title": "الوحدة الثالثة: استكمال تقييمات الوحدة الثالثة",
+          "kind": "content",
+          "page": 81,
+          "endPage": 91,
+          "concepts": ["تقييم", "نظم بيئية"]
+        },
+        {
+          "id": "dirasat-3prep-t1-c10",
+          "title": "الوحدة الرابعة: الحركة الوطنية في مواجهة الاحتلال البريطاني",
+          "kind": "content",
+          "page": 92,
+          "endPage": 107,
+          "concepts": ["حركة وطنية", "احتلال بريطاني", "ثورة"]
+        },
+        {
+          "id": "dirasat-3prep-t1-c11",
+          "title": "مراجعة عامة وخلفية الكتاب",
+          "kind": "content",
+          "page": 108,
+          "endPage": 112,
+          "concepts": ["مراجعة", "خاتمة"]
+        }
+      ]
+    }
+  ]
+}

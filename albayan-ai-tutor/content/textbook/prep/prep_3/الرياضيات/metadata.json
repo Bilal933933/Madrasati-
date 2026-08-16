@@ -1,0 +1,89 @@
+{
+  "id": "math-prep-3-term-1-2027",
+  "title": "الرياضيات — الصف الثالث الإعدادي — الفصل الدراسي الأول 2027",
+  "author": "إدارة المحتوى التعليمي — وزارة التربية والتعليم",
+  "publisher": "وزارة التربية والتعليم والتعليم الفني",
+  "stage": "general",
+  "subject": "الرياضيات",
+  "branch": "رياضيات",
+  "total_pages": 112,
+  "parts": [
+    {
+      "file": "part-01.md",
+      "pages": [1, 40],
+      "chapter": null,
+      "sections": [
+        {
+          "id": "math-3prep-t1-c1",
+          "title": "المقدمة والمحتويات",
+          "kind": "noise",
+          "page": 1,
+          "endPage": 4,
+          "concepts": []
+        },
+        {
+          "id": "math-3prep-t1-c2",
+          "title": "الوحدة الأولى: العلاقات والدوال",
+          "kind": "content",
+          "page": 5,
+          "endPage": 13,
+          "concepts": ["علاقات", "دوال", "رياضيات"]
+        },
+        {
+          "id": "math-3prep-t1-c3",
+          "title": "الوحدة الثانية: الجبر (النسبة والتناسب والتغير)",
+          "kind": "content",
+          "page": 14,
+          "endPage": 40,
+          "concepts": ["نسبة", "تناسب", "تغير طردي", "تغير عكسي"]
+        }
+      ]
+    },
+    {
+      "file": "part-02.md",
+      "pages": [41, 80],
+      "chapter": null,
+      "sections": [
+        {
+          "id": "math-3prep-t1-c4",
+          "title": "الوحدة الثانية: استكمال الجبر والإحصاء",
+          "kind": "content",
+          "page": 41,
+          "endPage": 47,
+          "concepts": ["إحصاء", "تشتت"]
+        },
+        {
+          "id": "math-3prep-t1-c5",
+          "title": "الوحدة الثالثة: الهندسة وحساب المثلثات",
+          "kind": "content",
+          "page": 48,
+          "endPage": 80,
+          "concepts": ["هندسة", "حساب مثلثات", "دائرة"]
+        }
+      ]
+    },
+    {
+      "file": "part-03.md",
+      "pages": [81, 112],
+      "chapter": null,
+      "sections": [
+        {
+          "id": "math-3prep-t1-c6",
+          "title": "الوحدة الثالثة: استكمال الهندسة",
+          "kind": "content",
+          "page": 81,
+          "endPage": 95,
+          "concepts": ["زوايا", "دائرة", "هندسة"]
+        },
+        {
+          "id": "math-3prep-t1-c7",
+          "title": "الوحدة الرابعة: الإحصاء والتقييمات النهائية",
+          "kind": "content",
+          "page": 96,
+          "endPage": 112,
+          "concepts": ["إحصاء", "مراجعة عامة"]
+        }
+      ]
+    }
+  ]
+}

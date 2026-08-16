@@ -14,6 +14,10 @@ import { corsOrigins } from '../common/security/cors.config.js';
 import { ChatService } from './chat.service.js';
 import { GenerateQuestionDto } from './dto/generate-question.dto.js';
 import { SendQuestionDto } from './dto/send-question.dto.js';
+import {
+  messageOf,
+  statusOf,
+} from '../common/errors/global-exception.filter.js';
 
 @WebSocketGateway({
   namespace: 'chat',
@@ -118,6 +122,12 @@ export class ChatGateway {
         'Failed to answer question',
         error,
       );
+      // يبث حدث خطأ برسالة عربية واضحة حتى لا تعلق الواجهة بحالة "يكتب".
+      client.emit('error', {
+        message: messageOf(error),
+        statusCode: statusOf(error),
+        timestamp: new Date().toISOString(),
+      });
       throw error;
     }
   }

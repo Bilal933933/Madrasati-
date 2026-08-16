@@ -1,6 +1,7 @@
 import { Injectable, Optional } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { splitMarkdown, type Chunk } from './chunker.js';
+import { EmbeddingService } from './embedding.service.js';
 import {
   BookSection,
   GeneralBookDoc,
@@ -8,12 +9,15 @@ import {
   MarkdownLoader,
 } from './markdown-loader.js';
 import { extractTipTapText } from './tiptap.js';
+import { VectorService, type VectorSearchHit } from './vector.service.js';
 import { LoggerService } from '../common/logger/logger.service.js';
 
 export interface RagResult {
   lessons: { id: number; title: string; summary: string | null }[];
   contentWindow: string;
   sources: { lessonId: number; lessonTitle: string }[];
+  /** مقاطع من قاعدة المتجهات شاركت في النافذة — إفادة التشخيص. */
+  semanticHits: { docPath: string; docType: string; similarity: number }[];
 }
 
 @Injectable()
@@ -21,10 +25,14 @@ export class RagService {
   private readonly maxChars: number;
   private readonly coverageThreshold: number;
   private readonly minContentChars: number;
+  private readonly semanticTopK: number;
+  private readonly rrfK: number;
 
   constructor(
     private readonly prisma: PrismaService,
     private readonly markdown: MarkdownLoader,
+    @Optional() private readonly embedding?: EmbeddingService,
+    @Optional() private readonly vector?: VectorService,
     @Optional() private readonly logger?: LoggerService,
   ) {
     const parsed = Number.parseInt(process.env.AI_RAG_MAX_CHARS ?? '', 10);
@@ -44,6 +52,12 @@ export class RagService {
     );
     this.minContentChars =
       Number.isFinite(contentChars) && contentChars > 0 ? contentChars : 120;
+
+    const topK = Number.parseInt(process.env.VECTOR_TOP_K ?? '', 10);
+    this.semanticTopK = Number.isFinite(topK) && topK > 0 ? topK : 20;
+
+    const k = Number.parseInt(process.env.RRF_K ?? '', 10);
+    this.rrfK = Number.isFinite(k) && k > 0 ? k : 60;
   }
 
   /**
@@ -64,7 +78,7 @@ export class RagService {
   ): Promise<RagResult> {
     const tokens = this.tokenize(question);
     if (tokens.length === 0) {
-      return { lessons: [], contentWindow: '', sources: [] };
+      return { lessons: [], contentWindow: '', sources: [], semanticHits: [] };
     }
 
     // الأوزان IDF تُحسب مرة واحدة وتُشارك بين الطبقتين 2 و3 لاتساق الصلة.
@@ -78,8 +92,8 @@ export class RagService {
 
     const layerErrors: unknown[] = [];
 
-    // الطبقة 1 (DB) والطبقة 2 (ذاكرة) — تدهور سعيد: فشل DB للدروس لا يفشل
-    // الطلب، بل يُكمَل من مقاطع المدرسي والمراجع.
+    // الطبقة 1 (DB) والطبقة 2 (ذاكرة) — تدهور سعيد: فشل أي مكوّن لا يفشل
+    // الطلب، بل يُكمَل من المكونات الباقية.
     const [layer1, layer2] = await Promise.allSettled([
       this.buildLayer1(opts, tokens),
       Promise.resolve(this.buildLayer2Candidates(opts, tokens, tokenWeights)),
@@ -144,6 +158,42 @@ export class RagService {
       }
     }
 
+    // الطبقة الدلالية كسولة: تُستعلم قاعدة المتجهات فقط عند عدم كفاية
+    // الطبقات 1-3 معًا، وتُدمج عبر RRF مع المرشّحين المعجميين.
+    let semanticHits: RagResult['semanticHits'] = [];
+    if (!this.isLayerSufficient(contentWindow, tokens)) {
+      const semantic = await Promise.allSettled([
+        this.buildSemanticCandidates(question, opts),
+      ]);
+      if (semantic[0].status === 'fulfilled' && semantic[0].value.length > 0) {
+        const blockS = this.selectSemanticLayer(
+          semantic[0].value,
+          layer2.status === 'fulfilled' ? layer2.value : [],
+          tokens,
+          contentWindow,
+        );
+        if (blockS.block) {
+          layers.push(blockS.block);
+          contentWindow = layers.join('\n\n');
+        }
+        semanticHits = blockS.used;
+      } else if (semantic[0].status === 'rejected') {
+        layerErrors.push(semantic[0].reason);
+        this.logger?.warn(
+          { event: 'rag.semantic_failed' },
+          'فشل البحث الدلالي — يُكمَل بالنافذة المعجمية فقط',
+          {
+            subjectId: opts.subjectId,
+            gradeId: opts.gradeId,
+            error:
+              semantic[0].reason instanceof Error
+                ? semantic[0].reason.message
+                : String(semantic[0].reason),
+          },
+        );
+      }
+    }
+
     // حماية قصوى بلا قصّ وسط المعرفة: تُسقط طبقات كاملة من النهاية عند
     // تجاوز السقف، فلا يُقطع قسم في منتصفه إلا في الحالة النظرية الوحيدة
     // التي تتفوق فيها الطبقة 1 وحدها على السقف.
@@ -170,7 +220,7 @@ export class RagService {
       throw new Error(`لم تُبنَ أي طبقة سياق: ${message}`);
     }
 
-    return { lessons, contentWindow, sources };
+    return { lessons, contentWindow, sources, semanticHits };
   }
 
   /**
@@ -318,9 +368,18 @@ export class RagService {
     const represented = this.coveredSubstantiveTokens(tokens, block1);
     const budget = Math.max(0, this.maxChars - block1.length);
 
+    // الكتاب المدرسي هو الحقيقة المطلقة والفيصل عند التعارض: تُقدَّم مقاطعه
+    // أولًا (ثابت ضمن نوعه بالوزن) حتى يدخل "الحَكَم" النافذة قبل المراجع.
+    const prioritized = [...candidates].sort((a, b) => {
+      const ta = a.doc.type === 'textbook' ? 0 : 1;
+      const tb = b.doc.type === 'textbook' ? 0 : 1;
+      if (ta !== tb) return ta - tb;
+      return b.score - a.score;
+    });
+
     const markdownBlock: string[] = [];
     let used = 0;
-    for (const cand of candidates) {
+    for (const cand of prioritized) {
       const addedTokens = this.addedSubstantiveTokens(
         tokens,
         `${cand.chunk.heading} ${cand.chunk.text}`,
@@ -390,6 +449,128 @@ export class RagService {
 
     if (generalBlock.length === 0) return '';
     return `## الطبقة 3: من المراجع العامة\n${generalBlock.join('\n\n')}`;
+  }
+
+  /**
+   * الطبقة الدلالية: يستعلم قاعدة المتجهات بتضمين السؤال. تُبنى بالتوازي مع
+   * الطبقتين 1 و2، وتُدمج عبر RRF مع المرشّحين المعجميين. غياب الخدمتين
+   * (اختبار/بيئة) أو فشلهما يُرجع [] فيُستكمل المعجمي بلا انهيار.
+   */
+  private async buildSemanticCandidates(
+    question: string,
+    opts: { subjectId?: number | null; gradeId?: number | null },
+  ): Promise<VectorSearchHit[]> {
+    if (!this.embedding || !this.vector) return [];
+    const queryVector = await this.embedding.embed(question);
+    return this.vector.search(queryVector, {
+      subjectId: opts.subjectId ?? null,
+      gradeId: opts.gradeId ?? null,
+      topK: this.semanticTopK,
+    });
+  }
+
+  /**
+   * يختار مقاطع الطبقة الدلالية بترتيب RRF (دمج رتبتي التشابه الدلالي والوزن
+   * المعجمي)، مع الكسب الهامشي والميزانية نفسَين للطبقات الباقية.
+   * يُرجع الكتلة مع المقاطع المضمومة فعلًا للتشخيص.
+   */
+  private selectSemanticLayer(
+    hits: VectorSearchHit[],
+    lexicalCandidates: { doc: MarkdownDoc; chunk: Chunk; score: number }[],
+    tokens: string[],
+    windowBefore: string,
+  ): {
+    block: string;
+    used: { docPath: string; docType: string; similarity: number }[];
+  } {
+    if (hits.length === 0) return { block: '', used: [] };
+
+    // رتبة دلالية (تنازليًا بالتشابه) ورتبة معجمية (تنازليًا بالوزن).
+    const semanticOrder = [...hits].sort((a, b) => b.similarity - a.similarity);
+    const lexicalWeights = new Map(tokens.map((t) => [t, 1]));
+    const lexicalOrder = [...hits].sort((a, b) => {
+      const sa = scoreChunk(
+        {
+          id: a.docKey,
+          heading: a.heading ?? '',
+          text: a.text,
+          startPage: a.pageStart,
+          endPage: a.pageEnd,
+          wordCount: 0,
+        },
+        tokens,
+        lexicalWeights,
+      ).score;
+      const sb = scoreChunk(
+        {
+          id: b.docKey,
+          heading: b.heading ?? '',
+          text: b.text,
+          startPage: b.pageStart,
+          endPage: b.pageEnd,
+          wordCount: 0,
+        },
+        tokens,
+        lexicalWeights,
+      ).score;
+      return sb - sa;
+    });
+
+    const rankOf = (ordered: VectorSearchHit[], hit: VectorSearchHit): number =>
+      ordered.findIndex((h) => h.docKey === hit.docKey);
+
+    // RRF: 1/(k+rankSemantic) + 1/(k+rankLexical).
+    const fused = [...hits].sort((a, b) => {
+      const ra =
+        1 / (this.rrfK + rankOf(semanticOrder, a)) +
+        1 / (this.rrfK + rankOf(lexicalOrder, a));
+      const rb =
+        1 / (this.rrfK + rankOf(semanticOrder, b)) +
+        1 / (this.rrfK + rankOf(lexicalOrder, b));
+      return rb - ra;
+    });
+
+    const represented = this.coveredSubstantiveTokens(tokens, windowBefore);
+    const budget = Math.max(0, this.maxChars - windowBefore.length);
+
+    const semanticBlock: string[] = [];
+    const used: { docPath: string; docType: string; similarity: number }[] = [];
+    let usedChars = 0;
+
+    for (const hit of fused) {
+      const added = this.addedSubstantiveTokens(
+        tokens,
+        `${hit.heading ?? ''} ${hit.text}`,
+        represented,
+      );
+      if (added.length === 0) continue;
+      const label =
+        hit.docType === 'general'
+          ? 'كتاب عام'
+          : hit.docType === 'lesson'
+            ? 'درس المنصة'
+            : hit.docType === 'reference'
+              ? 'مرجع عام'
+              : 'من الكتاب المدرسي';
+      const heading = hit.heading?.trim();
+      const block = `### ${hit.docPath} — [${label}]${heading ? ` — ${heading}` : ''}\n${hit.text}`;
+      if (semanticBlock.length > 0 && usedChars + block.length > budget) break;
+      semanticBlock.push(block);
+      usedChars += block.length;
+      used.push({
+        docPath: hit.docPath,
+        docType: hit.docType,
+        similarity: hit.similarity,
+      });
+      // تُعتبر التوكنز المضافة ممثلة للمقاطع اللاحقة (كسب هامشي متسلسل).
+      for (const token of added) represented.add(token);
+    }
+
+    if (semanticBlock.length === 0) return { block: '', used: [] };
+    return {
+      block: `## الطبقة الدلالية: بحث دلالي\n${semanticBlock.join('\n\n')}`,
+      used,
+    };
   }
 
   /**

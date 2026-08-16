@@ -11,6 +11,7 @@ import { PrismaService } from '../prisma/prisma.service.js';
 const FLAGSHIP_GRADES: Record<string, string> = {
   primary_4: 'الصف الرابع الابتدائي',
   prep_1: 'الصف الأول الإعدادي',
+  prep_3: 'الصف الثالث الإعدادي',
   secondary_1: 'الصف الأول الثانوي',
 };
 
@@ -148,7 +149,7 @@ export class MarkdownLoader implements OnModuleInit {
 
       return {
         path: relative,
-        type: type === 'reference' ? 'reference' : 'textbook',
+        type: type === 'references' ? 'reference' : 'textbook',
         stageKey,
         gradeKey,
         subjectName,
@@ -326,7 +327,10 @@ export class MarkdownLoader implements OnModuleInit {
     );
     if (!part) return null;
 
-    const text = fs.readFileSync(path.join(book.rootPath, part.file), 'utf8');
+    const partPath = path.join(book.rootPath, part.file);
+    if (!fs.existsSync(partPath)) return null;
+
+    const text = fs.readFileSync(partPath, 'utf8');
     const lines = text.split(/\r?\n/);
 
     let start = -1;

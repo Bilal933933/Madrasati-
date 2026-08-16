@@ -1,0 +1,33 @@
+generator client {
+  provider     = "prisma-client"
+  moduleFormat = "cjs"
+  output       = "../src/generated/vector"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model KnowledgeChunk {
+  id        BigInt                       @id @default(autoincrement())
+  docKey    String                       @unique(map: "knowledge_chunks_doc_key_unique") @db.VarChar(64)
+  docPath   String                       @db.VarChar(512)
+  docType   String                       @db.VarChar(32)
+  subjectId BigInt?
+  gradeId   BigInt?
+  lessonId  BigInt?
+  heading   String?                      @db.VarChar(255)
+  ordinal   Int?
+  text      String                       @db.Text
+  pageStart Int?
+  pageEnd   Int?
+  wordCount Int?
+  embedding Unsupported("halfvec(768)")?
+  createdAt DateTime                     @default(now()) @db.Timestamp(6)
+  updatedAt DateTime                     @updatedAt @db.Timestamp(6)
+
+  @@map("knowledge_chunks")
+  @@index([subjectId, gradeId], map: "knowledge_chunks_subject_grade_idx")
+  @@index([docType], map: "knowledge_chunks_doc_type_idx")
+  @@index([lessonId], map: "knowledge_chunks_lesson_id_idx")
+}

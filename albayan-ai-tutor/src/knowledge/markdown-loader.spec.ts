@@ -53,6 +53,32 @@ describe('MarkdownLoader', () => {
   });
 
   describe('lookupIds', () => {
+    it('يحل الصف الثالث الإعدادي (prep_3) إلى معرفات قاعدة البيانات', async () => {
+      prismaMock.stages.findUnique.mockResolvedValue({ id: 2n });
+      prismaMock.grades.findFirst.mockResolvedValue({ id: 9n });
+      prismaMock.subjects.findFirst.mockResolvedValue({ id: 117n });
+
+      const ids = await (
+        loader as unknown as {
+          lookupIds: (doc: {
+            stageKey: string;
+            gradeKey: string;
+            subjectName: string;
+          }) => Promise<{ subjectId: number; gradeId: number } | null>;
+        }
+      ).lookupIds({
+        stageKey: 'prep',
+        gradeKey: 'prep_3',
+        subjectName: 'الدراسات الاجتماعية',
+      });
+
+      expect(ids).toEqual({ subjectId: 117, gradeId: 9 });
+      expect(prismaMock.grades.findFirst).toHaveBeenCalledWith({
+        where: { stage_id: 2n, name: 'الصف الثالث الإعدادي' },
+        select: { id: true },
+      });
+    });
+
     it('يحل مسار المرحلة/الصف/المادة إلى معرفات قاعدة البيانات', async () => {
       prismaMock.stages.findUnique.mockResolvedValue({ id: 1n });
       prismaMock.grades.findFirst.mockResolvedValue({ id: 8n });

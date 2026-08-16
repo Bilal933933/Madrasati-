@@ -1,0 +1,97 @@
+{
+  "id": "science-prep-3-term-1-2027",
+  "title": "العلوم — الصف الثالث الإعدادي — الفصل الدراسي الأول 2027",
+  "author": "إدارة المحتوى التعليمي — وزارة التربية والتعليم",
+  "publisher": "وزارة التربية والتعليم والتعليم الفني",
+  "stage": "general",
+  "subject": "العلوم",
+  "branch": "علوم",
+  "total_pages": 109,
+  "parts": [
+    {
+      "file": "part-01.md",
+      "pages": [1, 40],
+      "chapter": null,
+      "sections": [
+        {
+          "id": "science-3prep-t1-c1",
+          "title": "المقدمة والمحتويات",
+          "kind": "noise",
+          "page": 1,
+          "endPage": 5,
+          "concepts": []
+        },
+        {
+          "id": "science-3prep-t1-c2",
+          "title": "الوحدة الأولى: القوى والحركة",
+          "kind": "content",
+          "page": 6,
+          "endPage": 34,
+          "concepts": ["قوى", "حركة", "سرعة متجهة", "عجلة"]
+        },
+        {
+          "id": "science-3prep-t1-c3",
+          "title": "الوحدة الثانية: الطاقة الضوئية",
+          "kind": "content",
+          "page": 35,
+          "endPage": 40,
+          "concepts": ["انعكاس الضوء", "انكسار الضوء", "عدسات", "مرايا"]
+        }
+      ]
+    },
+    {
+      "file": "part-02.md",
+      "pages": [41, 80],
+      "chapter": null,
+      "sections": [
+        {
+          "id": "science-3prep-t1-c4",
+          "title": "الوحدة الثانية: استكمال الطاقة الضوئية",
+          "kind": "content",
+          "page": 41,
+          "endPage": 64,
+          "concepts": ["مرايا مقعرة ومحدبة", "عدسات محدبة ومقعرة"]
+        },
+        {
+          "id": "science-3prep-t1-c5",
+          "title": "الوحدة الثالثة: الكون والكونيات",
+          "kind": "content",
+          "page": 65,
+          "endPage": 80,
+          "concepts": ["الكون", "المجموعة الشمسية", "نظرية الانفجار العظيم"]
+        }
+      ]
+    },
+    {
+      "file": "part-03.md",
+      "pages": [81, 109],
+      "chapter": null,
+      "sections": [
+        {
+          "id": "science-3prep-t1-c6",
+          "title": "الوحدة الثالثة: استكمال الكون",
+          "kind": "content",
+          "page": 81,
+          "endPage": 84,
+          "concepts": ["نجوم", "مجرات"]
+        },
+        {
+          "id": "science-3prep-t1-c7",
+          "title": "الوحدة الرابعة: التكاثر واستمرار النوع",
+          "kind": "content",
+          "page": 85,
+          "endPage": 104,
+          "concepts": ["انقسام ميوزي", "انقسام ميوزيني", "تكاثر جنسي وغير جنسي"]
+        },
+        {
+          "id": "science-3prep-t1-c8",
+          "title": "المراجعة النهائية والتقييمات",
+          "kind": "content",
+          "page": 105,
+          "endPage": 109,
+          "concepts": ["مراجعة", "تقييم"]
+        }
+      ]
+    }
+  ]
+}

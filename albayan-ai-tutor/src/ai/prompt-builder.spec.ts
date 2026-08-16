@@ -70,6 +70,27 @@ describe('PromptBuilder', () => {
     expect(prompt).toContain('(من الكتاب المدرسي)');
   });
 
+  it('يجعل الكتاب المدرسي هو الفيصل عند أي تعارض', () => {
+    const prompt = builder.build(context, rag);
+
+    expect(prompt).toContain('الحقيقة المطلقة');
+    expect(prompt).toContain('الفيصل عند أي تعارض');
+    expect(prompt).toContain('فاعتمد ما في الكتاب المدرسي');
+    expect(prompt).toContain('لا تخالف الكتاب المدرسي');
+  });
+
+  it('يقلب ترتيب الابتداء: من الكتاب المدرسي ثم الدرس ثم المراجع', () => {
+    const prompt = builder.build(context, rag);
+
+    const idxTextbook = prompt.indexOf('ابدأ إجابتك من الكتاب المدرسي');
+    const idxLesson = prompt.indexOf('ثم أثرِها من الدرس');
+    const idxRefs = prompt.indexOf('المراجع العامة عند وجود تفصيل إضافي');
+
+    expect(idxTextbook).toBeGreaterThan(-1);
+    expect(idxLesson).toBeGreaterThan(idxTextbook);
+    expect(idxRefs).toBeGreaterThan(idxLesson);
+  });
+
   it('يأمر بإبراز التفاصيل الإضافية في قسم منفصل', () => {
     const prompt = builder.build(context, rag);
 

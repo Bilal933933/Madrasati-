@@ -48,20 +48,40 @@ export class GeminiService {
     }));
     contents.push({ role: 'user', parts: [{ text: currentQuestion }] });
 
-    const stream = await this.ai.models.generateContentStream({
-      model: this.model,
-      contents,
-      config: {
-        systemInstruction: system,
-        maxOutputTokens: this.maxTokens,
-      },
-    });
+    const attempts = 3;
+    let lastError: unknown;
+    for (let attempt = 1; attempt <= attempts; attempt++) {
+      let yielded = false;
+      try {
+        const stream = await this.ai.models.generateContentStream({
+          model: this.model,
+          contents,
+          config: {
+            systemInstruction: system,
+            maxOutputTokens: this.maxTokens,
+          },
+        });
 
-    for await (const chunk of stream) {
-      if (chunk.text) {
-        yield chunk.text;
+        for await (const chunk of stream) {
+          if (chunk.text) {
+            yielded = true;
+            yield chunk.text;
+          }
+        }
+        return;
+      } catch (error) {
+        // انقطاع بعد بدء البث لا يُعوض بإعادة المحاولة (سيكرر المستخدم نصًا
+        // جزئيًا فيظهر مكررًا) — يُرمى الخطأ ليُرسل للعميل ويُعرض بوضوح.
+        if (yielded || !isRetryableStreamError(error) || attempt === attempts) {
+          throw error;
+        }
+        lastError = error;
+        await new Promise((resolve) =>
+          setTimeout(resolve, 1000 * attempt + Math.floor(Math.random() * 500)),
+        );
       }
     }
+    throw lastError;
   }
 
   /**
@@ -91,4 +111,24 @@ export class GeminiService {
       throw new Error('تعذّر تحليل استجابة JSON الواردة من النموذج.');
     }
   }
+}
+
+/**
+ * هل الخطأ عابرًا فيستحق إعادة محاولة الدفق؟ Gemini قد يرفض مؤقتًا بضغط
+ * عالٍ (UNAVAILABLE/503) أو استنفاد حصة (429) — لا نعيد المحاولة في أخطاء
+ * أخرى (مفاتيح، حظر، مدخلات) لأنها لن تنجح بالتكرار.
+ */
+function isRetryableStreamError(error: unknown): boolean {
+  const message =
+    error instanceof Error
+      ? error.message
+      : typeof error === 'string'
+        ? error
+        : '';
+  return (
+    message.includes('UNAVAILABLE') ||
+    message.includes('RESOURCE_EXHAUSTED') ||
+    /got status: (429|5\d\d)/.test(message) ||
+    /"code":(429|503)/.test(message)
+  );
 }

@@ -9,6 +9,12 @@ coverage/
 
 # Prisma Client المولّد — يولّد من جديد عبر `npx prisma generate`
 src/generated/prisma/
+src/generated/vector/
+
+# مخرجات بناء prisma.config (تُبنى من المصدر)
+prisma/vector.config.js
+prisma/vector.config.js.map
+prisma/vector.config.d.ts
 
 # سجلات Winston
 logs/

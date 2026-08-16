@@ -481,6 +481,45 @@ describe('RagService', () => {
       expect(result.contentWindow).not.toContain('القاعدة العامة');
       expect(result.contentWindow).not.toContain('كلمة2000');
     });
+
+    it('يقدّم مقاطع الكتاب المدرسي على المراجع عند تساوي الصلة (المدرسي هو الفيصل)', async () => {
+      const refDoc = (title: string, body: string) => ({
+        path: 'references/primary/primary_4/اللغة العربية/النحو/ref.md',
+        type: 'reference' as const,
+        stageKey: 'primary',
+        gradeKey: 'primary_4',
+        subjectName: 'اللغة العربية',
+        courseName: 'النحو',
+        title,
+        body,
+        subjectId: 5,
+        gradeId: 8,
+      });
+      markdownMock.matching.mockReturnValue([
+        refDoc(
+          'مرجع المبتدأ',
+          '## المبتدأ\nالمبتدأ اسم مرفوع يقع أول الجملة، وهو أساس الجملة الاسمية.',
+        ),
+        doc(
+          'المدرسي المبتدأ',
+          '## المبتدأ\nالمبتدأ اسم مرفوع يقع أول الجملة، وهو أساس الجملة الاسمية.',
+        ),
+      ]);
+      markdownMock.matchingGeneral.mockReturnValue([]);
+      prismaMock.lessons.findMany.mockResolvedValue([]);
+      prismaMock.paragraphs.findMany.mockResolvedValue([]);
+
+      const result = await rag.retrieve('ما المبتدأ؟', {
+        subjectId: 5,
+        gradeId: null,
+      });
+
+      const idxTextbook = result.contentWindow.indexOf('المدرسي المبتدأ');
+      const idxRef = result.contentWindow.indexOf('مرجع المبتدأ');
+      expect(idxTextbook).toBeGreaterThan(-1);
+      expect(idxRef).toBeGreaterThan(-1);
+      expect(idxTextbook).toBeLessThan(idxRef);
+    });
   });
 
   describe('بوابة الكفاية والكسب الهامشي', () => {
