@@ -52,12 +52,15 @@
 - استثناءات الطبقة 3 محتجزة محليًا (`rag.layer3_failed` عبر `logger.warn`)، لا تصل إلى فلتر الأخطاء العام.
 
 ### الطبقة الدلالية (pgvector + Hybrid/RRF)
-- **قاعدة المتجهات**: قاعدة Neon مستقلة (`VECTOR_DATABASE_URL`) يملكها ai-tutor؛ جدول `knowledge_chunks` بنمط `halfvec(768)` عبر `prisma/vector.prisma` (كل عمليات المتجه SQL خام لأن Prisma لا يدعم نصف المتجهات)، وفهرس `hnsw (embedding halfvec_cosine_ops)`.
+- **قاعدة المتجهات**: قاعدة Neon مستقلة (`VECTOR_DATABASE_URL`) يملكها ai-tutor؛ جدول `knowledge_chunks` بنمط `halfvec(768)` عبر `vector-schema/vector.prisma` (كل عمليات المتجه SQL خام لأن Prisma لا يدعم نصف المتجهات)، وفهرس `hnsw (embedding halfvec_cosine_ops)`.
 - **النموذج**: `gemini-embedding-001` بأبعاد 768 عبر MRL (`outputDimensionality`) — بلا `taskType` (خاص Vertex فقط).
 - **المصادر المفهرسة**: مقاطع markdown بـ 500 كلمة، أقسام الكتب العامة، وفقرات دروس DB — بمفاتيح `docKey` مستقرة (sha256 من موقع المقطع لا محتواه) وupsert على `doc_key`.
 - **الدمج**: الطبقة الدلالية **كسولة** — تُبنى فقط عند عدم كفاية الطبقات 1-3 لبوابة الكفاية (توفير تكلفة الـ embedding لكل سؤال)، ثم تُرتَّب نتائجها عبر **RRF** (دمج رتبة التشابه الدلالي + الوزن المعجمي) مع الكسب الهامشي والميزانية نفسَيهما للطبقات الباقية.
 - **الانهيار السعيد**: غياب أو فشل التضمين/قاعدة المتجهات لا يفشل الطلب (`rag.semantic_failed` عبر `logger.warn`) — يُكمَل المعجمي كما كان.
 - **بيئة التشغيل**: `EMBEDDING_MODEL`/`EMBEDDING_DIMENSIONS`/`EMBEDDING_BATCH_SIZE`/`VECTOR_TOP_K` (افتراضي 20)/`RRF_K` (افتراضي 60). الفهرسة عبر `npm run index:vector` (مبنية) أو `node dist/cli/indexer.js`.
+- **القيود والتباطؤ**: حصة free tier لنموذج `gemini-embedding-1.0` هي `embed_content_free_tier_requests` **1000 طلب/يوم** لكل مشروع/نموذج، تُعاد منتصف ليل Pacific. لتوزيع الطلبات على نافذة الدقيقة (تفادي TPM/RPM اللحظية) تُشغَّل الفهرسة بـ `EMBEDDING_BATCH_SIZE=1` و`INDEXER_DELAY_MS=2500` (راحة بين الدفعات في `indexer.service.ts`). الـ upsert على `docKey` يجعل الاستئناف بعد استنفاد الحصة آمنًا بلا تكرار.
+- **`--prefix` على Windows**: `indexer.service.ts` يطبّع المسارات (`\`→`/`) قبل `startsWith` حتى يعمل `--prefix textbook/prep/prep_3` على Windows.
+- **حالة الفهرسة (2026-08-17)**: `textbook/prep/prep_3` (4 كتب مدرسية، 321 مقطعًا) **302/321 مفهرسة** في قاعدة المتجهات؛ الـ 19 المتبقية ستُستأنف تلقائيًا عند إعادة ضبط الحصة. باقي المصادر (references/prep/prep_3، الكتب العامة، دروس DB) بنفس الآلية البطيئة.
 - **معايرة مؤجلة**: العتبات الفعلية (topK، حجم المقطع، نسب الدمج) لم تُعيَر بعد بسبب استنفاد حصة Gemini API أثناء الفهرسة التجريبية — تُعاد عند إعادة ضبط الحصة.
 
 ## 3) قاعدة قرارات الحذف — ملزمة

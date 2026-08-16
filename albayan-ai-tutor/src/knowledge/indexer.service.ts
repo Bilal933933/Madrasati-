@@ -45,8 +45,12 @@ export class IndexerService {
     const pending: PendingChunk[] = [];
 
     // 1) المدرسي/المراجع (مقاطع 500 كلمة).
+    const normalize = (p: string): string => p.replaceAll('\\', '/');
     for (const doc of this.markdown.all()) {
-      if (opts.docPathPrefix && !doc.path.startsWith(opts.docPathPrefix)) {
+      if (
+        opts.docPathPrefix &&
+        !normalize(doc.path).startsWith(normalize(opts.docPathPrefix))
+      ) {
         continue;
       }
       const chunks = splitMarkdown(doc.body, {
@@ -129,6 +133,7 @@ export class IndexerService {
     // تحميل متجهات دفعات ثم upsert — بلا نسخ الصف الذي فُهرس مسبقًا بنفس المفتاح.
     let upserted = 0;
     const batchSize = this.embeddingBatchSize;
+    const delayMs = this.batchDelayMs;
     for (let i = 0; i < pending.length; i += batchSize) {
       const batch = pending.slice(i, i + batchSize);
       const vectors = await this.embedding.embedBatch(
@@ -137,6 +142,10 @@ export class IndexerService {
       for (let j = 0; j < batch.length; j++) {
         await this.vector.upsert(batch[j].row, vectors[j]);
         upserted += 1;
+      }
+      // راحة بين الدفعات لتفادي حد الرموز/الطلبات في الدقيقة (TPM/RPM).
+      if (delayMs > 0 && i + batchSize < pending.length) {
+        await new Promise((r) => setTimeout(r, delayMs));
       }
       if (upserted % (batchSize * 4) === 0 || upserted === pending.length) {
         this.logger.info(
@@ -158,6 +167,11 @@ export class IndexerService {
   private get embeddingBatchSize(): number {
     const parsed = Number.parseInt(process.env.EMBEDDING_BATCH_SIZE ?? '', 10);
     return Number.isFinite(parsed) && parsed > 0 ? parsed : 25;
+  }
+
+  private get batchDelayMs(): number {
+    const parsed = Number.parseInt(process.env.INDEXER_DELAY_MS ?? '', 10);
+    return Number.isFinite(parsed) && parsed > 0 ? parsed : 0;
   }
 
   /** يجمع فقرات كل الدروس المنشورة كنصوص (نفس نافذة الطبقة 1 في RAG). */

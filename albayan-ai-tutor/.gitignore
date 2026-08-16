@@ -12,9 +12,9 @@ src/generated/prisma/
 src/generated/vector/
 
 # مخرجات بناء prisma.config (تُبنى من المصدر)
-prisma/vector.config.js
-prisma/vector.config.js.map
-prisma/vector.config.d.ts
+vector-schema/vector.config.js
+vector-schema/vector.config.js.map
+vector-schema/vector.config.d.ts
 
 # سجلات Winston
 logs/

@@ -1,16 +1,16 @@
 import { Injectable, Optional } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service.js';
-import { splitMarkdown, type Chunk } from './chunker.js';
-import { EmbeddingService } from './embedding.service.js';
-import {
-  BookSection,
-  GeneralBookDoc,
-  MarkdownDoc,
-  MarkdownLoader,
-} from './markdown-loader.js';
-import { extractTipTapText } from './tiptap.js';
-import { VectorService, type VectorSearchHit } from './vector.service.js';
 import { LoggerService } from '../common/logger/logger.service.js';
+import { PrismaService } from '../prisma/prisma.service.js';
+import { EmbeddingService } from './embedding.service.js';
+import { MarkdownLoader } from './markdown-loader.js';
+import { Layer1Builder } from './rag-layer1.builder.js';
+import { Layer2Builder } from './rag-layer2.builder.js';
+import { Layer3Builder } from './rag-layer3.builder.js';
+import { SemanticLayerBuilder } from './rag-semantic.builder.js';
+import { isLayerSufficient } from './rag.gate.js';
+import { computeTokenWeights } from './rag.scoring.js';
+import { tokenize } from './rag.tokenizer.js';
+import { VectorService } from './vector.service.js';
 
 export interface RagResult {
   lessons: { id: number; title: string; summary: string | null }[];
@@ -20,21 +20,42 @@ export interface RagResult {
   semanticHits: { docPath: string; docType: string; similarity: number }[];
 }
 
+/**
+ * المنسّق العام لنظام RAG الهجين:
+ * 1) الطبقة 1: الدروس المطابقة من المنصة (استعلام DB).
+ * 2) الطبقة 2: مقاطع الكتاب المدرسي/المراجع المطابقة (في الذاكرة) — تعمل
+ *    بالتوازي مع الطبقة 1 عبر Promise.allSettled لأنها رخيصة.
+ * 3) الطبقة 3: أقسام المراجع العامة (قراءات قرص) — كسولة تسلسلية، لا تُبنى
+ *    إلا عند عدم كفاية الطبقتين 1 و2 لبوابة الكفاية.
+ * 4) الطبقة الدلالية: قاعدة المتجهات عبر RRF — كسولة أيضًا.
+ * بوابة الكفاية: تغطية نسبة التوكنز الجوهرية للسؤال ≥ العتبة
+ * (RAG_SUFFICIENCY_COVERAGE، افتراضي 0.6) وسور الطول الثانوي
+ * (RAG_MIN_CONTENT_CHARS، افتراضي 120). الكسب الهامشي بين الطبقات: لا يُضم
+ * مقطع/قسم يعيد توكنز جوهرية نُصِّفت بالفعل في النافذة الحالية.
+ *
+ * كل بناء طبقة منفصل في فئته الخاصة (Layer1Builder/Layer2Builder/
+ * Layer3Builder/SemanticLayerBuilder) — هذا الملف منسّق فقط.
+ */
 @Injectable()
 export class RagService {
   private readonly maxChars: number;
   private readonly coverageThreshold: number;
   private readonly minContentChars: number;
-  private readonly semanticTopK: number;
-  private readonly rrfK: number;
+  private readonly logger?: LoggerService;
+  private readonly layer1: Layer1Builder;
+  private readonly layer2: Layer2Builder;
+  private readonly layer3: Layer3Builder;
+  private readonly semantic: SemanticLayerBuilder;
 
   constructor(
-    private readonly prisma: PrismaService,
+    prisma: PrismaService,
     private readonly markdown: MarkdownLoader,
-    @Optional() private readonly embedding?: EmbeddingService,
-    @Optional() private readonly vector?: VectorService,
-    @Optional() private readonly logger?: LoggerService,
+    @Optional() embedding?: EmbeddingService,
+    @Optional() vector?: VectorService,
+    logger?: LoggerService,
   ) {
+    this.logger = logger;
+
     const parsed = Number.parseInt(process.env.AI_RAG_MAX_CHARS ?? '', 10);
     this.maxChars = Number.isFinite(parsed) && parsed > 0 ? parsed : 120000;
 
@@ -54,35 +75,34 @@ export class RagService {
       Number.isFinite(contentChars) && contentChars > 0 ? contentChars : 120;
 
     const topK = Number.parseInt(process.env.VECTOR_TOP_K ?? '', 10);
-    this.semanticTopK = Number.isFinite(topK) && topK > 0 ? topK : 20;
+    const semanticTopK = Number.isFinite(topK) && topK > 0 ? topK : 20;
 
     const k = Number.parseInt(process.env.RRF_K ?? '', 10);
-    this.rrfK = Number.isFinite(k) && k > 0 ? k : 60;
+    const rrfK = Number.isFinite(k) && k > 0 ? k : 60;
+
+    this.layer1 = new Layer1Builder(prisma, logger);
+    this.layer2 = new Layer2Builder(markdown, this.maxChars);
+    this.layer3 = new Layer3Builder(markdown, this.maxChars);
+    this.semantic = new SemanticLayerBuilder(
+      embedding,
+      vector,
+      rrfK,
+      this.maxChars,
+      semanticTopK,
+    );
   }
 
-  /**
-   * استرجاع نصي بسيط (بلا vector DB) ببنية متدرجة:
-   * 1) الطبقة 1: الدروس المطابقة من المنصة (استعلام DB).
-   * 2) الطبقة 2: مقاطع الكتاب المدرسي/المراجع المطابقة (في الذاكرة) — تعمل
-   *    بالتوازي مع الطبقة 1 عبر Promise.allSettled لأنها رخيصة.
-   * 3) الطبقة 3: أقسام المراجع العامة (قراءات قرص) — كسولة تسلسلية، لا تُبنى
-   *    إلا عند عدم كفاية الطبقتين 1 و2 لبوابة الكفاية.
-   * بوابة الكفاية: تغطية نسبة التوكنز الجوهرية للسؤال ≥ العتبة
-   * (RAG_SUFFICIENCY_COVERAGE، افتراضي 0.6) وسور الطول الثانوي
-   * (RAG_MIN_CONTENT_CHARS، افتراضي 120). الكسب الهامشي بين الطبقات: لا يُضم
-   * مقطع/قسم يعيد توكنز جوهرية نُصِّفت بالفعل في النافذة الحالية.
-   */
   async retrieve(
     question: string,
     opts: { subjectId?: number | null; gradeId?: number | null },
   ): Promise<RagResult> {
-    const tokens = this.tokenize(question);
+    const tokens = tokenize(question);
     if (tokens.length === 0) {
       return { lessons: [], contentWindow: '', sources: [], semanticHits: [] };
     }
 
     // الأوزان IDF تُحسب مرة واحدة وتُشارك بين الطبقتين 2 و3 لاتساق الصلة.
-    const tokenWeights = this.computeTokenWeights(
+    const tokenWeights = computeTokenWeights(
       this.markdown.matchingGeneral({
         subjectId: opts.subjectId,
         gradeId: opts.gradeId,
@@ -95,8 +115,8 @@ export class RagService {
     // الطبقة 1 (DB) والطبقة 2 (ذاكرة) — تدهور سعيد: فشل أي مكوّن لا يفشل
     // الطلب، بل يُكمَل من المكونات الباقية.
     const [layer1, layer2] = await Promise.allSettled([
-      this.buildLayer1(opts, tokens),
-      Promise.resolve(this.buildLayer2Candidates(opts, tokens, tokenWeights)),
+      this.layer1.build(opts, tokens),
+      Promise.resolve(this.layer2.buildCandidates(opts, tokens, tokenWeights)),
     ]);
 
     let lessons: RagResult['lessons'] = [];
@@ -122,7 +142,7 @@ export class RagService {
 
     let block2 = '';
     if (layer2.status === 'fulfilled') {
-      block2 = this.selectLayer2(layer2.value, tokens, block1);
+      block2 = this.layer2.select(layer2.value, tokens, block1);
       if (block2) layers.push(block2);
     } else {
       layerErrors.push(layer2.reason);
@@ -136,9 +156,9 @@ export class RagService {
     let contentWindow = layers.join('\n\n');
 
     // الطبقة 3 كسولة: تُقرأ من القرص فقط عند عدم كفاية الطبقتين 1 و2 معًا.
-    if (!this.isLayerSufficient(contentWindow, tokens)) {
+    if (!this.isSufficient(contentWindow, tokens)) {
       try {
-        const block3 = this.buildLayer3(
+        const block3 = this.layer3.build(
           opts,
           tokens,
           tokenWeights,
@@ -161,22 +181,21 @@ export class RagService {
     // الطبقة الدلالية كسولة: تُستعلم قاعدة المتجهات فقط عند عدم كفاية
     // الطبقات 1-3 معًا، وتُدمج عبر RRF مع المرشّحين المعجميين.
     let semanticHits: RagResult['semanticHits'] = [];
-    if (!this.isLayerSufficient(contentWindow, tokens)) {
+    if (!this.isSufficient(contentWindow, tokens)) {
       const semantic = await Promise.allSettled([
-        this.buildSemanticCandidates(question, opts),
+        this.semantic.buildCandidates(question, opts),
       ]);
       if (semantic[0].status === 'fulfilled' && semantic[0].value.length > 0) {
-        const blockS = this.selectSemanticLayer(
+        const selection = this.semantic.select(
           semantic[0].value,
-          layer2.status === 'fulfilled' ? layer2.value : [],
           tokens,
           contentWindow,
         );
-        if (blockS.block) {
-          layers.push(blockS.block);
+        if (selection.block) {
+          layers.push(selection.block);
           contentWindow = layers.join('\n\n');
         }
-        semanticHits = blockS.used;
+        semanticHits = selection.used;
       } else if (semantic[0].status === 'rejected') {
         layerErrors.push(semantic[0].reason);
         this.logger?.warn(
@@ -223,667 +242,13 @@ export class RagService {
     return { lessons, contentWindow, sources, semanticHits };
   }
 
-  /**
-   * الطبقة 1: دروس منصة من DB تُقيَّم بالسؤال ثم تُسحب فقراتها كنصوص.
-   * المصدر يُسجَّل للدرس فقط إن وُجد نصه الفعلي ضمن النافذة (لا استشهاد
-   * بلا نص) — إغلاق التسريب الذي كان يدفع كل الدروس المختارة مهما كانت
-   * فقراتها فارغة.
-   */
-  private async buildLayer1(
-    opts: {
-      subjectId?: number | null;
-      gradeId?: number | null;
-    },
-    tokens: string[],
-  ): Promise<{
-    block: string;
-    lessons: RagResult['lessons'];
-    sources: RagResult['sources'];
-  }> {
-    const lessons = await this.prisma.lessons.findMany({
-      where: {
-        is_published: true,
-        ...(opts.subjectId != null
-          ? { courses: { subject_id: opts.subjectId } }
-          : opts.gradeId != null
-            ? { courses: { subjects: { grade_id: opts.gradeId } } }
-            : {}),
-      },
-      select: {
-        id: true,
-        title: true,
-        summary: true,
-        learning_objectives: true,
-      },
-      take: 200,
-      orderBy: { sort_order: 'asc' },
+  private isSufficient(contentWindow: string, tokens: string[]): boolean {
+    return isLayerSufficient(contentWindow, tokens, {
+      minContentChars: this.minContentChars,
+      coverageThreshold: this.coverageThreshold,
     });
-
-    const lessonWeights = this.computeLessonTokenWeights(lessons, tokens);
-
-    const scored = lessons
-      .map((lesson) => ({
-        lesson,
-        score: this.scoreLesson(lesson, tokens, lessonWeights),
-      }))
-      .sort((a, b) => b.score - a.score);
-
-    // استبعاد الدروس عديمة الصلة تمامًا (score=0) حتى لا تُزحم النافذة.
-    const selected = scored.filter((s) => s.score > 0).slice(0, 4);
-
-    const paragraphs = await this.prisma.paragraphs.findMany({
-      where: {
-        lesson_id: { in: selected.map((s) => s.lesson.id) },
-      },
-      select: { id: true, lesson_id: true, title: true, content: true },
-    });
-
-    const byLesson = new Map<number, string[]>();
-    for (const p of paragraphs) {
-      const extracted = extractTipTapText(p.content);
-      if (!extracted.ok) {
-        this.logger?.warn(
-          { event: 'rag.paragraph_extract_failed' },
-          'فشل استخراج نص فقرة من JSON تيبتاب',
-          {
-            lessonId: Number(p.lesson_id),
-            paragraphId: Number(p.id),
-            paragraphTitle: p.title,
-            contentPreview: p.content.slice(0, 120),
-          },
-        );
-        continue;
-      }
-      if (extracted.text.length === 0) {
-        continue;
-      }
-      const list = byLesson.get(Number(p.lesson_id)) ?? [];
-      list.push(extracted.text);
-      byLesson.set(Number(p.lesson_id), list);
-    }
-
-    const lessonsBlock: string[] = [];
-    const sources: RagResult['sources'] = [];
-    for (const entry of selected) {
-      const texts = byLesson.get(Number(entry.lesson.id)) ?? [];
-      if (texts.length === 0) continue;
-      lessonsBlock.push(`### ${entry.lesson.title}\n${texts.join('\n\n')}`);
-      sources.push({
-        lessonId: Number(entry.lesson.id),
-        lessonTitle: entry.lesson.title,
-      });
-    }
-
-    const block =
-      lessonsBlock.length > 0
-        ? `## الطبقة 1: الدرس على المنصة\n${lessonsBlock.join('\n\n')}`
-        : '';
-
-    return {
-      block,
-      lessons: selected.map((s) => ({
-        id: Number(s.lesson.id),
-        title: s.lesson.title,
-        summary: s.lesson.summary,
-      })),
-      sources,
-    };
-  }
-
-  /** يجمع مرشّحين الطبقة 2 (مقاطع chunked) — يصلح للبناء المتوازي. */
-  private buildLayer2Candidates(
-    opts: { subjectId?: number | null; gradeId?: number | null },
-    tokens: string[],
-    tokenWeights: Map<string, number>,
-  ): { doc: MarkdownDoc; chunk: Chunk; score: number }[] {
-    const chunkCandidates: {
-      doc: MarkdownDoc;
-      chunk: Chunk;
-      score: number;
-    }[] = [];
-    for (const doc of this.markdown.matching({
-      subjectId: opts.subjectId,
-      gradeId: opts.gradeId,
-    })) {
-      for (const chunk of splitMarkdown(doc.body)) {
-        const { score, contentMatch } = scoreChunk(chunk, tokens, tokenWeights);
-        if (score > 0 && contentMatch) {
-          chunkCandidates.push({ doc, chunk, score });
-        }
-      }
-    }
-    return chunkCandidates.sort((a, b) => b.score - a.score);
-  }
-
-  /**
-   * يختار مقاطع الطبقة 2 ضمن ميزانية الحروف المتبقية بعد الطبقة 1، مع
-   * الكسب الهامشي: يُضم مقطع فقط لو أضاف توكنز جوهرية للسؤال غير ممثلة بعد
-   * في نافذة الطبقة 1 (مثل ملف مرجعي يكرّر نص درس المنصة).
-   */
-  private selectLayer2(
-    candidates: { doc: MarkdownDoc; chunk: Chunk; score: number }[],
-    tokens: string[],
-    block1: string,
-  ): string {
-    const represented = this.coveredSubstantiveTokens(tokens, block1);
-    const budget = Math.max(0, this.maxChars - block1.length);
-
-    // الكتاب المدرسي هو الحقيقة المطلقة والفيصل عند التعارض: تُقدَّم مقاطعه
-    // أولًا (ثابت ضمن نوعه بالوزن) حتى يدخل "الحَكَم" النافذة قبل المراجع.
-    const prioritized = [...candidates].sort((a, b) => {
-      const ta = a.doc.type === 'textbook' ? 0 : 1;
-      const tb = b.doc.type === 'textbook' ? 0 : 1;
-      if (ta !== tb) return ta - tb;
-      return b.score - a.score;
-    });
-
-    const markdownBlock: string[] = [];
-    let used = 0;
-    for (const cand of prioritized) {
-      const addedTokens = this.addedSubstantiveTokens(
-        tokens,
-        `${cand.chunk.heading} ${cand.chunk.text}`,
-        represented,
-      );
-      if (addedTokens.length === 0) continue;
-      const label =
-        cand.doc.type === 'reference' ? 'مرجع عام' : 'من الكتاب المدرسي';
-      const heading = cand.chunk.heading.trim();
-      const block = `### ${cand.doc.title} — [${label}]${heading ? ` — ${heading}` : ''}\n${cand.chunk.text}`;
-      // يقرأ أول مقطع مهما كان حجمه، ثم يتوقف عند تجاوز الميزانية بمقاطع كاملة.
-      if (markdownBlock.length > 0 && used + block.length > budget) break;
-      markdownBlock.push(block);
-      used += block.length;
-    }
-
-    if (markdownBlock.length === 0) return '';
-    return `## الطبقة 2: من الكتاب المدرسي والمراجع\n${markdownBlock.join('\n\n')}`;
-  }
-
-  /**
-   * الطبقة 3: أقسام المراجع العامة — تُقرأ كسولةً من القرص فقط عند عدم كفاية
-   * الطبقتين 1 و2 لبوابة الكفاية، وضمن ميزانية الحروف المتبقية. الكسب
-   * الهامشي ينطبق أيضًا: قسمٌ يعيد توكنز جوهرية نُصِّفت لا يُقرأ.
-   */
-  private buildLayer3(
-    opts: { subjectId?: number | null; gradeId?: number | null },
-    tokens: string[],
-    tokenWeights: Map<string, number>,
-    windowBefore: string,
-  ): string {
-    const candidates: {
-      section: BookSection;
-      book: GeneralBookDoc;
-      score: number;
-    }[] = [];
-    for (const book of this.markdown.matchingGeneral({
-      subjectId: opts.subjectId,
-      gradeId: opts.gradeId,
-    })) {
-      for (const cand of this.candidateSections(book, tokens, tokenWeights)) {
-        candidates.push({ ...cand, book });
-      }
-    }
-    candidates.sort((a, b) => b.score - a.score);
-
-    const represented = this.coveredSubstantiveTokens(tokens, windowBefore);
-    const budget = Math.max(0, this.maxChars - windowBefore.length);
-
-    const generalBlock: string[] = [];
-    let used = 0;
-    for (const cand of candidates) {
-      const text = this.markdown.readSection(cand.book, cand.section);
-      if (!text) continue;
-      const addedTokens = this.addedSubstantiveTokens(
-        tokens,
-        `${cand.section.title} ${(cand.section.concepts ?? []).join(' ')} ${text}`,
-        represented,
-      );
-      if (addedTokens.length === 0) continue;
-      const block = `### ${cand.section.title} — [${cand.book.title}: ${cand.section.page}]\n${text}`;
-      // يقرأ أول قسم مهما كان حجمه، ثم يتوقف عند تجاوز الميزانية بأقسام كاملة.
-      if (generalBlock.length > 0 && used + block.length > budget) break;
-      generalBlock.push(block);
-      used += block.length;
-    }
-
-    if (generalBlock.length === 0) return '';
-    return `## الطبقة 3: من المراجع العامة\n${generalBlock.join('\n\n')}`;
-  }
-
-  /**
-   * الطبقة الدلالية: يستعلم قاعدة المتجهات بتضمين السؤال. تُبنى بالتوازي مع
-   * الطبقتين 1 و2، وتُدمج عبر RRF مع المرشّحين المعجميين. غياب الخدمتين
-   * (اختبار/بيئة) أو فشلهما يُرجع [] فيُستكمل المعجمي بلا انهيار.
-   */
-  private async buildSemanticCandidates(
-    question: string,
-    opts: { subjectId?: number | null; gradeId?: number | null },
-  ): Promise<VectorSearchHit[]> {
-    if (!this.embedding || !this.vector) return [];
-    const queryVector = await this.embedding.embed(question);
-    return this.vector.search(queryVector, {
-      subjectId: opts.subjectId ?? null,
-      gradeId: opts.gradeId ?? null,
-      topK: this.semanticTopK,
-    });
-  }
-
-  /**
-   * يختار مقاطع الطبقة الدلالية بترتيب RRF (دمج رتبتي التشابه الدلالي والوزن
-   * المعجمي)، مع الكسب الهامشي والميزانية نفسَين للطبقات الباقية.
-   * يُرجع الكتلة مع المقاطع المضمومة فعلًا للتشخيص.
-   */
-  private selectSemanticLayer(
-    hits: VectorSearchHit[],
-    lexicalCandidates: { doc: MarkdownDoc; chunk: Chunk; score: number }[],
-    tokens: string[],
-    windowBefore: string,
-  ): {
-    block: string;
-    used: { docPath: string; docType: string; similarity: number }[];
-  } {
-    if (hits.length === 0) return { block: '', used: [] };
-
-    // رتبة دلالية (تنازليًا بالتشابه) ورتبة معجمية (تنازليًا بالوزن).
-    const semanticOrder = [...hits].sort((a, b) => b.similarity - a.similarity);
-    const lexicalWeights = new Map(tokens.map((t) => [t, 1]));
-    const lexicalOrder = [...hits].sort((a, b) => {
-      const sa = scoreChunk(
-        {
-          id: a.docKey,
-          heading: a.heading ?? '',
-          text: a.text,
-          startPage: a.pageStart,
-          endPage: a.pageEnd,
-          wordCount: 0,
-        },
-        tokens,
-        lexicalWeights,
-      ).score;
-      const sb = scoreChunk(
-        {
-          id: b.docKey,
-          heading: b.heading ?? '',
-          text: b.text,
-          startPage: b.pageStart,
-          endPage: b.pageEnd,
-          wordCount: 0,
-        },
-        tokens,
-        lexicalWeights,
-      ).score;
-      return sb - sa;
-    });
-
-    const rankOf = (ordered: VectorSearchHit[], hit: VectorSearchHit): number =>
-      ordered.findIndex((h) => h.docKey === hit.docKey);
-
-    // RRF: 1/(k+rankSemantic) + 1/(k+rankLexical).
-    const fused = [...hits].sort((a, b) => {
-      const ra =
-        1 / (this.rrfK + rankOf(semanticOrder, a)) +
-        1 / (this.rrfK + rankOf(lexicalOrder, a));
-      const rb =
-        1 / (this.rrfK + rankOf(semanticOrder, b)) +
-        1 / (this.rrfK + rankOf(lexicalOrder, b));
-      return rb - ra;
-    });
-
-    const represented = this.coveredSubstantiveTokens(tokens, windowBefore);
-    const budget = Math.max(0, this.maxChars - windowBefore.length);
-
-    const semanticBlock: string[] = [];
-    const used: { docPath: string; docType: string; similarity: number }[] = [];
-    let usedChars = 0;
-
-    for (const hit of fused) {
-      const added = this.addedSubstantiveTokens(
-        tokens,
-        `${hit.heading ?? ''} ${hit.text}`,
-        represented,
-      );
-      if (added.length === 0) continue;
-      const label =
-        hit.docType === 'general'
-          ? 'كتاب عام'
-          : hit.docType === 'lesson'
-            ? 'درس المنصة'
-            : hit.docType === 'reference'
-              ? 'مرجع عام'
-              : 'من الكتاب المدرسي';
-      const heading = hit.heading?.trim();
-      const block = `### ${hit.docPath} — [${label}]${heading ? ` — ${heading}` : ''}\n${hit.text}`;
-      if (semanticBlock.length > 0 && usedChars + block.length > budget) break;
-      semanticBlock.push(block);
-      usedChars += block.length;
-      used.push({
-        docPath: hit.docPath,
-        docType: hit.docType,
-        similarity: hit.similarity,
-      });
-      // تُعتبر التوكنز المضافة ممثلة للمقاطع اللاحقة (كسب هامشي متسلسل).
-      for (const token of added) represented.add(token);
-    }
-
-    if (semanticBlock.length === 0) return { block: '', used: [] };
-    return {
-      block: `## الطبقة الدلالية: بحث دلالي\n${semanticBlock.join('\n\n')}`,
-      used,
-    };
-  }
-
-  /**
-   * بوابة الكفاية: هل توفر النافذة الحالية مواد كافية للإجابة؟
-   * 1) شرط صلة صريح: مفردة جوهرية واحدة على الأقل داخل النافذة.
-   * 2) نسبة التغطية (المغطاة من التوكنز الجوهرية للسؤال) ≥ العتبة.
-   * 3) سور طول ثانوي حتى لا تقدّ نافذة قصيرة تكرارية بأنها "كافية".
-   * يحصر النسبةَ على التوكنز الجوهرية فقط (يستبعد MINOR_TOKENS مثل الفرق/بين)
-   * حتى لا يبدو سؤال "الفرق بين..." كافيًا بتغطية لا جوهر تجاهها.
-   */
-  private isLayerSufficient(contentWindow: string, tokens: string[]): boolean {
-    const substantive = tokens.filter((t) => !MINOR_TOKENS.has(t));
-    if (substantive.length === 0) return false;
-    if (contentWindow.length < this.minContentChars) return false;
-
-    let covered = 0;
-    for (const token of substantive) {
-      if (textMatchesToken(contentWindow, token)) covered += 1;
-    }
-    if (covered === 0) return false;
-    return covered / substantive.length >= this.coverageThreshold;
-  }
-
-  /** التوكنز الجوهرية للسؤال الممثلة فعلًا في نص معيّن. */
-  private coveredSubstantiveTokens(
-    tokens: string[],
-    text: string,
-  ): Set<string> {
-    const covered = new Set<string>();
-    for (const token of tokens) {
-      if (MINOR_TOKENS.has(token)) continue;
-      if (text.length > 0 && textMatchesToken(text, token)) covered.add(token);
-    }
-    return covered;
-  }
-
-  /** التوكنز الجوهرية الإضافية التي يحققها نص مرشّح ولا تتوفر بعد في النافذة. */
-  private addedSubstantiveTokens(
-    tokens: string[],
-    text: string,
-    represented: Set<string>,
-  ): string[] {
-    const added: string[] = [];
-    for (const token of tokens) {
-      if (MINOR_TOKENS.has(token)) continue;
-      if (represented.has(token)) continue;
-      if (text.length > 0 && textMatchesToken(text, token)) added.push(token);
-    }
-    return added;
-  }
-
-  private tokenize(text: string): string[] {
-    return normalizeArabic(text)
-      .replace(/[^\p{L}\p{N}]+/gu, ' ')
-      .split(/\s+/)
-      .filter((t) => t.length > 1 && !STOPWORDS.has(t));
-  }
-
-  /**
-   * يزن التوكنز عكسيًا مع تواترها في كتالوج الأقسام كافة (idf):
-   * المفردة النادرة (المبتدأ) تُرجَّح فوق الكلمة العامة المتكررة (الفرق، بين)
-   * فيعلو القسم المطابق للموضوع الحقيقي على المقارنات العامة.
-   * الصيغة (total+1)/(df+1) تضمن وزنًا موجبًا حتى في الكتالوجات الصغيرة.
-   */
-  private computeTokenWeights(
-    books: GeneralBookDoc[],
-    tokens: string[],
-  ): Map<string, number> {
-    const sections: string[] = [];
-    for (const book of books) {
-      for (const part of book.parts) {
-        for (const section of part.sections) {
-          if (section.kind !== 'content') continue;
-          sections.push(
-            `${section.title} ${(section.concepts ?? []).join(' ')}`,
-          );
-        }
-      }
-    }
-    const total = Math.max(sections.length, 1);
-    const weights = new Map<string, number>();
-    for (const token of tokens) {
-      let df = 0;
-      for (const text of sections) {
-        if (textMatchesToken(text, token)) df += 1;
-      }
-      // حد أدنى للوزن (0.5) حتى لا ينعدم وزن المفردة الشائعة في كتالوج صغير
-      // يكون فيه df قريبًا من total، فلا يُسقط قسمٌ صحيح لمجرد شيوع لفظة فيه.
-      weights.set(token, Math.max(0.5, Math.log((total + 1) / (df + 1))));
-    }
-    return weights;
-  }
-
-  /**
-   * يرصد كل أقسام الكتاب المجتازة لبوابة الصلة: تطابق توكنز السؤال مع
-   * العنوان أو المفاهيم، مع إمّا مفردة جوهرية على الأقل (contentMatch).
-   * تُرجع المرشّحين بنتائجهم مرتّبة تنازليًا لتُرَتَّب على مستوى الكتب كافة
-   * وتُقتطع حسب الميزانية في retrieve.
-   */
-  private candidateSections(
-    book: GeneralBookDoc,
-    tokens: string[],
-    weights: Map<string, number>,
-  ): { section: BookSection; score: number }[] {
-    if (tokens.length === 0) return [];
-
-    const scored: { section: BookSection; score: number }[] = [];
-    for (const part of book.parts) {
-      for (const section of part.sections) {
-        if (section.kind !== 'content') continue;
-        const title = normalizeArabic(section.title).toLowerCase();
-        const concepts = normalizeArabic(
-          (section.concepts ?? []).join(' '),
-        ).toLowerCase();
-
-        let score = 0;
-        let contentMatch = false;
-        for (const token of tokens) {
-          const tMatch = textMatchesToken(title, token);
-          const cMatch = textMatchesToken(concepts, token);
-          if (!tMatch && !cMatch) continue;
-          if (!MINOR_TOKENS.has(token)) contentMatch = true;
-          const w = MINOR_TOKENS.has(token) ? 0.5 : (weights.get(token) ?? 1);
-          if (tMatch) score += 3 * w;
-          if (cMatch) score += 2 * w;
-        }
-        // الأقسام التي لا تطابق أي مفردة جوهرية (مثل "الفرق بين...") خارج السباق.
-        if (score > 0 && contentMatch) scored.push({ section, score });
-      }
-    }
-
-    return scored.sort((a, b) => b.score - a.score);
-  }
-
-  /**
-   * يزن توكنز السؤال عكسيًا مع تواترها في كتالوج الدروس المرشّحة (idf):
-   * المفردة النادرة (المبتدأ) تُرجَّح فوق الكلمة العامة المتكررة في العناوين
-   * (الفرق، بين، اللغة...) فيعلو درس الموضوع الحقيقي على دروس الصلة العامة.
-   * كتالوج الدروس يختلف عن كتالوج أقسام الكتب العامة فلا تُعيد استخدام
-   * computeTokenWeights بل يرجّح كل طبقة على مجتمعها الإحصائي.
-   */
-  private computeLessonTokenWeights(
-    lessons: {
-      title: string;
-      summary: string | null;
-      learning_objectives: unknown;
-    }[],
-    tokens: string[],
-  ): Map<string, number> {
-    const texts = lessons.map((lesson) => {
-      const objectives = Array.isArray(lesson.learning_objectives)
-        ? lesson.learning_objectives.join(' ')
-        : '';
-      return `${lesson.title} ${lesson.summary ?? ''} ${objectives}`;
-    });
-    const total = Math.max(texts.length, 1);
-    const weights = new Map<string, number>();
-    for (const token of tokens) {
-      let df = 0;
-      for (const text of texts) {
-        if (textMatchesToken(text, token)) df += 1;
-      }
-      weights.set(token, Math.max(0.5, Math.log((total + 1) / (df + 1))));
-    }
-    return weights;
-  }
-
-  private scoreLesson(
-    lesson: {
-      title: string;
-      summary: string | null;
-      learning_objectives: unknown;
-    },
-    tokens: string[],
-    weights: Map<string, number>,
-  ): number {
-    const title = lesson.title.toLowerCase();
-    const summary = (lesson.summary ?? '').toLowerCase();
-    const objectives = Array.isArray(lesson.learning_objectives)
-      ? lesson.learning_objectives.join(' ').toLowerCase()
-      : '';
-
-    let score = 0;
-    let contentMatch = false;
-    for (const token of tokens) {
-      // الوزن: MINOR_TOKENS تُمنح وزنًا منخفضًا ثابتًا حتى لا يرفع درس
-      // "الفرق بين..." فوق دروس التوكنز الجوهرية، ويُحسب الباقي بـ idf.
-      const w = MINOR_TOKENS.has(token) ? 0.5 : (weights.get(token) ?? 1);
-      const tMatch = textMatchesToken(title, token);
-      const sMatch = textMatchesToken(summary, token);
-      const oMatch = textMatchesToken(objectives, token);
-      if (tMatch) score += 3 * w;
-      if (sMatch) score += 2 * w;
-      if (oMatch) score += 1 * w;
-      if ((tMatch || sMatch || oMatch) && !MINOR_TOKENS.has(token)) {
-        contentMatch = true;
-      }
-    }
-    // درسٌ لا يطابق أي مفردة جوهرية (title/summary/objectives) لا يُنتخب
-    // لـ L1 — يستبعد دروس المقارنات العامة التي تصل بتوكنز MINOR وحدها.
-    return contentMatch ? score : 0;
   }
 }
 
-/**
- * يقيّم مقطعًا من الطبقة 2 (نص ملف مدرسي/مرجع) بنفس أوزان الطبقة 3:
- * تطابق العنوان أعلى (3w) من تطابق النص (2w)، مع وزن الندرة IDF.
- * يُرفض المقطع إن لم يطابق أي مفردة جوهرية (contentMatch) — فلا تدخل
- * الملفات غير ذات الصلة نافذة السياق.
- */
-export function scoreChunk(
-  chunk: Chunk,
-  tokens: string[],
-  weights: Map<string, number>,
-): { score: number; contentMatch: boolean } {
-  if (tokens.length === 0) return { score: 0, contentMatch: false };
-
-  const heading = normalizeArabic(chunk.heading).toLowerCase();
-  const text = normalizeArabic(chunk.text).toLowerCase();
-
-  let score = 0;
-  let contentMatch = false;
-  for (const token of tokens) {
-    const tMatch = textMatchesToken(heading, token);
-    const cMatch = textMatchesToken(text, token);
-    if (!tMatch && !cMatch) continue;
-    if (!MINOR_TOKENS.has(token)) contentMatch = true;
-    const w = MINOR_TOKENS.has(token) ? 0.5 : (weights.get(token) ?? 1);
-    if (tMatch) score += 3 * w;
-    if (cMatch) score += 2 * w;
-  }
-
-  return { score: score > 0 && contentMatch ? score : 0, contentMatch };
-}
-
-/**
- * يطبّع النص العربي للمطابقة: يجرّد التشكيل وعلامات الإعراب والتطويل
- * ويوحّد الألف المقصورة والتاء المربوطة والهمزات. ضروري لأن عناوين
- * الفهارس مشكولة بينما أسئلة الطالب غير مشكولة عادة.
- */
-export function normalizeArabic(text: string): string {
-  return text
-    .replace(/[\u064B-\u0652\u0670\u0640]/g, '')
-    .replace(/\u0649/g, '\u064A')
-    .replace(/\u0629/g, '\u0647')
-    .replace(/[\u0623\u0622\u0625]/g, '\u0627');
-}
-
-/** كلمات استفهام/ربط عامة تُستبعد من التوكنز حتى لا تلوّث المطابقة. */
-const STOPWORDS = new Set([
-  'ما',
-  'ماذا',
-  'ماهو',
-  'ماهي',
-  'لماذا',
-  'كيف',
-  'هل',
-  'متي',
-  'اين',
-  'هو',
-  'هي',
-  'هذا',
-  'هذه',
-  'ذلك',
-  'تلك',
-  'ان',
-  'ثم',
-  'قد',
-  'انت',
-  'نحن',
-]);
-
-/**
- * توكنز مقارنة عامة شائعة في العناوين (الفرق بين...) — تُمنح وزنًا منخفضًا
- * ولا ينهض قسمٌ بها وحدها ليُقرأ.
- */
-const MINOR_TOKENS = new Set(['الفرق', 'بين']);
-
-/**
- * يوسّع الكلمة إلى أشكالها الاحتمالية بعد تطبيعها: يجرّد حروف الجر/العطف
- * المفردة (و ف ب ك ل) وأداة التعريف (ال) المتكررة على شكل و/ف/ب/ك/ل + ال.
- * مثال: «والخبر» ← { والخبر, الخبر, خبر }.
- */
-function expandWord(word: string): Set<string> {
-  const out = new Set<string>();
-  if (!word) return out;
-  out.add(word);
-  let w = word;
-  while (w.length > 2 && 'وفبكل'.includes(w[0])) {
-    w = w.slice(1);
-    out.add(w);
-  }
-  if (w.startsWith('ال') && w.length - 2 >= 3) {
-    out.add(w.slice(2));
-  }
-  return out;
-}
-
-/**
- * يتحقق من أن التوكن يطابق كلمة كاملة في النص مع مراعاة البادئات —
- * لا مطابقة جزئية: «بين» لا تطابق «بينما»، و«والخبر» تطابق «الخبر».
- */
-function textMatchesToken(text: string, token: string): boolean {
-  const tokenCands = expandWord(normalizeArabic(token).toLowerCase());
-  const words = normalizeArabic(text)
-    .toLowerCase()
-    .replace(/[^\p{L}\p{N}]+/gu, ' ')
-    .split(/\s+/)
-    .filter(Boolean);
-  for (const w of words) {
-    for (const c of expandWord(w)) {
-      if (tokenCands.has(c)) return true;
-    }
-  }
-  return false;
-}
+export { normalizeArabic } from './rag.tokenizer.js';
+export { scoreChunk } from './rag.scoring.js';
