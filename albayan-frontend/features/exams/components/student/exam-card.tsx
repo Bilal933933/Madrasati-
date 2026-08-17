@@ -81,6 +81,12 @@ export function ExamCard({
               ? `${exam.attempts_left} / ${exam.attempts_allowed} محاولات`
               : `${exam.attempts_allowed} محاولات`}
           </span>
+          {!exam.requires_completion && (
+            <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-1">
+              <Unlock className="size-3.5" aria-hidden />
+              متاح دون إكمال الدروس
+            </span>
+          )}
           {exam.best_score != null && (
             <span className="inline-flex items-center gap-1 rounded-full bg-warning/15 px-2.5 py-1 text-warning-foreground">
               <Trophy className="size-3.5" aria-hidden />
@@ -89,7 +95,7 @@ export function ExamCard({
           )}
         </div>
 
-        {exam.unlock_progress != null && (
+        {exam.requires_completion && exam.unlock_progress != null && (
           <div className="space-y-1.5">
             <div className="flex items-center justify-between text-xs font-medium">
               <span className="inline-flex items-center gap-1 text-muted-foreground">

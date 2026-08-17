@@ -24,24 +24,43 @@ class ExamUnlockService
 
     /**
      * هل الامتحان مفتوح للطالب؟
+     *
+     * امتحان requires_completion=false (الافتراضي) متاح دائمًا دون إكمال الدروس.
      */
     public function isUnlocked(User $user, ExamBlueprint $blueprint): bool
     {
+        if (! $blueprint->requires_completion) {
+            return true;
+        }
+
         return $this->completedLessonIds($user, $blueprint)->count() === $this->requiredLessonIds($blueprint)->count();
     }
 
     /**
-     * تقدّم الطالب في فتح النطاق (عدد الدروس المكتملة من الإجمالي).
+     * تقدّم الطالب في فتح النطاق (عدد الدروس المكتملة من الإجمالي + النسبة).
      */
     public function progress(User $user, ExamBlueprint $blueprint): array
     {
         $required = $this->requiredLessonIds($blueprint);
-        $completed = $this->completedLessonIds($user, $blueprint);
+        $total = $required->count();
+
+        if (! $blueprint->requires_completion) {
+            return [
+                'total' => $total,
+                'completed' => $total,
+                'unlocked' => true,
+                'percent' => 100,
+            ];
+        }
+
+        $completed = $this->completedLessonIds($user, $blueprint)->count();
+        $unlocked = $completed === $total;
 
         return [
-            'total' => $required->count(),
-            'completed' => $completed->count(),
-            'unlocked' => $this->isUnlocked($user, $blueprint),
+            'total' => $total,
+            'completed' => $completed,
+            'unlocked' => $unlocked,
+            'percent' => $unlocked ? 100 : ($total > 0 ? (int) round($completed * 100 / $total) : 0),
         ];
     }
 
@@ -49,8 +68,8 @@ class ExamUnlockService
      * تقدّم فتح كل الامتحانات دفعة واحدة — بجلب واحد لسجلات إكمال الطالب
      * بدل استعلام لكل blueprint (يستأصل N+1 في قائمة الامتحانات).
      *
-     * @param  \Illuminate\Support\Collection<int, ExamBlueprint>  $blueprints
-     * @return array<int, array{total: int, completed: int, unlocked: bool}>
+     * @param  Collection<int, ExamBlueprint>  $blueprints
+     * @return array<int, array{total: int, completed: int, unlocked: bool, percent: int}>
      */
     public function progressForBlueprints(User $user, Collection $blueprints): array
     {
@@ -77,14 +96,29 @@ class ExamUnlockService
 
         foreach ($blueprints as $blueprint) {
             $required = $idsByBlueprint[$blueprint->id];
+            $total = $required->count();
+
+            if (! $blueprint->requires_completion) {
+                $progress[$blueprint->id] = [
+                    'total' => $total,
+                    'completed' => $total,
+                    'unlocked' => true,
+                    'percent' => 100,
+                ];
+
+                continue;
+            }
+
             $completed = $required->isEmpty()
                 ? 0
                 : $completedIds->intersect($required->all())->count();
+            $unlocked = $completed === $total;
 
             $progress[$blueprint->id] = [
-                'total' => $required->count(),
+                'total' => $total,
                 'completed' => $completed,
-                'unlocked' => $completed === $required->count(),
+                'unlocked' => $unlocked,
+                'percent' => $unlocked ? 100 : ($total > 0 ? (int) round($completed * 100 / $total) : 0),
             ];
         }
 

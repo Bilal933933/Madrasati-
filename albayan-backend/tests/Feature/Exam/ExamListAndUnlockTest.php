@@ -32,23 +32,34 @@ class ExamListAndUnlockTest extends BaseExamTestCase
         $response->assertOk()
             ->assertJsonCount(1, 'data')
             ->assertJsonPath('data.0.title', 'امتحان الدرس')
-            ->assertJsonPath('data.0.unlock_progress.unlocked', true)
-            ->assertJsonPath('data.0.unlock_progress.completed', 1)
-            ->assertJsonPath('data.0.unlock_progress.total', 1);
+            ->assertJsonPath('data.0.requires_completion', false)
+            ->assertJsonPath('data.0.unlock_progress', 100);
     }
 
     #[Test]
     public function list_reports_locked_state_before_completion(): void
     {
         $this->makeMcq($this->lessonOne);
-        $this->makeBlueprint();
+        $this->makeBlueprint(['requires_completion' => true]);
 
         $response = $this->actingAs($this->student)->getJson('/api/exams');
 
         $response->assertOk()
-            ->assertJsonPath('data.0.unlock_progress.unlocked', false)
-            ->assertJsonPath('data.0.unlock_progress.completed', 0)
-            ->assertJsonPath('data.0.unlock_progress.total', 1);
+            ->assertJsonPath('data.0.requires_completion', true)
+            ->assertJsonPath('data.0.unlock_progress', 0);
+    }
+
+    #[Test]
+    public function list_opens_free_blueprint_without_any_completion(): void
+    {
+        $this->makeMcq($this->lessonOne);
+        $this->makeBlueprint(); // requires_completion = false (الافتراضي)
+
+        $response = $this->actingAs($this->student)->getJson('/api/exams');
+
+        $response->assertOk()
+            ->assertJsonPath('data.0.requires_completion', false)
+            ->assertJsonPath('data.0.unlock_progress', 100);
     }
 
     #[Test]
@@ -186,7 +197,8 @@ class ExamListAndUnlockTest extends BaseExamTestCase
 
         $response->assertOk()
             ->assertJsonPath('data.title', $blueprint->title)
-            ->assertJsonPath('data.unlock_progress.unlocked', true)
+            ->assertJsonPath('data.requires_completion', true)
+            ->assertJsonPath('data.unlock_progress', 100)
             ->assertJsonPath('data.total_questions', $blueprint->easy_count + $blueprint->medium_count + $blueprint->hard_count);
     }
 
@@ -209,13 +221,14 @@ class ExamListAndUnlockTest extends BaseExamTestCase
             'medium_count' => 0,
             'hard_count' => 0,
             'is_active' => true,
+            'requires_completion' => true,
         ]);
 
         $response = $this->actingAs($this->student)->getJson("/api/exams/{$blueprint->id}");
 
         $response->assertOk()
-            ->assertJsonPath('data.unlock_progress.unlocked', true)
-            ->assertJsonPath('data.unlock_progress.total', 2);
+            ->assertJsonPath('data.requires_completion', true)
+            ->assertJsonPath('data.unlock_progress', 100);
     }
 
     /* ---------------------- بيانات موفّمة للنطاقات الأخرى ---------------------- */
@@ -227,6 +240,7 @@ class ExamListAndUnlockTest extends BaseExamTestCase
                 return $case->makeBlueprint([
                     'title' => 'امتحان الدرس — نطاق',
                     'easy_count' => 1,
+                    'requires_completion' => true,
                 ]);
             }],
             'unit' => ['unit', function ($case) {
@@ -239,6 +253,7 @@ class ExamListAndUnlockTest extends BaseExamTestCase
                     'medium_count' => 0,
                     'hard_count' => 0,
                     'is_active' => true,
+                    'requires_completion' => true,
                 ]);
             }],
             'monthly' => ['monthly', function ($case) {
@@ -252,6 +267,7 @@ class ExamListAndUnlockTest extends BaseExamTestCase
                     'medium_count' => 0,
                     'hard_count' => 0,
                     'is_active' => true,
+                    'requires_completion' => true,
                 ]);
             }],
             'semester' => ['semester', function ($case) {
@@ -264,6 +280,7 @@ class ExamListAndUnlockTest extends BaseExamTestCase
                     'medium_count' => 0,
                     'hard_count' => 0,
                     'is_active' => true,
+                    'requires_completion' => true,
                 ]);
             }],
             'full' => ['full', function ($case) {
@@ -276,6 +293,7 @@ class ExamListAndUnlockTest extends BaseExamTestCase
                     'medium_count' => 0,
                     'hard_count' => 0,
                     'is_active' => true,
+                    'requires_completion' => true,
                 ]);
             }],
         ];

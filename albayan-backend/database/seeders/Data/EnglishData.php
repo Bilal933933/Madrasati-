@@ -321,6 +321,8 @@ class EnglishData
                         'نحفظ الحيوانات الأليفة: cat (قط)، dog (كلب)، rabbit (أرنب)، bird (عصفور)، fish (سمكة)، goat (ماعز).',
                         ['I have a cat.', 'The dog is friendly.', 'A rabbit eats carrots.'],
                         'الأليفة تعيش معنا بسلام في البيت والمزرعة.',
+                        [],
+                        LessonSpec::DIAGRAM_PETS,
                     ),
                     [
                         LessonSpec::mcq('كلمة «أرنب» بالإنجليزية...', ['rabbit', 'cat', 'dog', 'horse'], 0, 'Rabbit = أرنب.'),

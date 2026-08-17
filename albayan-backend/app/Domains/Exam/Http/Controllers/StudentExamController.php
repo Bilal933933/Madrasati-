@@ -38,7 +38,7 @@ class StudentExamController extends Controller
 
         return ExamBlueprintResource::collection(
             $blueprints->map(function ($blueprint) use ($progressMap) {
-                $blueprint->unlock_progress = $progressMap[$blueprint->id];
+                $blueprint->unlock_progress = $progressMap[$blueprint->id]['percent'];
 
                 return $blueprint;
             })
@@ -55,7 +55,7 @@ class StudentExamController extends Controller
 
         $this->authorize('view', $blueprint, 'هذا الامتحان غير متاح لصفك الدراسي.');
 
-        $blueprint->unlock_progress = $this->unlockService->progress($user, $blueprint);
+        $blueprint->unlock_progress = $this->unlockService->progress($user, $blueprint)['percent'];
         $blueprint->setAttribute('attempts_left', $this->attemptsLeft($blueprint, $user));
         $blueprint->setAttribute('best_score', $this->bestScore($blueprint, $user));
 

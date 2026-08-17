@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useEditor, EditorContent, type JSONContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Placeholder from "@tiptap/extension-placeholder";
@@ -12,9 +13,12 @@ import {
   Quote,
   Redo2,
   Undo2,
+  Workflow,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Toggle } from "@/components/ui/toggle";
+import { Diagram } from "./tiptap/diagram-node";
+import { DiagramDialog } from "./tiptap/diagram-dialog";
 import {
   Select,
   SelectContent,
@@ -50,6 +54,7 @@ export function RichTextEditor({
       StarterKit.configure({
         heading: { levels: [1, 2, 3] },
       }),
+      Diagram,
       Placeholder.configure({ placeholder }),
     ],
     content: parseContent(value),
@@ -61,6 +66,8 @@ export function RichTextEditor({
     },
     onUpdate: ({ editor }) => onValueChange(JSON.stringify(editor.getJSON())),
   });
+
+  const [diagramOpen, setDiagramOpen] = useState(false);
 
   if (!editor) {
     return <div className={`min-h-40 ${className ?? ""}`} />;
@@ -164,6 +171,18 @@ export function RichTextEditor({
           type="button"
           variant="ghost"
           size="icon-sm"
+          aria-label="إدراج رسم بياني"
+          onClick={() => setDiagramOpen(true)}
+        >
+          <Workflow />
+        </Button>
+
+        <span className="mx-1 h-5 w-px bg-border" aria-hidden="true" />
+
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon-sm"
           aria-label="تراجع"
           disabled={!editor.can().chain().focus().undo().run()}
           onClick={() => editor.chain().focus().undo().run()}
@@ -183,6 +202,18 @@ export function RichTextEditor({
       </div>
 
       <EditorContent id={id} editor={editor} />
+
+      <DiagramDialog
+        open={diagramOpen}
+        onOpenChange={setDiagramOpen}
+        onInsert={(code) =>
+          editor
+            .chain()
+            .focus()
+            .insertContent({ type: "diagram", attrs: { content: code } })
+            .run()
+        }
+      />
     </div>
   );
 }

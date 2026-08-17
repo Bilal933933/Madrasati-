@@ -43,6 +43,11 @@ export interface TiptapHardBreakNode {
   type: "hardBreak";
 }
 
+export interface TiptapDiagramNode {
+  type: "diagram";
+  attrs?: { content?: string };
+}
+
 export type TiptapInlineNode = TiptapTextNode | TiptapParagraphNode;
 
 export type TiptapBlockNode =
@@ -50,7 +55,8 @@ export type TiptapBlockNode =
   | TiptapHeadingNode
   | TiptapListNode
   | TiptapBlockquoteNode
-  | TiptapHardBreakNode;
+  | TiptapHardBreakNode
+  | TiptapDiagramNode;
 
 export interface TiptapDoc {
   type: "doc";

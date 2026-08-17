@@ -34,6 +34,7 @@ use Illuminate\Support\Carbon;
  * @property int $pass_threshold_percent
  * @property bool $show_review_after_submit
  * @property bool $is_active
+ * @property bool $requires_completion
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read Lesson|null $lesson
@@ -63,6 +64,7 @@ class ExamBlueprint extends Model
         'pass_threshold_percent',
         'show_review_after_submit',
         'is_active',
+        'requires_completion',
     ];
 
     protected function casts(): array
@@ -77,6 +79,7 @@ class ExamBlueprint extends Model
             'pass_threshold_percent' => 'integer',
             'show_review_after_submit' => 'boolean',
             'is_active' => 'boolean',
+            'requires_completion' => 'boolean',
         ];
     }
 

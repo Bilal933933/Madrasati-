@@ -32,6 +32,7 @@ class ExamBlueprintRequest extends FormRequest
             'pass_threshold_percent' => ['required', 'integer', 'between:1,100'],
             'show_review_after_submit' => ['sometimes', 'boolean'],
             'is_active' => ['sometimes', 'boolean'],
+            'requires_completion' => ['sometimes', 'boolean'],
         ];
     }
 

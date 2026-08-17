@@ -94,7 +94,7 @@ class ExamBlueprintSeeder extends Seeder
             $blueprintService->create([
                 'exam_type' => 'lesson',
                 'title' => 'امتحان درس «'.$lesson->title.'»',
-                'description' => 'اختبر فهمك لدرس '.$lesson->title.' بعد إتمام رحلته.',
+                'description' => 'اختبر فهمك لدرس '.$lesson->title.'.',
                 'lesson_id' => $lesson->id,
                 'duration_minutes' => 30,
                 'attempts_allowed' => 2,
@@ -104,6 +104,7 @@ class ExamBlueprintSeeder extends Seeder
                 'pass_threshold_percent' => 60,
                 'show_review_after_submit' => true,
                 'is_active' => true,
+                'requires_completion' => false,
             ]);
         }
     }
@@ -121,7 +122,7 @@ class ExamBlueprintSeeder extends Seeder
             $blueprintService->create([
                 'exam_type' => 'unit',
                 'title' => 'امتحان وحدة '.$course->name,
-                'description' => 'امتحان يغطي دروس وحدة «'.$course->name.'» بعد إتمامها.',
+                'description' => 'امتحان يغطي دروس وحدة «'.$course->name.'».',
                 'course_id' => $course->id,
                 'duration_minutes' => 30,
                 'attempts_allowed' => 2,
@@ -131,6 +132,7 @@ class ExamBlueprintSeeder extends Seeder
                 'pass_threshold_percent' => 60,
                 'show_review_after_submit' => true,
                 'is_active' => true,
+                'requires_completion' => false,
             ]);
         }
     }
@@ -160,6 +162,7 @@ class ExamBlueprintSeeder extends Seeder
                     'pass_threshold_percent' => 60,
                     'show_review_after_submit' => true,
                     'is_active' => true,
+                    'requires_completion' => false,
                 ]);
             }
         }
@@ -194,6 +197,7 @@ class ExamBlueprintSeeder extends Seeder
                 'pass_threshold_percent' => 60,
                 'show_review_after_submit' => true,
                 'is_active' => true,
+                'requires_completion' => false,
             ]);
         }
     }
@@ -221,6 +225,7 @@ class ExamBlueprintSeeder extends Seeder
             'pass_threshold_percent' => 60,
             'show_review_after_submit' => true,
             'is_active' => true,
+            'requires_completion' => false,
         ]);
     }
 }

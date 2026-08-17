@@ -35,6 +35,7 @@ class ExamBlueprintResource extends JsonResource
             'pass_threshold_percent' => $this->pass_threshold_percent,
             'show_review_after_submit' => $this->show_review_after_submit,
             'is_active' => $this->is_active,
+            'requires_completion' => (bool) $this->requires_completion,
             'unlock_progress' => $this->unlock_progress,
             'attempts_left' => $this->attempts_left,
             'best_score' => $this->best_score,

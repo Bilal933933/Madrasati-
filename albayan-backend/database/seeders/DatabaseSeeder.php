@@ -26,6 +26,7 @@ class DatabaseSeeder extends Seeder
             Curriculum\SubjectSeeder::class,
             Curriculum\CourseSeeder::class,
             Lesson\LessonSeeder::class,
+            Prep3\Prep3Seeder::class,
             Assessment\AssessmentSeeder::class,
             Assessment\QuestionSeeder::class,
             StudentProfileSeeder::class,

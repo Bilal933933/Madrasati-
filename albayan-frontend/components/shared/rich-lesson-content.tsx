@@ -1,4 +1,5 @@
 import type { TiptapDoc, TiptapListNode } from "@/features/lesson-engine/engine/tiptap-types";
+import { DiagramBlock } from "@/features/ai-tutor/components/diagram-block";
 
 /**
  * يعرض مستند TipTap (JSON) كبطاقات درس تعليمية:
@@ -51,6 +52,8 @@ function RichBlockRenderer({ node }: { node: NonNullable<TiptapDoc["content"]>[n
       );
     case "hardBreak":
       return <div aria-hidden className="h-px" />;
+    case "diagram":
+      return <DiagramBlock code={node.attrs?.content ?? ""} />;
     default:
       return null;
   }

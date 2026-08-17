@@ -22,6 +22,7 @@ class TiptapSanitizerService
         'blockquote',
         'text',
         'hardBreak',
+        'diagram',
     ];
 
     /** العلامات (Marks) المسموحة داخل نص. */
@@ -35,6 +36,9 @@ class TiptapSanitizerService
     private const MAX_DEPTH = 12;
 
     private const MAX_LENGTH = 200_000;
+
+    /** أقصى طول لكود مخطط Mermaid داخل عقدة diagram. */
+    private const MAX_DIAGRAM_LENGTH = 20_000;
 
     /**
      * يعقّم سلسلة JSON قادمة من TipTap ويعيد نسخة نظيفة منها.
@@ -106,6 +110,15 @@ class TiptapSanitizerService
             if (is_int($level) && in_array($level, [1, 2, 3], true)) {
                 $clean['attrs'] = ['level' => $level];
             }
+        }
+
+        if ($type === 'diagram') {
+            $content = $node['attrs']['content'] ?? null;
+            if (! is_string($content) || $content === '' || strlen($content) > self::MAX_DIAGRAM_LENGTH) {
+                return null;
+            }
+
+            return ['type' => 'diagram', 'attrs' => ['content' => $content]];
         }
 
         if (isset($node['content']) && is_array($node['content'])) {

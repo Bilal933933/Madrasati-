@@ -147,7 +147,7 @@ export function ExamDetailPage({ examId }: { examId: number }) {
             )}
           </div>
 
-          {exam.unlock_progress != null && (
+          {exam.requires_completion && exam.unlock_progress != null && (
             <div className="space-y-1.5">
               <div className="flex items-center justify-between text-xs font-medium">
                 <span className="text-muted-foreground">

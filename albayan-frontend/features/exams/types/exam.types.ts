@@ -100,6 +100,7 @@ export interface ExamBlueprint {
   pass_threshold_percent: number;
   show_review_after_submit: boolean;
   is_active: boolean;
+  requires_completion: boolean;
   unlock_progress: number | null;
   attempts_left: number | null;
   best_score: number | null;
@@ -124,6 +125,7 @@ export interface ExamBlueprintPayload {
   pass_threshold_percent: number;
   show_review_after_submit?: boolean;
   is_active?: boolean;
+  requires_completion?: boolean;
 }
 
 export interface ExamBlueprintListResponse {

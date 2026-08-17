@@ -39,6 +39,7 @@ return new class extends Migration
             $table->unsignedTinyInteger('pass_threshold_percent')->default(60);
             $table->boolean('show_review_after_submit')->default(true);
             $table->boolean('is_active')->default(true);
+            $table->boolean('requires_completion')->default(false); // false → متاح دائمًا، true → يتطلب إكمال دروس النطاق
             $table->timestamps();
 
             $table->index(['exam_type', 'is_active']);

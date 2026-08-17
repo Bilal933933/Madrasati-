@@ -66,6 +66,7 @@ type FormState = {
   pass_threshold_percent: string;
   show_review_after_submit: boolean;
   is_active: boolean;
+  requires_completion: boolean;
 };
 
 function scopeValue(blueprint: ExamBlueprint | null, field: keyof FormState): string {
@@ -141,6 +142,7 @@ function ExamBlueprintForm({
     pass_threshold_percent: blueprint ? String(blueprint.pass_threshold_percent) : "50",
     show_review_after_submit: blueprint?.show_review_after_submit ?? true,
     is_active: blueprint?.is_active ?? true,
+    requires_completion: blueprint?.requires_completion ?? false,
   }));
   const [serverErrors, setServerErrors] = useState<Record<string, string[]> | null>(null);
 
@@ -182,6 +184,7 @@ function ExamBlueprintForm({
       pass_threshold_percent: intValue(form.pass_threshold_percent, 50),
       show_review_after_submit: form.show_review_after_submit,
       is_active: form.is_active,
+      requires_completion: form.requires_completion,
     };
 
     switch (form.exam_type) {
@@ -590,6 +593,21 @@ function ExamBlueprintForm({
             />
             مفعّل
           </label>
+        </Field>
+
+        <Field>
+          <label className="flex w-fit cursor-pointer items-center gap-2 text-sm">
+            <Checkbox
+              checked={form.requires_completion}
+              onCheckedChange={(checked) =>
+                handleChange("requires_completion", checked === true)
+              }
+            />
+            يتطلب إكمال دروس النطاق أولًا
+          </label>
+          <p className="text-xs text-muted-foreground">
+            عند تعطيله (الافتراضي) يكون الامتحان متاحًا دون إكمال الدروس.
+          </p>
         </Field>
 
         {serverErrors && Object.keys(serverErrors).length > 0 && (
