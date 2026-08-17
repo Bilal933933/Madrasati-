@@ -148,4 +148,20 @@ export class VectorService implements OnModuleInit, OnModuleDestroy {
     `;
     return Number(row[0]?.n ?? 0);
   }
+
+  /**
+   * مفاتيح المقاطع المفهرسة فعلًا — تُستخدم لتخطّي إعادة التضمين في جولات
+   * الاستئناف، فلا تُنفق حصة الـ embedding على مقاطع موجودة.
+   */
+  async existingDocKeys(opts?: {
+    docPathPrefix?: string;
+  }): Promise<Set<string>> {
+    const prefix = opts?.docPathPrefix ?? null;
+    const rows = await this.prisma.$queryRaw<Array<{ docKey: string }>>`
+      SELECT "docKey" FROM knowledge_chunks
+      WHERE ${prefix}::text IS NULL
+         OR REPLACE("docPath", '\\', '/') LIKE ${prefix + '%'}
+    `;
+    return new Set(rows.map((r) => r.docKey));
+  }
 }

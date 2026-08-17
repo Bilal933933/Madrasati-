@@ -42,7 +42,7 @@ export class IndexerService {
     upserted: number;
     skipped: number;
   }> {
-    const pending: PendingChunk[] = [];
+    let pending: PendingChunk[] = [];
 
     // 1) المدرسي/المراجع (مقاطع 500 كلمة).
     const normalize = (p: string): string => p.replaceAll('\\', '/');
@@ -128,6 +128,28 @@ export class IndexerService {
     // 3) دروس DB — فقرات (الطبقة 1).
     if (opts.includeLessons !== false) {
       pending.push(...(await this.collectLessonParagraphs()));
+    }
+
+    // تخطّي المقاطع المفهرسة فعلًا (upsert لا يمنع تكلفة إعادة التضمين):
+    // استعلام الموجود حسب بادئة المسار وحذف مكرّرات docKey قبل أي مكالمة.
+    const existing = await this.vector.existingDocKeys({
+      docPathPrefix: opts.docPathPrefix,
+    });
+    const before = pending.length;
+    const seen = new Set<string>();
+    pending = pending.filter((p) => {
+      if (existing.has(p.row.docKey)) return false;
+      if (seen.has(p.row.docKey)) return false;
+      seen.add(p.row.docKey);
+      return true;
+    });
+    const skippedExisting = before - pending.length;
+    if (skippedExisting > 0) {
+      this.logger.info(
+        { event: 'indexer.skip_existing' },
+        `تخطّي ${skippedExisting} مقطعًا مفهرسًا مسبقًا`,
+        { skipped: skippedExisting, remaining: pending.length },
+      );
     }
 
     // تحميل متجهات دفعات ثم upsert — بلا نسخ الصف الذي فُهرس مسبقًا بنفس المفتاح.
