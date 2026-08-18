@@ -59,6 +59,14 @@ export function AiTutorChat({ chat }: { chat: UseAiTutorChatReturn }) {
     router.push("/ai-tutor");
   }
 
+  /** تنسيق وقت الرسالة بالأرقام العربية («٤:٢٥ م») مع تجاهل القيم الغائبة. */
+  function formatTime(iso?: string): string | null {
+    if (!iso) return null;
+    const date = new Date(iso);
+    if (Number.isNaN(date.getTime())) return null;
+    return date.toLocaleTimeString("ar", { hour: "numeric", minute: "2-digit" });
+  }
+
   return (
     <div className="flex h-full w-full min-h-0 flex-1 flex-col overflow-hidden bg-[#faf6ee] text-foreground">
       {/* شاشة تسجيل الخروج — بأسلوب Claude/ChatGPT */}
@@ -148,6 +156,11 @@ export function AiTutorChat({ chat }: { chat: UseAiTutorChatReturn }) {
                       ) : null}
                     </div>
                   )}
+                  {formatTime(message.createdAt) && (
+                    <span className="px-1 text-[11px] text-foreground/45">
+                      {formatTime(message.createdAt)}
+                    </span>
+                  )}
                 </div>
               ) : (
                 <div key={message.id} className="flex w-full flex-col items-end gap-1.5" dir="rtl">
@@ -157,6 +170,11 @@ export function AiTutorChat({ chat }: { chat: UseAiTutorChatReturn }) {
                   <div className="w-fit max-w-[85%] rounded-2xl rounded-bl-sm bg-gradient-to-b from-[#4a2c17] to-[#3a2313] px-4 py-3 text-sm leading-relaxed text-white shadow-md">
                     {message.text}
                   </div>
+                  {formatTime(message.createdAt) && (
+                    <span className="px-1 text-[11px] text-foreground/45">
+                      {formatTime(message.createdAt)}
+                    </span>
+                  )}
                 </div>
               )
             )}

@@ -21,6 +21,8 @@ export interface AiChatMessage {
   /** نوع عرض الرسالة: نص عادي يُمرَّر عبر Markdown، أو بطاقة سؤال */
   kind?: "text" | "quiz";
   quiz?: QuizQuestion;
+  /** وقت الإرسال (ISO) — من الخادم للرسائل المحفوظة، أو وقت المتصفح للرسائل الحية */
+  createdAt?: string;
 }
 
 export type AiChatStatus =

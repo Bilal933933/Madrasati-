@@ -21,12 +21,17 @@ function nextId(prefix: "user" | "assistant"): string {
   return `${prefix}_${Date.now()}_${counter.toString(36)}`;
 }
 
+/** توقيع رسالة حية بوقت المتصفح — مكمّل وقت الخادم للرسائل المحفوظة. */
+function nowIso(): string {
+  return new Date().toISOString();
+}
+
 /** تعيين رسالة الخادم (DTO) إلى شكل الواجهة المحلي. */
 function mapMessageDto(dto: AiMessageDto): AiChatMessage {
   if (dto.kind === "quiz") {
     try {
       const quiz = JSON.parse(dto.content) as QuizQuestion;
-      return { id: dto.id, role: "assistant", text: "", kind: "quiz", quiz };
+      return { id: dto.id, role: "assistant", text: "", kind: "quiz", quiz, createdAt: dto.createdAt };
     } catch {
       // بطاقة تالفة — اعرضها كنص خام
     }
@@ -35,6 +40,7 @@ function mapMessageDto(dto: AiMessageDto): AiChatMessage {
     id: dto.id,
     role: dto.sender === "USER" ? "user" : "assistant",
     text: dto.content,
+    createdAt: dto.createdAt,
   };
 }
 
@@ -150,7 +156,7 @@ export function useAiTutorChat(threadId: string | undefined) {
           }
           const id = assistantIdRef.current ?? nextId("assistant");
           assistantIdRef.current = id;
-          next.push({ id, role: "assistant", text: chunk });
+          next.push({ id, role: "assistant", text: chunk, createdAt: nowIso() });
           return next;
         });
       });
@@ -177,6 +183,7 @@ export function useAiTutorChat(threadId: string | undefined) {
               text: "",
               kind: "quiz",
               quiz: question,
+              createdAt: nowIso(),
             },
           ]);
         }
@@ -232,7 +239,7 @@ export function useAiTutorChat(threadId: string | undefined) {
 
       setMessages((prev) => [
         ...prev,
-        { id: nextId("user"), role: "user", text: question },
+        { id: nextId("user"), role: "user", text: question, createdAt: nowIso() },
       ]);
       setStatus("busy");
       setStatusText("جاري جمع السياق وتجهيز الإجابة...");
