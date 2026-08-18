@@ -1,8 +1,10 @@
 "use client";
 
-import { GraduationCap, Menu } from "lucide-react";
+import { Menu } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState, type ReactNode } from "react";
+import { usePathname } from "next/navigation";
+import { memo, useCallback, useEffect, useState, type ReactNode } from "react";
+import { BrandMark } from "@/components/shared/brand-mark";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -43,6 +45,8 @@ type SiteNavbarProps = {
  * - عند التمرير: يتحول إلى حبّة عائمة (Floating Pill) بحواف دائرية وضبابية
  *   خلفية ومرتبطة أعلى الشاشة.
  * كل مجموعة صفحات تمرر روابطها وأيقوناتها وأزرارها عبر props.
+ * الأداء: اشتراك usePathname محصور في مكوّن NavLink (Leaf) — تنقّل المسار
+ * يُحدّث الروابط فقط دون إعادة رسم الشعار والأزرار وقائمة الجوال.
  */
 export function SiteNavbar({
   brandName = "مدرستي",
@@ -56,6 +60,8 @@ export function SiteNavbar({
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const items = mobileItems ?? links;
+
+  const closeSheet = useCallback(() => setOpen(false), []);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -76,10 +82,8 @@ export function SiteNavbar({
         )}
       >
         {/* الشعار */}
-        <Link href={brandHref} className="flex items-center gap-2.5">
-          <span className="flex size-9 items-center justify-center rounded-full bg-[#D8B486] text-black">
-            <GraduationCap className="size-5" />
-          </span>
+        <Link href={brandHref} className="-m-1.5 flex items-center gap-2.5 rounded-full p-1.5">
+          <BrandMark className="size-9" />
           <span className="hidden text-lg font-bold tracking-tight text-foreground sm:inline">
             {brandName}
           </span>
@@ -87,7 +91,7 @@ export function SiteNavbar({
 
         {/* روابط الأقسام (الشاشات الكبيرة) */}
         {links.length > 0 && (
-          <nav className="hidden items-center gap-7 text-sm font-medium text-muted-foreground md:flex">
+          <nav className="hidden items-center gap-7 text-sm font-medium text-muted-foreground lg:flex">
             {links.map((link) => (
               <NavLink
                 key={link.label}
@@ -105,16 +109,14 @@ export function SiteNavbar({
           {items.length > 0 || mobileActions ? (
             <Sheet open={open} onOpenChange={setOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="md:hidden" aria-label="القائمة">
+                <Button variant="ghost" size="icon" className="size-11 lg:hidden" aria-label="القائمة">
                   <Menu className="size-5" />
                 </Button>
               </SheetTrigger>
               <SheetContent side="right" className="w-[280px]">
                 <SheetTitle className="sr-only">قائمة التنقل</SheetTitle>
                 <div className="flex items-center gap-2 px-4 pt-2">
-                  <span className="flex size-8 items-center justify-center rounded-full bg-[#D8B486] text-black">
-                    <GraduationCap className="size-4" />
-                  </span>
+                  <BrandMark className="size-8" iconClassName="size-4" />
                   <span className="text-base font-bold tracking-tight">{brandName}</span>
                 </div>
 
@@ -124,7 +126,7 @@ export function SiteNavbar({
                       <NavLink
                         key={item.label}
                         link={item}
-                        close={() => setOpen(false)}
+                        close={closeSheet}
                         className="rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                       />
                     ))}
@@ -133,7 +135,7 @@ export function SiteNavbar({
 
                 {mobileActions && (
                   <div className="mt-auto flex flex-col gap-2 p-4">
-                    {mobileActions(() => setOpen(false))}
+                    {mobileActions(closeSheet)}
                   </div>
                 )}
               </SheetContent>
@@ -145,7 +147,11 @@ export function SiteNavbar({
   );
 }
 
-function NavLink({
+/**
+ * رابط ورقي (Leaf) — المكوّن الوحيد المشترك في usePathname.
+ * الروابط #hash (الواجهة) لا تُعتبر نشطة أبدًا؛ التطابق تام أو بادئة للمسارات.
+ */
+const NavLink = memo(function NavLink({
   link,
   close,
   className,
@@ -154,6 +160,15 @@ function NavLink({
   close?: () => void;
   className?: string;
 }) {
+  const pathname = usePathname();
+
+  const isActive =
+    link.href !== undefined &&
+    !link.href.startsWith("#") &&
+    (pathname === link.href || pathname.startsWith(`${link.href}/`));
+
+  const classes = cn(className, isActive && "text-primary hover:text-primary");
+
   const content = (
     <>
       {close && link.icon ? <span className="text-primary">{link.icon}</span> : null}
@@ -163,7 +178,12 @@ function NavLink({
 
   if (link.href) {
     return (
-      <Link href={link.href} onClick={close} className={className}>
+      <Link
+        href={link.href}
+        onClick={close}
+        className={classes}
+        aria-current={isActive ? "page" : undefined}
+      >
         {content}
       </Link>
     );
@@ -176,9 +196,10 @@ function NavLink({
         link.onClick?.();
         close?.();
       }}
-      className={className}
+      className={classes}
+      aria-current={isActive ? "page" : undefined}
     >
       {content}
     </button>
   );
-}
+});

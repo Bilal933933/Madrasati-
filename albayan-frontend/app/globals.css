@@ -246,6 +246,9 @@
 
 :root {
   /* ===== Warm Earthy — الوضع الفاتح (Light Mode) ===== */
+  /* حشوات المساحة المحجوزة لـ StudentDock (قابلة للضبط من مكان واحد) */
+  --dock-inset-y: 7rem;
+  --dock-inset-x: 7rem;
   --background: #F4EFEA;          /* الخلفية الرئيسية */
   --foreground: #2D2926;          /* النص الرئيسي */
   --card: #FFFFFF;                /* خلفية البطاقات */
@@ -253,7 +256,7 @@
   --popover: #FFFFFF;
   --popover-foreground: #2D2926;
   --primary: #B08B66;             /* اللون المميز / أزرار CTA */
-  --primary-foreground: #FFFFFF;
+  --primary-foreground: #2D2926;  /* نص داكن على الذهبي — تباين 4.6:1 (WCAG AA) */
   --secondary: #EFE5D8;           /* تدرج فاتح من البيج */
   --secondary-foreground: #2D2926;
   --muted: #EFE5D8;
@@ -276,7 +279,7 @@
   --sidebar: #FAF6F0;
   --sidebar-foreground: #2D2926;
   --sidebar-primary: #B08B66;
-  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-primary-foreground: #2D2926;
   --sidebar-accent: #EFE5D8;
   --sidebar-accent-foreground: #2D2926;
   --sidebar-border: #E2D8CE;

@@ -45,19 +45,20 @@ export function HeroDemo() {
   const doneCount = useMemo(() => (selected ? 1 : 0), [selected]);
 
   return (
-    <div className="w-full">
+    <div className="w-full max-w-2xl mx-auto lg:max-w-none">
       <div className="overflow-hidden rounded-3xl border bg-card shadow-lg shadow-primary/5">
         {/* رأس الشاشة كمسار حقيقي */}
-        <div className="border-b bg-muted/40 px-5 py-3">
+        <div className="border-b bg-muted/40 px-5 py-4">
           <div className="flex items-center justify-between gap-3">
             <div>
-              <p className="text-xs text-muted-foreground">
-                اليوم · اللغة العربية · الوحدة الثالثة · الدرس الرابع
+              <h3 className="text-lg font-black text-foreground">المبتدأ والخبر</h3>
+              <p className="text-xs font-medium text-muted-foreground">
+                اللغة العربية · الوحدة الثالثة
               </p>
-              <h3 className="mt-0.5 font-bold">المبتدأ والخبر</h3>
             </div>
-            <span className="rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
-              ⏱ 18 دقيقة
+            <span className="flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1.5 text-xs font-bold text-primary">
+              <span className="size-1.5 animate-pulse rounded-full bg-primary" />
+              تجربة حية
             </span>
           </div>
         </div>
@@ -111,17 +112,17 @@ export function HeroDemo() {
         </div>
 
         {/* جسم الشاشة */}
-        <div className="px-5 py-4">
+        <div className="px-5 py-6">
           {phase === "question" && (
             <div>
-              <p className="mb-3 flex items-center gap-2 text-sm font-semibold">
-                <ClipboardList className="size-4 text-primary" />
+              <p className="mb-4 flex items-center gap-2 text-base font-bold text-foreground">
+                <Sparkles className="size-5 text-primary" />
                 لنرَ ما تعرفه مسبقًا
               </p>
-              <p className="mb-4 text-sm leading-relaxed">
+              <p className="mb-6 text-base leading-relaxed font-medium">
                 ما إعراب «المبتدأ» في جملة «المبتدأ يبدأ الجملة الاسمية»؟
               </p>
-              <div className="flex flex-col gap-2" role="radiogroup" aria-label="سؤال تجريبي">
+              <div className="flex flex-col gap-3" role="radiogroup" aria-label="سؤال تجريبي">
                 {DEMO_OPTIONS.map((option) => (
                   <button
                     key={option}
@@ -133,12 +134,20 @@ export function HeroDemo() {
                       setPhase("feedback");
                     }}
                     className={cn(
-                      "rounded-xl border bg-background px-3 py-2 text-start text-sm font-medium transition-all",
-                      "hover:border-primary/40 hover:bg-accent/40",
-                      selected === option && "border-primary text-primary",
+                      "group relative overflow-hidden rounded-2xl border-2 bg-background p-4 text-start text-base font-bold transition-all",
+                      "hover:border-primary hover:bg-primary/5 hover:translate-x-[-4px]",
+                      selected === option ? "border-primary bg-primary/5 ring-2 ring-primary/20" : "border-border",
                     )}
                   >
-                    {option}
+                    <div className="flex items-center justify-between">
+                      <span>{option}</span>
+                      <div className={cn(
+                        "size-5 rounded-full border-2 transition-all",
+                        selected === option ? "border-primary bg-primary" : "border-muted-foreground/30"
+                      )}>
+                        {selected === option && <Check className="size-3 text-white mx-auto" />}
+                      </div>
+                    </div>
                   </button>
                 ))}
               </div>

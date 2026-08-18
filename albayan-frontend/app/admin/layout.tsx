@@ -2,7 +2,8 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { ShieldAlert } from "lucide-react";
+import { ArrowRight, ShieldAlert } from "lucide-react";
+import Link from "next/link";
 import {
   SidebarProvider,
   SidebarInset,
@@ -15,9 +16,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
+import { BrandMark } from "@/components/shared/brand-mark";
+import { ThemeToggle } from "@/components/shared/theme-toggle";
 import { useAuthStore } from "@/features/auth/store/authStore";
 import { AdminSidebar } from "@/components/shared/admin-sidebar";
+import { UserMenu } from "@/features/student/components/UserMenu";
 
 export default function AdminLayout({
   children,
@@ -67,8 +72,28 @@ export default function AdminLayout({
       <SidebarProvider>
         <AdminSidebar />
         <SidebarInset>
-          <header className="flex h-14 shrink-0 items-center gap-2 border-b px-4">
-            <SidebarTrigger />
+          <header className="sticky top-0 z-50 flex h-16 shrink-0 items-center justify-between gap-2 border-b bg-background px-4">
+            {/* مجموعة البداية: Trigger + الشعار + العودة (truncate لتجنّب الدفع خارج الشاشة) */}
+            <div className="flex min-w-0 items-center gap-2">
+              <SidebarTrigger className="shrink-0" />
+              <BrandMark className="size-7 shrink-0" iconClassName="size-4" />
+              <Button
+                asChild
+                variant="ghost"
+                className="hidden min-w-0 sm:inline-flex"
+              >
+                <Link href="/" className="gap-1.5">
+                  <ArrowRight className="size-4 shrink-0" aria-hidden />
+                  <span className="truncate">العودة إلى الموقع</span>
+                </Link>
+              </Button>
+            </div>
+
+            {/* مجموعة النهاية: ثابتة لا تتغير */}
+            <div className="flex shrink-0 items-center gap-1.5">
+              <ThemeToggle />
+              <UserMenu />
+            </div>
           </header>
           {children}
         </SidebarInset>

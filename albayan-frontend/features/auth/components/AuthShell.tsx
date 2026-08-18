@@ -1,4 +1,3 @@
-import { GraduationCap } from "lucide-react";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import {
@@ -8,6 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { BrandMark } from "@/components/shared/brand-mark";
 import { ThemeToggle } from "@/components/shared/theme-toggle";
 import { ScrollReveal } from "@/features/landing/components/scroll-reveal";
 
@@ -39,9 +39,7 @@ export function AuthShell({ title, description, children, footer }: AuthShellPro
           <ScrollReveal>
             <div className="mb-8 flex flex-col items-center gap-3">
               <Link href="/" className="flex flex-col items-center gap-3">
-                <span className="flex size-12 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-lg shadow-primary/20">
-                  <GraduationCap className="size-6" />
-                </span>
+                <BrandMark className="size-12" iconClassName="size-6" />
                 <p className="text-lg font-bold tracking-tight">مدرستي</p>
               </Link>
             </div>

@@ -102,7 +102,7 @@ export function LearningSection({
         <div className={cn("relative aspect-[16/9] overflow-hidden rounded-3xl lg:aspect-auto lg:min-h-80", isEven ? "lg:order-2" : "lg:order-1")}>
           <ExploreThumb
             image={image}
-            fallbackImage="/images/subject-fallback.jpg"
+            fallbackImage={image ? "/images/subject-fallback.jpg" : null}
             className="absolute inset-0 size-full rounded-none transition-transform duration-700 group-hover:scale-105"
             alt={title}
             fallback={
@@ -142,7 +142,7 @@ export function LearningSection({
         {/* المحتوى */}
         <div className={cn("flex flex-col gap-6 p-2", isEven ? "lg:order-1 lg:pe-10" : "lg:order-2 lg:ps-10")}>
           <div className="pt-2">
-            <h3 className="text-xl font-bold tracking-tight sm:text-2xl">{title}</h3>
+            <p className="text-xl font-bold tracking-tight sm:text-2xl">{title}</p>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{tagline}</p>
           </div>
 
@@ -204,12 +204,7 @@ export function LearningSection({
           {href ? (
             <Link
               href={href}
-              className={cn(
-                "flex w-full items-center justify-center gap-2.5 rounded-2xl px-5 py-3.5 text-base font-bold transition-all duration-200 active:scale-[0.98]",
-                status === "completed"
-                  ? "border-2 border-primary text-primary hover:bg-primary/5"
-                  : "bg-primary text-primary-foreground hover:bg-primary/90",
-              )}
+              className="flex w-full items-center justify-center gap-2.5 rounded-2xl bg-primary px-5 py-3.5 text-base font-bold text-primary-foreground transition-all duration-200 hover:bg-primary/90 active:scale-[0.98]"
             >
               {actionLabel(status)}
               <ChevronLeft className="size-4 rtl:rotate-180" aria-hidden />

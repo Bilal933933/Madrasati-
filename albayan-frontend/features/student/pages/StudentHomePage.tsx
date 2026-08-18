@@ -1,8 +1,9 @@
-import { GraduationCap, Hand, TrendingUp } from "lucide-react";
+import { ChevronLeft, GraduationCap, Hand, TrendingUp } from "lucide-react";
+import Link from "next/link";
 import { ScrollReveal } from "@/features/landing/components/scroll-reveal";
 import { ExploreThumb } from "@/features/explore/components/ExploreThumb";
 import { AchievementsHomeCard } from "@/features/achievements/components/student/achievements-home-card";
-import { LearningSection } from "../components/LearningSection";
+import { SubjectCard } from "../components/SubjectCard";
 import { ProgressBar } from "../components/progress-bar";
 import type { StudentHomeData } from "../types/student.types";
 
@@ -12,6 +13,13 @@ import type { StudentHomeData } from "../types/student.types";
  * وصورة الصف بجانبه في طبقة متلاشية. ثم فاصل متدرّج + مواد.
  */
 export function StudentHomePage({ data }: { data: StudentHomeData }) {
+  const current =
+    data.subjects.find(
+      (s) => s.status === "in_progress" && (s.next_lesson || s.last_lesson),
+    ) ??
+    data.subjects.find((s) => s.status === "not_started" && s.next_lesson) ??
+    null;
+
   return (
     <div className="mx-auto w-full max-w-6xl px-4 pb-32 sm:px-6">
       {/* غلاف البيت — Hero: يمين=نص (5) | يسار=صورة الصف المتلاشية (7) */}
@@ -72,6 +80,47 @@ export function StudentHomePage({ data }: { data: StudentHomeData }) {
         </div>
       </ScrollReveal>
 
+      {/* الدرس التالي (البطل) — الخطوة التالية مباشرة، حسب المرجع 5.1 */}
+      {current && (
+        <ScrollReveal className="mt-10">
+          <div className="relative overflow-hidden rounded-3xl border border-primary/25 bg-primary/5 p-6 sm:p-8">
+            <div
+              className="pointer-events-none absolute -end-16 -top-16 size-48 rounded-full bg-primary/20 blur-3xl"
+              aria-hidden
+            />
+            <div className="relative flex flex-col items-start gap-5 md:flex-row md:items-center md:justify-between">
+              <div className="flex w-full flex-col gap-1.5">
+                <span className="flex items-center gap-1.5 text-xs font-semibold text-primary">
+                  <span className="size-1.5 animate-pulse rounded-full bg-primary" aria-hidden />
+                  خطوتك التالية
+                </span>
+                <h2 className="text-xl font-black tracking-tight sm:text-2xl">
+                  {current.status === "in_progress"
+                    ? (current.next_lesson?.title ?? current.last_lesson?.title)
+                    : current.next_lesson?.title}
+                </h2>
+                <p className="text-sm text-muted-foreground">
+                  {current.name}
+                  {current.status === "in_progress"
+                    ? ` · التقدم ${current.progress}%`
+                    : " · جاهزة للبدء"}
+                </p>
+                {current.status === "in_progress" && (
+                  <ProgressBar value={current.progress} className="mt-2 h-2 max-w-xs" />
+                )}
+              </div>
+              <Link
+                href={`/home/subject/${current.slug}`}
+                className="inline-flex shrink-0 items-center justify-center gap-2 rounded-2xl bg-primary px-7 py-3.5 text-base font-bold text-primary-foreground transition-all duration-200 hover:bg-primary/90 active:scale-[0.98]"
+              >
+                {current.status === "in_progress" ? "أكمل التعلم" : "ابدأ الآن"}
+                <ChevronLeft className="size-4 rtl:rotate-180" aria-hidden />
+              </Link>
+            </div>
+          </div>
+        </ScrollReveal>
+      )}
+
       {/* فاصل ناعم بالتدرج بدل الخط الصلب */}
       <ScrollReveal className="mt-14 flex items-center gap-4">
         <div className="h-px flex-1 bg-gradient-to-l from-transparent via-border/60 to-transparent" />
@@ -80,33 +129,9 @@ export function StudentHomePage({ data }: { data: StudentHomeData }) {
       </ScrollReveal>
 
       {data.subjects.length > 0 ? (
-        <div className="mt-10 flex flex-col gap-14">
-          {data.subjects.map((subject, index) => (
-            <LearningSection
-              key={subject.id}
-              index={index}
-              title={subject.name}
-              tagline={subject.description}
-              image={subject.image}
-              icon={subject.icon}
-              progress={subject.progress}
-              status={subject.status}
-              lastLesson={subject.last_lesson}
-              nextLesson={subject.next_lesson}
-              lastVisitedAt={subject.last_visited_at}
-              isCurrentItem={index === 0 && subject.status === "in_progress"}
-              badge={
-                index === 0 && subject.status !== "in_progress"
-                  ? "آخر مادة استكشفتها"
-                  : undefined
-              }
-              stats={[
-                { value: subject.units_count, label: "وحدات" },
-                { value: subject.lessons_count, label: "دروس" },
-                { value: subject.completed_count, label: "مكتمل" },
-              ]}
-              href={`/home/subject/${subject.slug}`}
-            />
+        <div className="mt-10 grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
+          {data.subjects.map((subject) => (
+            <SubjectCard key={subject.id} subject={subject} />
           ))}
         </div>
       ) : (
