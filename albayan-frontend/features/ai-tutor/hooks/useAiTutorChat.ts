@@ -109,14 +109,28 @@ export function useAiTutorChat(threadId: string | undefined) {
         setStatusText(READY_TEXT);
       });
 
-      socket.on("connect_error", (error: Error) => {
+      socket.on("connect_error", async (error: Error) => {
         if (!mountedRef.current) return;
-        const message =
-          error.message === "jwt expired"
-            ? "انتهت صلاحية الجلسة. أعد تحميل الصفحة للمتابعة."
-            : "تعذّر الاتصال بالمعلم الذكي. جارٍ إعادة المحاولة...";
+        if (error.message !== "jwt expired") {
+          setStatus("connecting");
+          setStatusText("تعذّر الاتصال بالمعلم الذكي. جارٍ إعادة المحاولة...");
+          return;
+        }
+        // انتهت صلاحية التذكرة — جلب تذكرة جديدة وتحديثها وإعادة الاتصال تلقائيًا.
         setStatus("connecting");
-        setStatusText(message);
+        setStatusText("انتهت صلاحية الجلسة. جارٍ تجديدها تلقائيًا...");
+        try {
+          const { token: freshToken } = await getAiSessionTicket();
+          if (!mountedRef.current) return;
+          const current = socketRef.current;
+          if (!current) return;
+          current.auth = { token: freshToken };
+          current.connect();
+        } catch {
+          if (!mountedRef.current) return;
+          setStatus("error");
+          setStatusText("انتهت صلاحية الجلسة. أعد تحميل الصفحة للمتابعة.");
+        }
       });
 
       socket.on("status", (data: { status?: string; message?: string }) => {
