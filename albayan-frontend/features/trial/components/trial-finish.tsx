@@ -23,7 +23,8 @@ export function TrialFinish({ onRetry }: { onRetry: () => void }) {
         <div className="flex flex-col gap-1">
           <h2 className="text-2xl font-bold leading-tight">أعجبتك الطريقة؟</h2>
           <p className="max-w-md text-sm text-muted-foreground">
-            أنهيت تجربة «{title}» — أنشئ حسابًا مجانيًا لتكمل رحلتك خطوة بخطوة.
+            أنهيت أول خطوة في درس «{title}» — أنشئ حسابًا مجانيًا لتكمل بقية
+            الدرس خطوة بخطوة، وبعدها تفتح بقية دروسك.
           </p>
         </div>
       </ScrollReveal>

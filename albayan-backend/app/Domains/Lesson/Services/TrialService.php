@@ -11,12 +11,16 @@ use Illuminate\Database\Eloquent\Builder;
  * النسخة التجريبية (Trial) — نافذة تعليمية مصغّرة من درس حقيقي.
  *
  * ليست رحلة مستقلة، بل طبقة قراءة داخل نطاق الدرس: تحلّ درسًا واحدًا
- * (من إعداد أو تلقائيًا) ثم تعرض منه فقط أول فقرة + فيديو قصير (اختياري)
- * + سؤالَي أول تقييم، بلا كشف بقية الكتل.
+ * (من إعداد أو تلقائيًا) ثم تعرض منه أول فقرتين مع تقييميهما التكوينيين
+ * فقط — فتُري الزائر الحلقة الكاملة (فقرة ← قياس فوري ← تغذية راجعة ← فقرة)
+ * دون كشف القبلي/الختامي أو بقية الكتل.
  */
 class TrialService
 {
-    /** عدد أسئلة نافذة التجربة. */
+    /** عدد فقرات نافذة التجربة (مع تقييم تكويني بعد كل واحدة). */
+    private const TRIAL_PARAGRAPH_LIMIT = 2;
+
+    /** عدد أسئلة كل تقييم تكويني في نافذة التجربة. */
     private const TRIAL_QUESTION_LIMIT = 2;
 
     public function __construct(
@@ -25,28 +29,34 @@ class TrialService
 
     /**
      * يحلّ الدرس التجريبي: slug من الإعداد إن وُجد، وإلا أول درس منشور
-     * يحتوي على فقرة وتقييم (بترتيب الإنشاء).
+     * في اللغة العربية يحتوي فقرة وتقييمًا، وإلا أول درس منشور (أي مادة).
      */
     public function resolveLesson(): Lesson
     {
-        $base = $this->publishedWithParagraphAndAssessment();
-
         $slug = config('madrasati.trial_lesson_slug');
 
         if (is_string($slug) && $slug !== '') {
-            $lesson = (clone $base)->where('slug', $slug)->first();
+            $lesson = $this->publishedWithParagraphAndAssessment()
+                ->where('slug', $slug)
+                ->first();
 
             if ($lesson) {
                 return $lesson;
             }
         }
 
-        return $base->orderBy('id')->firstOrFail();
+        // تفضيل اللغة العربية (الدرس الرائد للتجربة) ثم أي مادة أخرى.
+        $arabic = $this->publishedWithParagraphAndAssessment()
+            ->whereHas('course.subject', fn ($q) => $q->where('name', 'اللغة العربية'))
+            ->orderBy('id')
+            ->first();
+
+        return $arabic ?? $this->publishedWithParagraphAndAssessment()->orderBy('id')->firstOrFail();
     }
 
     /**
      * يبني نافذة التجربة من الدرس: يحمّل رحلته كاملة ثم يقتطعها إلى
-     * [أول فقرة ← فيديو قصير (اختياري) ← أول تقييم بأول سؤالين].
+     * [فقرة 1 ← تقييمها التكويني ← فقرة 2 ← تقييمها التكويني] بترتيبها الرسمي.
      * النتيجة تحتفظ بعقدة LessonFlowResource ذاتها (lesson + blocks).
      */
     public function build(Lesson $lesson): Lesson
@@ -55,25 +65,37 @@ class TrialService
 
         $blocks = $lesson->blocks->where('is_published', true);
 
-        $paragraph = $blocks->first(
-            fn (LessonBlock $block) => $block->block_kind === BlockKind::Paragraph->value
-        );
+        // أول فقرتين منشورتين بالترتيب الرسمي للرحلة.
+        $paragraphs = $blocks
+            ->where('block_kind', BlockKind::Paragraph->value)
+            ->sortBy('sort_order')
+            ->take(self::TRIAL_PARAGRAPH_LIMIT);
 
-        $video = $blocks->first(
-            fn (LessonBlock $block) => $block->block_kind === BlockKind::LessonVideo->value
-        );
+        $trialBlocks = [];
 
-        $assessment = $blocks->first(
-            fn (LessonBlock $block) => BlockKind::tryFrom($block->block_kind)?->isAssessment() ?? false
-        );
+        foreach ($paragraphs as $paragraph) {
+            $trialBlocks[] = $paragraph;
 
-        // اقتصار أسئلة التقييم على سؤالَي التجربة فقط (خياراتها محمّلة مسبقًا).
-        $assessment?->assessment?->setRelation(
-            'questions',
-            $assessment->assessment->questions->take(self::TRIAL_QUESTION_LIMIT)
-        );
+            // التقييم التكويني المرتبط بالفقرة (لا قبلي ولا ختامي في النافذة).
+            $formative = $blocks->first(
+                fn (LessonBlock $block) => $block->block_kind === BlockKind::FormativeAssessment->value
+                    && $block->assessment?->paragraph_id === $paragraph->paragraph_id
+            );
 
-        $lesson->setRelation('blocks', collect([$paragraph, $video, $assessment])->filter()->values());
+            if ($formative === null) {
+                continue;
+            }
+
+            // اقتصار أسئلة التكويني على سقف التجربة (خياراتها محمّلة مسبقًا).
+            $formative->assessment->setRelation(
+                'questions',
+                $formative->assessment->questions->take(self::TRIAL_QUESTION_LIMIT)
+            );
+
+            $trialBlocks[] = $formative;
+        }
+
+        $lesson->setRelation('blocks', collect($trialBlocks)->values());
 
         return $lesson;
     }

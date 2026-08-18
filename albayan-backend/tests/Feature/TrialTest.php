@@ -10,8 +10,8 @@ use App\Domains\Curriculum\Models\Stage;
 use App\Domains\Curriculum\Models\Subject;
 use App\Domains\Lesson\Enums\BlockKind;
 use App\Domains\Lesson\Models\Lesson;
-use App\Domains\Lesson\Models\Paragraph;
 use App\Domains\Lesson\Services\LessonBlockService;
+use App\Domains\Lesson\Services\LessonEditorService;
 use App\Domains\Lesson\Services\LessonService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -32,7 +32,8 @@ class TrialTest extends TestCase
     }
 
     /**
-     * ينشئ درسًا برحلة كاملة: [قبلي، فقرة، ختامي] + فيديو، وأسئلة على القبلي.
+     * ينشئ درسًا برحلة افتراضية [قبلي، فقرة، ختامي] + فيديو، ثم يضيف
+     * فقرة ثانية مع تقييم تكويني بعد كل فقرة (ثلاثة أسئلة لكل تكويني).
      */
     private function makeLesson(array $tree, array $overrides = []): Lesson
     {
@@ -44,28 +45,40 @@ class TrialTest extends TestCase
             'is_published' => true,
         ], $overrides));
 
+        $editor = app(LessonEditorService::class);
+
+        // فيديو شامل — لا يُكشف داخل نافذة التجربة.
         app(LessonBlockService::class)->createBlock($lesson->id, BlockKind::LessonVideo);
 
-        $pre = $lesson->assessments()->where('type', 'pre')->first();
-        foreach ([0, 1, 2] as $order) {
-            $question = app(AssessmentService::class)->createQuestion([
-                'assessment_id' => $pre->id,
-                'type' => 'mcq',
-                'content' => "أسئلة التجربة $order",
-                'sort_order' => $order,
-            ]);
-            app(AssessmentService::class)->createOption([
-                'question_id' => $question->id,
-                'content' => 'خيار صحيح',
-                'is_correct' => true,
-                'sort_order' => 0,
-            ]);
-            app(AssessmentService::class)->createOption([
-                'question_id' => $question->id,
-                'content' => 'خيار خاطئ',
-                'is_correct' => false,
-                'sort_order' => 1,
-            ]);
+        // الفقرة الأولى + تكوينيها، ثم فقرة ثانية + تكوينيها.
+        $firstParagraph = $lesson->paragraphs()->orderBy('sort_order')->first();
+        $editor->addFormativeAssessment($lesson->id, ['paragraph_id' => $firstParagraph->id, 'title' => 'تحقق سريع ١']);
+
+        $secondBlock = $editor->addParagraph($lesson->id, ['title' => 'فقرة ثانية', 'content' => '{"type":"doc","content":[]}']);
+        $editor->addFormativeAssessment($lesson->id, ['paragraph_id' => $secondBlock->paragraph_id, 'title' => 'تحقق سريع ٢']);
+
+        // ثلاثة أسئلة لكل تكويني — تُقتصر على سؤالين في النافذة.
+        foreach ($lesson->assessments()->where('type', 'formative')->orderBy('id')->get() as $formative) {
+            foreach ([0, 1, 2] as $order) {
+                $question = app(AssessmentService::class)->createQuestion([
+                    'assessment_id' => $formative->id,
+                    'type' => 'mcq',
+                    'content' => "أسئلة التجربة {$order}",
+                    'sort_order' => $order,
+                ]);
+                app(AssessmentService::class)->createOption([
+                    'question_id' => $question->id,
+                    'content' => 'خيار صحيح',
+                    'is_correct' => true,
+                    'sort_order' => 0,
+                ]);
+                app(AssessmentService::class)->createOption([
+                    'question_id' => $question->id,
+                    'content' => 'خيار خاطئ',
+                    'is_correct' => false,
+                    'sort_order' => 1,
+                ]);
+            }
         }
 
         return $lesson;
@@ -79,21 +92,51 @@ class TrialTest extends TestCase
         $response->assertStatus(200);
 
         $blocks = $response->json('data.blocks');
-        $this->assertCount(3, $blocks);
-        $this->assertSame(['paragraph', 'lesson_video', 'pre_assessment'], array_column($blocks, 'kind'));
 
-        // لا يُكشف التقييم الختامي (نافذة مصغّرة لا الدرس الحقيقي).
-        $kinds = array_column($blocks, 'kind');
-        $this->assertNotContains('final_assessment', $kinds);
+        // النافذة: [فقرة ← تكويني] × 2 فقط — لا قبلي ولا ختامي ولا فيديو.
+        $this->assertCount(4, $blocks);
+        $this->assertSame(
+            ['paragraph', 'formative_assessment', 'paragraph', 'formative_assessment'],
+            array_column($blocks, 'kind')
+        );
 
-        // سؤالان فقط رغم إنشاء ثلاثة.
-        $assessment = collect($blocks)->first(fn ($b) => $b['kind'] === 'pre_assessment');
-        $this->assertCount(2, $assessment['data']['questions']);
+        // كل تكويني يتبع الفقرة التي ينتمي إليها (paragraph_id).
+        foreach ([0, 2] as $paragraphIndex) {
+            $this->assertSame(
+                $blocks[$paragraphIndex]['data']['id'],
+                $blocks[$paragraphIndex + 1]['data']['paragraph_id']
+            );
+        }
+
+        // سؤالان فقط لكل تكويني رغم إنشاء ثلاثة.
+        foreach ([1, 3] as $assessmentIndex) {
+            $this->assertCount(2, $blocks[$assessmentIndex]['data']['questions']);
+        }
 
         // الإجابات الصحيحة مكشوفة للتغذية الفورية داخل التجربة.
-        $question = $assessment['data']['questions'][0];
+        $question = $blocks[1]['data']['questions'][0];
         $correct = collect($question['options'])->first(fn ($o) => $o['is_correct'] === true);
         $this->assertNotNull($correct);
+    }
+
+    public function test_trial_includes_only_first_two_paragraphs(): void
+    {
+        $tree = $this->seedTree();
+        $lesson = $this->makeLesson($tree);
+
+        // فقرة ثالثة دون تقييم تكويني — خارج نافذة التجربة.
+        $editor = app(LessonEditorService::class);
+        $editor->addParagraph($lesson->id, ['title' => 'فقرة ثالثة', 'content' => '{"type":"doc","content":[]}']);
+
+        $response = $this->getJson('/api/trial');
+        $response->assertStatus(200);
+
+        $blocks = $response->json('data.blocks');
+
+        $this->assertCount(2, collect($blocks)->where('kind', 'paragraph'));
+
+        $titles = collect($blocks)->where('kind', 'paragraph')->pluck('data.title')->all();
+        $this->assertNotContains('فقرة ثالثة', $titles);
     }
 
     public function test_trial_prefers_configured_lesson(): void
@@ -109,25 +152,38 @@ class TrialTest extends TestCase
         $this->assertSame('درس ثانٍ', $response->json('data.lesson.title'));
     }
 
-    public function test_trial_includes_only_first_paragraph(): void
+    public function test_trial_prefers_arabic_lesson_by_default(): void
     {
+        // مادة الرياضيات أولًا، ثم درس في اللغة العربية — يُفضَّل العربي افتراضيًا.
         $tree = $this->seedTree();
-        $lesson = $this->makeLesson($tree);
+        $this->makeLesson($tree);
 
-        $secondParagraph = Paragraph::create([
-            'lesson_id' => $lesson->id,
-            'title' => 'فقرة ثانية',
-            'content' => '{"type":"doc","content":[]}',
+        $arabicSubject = Subject::create([
+            'grade_id' => $tree['grade']->id,
+            'semester_id' => $tree['semester']->id,
+            'name' => 'اللغة العربية',
+            'slug' => 'arabic',
             'sort_order' => 2,
+            'is_published' => true,
         ]);
-        app(LessonBlockService::class)->createBlock($lesson->id, BlockKind::Paragraph, paragraphId: $secondParagraph->id);
+        $arabicCourse = Course::create([
+            'subject_id' => $arabicSubject->id,
+            'name' => 'الوحدة الأولى',
+            'description' => 'مفاهيم أساسية',
+            'sort_order' => 1,
+            'is_published' => true,
+        ]);
+
+        $this->makeLesson([
+            'stage' => $tree['stage'],
+            'grade' => $tree['grade'],
+            'semester' => $tree['semester'],
+            'subject' => $arabicSubject,
+            'course' => $arabicCourse,
+        ], ['title' => 'درس عربي']);
 
         $response = $this->getJson('/api/trial');
         $response->assertStatus(200);
-
-        $paragraphKinds = collect($response->json('data.blocks'))
-            ->filter(fn ($b) => $b['kind'] === 'paragraph')
-            ->count();
-        $this->assertSame(1, $paragraphKinds);
+        $this->assertSame('درس عربي', $response->json('data.lesson.title'));
     }
 }
