@@ -3,7 +3,7 @@
 import { Menu } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { memo, useCallback, useEffect, useState, type ReactNode } from "react";
+import { memo, useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { BrandMark } from "@/components/shared/brand-mark";
 import { Button } from "@/components/ui/button";
 import {
@@ -59,19 +59,38 @@ export function SiteNavbar({
 }: SiteNavbarProps) {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [hidden, setHidden] = useState(false);
+  const lastY = useRef(0);
   const items = mobileItems ?? links;
 
   const closeSheet = useCallback(() => setOpen(false), []);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 8);
+    const onScroll = () => {
+      const y = window.scrollY;
+      const delta = y - lastY.current;
+      setScrolled(y > 8);
+      // لا نغيّر حالة الإخفاء إلا بحركة فعلية (أكثر من 2px) — عند توقف التمرير تبقى كما هي.
+      if (Math.abs(delta) > 2) {
+        setHidden(y > 120 && delta > 0);
+      }
+      lastY.current = y;
+    };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  const headerHidden = hidden && !open;
+
   return (
-    <header className={cn("sticky z-50 px-4", scrolled ? "top-2" : "top-0 pt-3")}>
+    <header
+      className={cn(
+        "sticky z-50 px-4 transition-transform duration-300",
+        scrolled ? "top-2" : "top-0 pt-3",
+        headerHidden && "-translate-y-[calc(100%+1rem)]"
+      )}
+    >
       <div
         className={cn(
           "mx-auto flex max-w-6xl items-center justify-between transition-all duration-300",

@@ -5,7 +5,7 @@ import { EXPLORE_ICONS } from "@/features/explore/lib/exploreIcons";
 import { ExploreThumb } from "@/features/explore/components/ExploreThumb";
 import { cn } from "@/lib/utils";
 import { ProgressBar } from "./progress-bar";
-import type { ProgressStatus, StudentSubject } from "../types/student.types";
+import type { ProgressStatus, StudentUnit } from "../types/student.types";
 
 const BADGE: Record<ProgressStatus, { label: string; className: string } | null> = {
   completed: { label: "مكتمل", className: "bg-green-500/15 text-green-600" },
@@ -19,7 +19,7 @@ const ACTION_TEXT: Record<ProgressStatus, string> = {
   not_started: "ابدأ الآن",
 };
 
-/** شارة التقدم بلون/خلفية شفافة من لون المادة المخزّن. */
+/** شارة التقدم بلون/خلفية شفافة من لون المقرر المخزّن. */
 function tintStyle(color: string | null): { backgroundColor?: string; color?: string } {
   if (color && /^#[0-9a-f]{6}$/i.test(color)) {
     return { backgroundColor: `${color}1f`, color };
@@ -28,29 +28,44 @@ function tintStyle(color: string | null): { backgroundColor?: string; color?: st
 }
 
 /**
- * بطاقة مادة بنمط بطاقة الدرس الموحّد:
+ * بطاقة مقرر بنمط بطاقة الدرس الموحّد:
  * شريط جانبي ملون + بانر صورة 16/9 + عنوان/شارة + وصف
- * + تقدم للمواد الجارية + إحصائيات + زر إجراء حبّي.
+ * + تقدم للمقررات الجارية + إحصائيات + زر إجراء حبّي.
  */
-export function SubjectCard({ subject, index }: { subject: StudentSubject; index: number }) {
-  const Icon = EXPLORE_ICONS[subject.icon ?? ""] ?? GraduationCap;
-  const badge = BADGE[subject.status];
-  const tint = tintStyle(subject.color);
-  const locked = subject.lessons_count === 0;
+export function UnitCard({
+  unit,
+  subjectSlug,
+  index,
+  isCurrent = false,
+}: {
+  unit: StudentUnit;
+  subjectSlug: string;
+  index: number;
+  isCurrent?: boolean;
+}) {
+  const Icon = EXPLORE_ICONS[unit.icon ?? ""] ?? GraduationCap;
+  const badge = BADGE[unit.status];
+  const tint = tintStyle(unit.color);
+  const locked = unit.total_count === 0 || !unit.slug;
 
   return (
     <ScrollReveal delay={index * 80}>
-      <div className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-border/60 bg-card/60 p-5 transition-all duration-200 hover:-translate-y-1 hover:border-primary/30 hover:bg-card hover:shadow-lg">
-        {/* شريط جانبي بلون المادة */}
+      <div
+        className={cn(
+          "group relative flex h-full flex-col overflow-hidden rounded-2xl border border-border/60 bg-card/60 p-5 transition-all duration-200 hover:-translate-y-1 hover:border-primary/30 hover:bg-card hover:shadow-lg",
+          isCurrent && "border-primary/30 bg-primary/5",
+        )}
+      >
+        {/* شريط جانبي بلون المقرر */}
         <span aria-hidden className="absolute inset-y-0 start-0 w-1.5" style={tint} />
 
         {/* بانر الصورة */}
         <div className="mb-4 aspect-[16/9] w-full overflow-hidden rounded-xl">
           <ExploreThumb
-            image={subject.image}
+            image={unit.image}
             fallbackImage="/images/subject-fallback.jpg"
             className="size-full rounded-none"
-            alt={subject.name}
+            alt={unit.name}
             fallback={
               <span className="flex size-full items-center justify-center bg-muted" style={tint}>
                 <Icon className="size-12" aria-hidden />
@@ -61,7 +76,9 @@ export function SubjectCard({ subject, index }: { subject: StudentSubject; index
 
         {/* الرأس: عنوان + شارة الحالة */}
         <div className="flex items-start justify-between gap-3">
-          <h3 className="text-lg font-bold tracking-tight">{subject.name}</h3>
+          <h3 className={cn("text-lg font-bold tracking-tight", isCurrent && "text-primary")}>
+            {unit.name}
+          </h3>
           {badge && (
             <span
               className={cn(
@@ -69,24 +86,24 @@ export function SubjectCard({ subject, index }: { subject: StudentSubject; index
                 badge.className,
               )}
             >
-              {subject.status === "completed" && <CheckCircle2 className="size-3" aria-hidden />}
+              {unit.status === "completed" && <CheckCircle2 className="size-3" aria-hidden />}
               {badge.label}
             </span>
           )}
         </div>
 
         <p className="mt-3 min-h-[2.5rem] line-clamp-2 text-sm leading-relaxed text-muted-foreground">
-          {subject.description}
+          {unit.description}
         </p>
 
-        {/* التقدم للمادة الجارية */}
-        {subject.status === "in_progress" && (
+        {/* التقدم للمقرر الجاري */}
+        {unit.status === "in_progress" && (
           <div className="mt-3">
             <div className="mb-1.5 flex items-center justify-between text-xs">
               <span className="text-muted-foreground">التقدم</span>
-              <span className="font-bold text-primary">{subject.progress}%</span>
+              <span className="font-bold text-primary">{unit.progress}%</span>
             </div>
-            <ProgressBar value={subject.progress} className="h-2" />
+            <ProgressBar value={unit.progress} className="h-2" />
           </div>
         )}
 
@@ -98,11 +115,11 @@ export function SubjectCard({ subject, index }: { subject: StudentSubject; index
           <div className="flex items-center gap-3 text-xs text-muted-foreground">
             <span className="flex items-center gap-1.5">
               <BookOpen className="size-3.5" aria-hidden />
-              {subject.units_count} وحدات
+              {unit.total_count} دروس
             </span>
             <span className="flex items-center gap-1.5">
               <CheckCircle2 className="size-3.5" aria-hidden />
-              {subject.progress}% مكتمل
+              {unit.completed_count} مكتمل
             </span>
           </div>
 
@@ -112,15 +129,15 @@ export function SubjectCard({ subject, index }: { subject: StudentSubject; index
             </span>
           ) : (
             <Link
-              href={`/home/subject/${subject.slug}`}
+              href={`/home/subject/${subjectSlug}/course/${unit.slug}`}
               className={cn(
                 "inline-flex shrink-0 items-center justify-center gap-1.5 rounded-full px-4 py-3 text-sm font-bold transition-all duration-200 active:scale-[0.98]",
-                subject.status === "completed"
+                unit.status === "completed"
                   ? "border border-primary/40 text-primary hover:bg-primary/5"
                   : "bg-primary text-primary-foreground hover:bg-primary/90",
               )}
             >
-              {ACTION_TEXT[subject.status]}
+              {ACTION_TEXT[unit.status]}
               <ChevronLeft className="size-4 rtl:rotate-180" aria-hidden />
             </Link>
           )}

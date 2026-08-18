@@ -3,14 +3,13 @@ import Link from "next/link";
 import { ScrollReveal } from "@/features/landing/components/scroll-reveal";
 import { ExploreThumb } from "@/features/explore/components/ExploreThumb";
 import { EXPLORE_ICONS } from "@/features/explore/lib/exploreIcons";
-import { LearningSection } from "../components/LearningSection";
 import { ProgressBar } from "../components/progress-bar";
+import { UnitCard } from "../components/UnitCard";
 import type { StudentSubjectDetail } from "../types/student.types";
 
 /**
- * صفحة المادة للطالب — نمط Open Canvas انسيابي بلا بطاقات/فواصل صلبة:
- * غلاف عائم بعمق تدرّجي وتوهج خلفي + إحصاءات نصية رشيقة + مقررات
- * متباعدة عموديًا دون إطارات. بألوان الثيم فقط (فاتح/داكن).
+ * صفحة المادة للطالب — غلاف تعريفي للمادة + شبكة بطاقات للمقررات
+ * (UnitCard) بنفس نمط بطاقات بيت الطالب.
  */
 export function StudentSubjectPage({ subject }: { subject: StudentSubjectDetail }) {
   const currentUnit = subject.units.find((unit) => unit.status === "in_progress");
@@ -116,26 +115,14 @@ export function StudentSubjectPage({ subject }: { subject: StudentSubjectDetail 
 
       {/* المقررات */}
       {subject.units.length > 0 ? (
-        <div className="mt-10 flex flex-col gap-14">
+        <div className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-2">
           {subject.units.map((unit, index) => (
-            <LearningSection
+            <UnitCard
               key={unit.id}
+              unit={unit}
+              subjectSlug={subject.slug}
               index={index}
-              title={unit.name}
-              tagline={unit.description}
-              image={unit.image}
-              icon={unit.icon}
-              progress={unit.progress}
-              status={unit.status}
-              lastLesson={unit.last_lesson}
-              nextLesson={unit.next_lesson}
-              lastVisitedAt={unit.last_visited_at}
-              isCurrentItem={currentUnit?.id === unit.id}
-              stats={[
-                { value: unit.total_count, label: "دروس" },
-                { value: unit.completed_count, label: "مكتمل" },
-              ]}
-              href={unit.slug ? `/home/subject/${subject.slug}/course/${unit.slug}` : ""}
+              isCurrent={currentUnit?.id === unit.id}
             />
           ))}
         </div>

@@ -129,9 +129,9 @@ export function StudentHomePage({ data }: { data: StudentHomeData }) {
       </ScrollReveal>
 
       {data.subjects.length > 0 ? (
-        <div className="mt-10 grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
-          {data.subjects.map((subject) => (
-            <SubjectCard key={subject.id} subject={subject} />
+        <div className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-2">
+          {data.subjects.map((subject, index) => (
+            <SubjectCard key={subject.id} subject={subject} index={index} />
           ))}
         </div>
       ) : (
