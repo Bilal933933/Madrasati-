@@ -79,7 +79,7 @@ function Stepper({
               disabled={!navigable}
               onClick={() => onJump(index)}
               className={cn(
-                "flex items-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 sm:gap-2.5",
+                "flex min-w-0 items-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 sm:gap-2.5",
                 navigable ? "cursor-pointer" : "cursor-default",
               )}
               aria-current={isActive ? "step" : undefined}
@@ -96,7 +96,7 @@ function Stepper({
               </span>
               <span
                 className={cn(
-                  "whitespace-nowrap text-sm font-semibold transition-colors",
+                  "min-w-0 whitespace-normal text-xs font-semibold leading-snug transition-colors sm:text-sm",
                   isDone && "text-primary",
                   isActive && "text-foreground",
                   !isDone && !isActive && "text-muted-foreground",

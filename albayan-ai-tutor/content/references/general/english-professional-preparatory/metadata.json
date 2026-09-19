@@ -1,0 +1,57 @@
+{
+  "id": "english-professional-preparatory",
+  "title": "بروفيشنال في تأسيس ومهارات اللغة الإنجليزية للمرحلة الإعدادية",
+  "author": null,
+  "publisher": "",
+  "stage": "general",
+  "subject": "اللغة الإنجليزية",
+  "branch": "تأسيس ومهارات",
+  "total_pages": 96,
+  "parts": [
+    {
+      "file": "part-01.md",
+      "pages": [1, 40],
+      "chapter": null,
+      "sections": [
+        {
+          "id": "english-professional-preparatory-p1",
+          "title": "الجزء 1 — صفحات 1-40",
+          "kind": "content",
+          "page": 1,
+          "endPage": 40,
+          "concepts": []
+        }
+      ]
+    },
+    {
+      "file": "part-02.md",
+      "pages": [41, 80],
+      "chapter": null,
+      "sections": [
+        {
+          "id": "english-professional-preparatory-p2",
+          "title": "الجزء 2 — صفحات 41-80",
+          "kind": "content",
+          "page": 41,
+          "endPage": 80,
+          "concepts": []
+        }
+      ]
+    },
+    {
+      "file": "part-03.md",
+      "pages": [81, 96],
+      "chapter": null,
+      "sections": [
+        {
+          "id": "english-professional-preparatory-p3",
+          "title": "الجزء 3 — صفحات 81-96",
+          "kind": "content",
+          "page": 81,
+          "endPage": 96,
+          "concepts": []
+        }
+      ]
+    }
+  ]
+}

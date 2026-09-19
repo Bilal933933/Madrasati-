@@ -13,6 +13,7 @@ import { ChatModule } from './chat/chat.module.js';
 import { AppLoggerMiddleware } from './common/logger/app-logger.middleware.js';
 import { LoggerModule } from './common/logger/logger.module.js';
 import { GlobalExceptionFilter } from './common/errors/global-exception.filter.js';
+import { ExamModule } from './exam/exam.module.js';
 import { KnowledgeModule } from './knowledge/knowledge.module.js';
 import { PrismaModule } from './prisma/prisma.module.js';
 import { StudentContextModule } from './student-context/student-context.module.js';
@@ -35,6 +36,7 @@ import { ThreadsModule } from './threads/threads.module.js';
     AiModule,
     ChatModule,
     ThreadsModule,
+    ExamModule,
   ],
   providers: [
     {

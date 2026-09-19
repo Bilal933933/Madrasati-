@@ -95,7 +95,7 @@ export function SiteNavbar({
         className={cn(
           "mx-auto flex max-w-6xl items-center justify-between transition-all duration-300",
           scrolled
-            ? "rounded-full border border-white/10 bg-foreground/10 px-5 py-2.5 shadow-2xl backdrop-blur-md sm:px-6"
+            ? "rounded-full border border-border/40 bg-background/80 px-5 py-2.5 shadow-xl backdrop-blur-md sm:px-6"
             : "border-b bg-background/85 px-2 py-2.5 backdrop-blur sm:px-3",
           className
         )}
@@ -128,7 +128,7 @@ export function SiteNavbar({
           {items.length > 0 || mobileActions ? (
             <Sheet open={open} onOpenChange={setOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="size-11 lg:hidden" aria-label="القائمة">
+                <Button variant="ghost" size="icon" className="size-10 lg:hidden" aria-label="القائمة">
                   <Menu className="size-5" />
                 </Button>
               </SheetTrigger>

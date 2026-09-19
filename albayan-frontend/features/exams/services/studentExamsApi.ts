@@ -14,6 +14,8 @@ import type {
   SaveProgressPayload,
   SaveProgressResponse,
   SubmitAttemptResponse,
+  GradingStatusResponse,
+  ExamResultResponse,
 } from "../types/attempt.types";
 
 /**
@@ -67,11 +69,23 @@ export const studentExamsApi = {
       { method: "PUT", body: JSON.stringify(payload), withCsrf: true }
     ),
 
-  /** تسليم المحاولة نهائيًا مع التصحيح الفوري. */
+  /** تسليم المحاولة نهائيًا. */
   submitAttempt: (attemptId: number) =>
     apiClient<SubmitAttemptResponse>(`/api/exams/attempts/${attemptId}/submit`, {
       method: "POST",
       withCsrf: true,
+    }),
+
+  /** حالة التصحيح (polling). */
+  getGradingStatus: (attemptId: number) =>
+    apiClient<GradingStatusResponse>(`/api/exams/attempts/${attemptId}/grading-status`, {
+      method: "GET",
+    }),
+
+  /** نتائج المحاولة (بعد اكتمال التصحيح). */
+  getResults: (attemptId: number) =>
+    apiClient<ExamResultResponse>(`/api/exams/attempts/${attemptId}/results`, {
+      method: "GET",
     }),
 };
 

@@ -26,9 +26,12 @@ interface QuestionCardProps {
   index?: number;
   total?: number;
   hint?: string;
-  hintOpen: boolean;
+  /** مفتوح/مغلق — اختياري (لا تلميح في بيانات المحرك حاليًا، والمكوّن للاستخدام المستقبلي). */
+  hintOpen?: boolean;
+  /** عرض الفقاعة والتوضيح تحت الاختيارات (افتراضيًا نعم؛ المحرك يعرضها في ديلوج). */
+  inlineFeedback?: boolean;
   onSelectOption: (optionId: number) => void;
-  onToggleHint: () => void;
+  onToggleHint?: () => void;
   children?: React.ReactNode;
 }
 
@@ -45,9 +48,10 @@ export function QuestionCard({
   revealed,
   correctOption,
   hint,
-  hintOpen,
+  hintOpen = false,
+  inlineFeedback = true,
   onSelectOption,
-  onToggleHint,
+  onToggleHint = () => {},
   index = 0,
   total = 1,
   children,
@@ -68,10 +72,10 @@ export function QuestionCard({
   };
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-4">
       <QuestionHeader index={index} total={total} typeLabel={isMcq ? "اختيار من متعدد" : "صواب وخطأ"} />
 
-      <h2 className="text-lg font-bold leading-relaxed">{question.content}</h2>
+      <h2 className="text-xl font-bold leading-relaxed sm:text-2xl">{question.content}</h2>
 
       {hint && (
         <HintReveal hint={hint} open={hintOpen} onToggle={onToggleHint} />
@@ -94,7 +98,7 @@ export function QuestionCard({
         children
       )}
 
-      {revealed && (
+      {revealed && inlineFeedback && (
         <div className="animate-in fade-in slide-in-from-bottom-1 flex flex-col gap-3 duration-300">
           <FeedbackBubble
             tone={selectedOption === correctOption ? "success" : "neutral"}

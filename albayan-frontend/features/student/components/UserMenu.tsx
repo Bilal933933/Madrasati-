@@ -32,7 +32,7 @@ export function UserMenu() {
         <button
           type="button"
           aria-label="قائمة المستخدم"
-          className="flex size-11 cursor-pointer items-center justify-center rounded-full p-2 outline-none transition-opacity hover:opacity-80 focus-visible:ring-2 focus-visible:ring-ring"
+          className="flex size-10 cursor-pointer items-center justify-center rounded-full p-1.5 outline-none transition-colors hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring"
         >
           <Avatar size="sm">
             {user.avatar ? <AvatarImage src={user.avatar} alt={user.name} /> : null}

@@ -1,5 +1,5 @@
-import { Loader } from "@/components/shared/loader";
+import { LessonRouteSkeleton } from "@/components/shared/route-skeletons";
 
 export default function Loading() {
-  return <Loader inline />;
+  return <LessonRouteSkeleton />;
 }

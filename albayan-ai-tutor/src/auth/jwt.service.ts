@@ -46,4 +46,37 @@ export class AiTicketService {
 
     return payload;
   }
+
+  /**
+   * تحقق من تذكرة AI session لمشرف لوحة المراقبة (role = admin).
+   * تُستخدم فقط في endpoints المراجعة الإدارية للجلسات — ليست للدردشة.
+   * @throws UnauthorizedException عند توقيع غير صالح أو انتهاء أو دور غير مشرف
+   */
+  verifyAdmin(token: string): AiSessionClaims {
+    if (!token) {
+      throw new UnauthorizedException('Missing AI session token');
+    }
+
+    let payload: AiSessionClaims;
+    try {
+      payload = this.jwt.verify<AiSessionClaims>(token);
+    } catch (error) {
+      const expired =
+        error instanceof Error && error.name === 'TokenExpiredError';
+      throw new UnauthorizedException({
+        code: expired ? ErrorCode.TOKEN_EXPIRED : ErrorCode.UNAUTHORIZED,
+        message: expired
+          ? 'AI session token expired'
+          : 'Invalid AI session token',
+      });
+    }
+
+    if (!payload.sub || payload.role !== 'admin') {
+      throw new UnauthorizedException(
+        'AI admin session is not authorized for this user',
+      );
+    }
+
+    return payload;
+  }
 }

@@ -86,18 +86,24 @@ export default function AdminLessonsPage() {
         title="الدروس"
         description="إدارة الدروس وتنظيمها ضمن المقررات."
         actions={
-          <>
-            <CascadeFilter
-              filter={filterWithPageReset}
-              levels={["stage", "grade", "semester", "subject", "course"]}
-            />
-            <Button onClick={openCreate} className="w-full sm:w-auto">
-              <Plus />
-              إضافة درس
-            </Button>
-          </>
+          <Button onClick={openCreate} className="w-full sm:w-auto">
+            <Plus />
+            إضافة درس
+          </Button>
         }
       />
+
+      <div className="mb-4">
+        <CascadeFilter
+          filter={filterWithPageReset}
+          levels={["stage", "grade", "semester", "subject", "course"]}
+          count={
+            isLoading || coursesLoading || subjectsLoading || gradesLoading || stagesLoading
+              ? undefined
+              : lessons.length
+          }
+        />
+      </div>
 
       <Card>
         <CardContent className="p-0 pt-4">

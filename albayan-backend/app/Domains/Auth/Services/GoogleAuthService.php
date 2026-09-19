@@ -4,6 +4,7 @@ namespace App\Domains\Auth\Services;
 
 use App\Domains\Auth\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 use Laravel\Socialite\Contracts\User as SocialiteUser;
 
 class GoogleAuthService
@@ -41,9 +42,18 @@ class GoogleAuthService
                     'avatar' => $googleUser->getAvatar(),
                 ]);
 
-                // role خارج $fillable عمدًا، يُضبط من السيرفر فقط
-                $user->forceFill(['role' => 'student'])->save();
+                // role خارج $fillable عمدًا، يُضبط من السيرفر فقط.
+                // is_active يُضبط صراحة لأن قيمة default في قاعدة البيانات
+                // لا تنعكس على الموديل الموجود في الذاكرة بعد create()
+                // (خلافًا سيؤدي لرفض الحساب الجديد باعتباره "موقوفًا").
+                $user->forceFill(['role' => 'student', 'is_active' => true])->save();
             }
+        }
+
+        if (! $user->isActive()) {
+            throw ValidationException::withMessages([
+                'email' => ['هذا الحساب موقوف. تواصل مع إدارة المنصة.'],
+            ]);
         }
 
         Auth::login($user, remember: true);

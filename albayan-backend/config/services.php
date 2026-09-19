@@ -50,4 +50,13 @@ return [
         'tutor_url' => env('AI_TUTOR_URL'),
     ],
 
+    'ai_grading' => [
+        // عنوان خدمة التصحيح الذكي (NestJS)
+        'url' => env('AI_GRADING_URL', 'http://localhost:3001'),
+        // مفتاح الخدمة المشتركة للمصادقة
+        'key' => env('AI_SERVICE_KEY', ''),
+        // مهلة الطلب بالمللي ثانية
+        'timeout' => (int) env('AI_GRADING_TIMEOUT_MS', 30000),
+    ],
+
 ];

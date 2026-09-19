@@ -68,15 +68,15 @@ export function AiTutorChat({ chat }: { chat: UseAiTutorChatReturn }) {
   }
 
   return (
-    <div className="flex h-full w-full min-h-0 flex-1 flex-col overflow-hidden bg-[#faf6ee] text-foreground">
+    <div className="flex h-full w-full min-h-0 flex-1 flex-col overflow-hidden bg-background text-foreground">
       {/* شاشة تسجيل الخروج — بأسلوب Claude/ChatGPT */}
       {signedOut ? (
         <div className="flex flex-1 flex-col items-center justify-center gap-6 px-6 text-center">
-          <span className="flex size-16 items-center justify-center rounded-3xl bg-[#3a2313] text-[#f5e9d8] shadow-lg shadow-[#3a2313]/20">
+          <span className="flex size-16 items-center justify-center rounded-3xl bg-primary text-primary-foreground shadow-lg shadow-primary/20">
             <Sparkles size={32} />
           </span>
           <div className="flex flex-col items-center gap-2">
-            <h1 className="text-2xl font-bold tracking-tight text-[#2b1a0e] sm:text-3xl">
+            <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
               وداعًا! لقد سجّلت خروجك
             </h1>
             <p className="max-w-md text-sm leading-relaxed text-foreground/70">
@@ -95,11 +95,11 @@ export function AiTutorChat({ chat }: { chat: UseAiTutorChatReturn }) {
           <Loader className="translate-y-12" />
         ) : messages.length === 0 ? (
           <div className="flex h-full flex-col items-center justify-center gap-7">
-            <span className="flex size-16 items-center justify-center rounded-3xl bg-[#3a2313] text-[#f5e9d8] shadow-lg shadow-[#3a2313]/20">
+            <span className="flex size-16 items-center justify-center rounded-3xl bg-primary text-primary-foreground shadow-lg shadow-primary/20">
               <Sparkles size={32} />
             </span>
             <div className="flex flex-col items-center gap-2 text-center">
-              <h1 className="text-2xl font-bold tracking-tight text-[#2b1a0e] sm:text-3xl">
+              <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
                 كيف أساعدك اليوم؟
               </h1>
               <p className="max-w-md text-sm leading-relaxed text-foreground/70">
@@ -115,9 +115,9 @@ export function AiTutorChat({ chat }: { chat: UseAiTutorChatReturn }) {
                       key={prompt}
                       type="button"
                       onClick={() => handleSend(prompt)}
-                      className="group rounded-2xl border border-border/70 bg-white/80 p-4 text-start shadow-sm transition-colors hover:border-[#3a2313]/30 hover:bg-[#f5e9d8]/50 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+                      className="group rounded-2xl border border-border/70 bg-card/80 p-4 text-start shadow-sm transition-colors hover:border-primary/30 hover:bg-secondary/50 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
                     >
-                      <p className="text-sm font-medium leading-relaxed text-foreground/85 group-hover:text-[#2b1a0e]">
+                      <p className="text-sm font-medium leading-relaxed text-foreground/85 group-hover:text-foreground">
                         {prompt}
                       </p>
                     </button>
@@ -128,7 +128,7 @@ export function AiTutorChat({ chat }: { chat: UseAiTutorChatReturn }) {
                   type="button"
                   onClick={generateQuestion}
                   disabled={busy}
-                  className="flex items-center gap-2 rounded-2xl border border-[#3a2313]/20 bg-[#3a2313] px-5 py-2.5 text-sm font-medium text-[#f5e9d8] shadow-sm transition-transform hover:scale-[1.02] disabled:pointer-events-none disabled:opacity-50"
+                  className="flex items-center gap-2 rounded-2xl border border-primary/20 bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground shadow-sm transition-transform hover:scale-[1.02] disabled:pointer-events-none disabled:opacity-50"
                 >
                   <ClipboardList className="size-4" aria-hidden />
                   أنشئ سؤال اختبار
@@ -150,7 +150,7 @@ export function AiTutorChat({ chat }: { chat: UseAiTutorChatReturn }) {
                   {message.kind === "quiz" && message.quiz ? (
                     <QuizCard quiz={message.quiz} />
                   ) : (
-                    <div className="w-fit max-w-[85%] rounded-2xl rounded-tr-sm border border-border/50 bg-gradient-to-b from-white to-[#f5e9d8]/60 px-4 py-3 text-sm leading-relaxed text-[#2b1a0e] shadow-sm">
+                    <div className="w-fit max-w-[85%] rounded-2xl rounded-tr-sm border border-border/50 bg-gradient-to-b from-card to-secondary/60 px-4 py-3 text-sm leading-relaxed text-foreground shadow-sm">
                       {message.text ? (
                         <ChatMarkdown>{message.text}</ChatMarkdown>
                       ) : null}
@@ -167,7 +167,7 @@ export function AiTutorChat({ chat }: { chat: UseAiTutorChatReturn }) {
                   <span className="flex items-center gap-1.5 px-1 text-xs font-semibold text-foreground/70">
                     أنت
                   </span>
-                  <div className="w-fit max-w-[85%] rounded-2xl rounded-bl-sm bg-gradient-to-b from-[#4a2c17] to-[#3a2313] px-4 py-3 text-sm leading-relaxed text-white shadow-md">
+                  <div className="w-fit max-w-[85%] rounded-2xl rounded-bl-sm bg-gradient-to-b from-primary/80 to-primary px-4 py-3 text-sm leading-relaxed text-primary-foreground shadow-md">
                     {message.text}
                   </div>
                   {formatTime(message.createdAt) && (
@@ -185,10 +185,10 @@ export function AiTutorChat({ chat }: { chat: UseAiTutorChatReturn }) {
                   <Sparkles className="size-3.5" aria-hidden />
                   المعلم الذكي
                 </span>
-                <div className="flex w-fit items-center gap-1 rounded-2xl rounded-tr-sm border border-border/50 bg-white px-4 py-3">
-                  <span className="size-1.5 animate-bounce rounded-full bg-[#3a2313] motion-reduce:animate-none" />
-                  <span className="size-1.5 animate-bounce rounded-full bg-[#3a2313] [animation-delay:120ms] motion-reduce:animate-none" />
-                  <span className="size-1.5 animate-bounce rounded-full bg-[#3a2313] [animation-delay:240ms] motion-reduce:animate-none" />
+                <div className="flex w-fit items-center gap-1 rounded-2xl rounded-tr-sm border border-border/50 bg-card px-4 py-3">
+                  <span className="size-1.5 animate-bounce rounded-full bg-primary motion-reduce:animate-none" />
+                  <span className="size-1.5 animate-bounce rounded-full bg-primary [animation-delay:120ms] motion-reduce:animate-none" />
+                  <span className="size-1.5 animate-bounce rounded-full bg-primary [animation-delay:240ms] motion-reduce:animate-none" />
                 </div>
               </div>
             )}
@@ -212,9 +212,9 @@ export function AiTutorChat({ chat }: { chat: UseAiTutorChatReturn }) {
       </div>
 
       {/* شريط الإدخال العائم */}
-      <footer className="border-t border-border/50 bg-white/70 px-6 py-4 sm:px-8">
+      <footer className="border-t border-border/50 bg-card/70 px-6 py-4 sm:px-8">
         <div className="mx-auto flex w-full max-w-3xl flex-col gap-2">
-          <div className="flex items-end gap-2 rounded-2xl border border-border bg-white p-2 shadow-lg shadow-black/5 focus-within:border-[#3a2313]/40">
+          <div className="flex items-end gap-2 rounded-2xl border border-border bg-card p-2 shadow-lg shadow-black/5 focus-within:border-primary/40">
             <Button
               onClick={() => handleSend(draft)}
               disabled={!connected || !draft.trim() || busy}

@@ -71,6 +71,13 @@ class ExamBank
                     true,
                     'نعم، مثل: نجحَ المهندسونَ رفعُه بالواو.'
                 ),
+                self::shortAnswer(
+                    'easy',
+                    'ما الفاعل في جملة «يكتبُ التلميذُ الدرسَ»؟',
+                    'التلميذُ',
+                    ['التلميذ', 'تلميذ'],
+                    'التلميذُ هو من قام بالكتابة، فهو الفاعل مرفوع.'
+                ),
             ],
 
             'الجملة الاسمية والجملة الفعلية' => [
@@ -340,6 +347,14 @@ class ExamBank
                     0,
                     '120 - 45 = 75.'
                 ),
+                self::numeric(
+                    'easy',
+                    'ما ناتج 30 + 12؟',
+                    42,
+                    0,
+                    null,
+                    '30 + 12 = 42.'
+                ),
             ],
 
             'إدراك الأعداد وترتيبها' => [
@@ -392,6 +407,13 @@ class ExamBank
                     ['ضوء الشمس والماء', 'الظلام فقط', 'الرياح القوية', 'الصوت المتكرر'],
                     0,
                     'البناء الضوئي يعمل بضوء الشمس والماء.'
+                ),
+                self::shortAnswer(
+                    'medium',
+                    'ما اسم العملية التي يصنع بها النبات غذاءه؟',
+                    'البناء الضوئي',
+                    ['التركيب الضوئي', 'البناء الضوئى', 'البناء الضوئى'],
+                    'النبات يصنع غذاءه بعملية البناء الضوئي مستعينًا بضوء الشمس.'
                 ),
             ],
 
@@ -499,6 +521,14 @@ class ExamBank
                     ['24', '10', '16', '12'],
                     0,
                     '4 × 6 = 24 شجرة.'
+                ),
+                self::numeric(
+                    'medium',
+                    'اشترى خالد 3 أقلام بـ 12 جنيهًا، كم ثمن القلم الواحد؟',
+                    4,
+                    0,
+                    'جنيه',
+                    '12 ÷ 3 = 4 جنيهات للقلم الواحد.'
                 ),
             ],
 
@@ -926,6 +956,13 @@ class ExamBank
                     0,
                     'الهدوء يرفع التركيز.'
                 ),
+                self::essay(
+                    'easy',
+                    'اكتب فقرة قصيرة عن كيفية تنظيم وقتك في يوم الدراسة.',
+                    'يبدأ يومي المتوازن بالاستيقاظ مبكرًا وصلاة الفجر، ثم أخصص ساعة للمذاكرة في مكان هادئ، وأوزع الوقت بين المهام والراحة واللعب، وأنجز الواجب قبل النوم.',
+                    ['وضوح الفكرة الرئيسة', 'الترتيب المنطقي لليوم', 'ذكر أمثلة عملية'],
+                    'تُقيَّم الفقرة على وضوح الأفكار وترتيبها وواقعيتها.'
+                ),
             ],
 
             'مشروعي الصغير' => [
@@ -1167,6 +1204,56 @@ class ExamBank
             'explanation' => $explanation ?: null,
             'difficulty' => $difficulty,
             'correct_answer' => $answer,
+        ];
+    }
+
+    /* --------------------- الأنواع الذكية (تصحيح المساعد) --------------------- */
+
+    /**
+     * إجابة قصيرة/أكمل الفراغ — يصححها المساعد دلاليًا مقابل نموذج الإجابة
+     * والإجابات البديلة المقبولة.
+     */
+    private static function shortAnswer(string $difficulty, string $q, string $modelAnswer, array $accepted = [], string $explanation = ''): array
+    {
+        return [
+            'type' => 'short_answer',
+            'content' => $q,
+            'explanation' => $explanation ?: null,
+            'difficulty' => $difficulty,
+            'model_answer' => $modelAnswer,
+            'accepted_answers' => $accepted,
+            'case_sensitive' => false,
+        ];
+    }
+
+    /**
+     * سؤال مقالي — يقيّمه المساعد بمعايير محددة (rubric) ويعيد درجة جزئية 0-1.
+     */
+    private static function essay(string $difficulty, string $q, string $modelAnswer, array $rubric, string $explanation = ''): array
+    {
+        return [
+            'type' => 'essay',
+            'content' => $q,
+            'explanation' => $explanation ?: null,
+            'difficulty' => $difficulty,
+            'model_answer' => $modelAnswer,
+            'rubric' => array_map(fn (string $criterion) => ['criterion' => $criterion], $rubric),
+        ];
+    }
+
+    /**
+     * إجابة رقمية — قيمة صحيحة + سماحية تقريب (±) + وحدة اختيارية.
+     */
+    private static function numeric(string $difficulty, string $q, float|int $correctValue, float|int $tolerance = 0, ?string $units = null, string $explanation = ''): array
+    {
+        return [
+            'type' => 'numeric',
+            'content' => $q,
+            'explanation' => $explanation ?: null,
+            'difficulty' => $difficulty,
+            'correct_value' => $correctValue,
+            'tolerance' => $tolerance,
+            'units' => $units,
         ];
     }
 }

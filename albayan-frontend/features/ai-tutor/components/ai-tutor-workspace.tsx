@@ -37,7 +37,7 @@ export function AiTutorWorkspace({ threadId }: { threadId?: string }) {
           size="icon"
           onClick={() => setSidebarOpen(true)}
           className={cn(
-            "absolute top-3 start-3 z-10 size-9 rounded-xl border border-border/60 bg-white/90 text-foreground/70 shadow-sm backdrop-blur",
+            "absolute top-3 start-3 z-10 size-9 rounded-xl border border-border/60 bg-card/90 text-foreground/70 shadow-sm backdrop-blur",
             "rtl:-scale-x-100"
           )}
           title="إظهار المحادثات"

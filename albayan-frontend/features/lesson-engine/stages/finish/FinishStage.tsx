@@ -27,6 +27,9 @@ export function FinishStage() {
   const unitCompleted = unit?.completion.status === "completed";
   const subjectSlug = data?.subjectSlug;
   const courseSlug = data?.courseSlug;
+  const summary = data?.summary;
+  const assessmentCount = data?.flow.filter((step) => step.screen === "assessment").length ?? 0;
+  const contentCount = data?.flow.filter((step) => step.screen === "content").length ?? 0;
 
   const goToCourseLessons = () => {
     if (subjectSlug && courseSlug) {
@@ -62,6 +65,27 @@ export function FinishStage() {
           <p className="max-w-md text-sm leading-relaxed text-muted-foreground">
             استمر في التعلّم خطوة بخطوة، وستجمع كل يوم فكرة جديدة حتى تتقن المفاهيم.
           </p>
+
+          {/* خلاصة ما تعلمته + إحصاء الرحلة. */}
+          {summary ? (
+            <div className="flex w-full max-w-sm flex-col items-start gap-1.5 rounded-2xl border border-border/60 bg-card p-5 text-start shadow-sm ring-1 ring-border/40">
+              <p className="text-xs font-semibold text-muted-foreground">خلاصة الدرس</p>
+              <p className="text-sm leading-relaxed text-foreground">{summary}</p>
+            </div>
+          ) : null}
+
+          {(contentCount > 0 || assessmentCount > 0) && (
+            <div className="flex w-full max-w-sm items-center gap-3" aria-label="إحصاء الرحلة">
+              <div className="flex flex-1 flex-col items-center gap-0.5 rounded-xl bg-muted/60 px-3 py-2.5">
+                <span className="text-lg font-black tabular-nums text-foreground">{contentCount}</span>
+                <span className="text-xs text-muted-foreground">فقرة تعليمية</span>
+              </div>
+              <div className="flex flex-1 flex-col items-center gap-0.5 rounded-xl bg-muted/60 px-3 py-2.5">
+                <span className="text-lg font-black tabular-nums text-foreground">{assessmentCount}</span>
+                <span className="text-xs text-muted-foreground">تقييم أتقنته</span>
+              </div>
+            </div>
+          )}
 
           {/* الدرس التالي: أول درس غير مكتمل حسب تقدم الطالب (إن لم تنته الوحدة). */}
           {unit?.completion.next_lesson ? (

@@ -1,6 +1,11 @@
 export type ExamType = "lesson" | "unit" | "monthly" | "semester" | "full";
 
-export type QuestionType = "mcq" | "true_false";
+export type QuestionType =
+  | "mcq"
+  | "true_false"
+  | "short_answer"
+  | "essay"
+  | "numeric";
 
 export type Difficulty = "easy" | "medium" | "hard";
 
@@ -15,6 +20,9 @@ export const EXAM_TYPE_LABELS: Record<ExamType, string> = {
 export const QUESTION_TYPE_LABELS: Record<QuestionType, string> = {
   mcq: "اختيار من متعدد",
   true_false: "صح وخطأ",
+  short_answer: "إجابة قصيرة",
+  essay: "سؤال مقالي",
+  numeric: "إجابة رقمية",
 };
 
 export const DIFFICULTY_LABELS: Record<Difficulty, string> = {
@@ -43,6 +51,13 @@ export interface BankQuestion {
   is_active: boolean;
   options: BankQuestionOption[];
   created_at: string | null;
+  model_answer?: string | null;
+  accepted_answers?: string[];
+  case_sensitive?: boolean;
+  rubric?: { criterion: string }[];
+  correct_value?: number | null;
+  tolerance?: number;
+  units?: string | null;
 }
 
 export interface BankQuestionOptionPayload {
@@ -59,6 +74,13 @@ export interface BankQuestionPayload {
   correct_answer?: boolean | null;
   is_active?: boolean;
   options?: BankQuestionOptionPayload[];
+  model_answer?: string | null;
+  accepted_answers?: string[];
+  case_sensitive?: boolean;
+  rubric?: { criterion: string }[];
+  correct_value?: number | null;
+  tolerance?: number;
+  units?: string | null;
 }
 
 export interface BankQuestionListResponse {

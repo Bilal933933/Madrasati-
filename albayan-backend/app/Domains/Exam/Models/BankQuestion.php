@@ -18,6 +18,13 @@ use Illuminate\Support\Carbon;
  * @property bool|null $correct_answer
  * @property string $difficulty
  * @property bool $is_active
+ * @property string|null $model_answer
+ * @property array|null $accepted_answers
+ * @property bool $case_sensitive
+ * @property array|null $rubric
+ * @property float|null $correct_value
+ * @property float $tolerance
+ * @property string|null $units
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read Lesson $lesson
@@ -33,6 +40,13 @@ class BankQuestion extends Model
         'correct_answer',
         'difficulty',
         'is_active',
+        'model_answer',
+        'accepted_answers',
+        'case_sensitive',
+        'rubric',
+        'correct_value',
+        'tolerance',
+        'units',
     ];
 
     protected function casts(): array
@@ -40,6 +54,11 @@ class BankQuestion extends Model
         return [
             'is_active' => 'boolean',
             'correct_answer' => 'boolean',
+            'accepted_answers' => 'array',
+            'case_sensitive' => 'boolean',
+            'rubric' => 'array',
+            'correct_value' => 'decimal:6',
+            'tolerance' => 'decimal:6',
         ];
     }
 
@@ -66,6 +85,31 @@ class BankQuestion extends Model
     public function isTrueFalse(): bool
     {
         return $this->type === 'true_false';
+    }
+
+    public function isShortAnswer(): bool
+    {
+        return $this->type === 'short_answer';
+    }
+
+    public function isEssay(): bool
+    {
+        return $this->type === 'essay';
+    }
+
+    public function isNumeric(): bool
+    {
+        return $this->type === 'numeric';
+    }
+
+    public function isAiGraded(): bool
+    {
+        return in_array($this->type, ['short_answer', 'essay', 'numeric'], true);
+    }
+
+    public function isDeterministic(): bool
+    {
+        return in_array($this->type, ['mcq', 'true_false'], true);
     }
 
     public function scopeActive($query)

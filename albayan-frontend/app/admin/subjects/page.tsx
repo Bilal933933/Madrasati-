@@ -6,7 +6,7 @@ import { DeleteDialog } from "@/components/shared/delete-dialog";
 import { PageHeader } from "@/components/shared/page-header";
 import { DataTablePagination } from "@/components/shared/data-table-pagination";
 import { CascadeFilter } from "@/components/shared/cascade-filter";
-import { useCascadeFilter, activeId } from "@/components/shared/use-cascade-filter";
+import { useCascadeFilter, activeId, filterSubjectsByStage } from "@/components/shared/use-cascade-filter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { SubjectsTable } from "@/features/subjects/components/subjects-table";
@@ -18,6 +18,7 @@ import { useSemesters } from "@/features/semesters/hooks/useSemesters";
 import type { Subject } from "@/features/subjects/types/subject.types";
 
 const PAGE_SIZE = 20;
+const ALL_RECORDS = 1000;
 
 export default function AdminSubjectsPage() {
   const [page, setPage] = useState(1);
@@ -38,20 +39,23 @@ export default function AdminSubjectsPage() {
     },
   };
 
+  // عند اختيار مرحلة فقط، نجلب كل المواد ونفلترها محليًا بالمرحلة لأن الباك
+  // لا يقبل stage_id للمواد — فيبقى عدّاد النتائج والترقيم متسقين.
+  const stageFilterActive = activeId(filter.values.stage) != null;
   const { data: subjectsData, isLoading } = useSubjects({
     gradeId: activeId(filter.values.grade),
     semesterId: activeId(filter.values.semester),
     page,
-    perPage: PAGE_SIZE,
+    perPage: stageFilterActive ? ALL_RECORDS : PAGE_SIZE,
   });
 
   const deleteSubject = useDeleteSubject();
-  const subjects = subjectsData?.data ?? [];
-  const meta = subjectsData?.meta;
-  const totalPages = meta?.last_page ?? 1;
   const grades = gradesData?.data ?? [];
   const stages = stagesData?.data ?? [];
   const semesters = semestersData?.data ?? [];
+  const subjects = filterSubjectsByStage(subjectsData?.data ?? [], grades, filter.values);
+  const meta = subjectsData?.meta;
+  const totalPages = meta?.last_page ?? 1;
 
   const [formOpen, setFormOpen] = useState(false);
   const [editingSubject, setEditingSubject] = useState<Subject | null>(null);
@@ -73,15 +77,20 @@ export default function AdminSubjectsPage() {
         title="المواد الدراسية"
         description="إدارة المواد وتنظيمها ضمن الصفوف."
         actions={
-          <>
-            <CascadeFilter filter={filterWithPageReset} levels={["stage", "grade", "semester"]} />
-            <Button onClick={openCreate} className="w-full sm:w-auto">
-              <Plus />
-              إضافة مادة
-            </Button>
-          </>
+          <Button onClick={openCreate} className="w-full sm:w-auto">
+            <Plus />
+            إضافة مادة
+          </Button>
         }
       />
+
+      <div className="mb-4">
+        <CascadeFilter
+          filter={filterWithPageReset}
+          levels={["stage", "grade", "semester"]}
+          count={isLoading || gradesLoading || stagesLoading ? undefined : subjects.length}
+        />
+      </div>
 
       <Card>
         <CardContent className="p-0 pt-4">

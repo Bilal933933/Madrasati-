@@ -5,7 +5,7 @@ import { Plus } from "lucide-react";
 import { DeleteDialog } from "@/components/shared/delete-dialog";
 import { PageHeader } from "@/components/shared/page-header";
 import { CascadeFilter } from "@/components/shared/cascade-filter";
-import { useCascadeFilter } from "@/components/shared/use-cascade-filter";
+import { useCascadeFilter, filterBlueprints } from "@/components/shared/use-cascade-filter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -54,7 +54,8 @@ export default function AdminExamsPage() {
   });
 
   const deleteBlueprint = useDeleteExamBlueprint();
-  const blueprints = blueprintsData?.data ?? [];
+  const subjects = subjectsData?.data ?? [];
+  const blueprints = filterBlueprints(blueprintsData?.data ?? [], filter.values, subjects);
 
   const [formOpen, setFormOpen] = useState(false);
   const [editingBlueprint, setEditingBlueprint] = useState<ExamBlueprint | null>(null);
@@ -83,24 +84,26 @@ export default function AdminExamsPage() {
         }
       />
 
-      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+      <div className="mb-4">
         <CascadeFilter
           filter={filter}
           levels={["stage", "grade", "semester", "subject", "course"]}
-        />
-        <Select value={examType} onValueChange={setExamType}>
-          <SelectTrigger aria-label="تصفية حسب نوع الامتحان" className="w-full sm:w-52">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">كل الأنواع</SelectItem>
-            {(Object.keys(EXAM_TYPE_LABELS) as ExamType[]).map((type) => (
-              <SelectItem key={type} value={type}>
-                {EXAM_TYPE_LABELS[type]}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+          count={isLoading ? undefined : blueprints.length}
+        >
+          <Select value={examType} onValueChange={setExamType}>
+            <SelectTrigger aria-label="تصفية حسب نوع الامتحان" className="w-full sm:w-52">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">كل الأنواع</SelectItem>
+              {(Object.keys(EXAM_TYPE_LABELS) as ExamType[]).map((type) => (
+                <SelectItem key={type} value={type}>
+                  {EXAM_TYPE_LABELS[type]}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </CascadeFilter>
       </div>
 
       <Card>

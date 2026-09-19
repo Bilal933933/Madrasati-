@@ -7,18 +7,28 @@ import type {
 
 /** هل السؤال مجاب؟ (exists أو اختيار صريح). */
 export function isAnswered(value: ExamAnswerValue | undefined): boolean {
-  return value != null && (value.optionId != null || value.booleanValue != null);
+  return (
+    value != null &&
+    (value.optionId != null || value.booleanValue != null || value.textValue != null)
+  );
 }
 
-/** هل القيمة فارغة (لا خيار ولا صحيح/خطأ)؟ */
+/** هل القيمة فارغة (لا خيار ولا صحيح/خطأ ولا نص)؟ */
 export function isEmptyValue(v?: ExamAnswerValue): boolean {
-  return v == null || (v.optionId == null && v.booleanValue == null);
+  return (
+    v == null ||
+    (v.optionId == null && v.booleanValue == null && v.textValue == null)
+  );
 }
 
 /** تساوي قيمتين مع اعتبار الفارغ مساويًا للفارغ. */
 export function sameValue(a: ExamAnswerValue, b?: ExamAnswerValue): boolean {
   if (isEmptyValue(a) && isEmptyValue(b)) return true;
-  return a.optionId === b?.optionId && a.booleanValue === b?.booleanValue;
+  return (
+    a.optionId === b?.optionId &&
+    a.booleanValue === b?.booleanValue &&
+    a.textValue === b?.textValue
+  );
 }
 
 /** تشكيل حمولة إجابة الخادم من القيمة المحلية. */
@@ -26,6 +36,7 @@ export function toPayload(value: ExamAnswerValue): SaveAnswerPayload {
   return {
     selected_option_id: value.optionId,
     selected_boolean: value.booleanValue,
+    selected_text: value.textValue,
   };
 }
 
@@ -43,10 +54,15 @@ export function seedWebServerAnswers(
   const map: Record<number, ExamAnswerValue> = {};
 
   for (const q of attempt.questions) {
-    if (q.selected_option_id != null || q.selected_boolean != null) {
+    if (
+      q.selected_option_id != null ||
+      q.selected_boolean != null ||
+      q.selected_text != null
+    ) {
       map[q.id] = {
         optionId: q.selected_option_id,
         booleanValue: q.selected_boolean,
+        textValue: q.selected_text,
       };
     }
   }

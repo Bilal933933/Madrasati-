@@ -26,6 +26,8 @@ Route::middleware('auth:sanctum')->prefix('exams')->group(function () {
     Route::put('attempts/{attemptId}/questions/{questionId}', [StudentExamController::class, 'saveAnswer']);
     Route::put('attempts/{attemptId}/progress', [StudentExamController::class, 'syncProgress']);
     Route::post('attempts/{attemptId}/submit', [StudentExamController::class, 'submit']);
+    Route::get('attempts/{attemptId}/grading-status', [StudentExamController::class, 'gradingStatus']);
+    Route::get('attempts/{attemptId}/results', [StudentExamController::class, 'results']);
     Route::get('{id}', [StudentExamController::class, 'show']);
     Route::get('{id}/attempts', [StudentExamController::class, 'myAttempts']);
     Route::post('{id}/start', [StudentExamController::class, 'start']);

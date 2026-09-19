@@ -15,3 +15,6 @@ require base_path('app/Domains/Assessment/routes.php');
 require base_path('app/Domains/Progress/routes.php');
 require base_path('app/Domains/Exam/routes.php');
 require base_path('app/Domains/Achievement/routes.php');
+require base_path('app/Domains/AdminUser/routes.php');
+require base_path('app/Domains/Analytics/routes.php');
+require base_path('app/Domains/Settings/routes.php');

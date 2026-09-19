@@ -14,6 +14,10 @@ import {
   HelpCircle,
   FileCheck2,
   Medal,
+  Users,
+  BarChart3,
+  Settings,
+  Bot,
 } from "lucide-react";
 import {
   Sidebar,
@@ -41,6 +45,10 @@ const NAV_ITEMS = [
   { href: "/admin/bank-questions", label: "بنك الأسئلة", icon: HelpCircle },
   { href: "/admin/exams", label: "الامتحانات", icon: FileCheck2 },
   { href: "/admin/achievements", label: "الإنجازات", icon: Medal },
+  { href: "/admin/users", label: "المستخدمون", icon: Users },
+  { href: "/admin/analytics", label: "الإحصائيات", icon: BarChart3 },
+  { href: "/admin/settings", label: "إعدادات المنصة", icon: Settings },
+  { href: "/admin/ai-tutor", label: "المعلم الآلي", icon: Bot },
 ];
 
 export function AdminSidebar() {

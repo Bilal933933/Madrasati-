@@ -87,9 +87,9 @@ export function HistorySidebar({ isOpen, onToggle, status, onLogout }: HistorySi
   if (!isOpen) return null;
 
   return (
-    <aside className="flex h-full w-72 shrink-0 flex-col border-l border-border/50 bg-white/60">
+    <aside className="flex h-full w-72 shrink-0 flex-col border-l border-border/50 bg-card/60">
       <div className="flex items-center justify-between gap-2 px-4 pt-4 pb-2">
-        <h2 className="text-sm font-bold text-[#2b1a0e]">المحادثات</h2>
+        <h2 className="text-sm font-bold text-foreground">المحادثات</h2>
         <Button
           type="button"
           variant="ghost"
@@ -142,8 +142,8 @@ export function HistorySidebar({ isOpen, onToggle, status, onLogout }: HistorySi
                       className={cn(
                         "block rounded-lg px-2.5 py-2 text-sm transition-colors",
                         thread.id === activeId
-                          ? "bg-[#3a2313] text-[#f5e9d8]"
-                          : "text-foreground/85 hover:bg-[#f5e9d8]/60"
+                          ? "bg-primary text-primary-foreground"
+                          : "text-foreground/85 hover:bg-secondary/60"
                       )}
                     >
                       <span className="block truncate font-medium">{thread.title}</span>

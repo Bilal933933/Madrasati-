@@ -17,7 +17,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Spinner } from "@/components/ui/spinner";
+import { PageSkeleton } from "@/components/shared/page-skeleton";
 import { BrandMark } from "@/components/shared/brand-mark";
 import { ThemeToggle } from "@/components/shared/theme-toggle";
 import { useAuthStore } from "@/features/auth/store/authStore";
@@ -41,11 +41,7 @@ export default function AdminLayout({
 
   // جارٍ التحقق من الجلسة
   if (!isInitialized) {
-    return (
-      <div className="flex min-h-svh items-center justify-center">
-        <Spinner className="size-8" />
-      </div>
-    );
+    return <PageSkeleton variant="admin" />;
   }
 
   // مستخدم مسجّل لكنه ليس أدمن → غير مصرّح

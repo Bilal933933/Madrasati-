@@ -8,6 +8,7 @@ use App\Domains\Exam\Models\ExamAttempt;
 use App\Domains\Exam\Models\ExamAttemptQuestion;
 use App\Domains\Exam\Models\ExamBlueprint;
 use App\Domains\Exam\Models\ExamProgress;
+use App\Jobs\GradeExamAttemptJob;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
@@ -58,6 +59,7 @@ class ExamAttemptService
             ->where('blueprint_id', $blueprint->id)
             ->where('user_id', $user->id)
             ->where('status', 'completed')
+            ->whereIn('attempt_status', ['graded', 'submitted'])
             ->count();
 
         if ($completedAttempts >= $blueprint->attempts_allowed) {
@@ -87,6 +89,7 @@ class ExamAttemptService
 
         $question->selected_option_id = $data['selected_option_id'] ?? null;
         $question->selected_boolean = $data['selected_boolean'] ?? null;
+        $question->selected_text = $data['selected_text'] ?? null;
         $question->save();
 
         return $question->fresh();
@@ -112,7 +115,11 @@ class ExamAttemptService
     }
 
     /**
-     * تسليم المحاولة (تصحيح فوري). يُضغط على أن أقسام المحاولة مكتملة.
+     * تسليم المحاولة:
+     * 1) تصحيح فوري للأسئلة الحتمية (mcq/true_false).
+     * 2) تغيير الحالة إلى submitted وقفل المحاولة.
+     * 3) بعث Job للتصحيح غير المتزامن للأسئلة الذكية.
+     * 4) إرجاع المحاولة مع الأوسمة المفتوحة (للتصحيح المتزامن).
      */
     public function submit(ExamAttempt $attempt): ExamAttempt
     {
@@ -120,12 +127,60 @@ class ExamAttemptService
             throw ValidationException::withMessages(['attempt_id' => 'هذه المحاولة لم تعد قابلة للتسليم.']);
         }
 
-        $event = $this->completeAndDispatch($attempt);
+        // 1) تصحيح فوري للأسئلة الحتمية
+        $this->gradingService->gradeDeterministicQuestions($attempt);
 
-        // الأوسمة المفتوحة حديثًا — لتظهر في استجابة تسليم المحاولة.
+        // 2) قفل المحاولة وتحديث الحالة
+        $attempt->update([
+            'status' => 'completed',
+            'attempt_status' => 'submitted',
+            'submitted_at' => now(),
+            'is_locked' => true,
+        ]);
+
+        // 3) إذا وجدت أسئلة ذكية، بعتها Job للتصحيح غير المتزامن
+        if ($this->gradingService->hasAiQuestions($attempt)) {
+            GradeExamAttemptJob::dispatch($attempt->id)
+                ->onQueue('grading');
+
+            // للأسئلة الذكية: لا توجد أوسمة فورية، يُعيد المحاولة كما هي
+            return $attempt->fresh();
+        }
+
+        // لا توجد أسئلة ذكية — نكمل التصحيح فوراً وننشر الحدث
+        $this->completeGradingAndDispatchEvent($attempt);
+
+        // نعيد نفس المحاولة (ليست fresh) لأن الأوسمة مُعيّنة عليها
+        return $attempt;
+    }
+
+    /**
+     * إكمال التصحيح ونشر حدث ExamCompleted (للأسئلة الحتمية فقط أو عند انتهاء Job).
+     */
+    public function completeGrading(ExamAttempt $attempt): ExamAttempt
+    {
+        $this->gradingService->grade($attempt);
+
+        $event = new ExamCompletedEvent($attempt->user, $attempt);
+        Event::dispatch($event);
+
+        return $attempt->fresh();
+    }
+
+    /**
+     * إكمال التصحيح ونشر الحدث مع التقاط الأوسمة المفتوحة (للرد الفوري في التسليم).
+     */
+    public function completeGradingAndDispatchEvent(ExamAttempt $attempt): ExamCompletedEvent
+    {
+        $this->gradingService->grade($attempt);
+
+        $event = new ExamCompletedEvent($attempt->user, $attempt);
+        Event::dispatch($event);
+
+        // تعيين الأوسمة المفتوحة على المحاولة للرد الفوري
         $attempt->unlocked_achievements = $event->unlocked;
 
-        return $attempt;
+        return $event;
     }
 
     /**
@@ -159,29 +214,27 @@ class ExamAttemptService
      */
     private function finalizeExpiredAttempt(ExamAttempt $attempt): void
     {
-        $this->completeAndDispatch($attempt);
+        // تصحيح الحتمية
+        $this->gradingService->gradeDeterministicQuestions($attempt);
+
+        $attempt->update([
+            'status' => 'completed',
+            'attempt_status' => 'submitted',
+            'submitted_at' => now(),
+            'is_locked' => true,
+        ]);
+
+        if ($this->gradingService->hasAiQuestions($attempt)) {
+            GradeExamAttemptJob::dispatch($attempt->id)
+                ->onQueue('grading');
+        } else {
+            $this->completeGradingAndDispatchEvent($attempt);
+        }
     }
 
     /**
-     * إنهاء المحاولة (الحالة + التصحيح) ونشر حدث ExamCompleted للأنظمة المستمعة.
+     * التحقق من إمكانية الإجابة.
      */
-    private function completeAndDispatch(ExamAttempt $attempt): ExamCompletedEvent
-    {
-        $attempt->update([
-            'status' => 'completed',
-            'submitted_at' => now(),
-        ]);
-
-        $this->gradingService->grade($attempt);
-
-        $event = new ExamCompletedEvent($attempt->user, $attempt);
-        Event::dispatch($event);
-
-        return $event;
-    }
-
-    /* ------------------------------------------------------------------ */
-
     private function assertCanAnswer(ExamAttempt $attempt): void
     {
         if (! $attempt->isInProgress()) {
@@ -192,7 +245,7 @@ class ExamAttemptService
             $this->finalizeExpiredAttempt($attempt);
             throw ValidationException::withMessages([
                 'attempt_id' => 'انتهى وقت الامتحان، تم تصحيح إجاباتك تلقائيًا.',
-                'redirect_to' => $attempt->fresh()->id, // إشارة للفرونت بالتوجيه للنتيجة
+                'redirect_to' => $attempt->fresh()->id,
             ]);
         }
     }
@@ -208,6 +261,7 @@ class ExamAttemptService
                 'user_id' => $user->id,
                 'attempt_number' => $attemptNumber,
                 'status' => 'in_progress',
+                'attempt_status' => 'in_progress',
                 'started_at' => $now,
                 'deadline_at' => $now->copy()->addMinutes($blueprint->duration_minutes),
                 'total_questions' => $questions->count(),

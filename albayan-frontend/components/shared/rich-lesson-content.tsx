@@ -1,4 +1,4 @@
-import type { TiptapDoc, TiptapListNode } from "@/features/lesson-engine/engine/tiptap-types";
+import type { TiptapDoc, TiptapInlineNode, TiptapListNode } from "@/features/lesson-engine/engine/tiptap-types";
 import { DiagramBlock } from "@/features/ai-tutor/components/diagram-block";
 
 /**
@@ -47,7 +47,7 @@ function RichBlockRenderer({ node }: { node: NonNullable<TiptapDoc["content"]>[n
     case "blockquote":
       return (
         <LessonCard tone="note" label="تذكر">
-          <InlineContent content={node.content} />
+          <BlockquoteBody content={node.content} />
         </LessonCard>
       );
     case "hardBreak":
@@ -145,6 +145,33 @@ function InlineContent({ content }: { content?: { type: string; text?: string; m
         return <span key={index}>{inner}</span>;
       })}
     </>
+  );
+}
+
+/**
+ * جسم بطاقة "تذكر" — محتوى blockquote عقد متداخلة (فقرات/نصوص)،
+ * فيُعرض سطرًا بسطر مع الحفاظ على التنسيق، بدل InlineContent المسطح.
+ */
+function BlockquoteBody({ content }: { content?: TiptapInlineNode[] }) {
+  if (!content || content.length === 0) {
+    return null;
+  }
+  return (
+    <div className="flex flex-col gap-1.5">
+      {content.map((child, index) => {
+        if (child.type === "text") {
+          return <InlineContent key={index} content={[child]} />;
+        }
+        if (child.type === "paragraph") {
+          return (
+            <p key={index}>
+              <InlineContent content={child.content} />
+            </p>
+          );
+        }
+        return null;
+      })}
+    </div>
   );
 }
 

@@ -8,6 +8,10 @@ import {
   HelpCircle,
   FileCheck2,
   Medal,
+  Users,
+  BarChart3,
+  Settings,
+  Bot,
   type LucideIcon,
 } from "lucide-react";
 
@@ -28,4 +32,8 @@ export const DASHBOARD_LINKS: DashboardLink[] = [
   { href: "/admin/bank-questions", title: "بنك الأسئلة", description: "إدارة أسئلة الامتحانات المرتبطة بالدروس.", icon: HelpCircle },
   { href: "/admin/exams", title: "الامتحانات", description: "إدارة تعريفات الامتحانات ونطاقاتها.", icon: FileCheck2 },
   { href: "/admin/achievements", title: "الإنجازات", description: "إدارة أوسمة الإنجاز وعتبات فتحها.", icon: Medal },
+  { href: "/admin/users", title: "المستخدمون", description: "إدارة الطلاب والمعلمين والمشرفين.", icon: Users },
+  { href: "/admin/analytics", title: "الإحصائيات", description: "مؤشرات النشاط والتقدّم على المنصة.", icon: BarChart3 },
+  { href: "/admin/settings", title: "إعدادات المنصة", description: "الاسم والشعار والرسائل العامة.", icon: Settings },
+  { href: "/admin/ai-tutor", title: "المعلم الآلي", description: "مراجعة محادثات الطلاب مع المعلم الآلي.", icon: Bot },
 ];

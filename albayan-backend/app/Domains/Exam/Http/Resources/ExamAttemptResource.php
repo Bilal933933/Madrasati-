@@ -13,6 +13,9 @@ class ExamAttemptResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
+        // للتوافق مع الاختبارات القديمة: استخدم score_percentage إذا كان percentage غير متاح
+        $scorePercentage = $this->percentage ?? $this->score_percentage;
+
         return [
             'id' => $this->id,
             'blueprint' => $this->whenLoaded('blueprint', fn () => new ExamBlueprintResource($this->blueprint)),
@@ -22,13 +25,13 @@ class ExamAttemptResource extends JsonResource
                 ? ExamType::tryFrom($this->blueprint->exam_type)?->label()
                 : null,
             'attempt_number' => $this->attempt_number,
-            'status' => $this->status,
+            'status' => $this->attempt_status === 'graded' ? 'completed' : $this->status,
             'started_at' => $this->started_at?->toISOString(),
             'deadline_at' => $this->deadline_at?->toISOString(),
             'submitted_at' => $this->submitted_at?->toISOString(),
             'total_questions' => $this->total_questions,
             'correct_count' => $this->correct_count,
-            'score_percentage' => $this->score_percentage,
+            'score_percentage' => $scorePercentage !== null ? (float) $scorePercentage : null,
             'passed' => $this->passed,
         ];
     }

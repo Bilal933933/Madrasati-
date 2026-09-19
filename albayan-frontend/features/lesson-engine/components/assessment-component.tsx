@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLessonEngineStore } from "@/features/lesson-engine/engine/lesson-engine-store";
 import type { AssessmentMode, LessonAssessmentData } from "@/features/lesson-engine/engine/types";
 import { QuestionCard } from "@/features/assessments/components/question/question-card";
-import { QuestionFooter } from "@/features/assessments/components/question/question-footer";
 import { ProgressIndicator } from "@/features/assessments/components/question/progress-indicator";
+import { QuestionFooter } from "@/features/assessments/components/question/question-footer";
+import { AssessmentFeedbackDialog } from "@/features/lesson-engine/components/assessment-feedback-dialog";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -87,6 +88,12 @@ function AssessmentSequence({
   const isLast = current === questions.length - 1;
   const correctOptionId = computeCorrectOptionId(question);
   const answerIsCorrect = question ? isCorrect(question, selected) : false;
+  // حارس يمنع التقدم المزدوج (زر «متابعة الآن» + المؤقت التلقائي).
+  const advancedRef = useRef(false);
+
+  useEffect(() => {
+    advancedRef.current = false;
+  }, [current]);
 
   const proceed = () => {
     if (!isLast) {
@@ -99,12 +106,24 @@ function AssessmentSequence({
   };
 
   const markDoneAndProceed = () => {
+    if (advancedRef.current) {
+      return;
+    }
+    advancedRef.current = true;
     setDone((previous) => {
       const copy = [...previous];
       copy[current] = true;
       return copy;
     });
     proceed();
+  };
+
+  // التحقق: يكشف الإجابة في ديلوج التغذية الراجعة.
+  const handleCheck = () => {
+    if (selected === null || revealed) {
+      return;
+    }
+    setRevealed(true);
   };
 
   // إجابة صحيحة → انتقال تلقائي بعد مهلة قصيرة لقراءة التغذية الراجعة.
@@ -122,79 +141,64 @@ function AssessmentSequence({
   }
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="mx-auto flex w-full max-w-3xl flex-col gap-5 py-4 sm:py-8">
       <div className="flex flex-col gap-1 text-center">
-        <p className="text-lg font-bold">{MODE_LABELS[mode]}</p>
+        <p className="text-xl font-bold">{MODE_LABELS[mode]}</p>
         {MODE_REASSURANCE[mode] && (
           <p className="text-sm text-muted-foreground">{MODE_REASSURANCE[mode]}</p>
         )}
       </div>
 
-      <ProgressIndicator total={questions.length} current={current} done={done} />
+      {questions.length > 1 && (
+        <ProgressIndicator total={questions.length} current={current} done={done} />
+      )}
 
-      <QuestionCard
-        question={question}
-        selectedOption={selected}
-        revealed={revealed}
-        correctOption={correctOptionId}
-        hintOpen={false}
-        onSelectOption={(optionId) => {
-          if (!revealed) {
-            setSelected(optionId);
-          }
-        }}
-        onToggleHint={() => {}}
-        index={current}
-        total={questions.length}
-      >
-        <TrueFalsePicker
-          selected={selected}
+      <div className="w-full">
+        <QuestionCard
+          question={question}
+          selectedOption={selected}
           revealed={revealed}
-          correctOptionId={correctOptionId}
-          onSelect={(optionId) => {
+          correctOption={correctOptionId}
+          inlineFeedback={false}
+          onSelectOption={(optionId) => {
             if (!revealed) {
               setSelected(optionId);
             }
           }}
-        />
-      </QuestionCard>
-
-      {/* التغذية الراجعة بعد التحقق */}
-      <div className="flex flex-col gap-2">
-        {!revealed && (
-          <QuestionFooter
-            label="تحقق"
-            disabled={selected === null}
-            onClick={() => setRevealed(true)}
+          index={current}
+          total={questions.length}
+        >
+          <TrueFalsePicker
+            selected={selected}
+            revealed={revealed}
+            correctOptionId={correctOptionId}
+            onSelect={(optionId) => {
+              if (!revealed) {
+                setSelected(optionId);
+              }
+            }}
           />
-        )}
-
-        {revealed && answerIsCorrect && (
-          <p className="flex flex-col items-center gap-1 rounded-xl bg-emerald-500/10 px-4 py-3 text-center text-sm font-medium text-emerald-700">
-            إجابة صحيحة ✓
-            <span className="text-xs font-normal text-emerald-700/70">
-              سينتقل تلقائيًا بعد لحظة...
-            </span>
-          </p>
-        )}
-
-        {revealed && !answerIsCorrect && (
-          <>
-            <QuestionFooter
-              label={isLast ? (mode === "final" ? "إنهاء الاختبار" : "متابعة الدرس") : "التالي"}
-              onClick={markDoneAndProceed}
-            />
-            <Button
-              size="lg"
-              variant="outline"
-              className="h-12 w-full text-base"
-              onClick={() => back()}
-            >
-              العودة إلى الفقرة السابقة
-            </Button>
-          </>
-        )}
+        </QuestionCard>
       </div>
+
+      {/* زر التحقق داخل الشاشة — التغذية والتوضيح يظهران في الديلوج بعده. */}
+      {!revealed && (
+        <QuestionFooter
+          label="تحقق"
+          disabled={selected === null}
+          onClick={handleCheck}
+        />
+      )}
+
+      <AssessmentFeedbackDialog
+        open={revealed}
+        correct={answerIsCorrect}
+        mode={mode}
+        isLast={isLast}
+        explanation={question.explanation}
+        onProceed={markDoneAndProceed}
+        onBackToParagraph={() => back()}
+      />
     </div>
   );
 }
@@ -242,6 +246,7 @@ function TrueFalsePicker({
 
   return (
     <div className="flex flex-col gap-2">
+      {/* قاعدة: الزر الإجرائي هنا مصمت (emerald-600) — يعادل CTA لا تلوين خيار. */}
       {options.map((option) => {
         const isSelected = selected === option.id;
         const isCorrectState = revealed && option.id === correctOptionId;
@@ -252,7 +257,7 @@ function TrueFalsePicker({
             type="button"
             variant={isCorrectState ? "default" : isWrong ? "destructive" : "outline"}
             className={cn(
-              "h-12 text-base",
+              "h-16 text-base",
               isCorrectState && "bg-emerald-600 text-white hover:bg-emerald-600"
             )}
             disabled={revealed}

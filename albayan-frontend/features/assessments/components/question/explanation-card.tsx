@@ -10,7 +10,7 @@ interface ExplanationCardProps {
 
 const TONE_STYLES: Record<NonNullable<ExplanationCardProps["tone"]>, string> = {
   success: "border-emerald-500/30 bg-emerald-500/5",
-  neutral: "border-border bg-muted/40",
+  neutral: "border-foreground/25 bg-muted/40",
 };
 
 /**

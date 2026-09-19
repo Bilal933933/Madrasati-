@@ -56,9 +56,13 @@ function ParagraphContent({
   url?: string | null;
   embed?: string | null;
 }) {
-  // وجود فيديو مرتبط بالفقرة يُفعّل زر التبديل (صورة/فيديو).
+  // الصورة والفيديو اختياريان: الصندوق يُرسم فقط عند وجود أحدهما.
+  const hasImage = Boolean(image);
   const hasVideo = Boolean(url || embed);
-  const [media, setMedia] = useState<"image" | "video">("image");
+  const hasMedia = hasImage || hasVideo;
+  const [media, setMedia] = useState<"image" | "video">(hasImage ? "image" : "video");
+  // حماية عند التنقل لفقرة بلا فيديو بينما الحالة السابقة «فيديو».
+  const showVideo = hasVideo && (media === "video" || !hasImage);
 
   return (
     <article className="flex flex-1 flex-col">
@@ -70,9 +74,10 @@ function ParagraphContent({
       )}
 
       <div className="flex flex-1 flex-col gap-6 lg:gap-8">
-        {/* الوسيط — صورة/فيديو قابل للتغيير بعرض كامل وبارتفاع أقصى محسوب */}
+        {/* الوسيط — يُعرض فقط عند وجود صورة أو فيديو */}
+        {hasMedia && (
         <div className="relative aspect-[16/9] w-full overflow-hidden rounded-xl border border-border/60 bg-muted lg:max-h-[28rem]">
-          {hasVideo && media === "video" ? (
+          {showVideo ? (
             <EmbedFrame url={url} embed={embed} />
           ) : (
             <ExploreThumb
@@ -88,8 +93,8 @@ function ParagraphContent({
             />
           )}
 
-          {/* تاب صغير للتبديل بين الصورة والفيديو أسفل الوسيط */}
-          {hasVideo && (
+          {/* تاب التبديل يظهر فقط عند وجود الصورة والفيديو معًا */}
+          {hasImage && hasVideo && (
             <div className="absolute bottom-3 right-3 flex items-center gap-1 rounded-full border border-border/60 bg-background/85 p-1 shadow-sm backdrop-blur">
               <button
                 type="button"
@@ -120,6 +125,7 @@ function ParagraphContent({
             </div>
           )}
         </div>
+        )}
 
         {/* النص — بعرض كامل */}
         <div className="flex flex-col gap-5">

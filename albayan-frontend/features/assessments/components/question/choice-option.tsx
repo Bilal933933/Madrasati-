@@ -32,10 +32,11 @@ export function ChoiceOption({
       disabled={disabled || isRevealed}
       onClick={() => onSelect(option.id)}
       className={cn(
-        "flex w-full items-center gap-3 rounded-xl border px-4 py-3 text-start text-sm transition-colors outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
+        "flex min-h-16 w-full items-center gap-3 rounded-xl border px-5 py-4 text-start text-base transition-colors outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
         selected
           ? "border-primary bg-primary/10 text-foreground"
-          : "border-border bg-background hover:bg-muted/60",
+          : "border-foreground/25 bg-background hover:border-foreground/40 hover:bg-muted/60",
+        // قاعدة: الخيارات تُلوَّن بتظليل شفاف (tint) — اللون المصمت محجوز لأزرار الإجراء.
         isRevealed && state === "correct" &&
           "border-emerald-500/50 bg-emerald-500/10 text-foreground",
         isRevealed && state === "wrong" &&
@@ -48,7 +49,7 @@ export function ChoiceOption({
       <span
         className={cn(
           "flex size-5 shrink-0 items-center justify-center rounded-full border text-xs",
-          selected ? "border-primary bg-primary text-primary-foreground" : "border-border"
+          selected ? "border-primary bg-primary text-primary-foreground" : "border-muted-foreground/50"
         )}
         aria-hidden
       >

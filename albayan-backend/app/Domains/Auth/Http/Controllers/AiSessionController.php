@@ -15,8 +15,8 @@ use Illuminate\Http\JsonResponse;
  * handshake إلى NestJS الذي يفحصها بنفس السر.
  *
  * الأمان:
- * - التذكرة للطلاب فقط (دور غير الطالب = 403).
- * - `sub` = معرّف الطالب من الجلسة الحاليّة، لا يُقبل من الطلب مطلقًا.
+ * - التذكرة للطلاب (للدردشة) وللمشرفين (لمراجعة جلسات المعلم الآلي من لوحة الأدمن).
+ * - `sub` = معرّف المستخدم من الجلسة الحاليّة، لا يُقبل من الطلب مطلقًا.
  * - المدة قصيرة (افتراضية 15 دقيقة) لكل اتصال جديد.
  */
 class AiSessionController extends Controller
@@ -25,7 +25,7 @@ class AiSessionController extends Controller
     {
         $user = request()->user();
 
-        if (! $user instanceof User || $user->role !== 'student') {
+        if (! $user instanceof User || ! in_array($user->role, ['student', 'admin'], true)) {
             return response()->json(['message' => 'غير مصرّح لك بالوصول إلى هذا المورد.'], 403);
         }
 

@@ -5,7 +5,7 @@ import { Plus } from "lucide-react";
 import { DeleteDialog } from "@/components/shared/delete-dialog";
 import { PageHeader } from "@/components/shared/page-header";
 import { CascadeFilter } from "@/components/shared/cascade-filter";
-import { useCascadeFilter, filterLessons } from "@/components/shared/use-cascade-filter";
+import { useCascadeFilter, filterLessons, filterBankQuestions } from "@/components/shared/use-cascade-filter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -57,7 +57,7 @@ export default function AdminBankQuestionsPage() {
   const [lessonId, setLessonId] = useState<string>("all");
 
   const scopedLessons = filterLessons(lessonsData?.data ?? [], filter.values);
-  const lessons = scopedLessons.length > 0 ? scopedLessons : lessonsData?.data ?? [];
+  const lessons = scopedLessons;
 
   const { data: questionsData, isLoading } = useBankQuestions({
     lessonId: lessonId !== "all" ? Number(lessonId) : undefined,
@@ -66,7 +66,14 @@ export default function AdminBankQuestionsPage() {
   });
 
   const deleteQuestion = useDeleteBankQuestion();
-  const questions = questionsData?.data ?? [];
+  const questions = filterBankQuestions(
+    questionsData?.data ?? [],
+    filter.values,
+    lessonsData?.data ?? [],
+    coursesData?.data ?? [],
+    subjectsData?.data ?? [],
+    gradesData?.data ?? []
+  );
 
   const [formOpen, setFormOpen] = useState(false);
   const [editingQuestion, setEditingQuestion] = useState<BankQuestion | null>(null);
@@ -95,45 +102,47 @@ export default function AdminBankQuestionsPage() {
         }
       />
 
-      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+      <div className="mb-4">
         <CascadeFilter
           filter={filter}
           levels={["stage", "grade", "semester", "subject", "course"]}
-        />
-        <Select value={lessonId} onValueChange={setLessonId}>
-          <SelectTrigger aria-label="تصفية حسب الدرس" className="w-full sm:w-52">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">كل الدروس</SelectItem>
-            {lessons.map((lesson) => (
-              <SelectItem key={lesson.id} value={String(lesson.id)}>
-                {lesson.title}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <Select value={difficulty} onValueChange={setDifficulty}>
-          <SelectTrigger aria-label="تصفية حسب الصعوبة" className="w-full sm:w-44">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">كل الصعوبات</SelectItem>
-            <SelectItem value="easy">سهل</SelectItem>
-            <SelectItem value="medium">متوسط</SelectItem>
-            <SelectItem value="hard">صعب</SelectItem>
-          </SelectContent>
-        </Select>
-        <Select value={questionType} onValueChange={setQuestionType}>
-          <SelectTrigger aria-label="تصفية حسب النوع" className="w-full sm:w-44">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">كل الأنواع</SelectItem>
-            <SelectItem value="mcq">اختيار من متعدد</SelectItem>
-            <SelectItem value="true_false">صح وخطأ</SelectItem>
-          </SelectContent>
-        </Select>
+          count={isLoading ? undefined : questions.length}
+        >
+          <Select value={lessonId} onValueChange={setLessonId}>
+            <SelectTrigger aria-label="تصفية حسب الدرس" className="w-full sm:w-52">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">كل الدروس</SelectItem>
+              {lessons.map((lesson) => (
+                <SelectItem key={lesson.id} value={String(lesson.id)}>
+                  {lesson.title}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={difficulty} onValueChange={setDifficulty}>
+            <SelectTrigger aria-label="تصفية حسب الصعوبة" className="w-full sm:w-44">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">كل الصعوبات</SelectItem>
+              <SelectItem value="easy">سهل</SelectItem>
+              <SelectItem value="medium">متوسط</SelectItem>
+              <SelectItem value="hard">صعب</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select value={questionType} onValueChange={setQuestionType}>
+            <SelectTrigger aria-label="تصفية حسب النوع" className="w-full sm:w-44">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">كل الأنواع</SelectItem>
+              <SelectItem value="mcq">اختيار من متعدد</SelectItem>
+              <SelectItem value="true_false">صح وخطأ</SelectItem>
+            </SelectContent>
+          </Select>
+        </CascadeFilter>
       </div>
 
       <Card>

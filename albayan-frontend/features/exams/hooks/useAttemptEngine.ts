@@ -5,6 +5,7 @@ import { useAttemptNavigation } from "./useAttemptNavigation";
 import { useAttemptProgressSync } from "./useAttemptProgressSync";
 import { useAttemptSubmission } from "./useAttemptSubmission";
 import { useAttemptTimer } from "./useAttemptTimer";
+import { useExamSubmission } from "./useExamSubmission";
 import type { ExamAttemptDetail } from "../types/attempt.types";
 
 /**
@@ -14,7 +15,8 @@ import type { ExamAttemptDetail } from "../types/attempt.types";
  * - الإجابات (useAttemptAnswers) — النسخة المحلية + الإرسال الفوري.
  * - التنقل (useAttemptNavigation) — الموضع + الحفظ المحلي للاستئناف.
  * - المزامنة (useAttemptProgressSync) — العلم والموضع → الباك بـ debounce.
- * - التسليم (useAttemptSubmission) + المؤقت (useAttemptTimer) — تسليم آلي عند انتهاء الوقت.
+ * - التسليم (useAttemptSubmission / useExamSubmission) + المؤقت (useAttemptTimer) —
+ *   تسليم آلي عند انتهاء الوقت، و polling للتصحيح غير المتزامن.
  *
  * الحارس (submittedRef) يُنشأ هنا كمرجع وحيد ويُشارك بين الـ hooks لضمان
  * اتخاذ قرار التسليم مرة واحدة.
@@ -32,6 +34,7 @@ export function useAttemptEngine(
     answers,
     selectOption,
     selectBoolean,
+    selectText,
     answeredCount,
     isSaving,
   } = useAttemptAnswers(attempt, guard);
@@ -51,20 +54,15 @@ export function useAttemptEngine(
     guard
   );
 
-  const { submit, isSubmitting } = useAttemptSubmission(
+  // استخدام التسليم الجديد مع polling للأسئلة النصية
+  const { submit, isSubmitting } = useExamSubmission({
     attemptId,
-    guard,
-    onSubmitted
-  );
-
-  // مرجع بأحدث دالة تسليم حتى يستخدمه المؤقت دون كسر إغلاقات التأثير
-  const submitRef = useRef<() => void>(submit);
-  useEffect(() => {
-    submitRef.current = submit;
+    onGraded: onSubmitted,
+    enabled: true,
   });
 
   // المؤقت — يسلّم تلقائيًا عند انتهاء الوقت مرة واحدة، ويسلّم فورًا لو فُتحت الصفحة بعد الموعد
-  const remainingSeconds = useAttemptTimer(attempt, guard, submitRef);
+  const remainingSeconds = useAttemptTimer(attempt, guard, { current: submit });
 
   const currentQuestion = questions[currentIndex] ?? null;
 
@@ -79,6 +77,7 @@ export function useAttemptEngine(
     isLastQuestion,
     selectOption,
     selectBoolean,
+    selectText,
     toggleFlag,
     flagged,
     answers,

@@ -41,6 +41,14 @@ class ExamBankService
             'correct_answer' => $data['correct_answer'] ?? null,
             'difficulty' => $data['difficulty'],
             'is_active' => $data['is_active'] ?? true,
+            // حقول الأنواع النصية/الرقمية (تصحيح المساعد الذكي)
+            'model_answer' => $data['model_answer'] ?? null,
+            'accepted_answers' => $data['accepted_answers'] ?? null,
+            'case_sensitive' => $data['case_sensitive'] ?? false,
+            'rubric' => $data['rubric'] ?? null,
+            'correct_value' => $data['correct_value'] ?? null,
+            'tolerance' => $data['tolerance'] ?? 0,
+            'units' => $data['units'] ?? null,
         ]);
 
         foreach ($data['options'] ?? [] as $index => $option) {
@@ -69,6 +77,14 @@ class ExamBankService
             'correct_answer' => array_key_exists('correct_answer', $data) ? $data['correct_answer'] : $question->correct_answer,
             'difficulty' => $data['difficulty'] ?? $question->difficulty,
             'is_active' => $data['is_active'] ?? $question->is_active,
+            // حقول الأنواع النصية/الرقمية (تصحيح المساعد الذكي)
+            'model_answer' => array_key_exists('model_answer', $data) ? $data['model_answer'] : $question->model_answer,
+            'accepted_answers' => array_key_exists('accepted_answers', $data) ? $data['accepted_answers'] : $question->accepted_answers,
+            'case_sensitive' => array_key_exists('case_sensitive', $data) ? $data['case_sensitive'] : $question->case_sensitive,
+            'rubric' => array_key_exists('rubric', $data) ? $data['rubric'] : $question->rubric,
+            'correct_value' => array_key_exists('correct_value', $data) ? $data['correct_value'] : $question->correct_value,
+            'tolerance' => array_key_exists('tolerance', $data) ? $data['tolerance'] : $question->tolerance,
+            'units' => array_key_exists('units', $data) ? $data['units'] : $question->units,
         ]);
 
         if (array_key_exists('options', $data)) {

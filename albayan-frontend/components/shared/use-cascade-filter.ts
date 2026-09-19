@@ -7,6 +7,10 @@ import type { Semester } from "@/features/semesters/types/semester.types";
 import type { Subject } from "@/features/subjects/types/subject.types";
 import type { Course } from "@/features/courses/types/course.types";
 import type { Lesson } from "@/features/lessons/types/lesson.types";
+import type {
+  BankQuestion,
+  ExamBlueprint,
+} from "@/features/exams/types/exam.types";
 
 export type CascadeLevel = "stage" | "grade" | "semester" | "subject" | "course";
 
@@ -71,6 +75,95 @@ export function filterCourses(courses: Course[], values: CascadeValues): Course[
 export function filterLessons(lessons: Lesson[], values: CascadeValues): Lesson[] {
   const course = activeId(values.course);
   return course ? lessons.filter((l) => l.course_id === course) : lessons;
+}
+
+/**
+ * تصفية المواد محليًا حسب المرحلة عبر علاقة الصف بالمرحلة.
+ * تُستخدم لأن الباك يفلتر المواد بـ grade_id/semester_id فقط.
+ */
+export function filterSubjectsByStage(
+  subjects: Subject[],
+  grades: Grade[],
+  values: CascadeValues
+): Subject[] {
+  const stage = activeId(values.stage);
+  if (!stage) return subjects;
+  const stageGradeIds = new Set(
+    grades.filter((g) => g.stage_id === stage).map((g) => g.id)
+  );
+  return subjects.filter((s) => s.grade_id != null && stageGradeIds.has(s.grade_id));
+}
+
+/**
+ * تصفية تعريفات الامتحانات محليًا حسب الفلتر السلسلي.
+ * الفصل يُحلّ عبر مادة الامتحان (subject.semester_id) لأن الـ Blueprint لا يحمل semester_id.
+ */
+export function filterBlueprints(
+  blueprints: ExamBlueprint[],
+  values: CascadeValues,
+  subjects: Subject[]
+): ExamBlueprint[] {
+  const stage = activeId(values.stage);
+  const grade = activeId(values.grade);
+  const semester = activeId(values.semester);
+  const subject = activeId(values.subject);
+  const course = activeId(values.course);
+
+  const semesterSubjectIds = semester
+    ? new Set(subjects.filter((s) => s.semester_id === semester).map((s) => s.id))
+    : null;
+
+  return blueprints.filter((b) => {
+    if (stage && b.stage_id !== stage) return false;
+    if (grade && b.grade_id !== grade) return false;
+    if (semesterSubjectIds && (b.subject_id == null || !semesterSubjectIds.has(b.subject_id))) {
+      return false;
+    }
+    if (subject && b.subject_id !== subject) return false;
+    if (course && b.course_id !== course) return false;
+    return true;
+  });
+}
+
+/**
+ * تصفية أسئلة بنك الأسئلة محليًا حسب الفلتر السلسلي.
+ * تُحلّ السلسلة عبر: سؤال ← درس ← مقرر ← مادة ← صف ← مرحلة.
+ */
+export function filterBankQuestions(
+  questions: BankQuestion[],
+  values: CascadeValues,
+  lessons: Lesson[],
+  courses: Course[],
+  subjects: Subject[],
+  grades: Grade[]
+): BankQuestion[] {
+  const stage = activeId(values.stage);
+  const grade = activeId(values.grade);
+  const semester = activeId(values.semester);
+  const subject = activeId(values.subject);
+  const course = activeId(values.course);
+
+  const lessonById = new Map(lessons.map((l) => [l.id, l]));
+  const courseById = new Map(courses.map((c) => [c.id, c]));
+  const subjectById = new Map(subjects.map((s) => [s.id, s]));
+  const gradeById = new Map(grades.map((g) => [g.id, g]));
+
+  return questions.filter((q) => {
+    const lesson = lessonById.get(q.lesson_id);
+    if (!lesson) return false;
+    const crs = courseById.get(lesson.course_id);
+    if (!crs) return false;
+    const subj = subjectById.get(crs.subject_id);
+    if (!subj) return false;
+    const grd = subj.grade_id != null ? gradeById.get(subj.grade_id) : undefined;
+
+    if (stage && !(grd && grd.stage_id === stage)) return false;
+    if (grade && subj.grade_id !== grade) return false;
+    if (semester && subj.semester_id !== semester) return false;
+    if (subject && crs.subject_id !== subject) return false;
+    if (course && lesson.course_id !== course) return false;
+    return true;
+  });
 }
 
 export function useCascadeFilter(data: CascadeFilterData): CascadeFilterState {

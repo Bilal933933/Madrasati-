@@ -22,7 +22,8 @@ const STATUS_STYLES: Record<
   { label: string; className: string }
 > = {
   in_progress: { label: "قيد التنفيذ", className: "bg-warning/15 text-warning-foreground" },
-  completed: { label: "مكتمل", className: "bg-success/15 text-success" },
+  submitted: { label: "بانتظار التصحيح", className: "bg-info/15 text-info-foreground" },
+  graded: { label: "مكتمل", className: "bg-success/15 text-success" },
 };
 
 const TYPE_ICONS: Record<string, { icon: typeof BookOpen; headerClass: string }> = {
@@ -56,7 +57,7 @@ export function AttemptCard({
   continueHref: string;
   index?: number;
 }) {
-  const status = STATUS_STYLES[attempt.status] ?? STATUS_STYLES.completed;
+  const status = STATUS_STYLES[attempt.status] ?? STATUS_STYLES.graded;
   const typeInfo =
     (attempt.exam_type != null && TYPE_ICONS[attempt.exam_type]) || DEFAULT_TYPE;
   const TypeIcon = typeInfo.icon;

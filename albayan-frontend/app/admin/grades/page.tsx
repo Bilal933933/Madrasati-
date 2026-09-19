@@ -44,15 +44,20 @@ export default function AdminGradesPage() {
         title="الصفوف الدراسية"
         description="إدارة الصفوف وتنظيمها ضمن المراحل."
         actions={
-          <>
-            <CascadeFilter filter={filter} levels={["stage"]} />
-            <Button onClick={openCreate} className="w-full sm:w-auto">
-              <Plus />
-              إضافة صف
-            </Button>
-          </>
+          <Button onClick={openCreate} className="w-full sm:w-auto">
+            <Plus />
+            إضافة صف
+          </Button>
         }
       />
+
+      <div className="mb-4">
+        <CascadeFilter
+          filter={filter}
+          levels={["stage"]}
+          count={isLoading || stagesLoading ? undefined : filteredGrades.length}
+        />
+      </div>
 
       <Card>
         <CardContent className="p-0 pt-4">

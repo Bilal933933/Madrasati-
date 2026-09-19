@@ -15,6 +15,7 @@ use Database\Seeders\Prep3\Data\Arabic;
 use Database\Seeders\Prep3\Data\Math;
 use Database\Seeders\Prep3\Data\Science;
 use Database\Seeders\Prep3\Data\SocialStudies;
+use Database\Seeders\Support\SeedRegistry;
 use Illuminate\Database\Seeder;
 
 /**
@@ -125,8 +126,9 @@ class Prep3Seeder extends Seeder
         $finalBlock = $lesson->blocks()->where('block_kind', BlockKind::FinalAssessment->value)->firstOrFail();
 
         $orderedBlockIds = [$preBlock->id];
+        $formativeAssessmentIds = [];
 
-        foreach ($spec['paragraphs'] as $paragraph) {
+        foreach ($spec['paragraphs'] as $index => $paragraph) {
             $paragraphBlock = $editor->addParagraph($lesson->id, [
                 'title' => $paragraph['title'],
                 'content' => $paragraph['content'],
@@ -142,6 +144,7 @@ class Prep3Seeder extends Seeder
                     'paragraph_id' => $paragraphBlock->paragraph_id,
                 ]);
                 $orderedBlockIds[] = $formativeBlock->id;
+                $formativeAssessmentIds[$index] = $formativeBlock->assessment_id;
             }
         }
 
@@ -153,6 +156,14 @@ class Prep3Seeder extends Seeder
         $orderedBlockIds[] = $finalBlock->id;
 
         $editor->reorder($lesson->id, $orderedBlockIds);
+
+        // تسليم بيانات الدرس للـ AssessmentSeeder — كما يفعل LessonSeeder.
+        SeedRegistry::$lessons[$lesson->id] = [
+            'pre' => $preBlock->assessment_id,
+            'formatives' => $formativeAssessmentIds,
+            'final' => $finalBlock->assessment_id,
+            'spec' => $spec,
+        ];
     }
 
     private function fallbackParagraphImage(Lesson $lesson, string $title): string

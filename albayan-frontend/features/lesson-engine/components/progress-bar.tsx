@@ -30,6 +30,7 @@ export function ProgressBar() {
 
   const hint = current ? (SCREEN_HINT[current.screen] ?? "") : "";
   const showBar = current?.screen !== "start";
+  const stepLabel = total > 1 ? `الخطوة ${Math.min(currentIndex, total - 1)} من ${total - 1}` : "";
 
   return (
     <div className="flex w-full flex-col gap-1" role="progressbar" aria-valuenow={percent} aria-valuemin={0} aria-valuemax={100} aria-label="تقدم الدرس">
@@ -41,7 +42,7 @@ export function ProgressBar() {
       </div>
       <div className="flex items-center justify-between text-[0.7rem] text-muted-foreground">
         <span>{hint}</span>
-        {showBar && <span className="font-medium tabular-nums">{percent}%</span>}
+        {showBar && <span className="font-medium tabular-nums">{stepLabel} · {percent}%</span>}
       </div>
     </div>
   );

@@ -49,15 +49,20 @@ export default function AdminSemestersPage() {
         title="الفصول الدراسية"
         description="إدارة الفصول وتنظيمها ضمن الصفوف."
         actions={
-          <>
-            <CascadeFilter filter={filter} levels={["stage", "grade"]} />
-            <Button onClick={openCreate} className="w-full sm:w-auto">
-              <Plus />
-              إضافة فصل
-            </Button>
-          </>
+          <Button onClick={openCreate} className="w-full sm:w-auto">
+            <Plus />
+            إضافة فصل
+          </Button>
         }
       />
+
+      <div className="mb-4">
+        <CascadeFilter
+          filter={filter}
+          levels={["stage", "grade"]}
+          count={isLoading || gradesLoading || stagesLoading ? undefined : filteredSemesters.length}
+        />
+      </div>
 
       <Card>
         <CardContent className="p-0 pt-4">

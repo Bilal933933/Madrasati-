@@ -73,7 +73,7 @@ export function useAttemptAnswers(
         saveAnswer.mutate({
           questionId: qid,
           payload: toPayload(
-            merged.answers[qid] ?? { optionId: null, booleanValue: null }
+            merged.answers[qid] ?? { optionId: null, booleanValue: null, textValue: null }
           ),
         });
       }
@@ -95,12 +95,12 @@ export function useAttemptAnswers(
     (questionId: number, optionId: number) => {
       const current = answers[questionId];
       const isCleared =
-        !current || (current.optionId == null && current.booleanValue == null);
+        !current || (current.optionId == null && current.booleanValue == null && current.textValue == null);
 
       if (!isCleared && current.optionId === optionId) {
-        commitAnswer(questionId, { optionId: null, booleanValue: null });
+        commitAnswer(questionId, { optionId: null, booleanValue: null, textValue: null });
       } else {
-        commitAnswer(questionId, { optionId, booleanValue: null });
+        commitAnswer(questionId, { optionId, booleanValue: null, textValue: null });
       }
     },
     [answers, commitAnswer]
@@ -110,15 +110,22 @@ export function useAttemptAnswers(
     (questionId: number, value: boolean) => {
       const current = answers[questionId];
       const isCleared =
-        !current || (current.optionId == null && current.booleanValue == null);
+        !current || (current.optionId == null && current.booleanValue == null && current.textValue == null);
 
       if (!isCleared && current.booleanValue === value) {
-        commitAnswer(questionId, { optionId: null, booleanValue: null });
+        commitAnswer(questionId, { optionId: null, booleanValue: null, textValue: null });
       } else {
-        commitAnswer(questionId, { optionId: null, booleanValue: value });
+        commitAnswer(questionId, { optionId: null, booleanValue: value, textValue: null });
       }
     },
     [answers, commitAnswer]
+  );
+
+  const selectText = useCallback(
+    (questionId: number, text: string) => {
+      commitAnswer(questionId, { optionId: null, booleanValue: null, textValue: text });
+    },
+    [commitAnswer]
   );
 
   const answeredCount = useMemo(
@@ -130,6 +137,7 @@ export function useAttemptAnswers(
     answers,
     selectOption,
     selectBoolean,
+    selectText,
     answeredCount,
     isSaving: saveAnswer.isPending,
   };

@@ -9,10 +9,14 @@ import { PrismaService } from '../prisma/prisma.service.js';
  * تطابق CurriculumData::flagshipGrades في الباك لتحويل المسار إلى معرف DB.
  */
 const FLAGSHIP_GRADES: Record<string, string> = {
+  primary_1: 'الصف الأول الابتدائي',
   primary_4: 'الصف الرابع الابتدائي',
+  primary_6: 'الصف السادس الابتدائي',
   prep_1: 'الصف الأول الإعدادي',
+  prep_2: 'الصف الثاني الإعدادي',
   prep_3: 'الصف الثالث الإعدادي',
   secondary_1: 'الصف الأول الثانوي',
+  secondary_3: 'الصف الثالث الثانوي',
 };
 
 export type MarkdownDocType = 'textbook' | 'reference';

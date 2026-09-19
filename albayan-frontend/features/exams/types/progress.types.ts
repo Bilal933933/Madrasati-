@@ -7,6 +7,7 @@
 export interface ExamAnswerValue {
   optionId: number | null;
   booleanValue: boolean | null;
+  textValue: string | null;
 }
 
 /** سجل تقدم محاولة واحدة. */

@@ -8,8 +8,8 @@ import { ScoreCircle } from "./score-circle";
 import { QuestionCard } from "./question-card";
 import { formatDateTime } from "../../lib/attemptFormat";
 
-function isAnswered(q: { selected_option_id: number | null; selected_boolean: boolean | null }) {
-  return q.selected_option_id != null || q.selected_boolean != null;
+function isAnswered(q: { selected_option_id: number | null; selected_boolean: boolean | null; selected_text: string | null }) {
+  return q.selected_option_id != null || q.selected_boolean != null || q.selected_text != null;
 }
 
 /**
@@ -92,6 +92,7 @@ export function ResultView({ attempt }: { attempt: ExamAttemptDetail }) {
                 revealed
                 selectedOptionId={q.selected_option_id}
                 selectedBoolean={q.selected_boolean}
+                selectedText={q.selected_text}
               />
             ))}
           </div>

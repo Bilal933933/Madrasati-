@@ -24,6 +24,7 @@ class SaveAnswerRequest extends FormRequest
         return [
             'selected_option_id' => ['nullable', 'integer', 'exists:bank_question_options,id'],
             'selected_boolean' => ['nullable', 'boolean'],
+            'selected_text' => ['nullable', 'string', 'max:8000'],
         ];
     }
 
@@ -33,6 +34,8 @@ class SaveAnswerRequest extends FormRequest
             'selected_option_id.integer' => 'معرّف الخيار غير صالح.',
             'selected_option_id.exists' => 'الخيار المحدد غير موجود.',
             'selected_boolean.boolean' => 'قيمة الإجابة لسؤال صح/خطأ غير صالحة.',
+            'selected_text.string' => 'الإجابة النصية يجب أن تكون نصاً.',
+            'selected_text.max' => 'الإجابة النصية طويلة جداً (8000 حرف كحد أقصى).',
         ];
     }
 }

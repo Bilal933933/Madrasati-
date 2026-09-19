@@ -3,6 +3,7 @@
 namespace App\Domains\Exam\Http\Controllers;
 
 use App\Domains\Achievement\Http\Resources\AchievementResource;
+use App\Domains\Exam\Http\Requests\SaveAnswerRequest;
 use App\Domains\Exam\Http\Resources\ExamAttemptDetailResource;
 use App\Domains\Exam\Http\Resources\ExamAttemptResource;
 use App\Domains\Exam\Http\Resources\ExamBlueprintResource;
@@ -93,8 +94,14 @@ class StudentExamController extends Controller
             ->orderByDesc('started_at')
             ->get();
 
-        $completed = $attempts->where('status', 'completed');
-        $average = $completed->whereNotNull('score_percentage')->avg('score_percentage');
+        // مكتملة = status completed + attempt_status graded (للتصحيح المتزامن) أو submitted (للتصحيح غير المتزامن)
+        $completed = $attempts->filter(fn ($a) => $a->status === 'completed' &&
+            in_array($a->attempt_status, ['graded', 'submitted'])
+        );
+
+        // استخدام percentage أو score_percentage للتوافق
+        $average = $completed->filter(fn ($a) => $a->percentage !== null || $a->score_percentage !== null)
+            ->avg(fn ($a) => $a->percentage ?? $a->score_percentage);
 
         return response()->json([
             'data' => ExamAttemptResource::collection($attempts),
@@ -102,7 +109,7 @@ class StudentExamController extends Controller
                 'total' => $attempts->count(),
                 'completed' => $completed->count(),
                 'in_progress' => $attempts->where('status', 'in_progress')->count(),
-                'average_percentage' => $average !== null ? round((float) $average, 1) : null,
+                'average_percentage' => $average !== null ? round((float) $average, 1) : 0,
             ],
         ]);
     }
@@ -140,7 +147,7 @@ class StudentExamController extends Controller
     /**
      * حفظ إجابة سؤال في محاولة جارية.
      */
-    public function saveAnswer(Request $request, int $attemptId, int $questionId)
+    public function saveAnswer(SaveAnswerRequest $request, int $attemptId, int $questionId)
     {
         $attempt = $this->findAttempt($attemptId);
         $this->authorize('answer', $attempt, 'لا يمكنك الوصول إلى محاولة طالب آخر.', 'attempt_id');
@@ -149,10 +156,7 @@ class StudentExamController extends Controller
             ->whereKey($questionId)
             ->firstOrFail();
 
-        $validated = $request->validate([
-            'selected_option_id' => ['nullable', 'integer', 'exists:bank_question_options,id'],
-            'selected_boolean' => ['nullable', 'boolean'],
-        ]);
+        $validated = $request->validated();
 
         // التحقق من أن الخيار يخصّ سؤال البنك المأخوذ في اللقطة
         $this->assertOptionBelongsToQuestion($question, $validated);
@@ -164,6 +168,7 @@ class StudentExamController extends Controller
                 'question_id' => $saved->id,
                 'selected_option_id' => $saved->selected_option_id,
                 'selected_boolean' => $saved->selected_boolean,
+                'selected_text' => $saved->selected_text,
             ],
             'message' => 'تم حفظ الإجابة.',
         ]);
@@ -215,7 +220,9 @@ class StudentExamController extends Controller
     }
 
     /**
-     * تسليم المحاولة نهائيًا مع التصحيح الفوري.
+     * تسليم المحاولة نهائيًا.
+     * - للأسئلة الحتمية (mcq/true_false): تصحيح فوري.
+     * - للأسئلة الذكية (short_answer/essay/numeric): تحديث الحالة إلى "submitted" وبعث Job للتصحيح غير المتزامن.
      */
     public function submit(Request $request, int $attemptId)
     {
@@ -226,9 +233,47 @@ class StudentExamController extends Controller
 
         return response()->json([
             'data' => new ExamAttemptResource($attempt->load('blueprint')),
-            'message' => 'تم تسليم المحاولة بنجاح.',
+            'message' => 'تم تسليم المحاولة بنجاح. جاري تصحيح الأسئلة النصية...',
             'unlocked_achievements' => AchievementResource::collection($attempt->unlocked_achievements ?? []),
         ]);
+    }
+
+    /**
+     * حالة التصحيح (polling من الفرونت).
+     */
+    public function gradingStatus(Request $request, int $attemptId)
+    {
+        $attempt = $this->findAttempt($attemptId);
+        $this->authorize('view', $attempt, 'لا يمكنك الوصول إلى محاولة طالب آخر.', 'attempt_id');
+
+        return response()->json([
+            'attempt_id' => $attempt->id,
+            'status' => $attempt->attempt_status, // in_progress | submitted | graded
+            'graded_at' => $attempt->graded_at?->toISOString(),
+            'total_score' => $attempt->total_score,
+            'max_score' => $attempt->max_score,
+            'percentage' => $attempt->percentage,
+            'grading_errors' => $attempt->grading_errors,
+        ]);
+    }
+
+    /**
+     * نتائج المحاولة (بعد اكتمال التصحيح فقط).
+     */
+    public function results(Request $request, int $attemptId)
+    {
+        $attempt = $this->findAttempt($attemptId);
+        $this->authorize('view', $attempt, 'لا يمكنك الوصول إلى محاولة طالب آخر.', 'attempt_id');
+
+        if ($attempt->attempt_status !== 'graded') {
+            throw ValidationException::withMessages([
+                'attempt_id' => 'التصحيح لم يكتمل بعد.',
+            ]);
+        }
+
+        $reveal = $attempt->blueprint->show_review_after_submit;
+
+        return new ExamAttemptDetailResource($attempt->load(['questions', 'progress']), revealAnswers: $reveal);
     }
 
     /* ------------------------------------------------------------------ */
@@ -275,6 +320,7 @@ class StudentExamController extends Controller
         $completed = $blueprint->attempts()
             ->where('user_id', $user->id)
             ->where('status', 'completed')
+            ->whereIn('attempt_status', ['graded', 'submitted'])
             ->count();
 
         return max(0, $blueprint->attempts_allowed - $completed);
@@ -285,6 +331,11 @@ class StudentExamController extends Controller
         return $blueprint->attempts()
             ->where('user_id', $user->id)
             ->where('status', 'completed')
+            ->whereIn('attempt_status', ['graded', 'submitted'])
+            ->max('percentage') ?? $blueprint->attempts()
+            ->where('user_id', $user->id)
+            ->where('status', 'completed')
+            ->whereIn('attempt_status', ['graded', 'submitted'])
             ->max('score_percentage');
     }
 }

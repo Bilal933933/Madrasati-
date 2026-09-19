@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Loader } from "@/components/shared/loader";
+import { PageSkeleton } from "@/components/shared/page-skeleton";
 import { SiteNavbar } from "@/components/shared/site-navbar";
 import { ThemeToggle } from "@/components/shared/theme-toggle";
 import { useAuthStore } from "@/features/auth/store/authStore";
@@ -40,7 +40,7 @@ export default function StudentAreaLayout({
   }, [isInitialized, user]);
 
   if (!isInitialized) {
-    return <Loader className="translate-y-12" />;
+    return <PageSkeleton variant="student" />;
   }
 
   if (!user) {
@@ -51,7 +51,7 @@ export default function StudentAreaLayout({
     <div className="flex min-h-dvh flex-col">
       <SiteNavbar brandHref="/home" links={STUDENT_LINKS} actions={<><ThemeToggle /><UserMenu /></>} />
 
-      <main className="flex-1 pb-[var(--dock-inset-y)] md:pb-0 md:pe-[var(--dock-inset-x)]">
+      <main className="flex-1 pt-4 pb-[var(--dock-inset-y)] md:pt-6 md:pb-0 md:pe-[var(--dock-inset-x)]">
         {children}
       </main>
 

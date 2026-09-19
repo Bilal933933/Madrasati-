@@ -12,7 +12,7 @@ export type { FeedbackBubbleProps };
 
 const TONE_STYLES: Record<FeedbackBubbleProps["tone"], string> = {
   success: "border-emerald-500/30 bg-emerald-500/10 text-foreground",
-  neutral: "border-border bg-muted/50 text-foreground",
+  neutral: "border-foreground/25 bg-muted/50 text-foreground",
   info: "border-primary/30 bg-primary/10 text-foreground",
 };
 

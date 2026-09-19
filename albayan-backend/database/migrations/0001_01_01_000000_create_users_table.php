@@ -27,7 +27,10 @@ return new class extends Migration
             // موجود لأسباب توافق قياسية مع Laravel، غير مُستخدم في منطق التفعيل حاليًا
             $table->timestamp('email_verified_at')->nullable();
 
-            $table->enum('role', ['student', 'admin'])->default('student');
+            $table->enum('role', ['student', 'teacher', 'admin'])->default('student');
+
+            // تفعيل/إيقاف الحساب — يُدار من لوحة الأدمن؛ الحساب الموقوف لا يسجّل دخولًا
+            $table->boolean('is_active')->default(true);
 
             $table->rememberToken();
             $table->timestamps();

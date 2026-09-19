@@ -6,7 +6,6 @@ import { TrialFinish } from "./trial-finish";
 import { useLessonEngineStore } from "@/features/lesson-engine/engine/lesson-engine-store";
 import { mapLesson } from "@/features/lesson-engine/engine/lesson-mapper";
 import { stageRenderer } from "@/features/lesson-engine/engine/stage-renderer";
-import { PHASE_LABEL } from "@/features/lesson-engine/engine/journey";
 import { LessonShell } from "@/features/lesson-engine/components/lesson-shell";
 import { getErrorMessage } from "@/lib/apiErrors";
 import { Button } from "@/components/ui/button";
@@ -64,7 +63,7 @@ export function TrialPlayer() {
 
   if (current.screen === "finish") {
     return (
-      <LessonShell phaseLabel={PHASE_LABEL.finish} footer={<div aria-hidden className="h-3" />}>
+      <LessonShell footer={<div aria-hidden className="h-3" />}>
         <TrialFinish onRetry={() => jumpTo("start")} />
       </LessonShell>
     );
@@ -78,7 +77,7 @@ export function TrialPlayer() {
     ) : undefined;
 
   return (
-    <LessonShell phaseLabel={PHASE_LABEL[current.screen]} footer={footer}>
+    <LessonShell footer={footer}>
       <Stage />
     </LessonShell>
   );

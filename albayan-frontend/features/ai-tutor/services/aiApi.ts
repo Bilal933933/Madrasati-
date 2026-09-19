@@ -14,6 +14,8 @@ const SOCKET_URL =
 
 const AI_BASE_URL = SOCKET_URL.replace(/\/chat\/?$/, "") || "http://localhost:3001";
 
+export { AI_BASE_URL };
+
 let ticketCache: { token: string; expiresAt: number } | null = null;
 let ticketPromise: Promise<string> | null = null;
 

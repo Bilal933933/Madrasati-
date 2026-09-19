@@ -1,0 +1,50 @@
+{
+    "$schema": "https://opencode.ai/config.json",
+    "provider": {
+        "openrouter": {
+            "options": {
+                "timeout": 300000,
+                "headerTimeout": 60000,
+                "chunkTimeout": 30000
+            }
+        },
+        "google": {
+            "options": {
+                "timeout": 300000,
+                "headerTimeout": 60000,
+                "chunkTimeout": 30000
+            }
+        },
+        "opencode": {
+            "options": {
+                "timeout": 300000,
+                "headerTimeout": 60000,
+                "chunkTimeout": 30000
+            }
+        }
+    },
+    "mcp": {
+        "laravel-boost": {
+            "type": "local",
+            "enabled": true,
+            "command": [
+                "php",
+                "albayan-backend/artisan",
+                "boost:mcp"
+            ],
+            "timeout": 60000
+        },
+        "playwright": {
+            "type": "local",
+            "enabled": true,
+            "command": [
+                "npx",
+                "@playwright/mcp"
+            ],
+            "timeout": 60000
+        }
+    },
+    "experimental": {
+        "mcp_timeout": 60000
+    }
+}

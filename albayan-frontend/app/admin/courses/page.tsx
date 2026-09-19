@@ -79,18 +79,24 @@ export default function AdminCoursesPage() {
         title="المقررات الدراسية"
         description="إدارة المقررات وتنظيمها ضمن المواد."
         actions={
-          <>
-            <CascadeFilter
-              filter={filterWithPageReset}
-              levels={["stage", "grade", "semester", "subject"]}
-            />
-            <Button onClick={openCreate} className="w-full sm:w-auto">
-              <Plus />
-              إضافة مقرر
-            </Button>
-          </>
+          <Button onClick={openCreate} className="w-full sm:w-auto">
+            <Plus />
+            إضافة مقرر
+          </Button>
         }
       />
+
+      <div className="mb-4">
+        <CascadeFilter
+          filter={filterWithPageReset}
+          levels={["stage", "grade", "semester", "subject"]}
+          count={
+            isLoading || subjectsLoading || gradesLoading || stagesLoading
+              ? undefined
+              : courses.length
+          }
+        />
+      </div>
 
       <Card>
         <CardContent className="p-0 pt-4">

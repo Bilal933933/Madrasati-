@@ -25,6 +25,7 @@ use Illuminate\Support\Carbon;
  * @property string|null $avatar
  * @property Carbon|null $email_verified_at
  * @property string $role
+ * @property bool $is_active
  * @property string|null $remember_token
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
@@ -86,6 +87,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed', // تشفير تلقائي عند أي عملية save() — لا تشفير يدوي متفرق
+            'is_active' => 'boolean',
         ];
     }
 
@@ -95,6 +97,14 @@ class User extends Authenticatable
     public function isAdmin(): bool
     {
         return $this->role === 'admin';
+    }
+
+    /**
+     * هل الحساب مفعّل؟ الحسابات الموقوفة تُمنع من تسجيل الدخول.
+     */
+    public function isActive(): bool
+    {
+        return (bool) $this->is_active;
     }
 
     /**

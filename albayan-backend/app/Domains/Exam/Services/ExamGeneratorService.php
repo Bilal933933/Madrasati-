@@ -73,6 +73,21 @@ class ExamGeneratorService
             $snapshot['options'] = $options->toArray();
             $correct = $options->firstWhere('is_correct', true);
             $snapshot['correct_option_id'] = $correct['id'] ?? null;
+        } elseif ($question->type === 'short_answer') {
+            $snapshot['model_answer'] = $question->model_answer ?? null;
+            $snapshot['accepted_answers'] = $question->accepted_answers ?? [];
+            $snapshot['case_sensitive'] = $question->case_sensitive ?? false;
+        } elseif ($question->type === 'essay') {
+            $snapshot['model_answer'] = $question->model_answer ?? null;
+            $snapshot['rubric'] = $question->rubric ?? [
+                ['criterion' => 'الدقة العلمية'],
+                ['criterion' => 'الاكتمال واتباع مفردات السؤال'],
+                ['criterion' => 'التنظيم والوضوح'],
+            ];
+        } elseif ($question->type === 'numeric') {
+            $snapshot['correct_value'] = $question->correct_value ?? null;
+            $snapshot['tolerance'] = $question->tolerance ?? 0;
+            $snapshot['units'] = $question->units ?? null;
         }
 
         return $snapshot;

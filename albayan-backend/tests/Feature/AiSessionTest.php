@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Domains\Auth\Models\User;
 use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -32,7 +33,7 @@ class AiSessionTest extends TestCase
 
         $payload = JWT::decode(
             $response->json('token'),
-            new \Firebase\JWT\Key((string) config('services.ai.service_secret'), 'HS256')
+            new Key((string) config('services.ai.service_secret'), 'HS256')
         );
 
         $this->assertSame((int) $student->id, (int) $payload->sub);
@@ -42,7 +43,7 @@ class AiSessionTest extends TestCase
         $this->assertLessThanOrEqual(15 * 60, $payload->exp - $payload->iat);
     }
 
-    public function test_admin_cannot_get_ai_session(): void
+    public function test_admin_gets_short_lived_ai_token(): void
     {
         $admin = User::create([
             'name' => 'مشرف',
@@ -51,6 +52,17 @@ class AiSessionTest extends TestCase
         ]);
         $admin->forceFill(['role' => 'admin'])->save();
 
-        $this->actingAs($admin)->postJson('/api/ai/session')->assertStatus(403);
+        $response = $this->actingAs($admin)->postJson('/api/ai/session');
+
+        $response->assertStatus(200)
+            ->assertJsonStructure(['token', 'expires_in']);
+
+        $payload = JWT::decode(
+            $response->json('token'),
+            new Key((string) config('services.ai.service_secret'), 'HS256')
+        );
+
+        $this->assertSame((int) $admin->id, (int) $payload->sub);
+        $this->assertSame('admin', $payload->role);
     }
 }

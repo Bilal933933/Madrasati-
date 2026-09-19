@@ -50,8 +50,10 @@ class AuthService
         ]);
 
         // role خارج $fillable عمدًا (حماية من تصعيد الصلاحيات عبر الطلبات)،
-        // لذلك نضبطه من السيرفر فقط عبر forceFill
-        $user->forceFill(['role' => 'student'])->save();
+        // لذلك نضبطه من السيرفر فقط عبر forceFill.
+        // is_active يُضبط صراحة (خلافًا يبقى null على الموديل بعد create()
+        // فلا يعكس default القاعدة، وقد يظهر "موقوفًا" في استجابات الـ Resource).
+        $user->forceFill(['role' => 'student', 'is_active' => true])->save();
 
         event(new Registered($user));
 
@@ -68,6 +70,12 @@ class AuthService
     public function login(array $credentials): User
     {
         $user = User::where('email', $credentials['email'])->first();
+
+        if ($user && ! $user->isActive()) {
+            throw ValidationException::withMessages([
+                'email' => ['هذا الحساب موقوف. تواصل مع إدارة المنصة.'],
+            ]);
+        }
 
         if (! $user || ! $user->password || ! Hash::check($credentials['password'], $user->password)) {
             $message = $user && ! $user->password

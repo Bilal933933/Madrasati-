@@ -8,7 +8,6 @@ import { useLessonProgress } from "@/features/lesson-engine/hooks/useLessonProgr
 import { useLessonEngineStore } from "@/features/lesson-engine/engine/lesson-engine-store";
 import { mapLesson } from "@/features/lesson-engine/engine/lesson-mapper";
 import { stageRenderer } from "@/features/lesson-engine/engine/stage-renderer";
-import { PHASE_LABEL } from "@/features/lesson-engine/engine/journey";
 import { LessonShell } from "@/features/lesson-engine/components/lesson-shell";
 import { getErrorMessage } from "@/lib/apiErrors";
 import { Button } from "@/components/ui/button";
@@ -122,7 +121,7 @@ export function LessonPlayer({ lessonSlug, onFinish }: LessonPlayerProps) {
     ) : undefined;
 
   return (
-    <LessonShell phaseLabel={PHASE_LABEL[current.screen]} footer={footer}>
+    <LessonShell footer={footer}>
       <Stage />
     </LessonShell>
   );
