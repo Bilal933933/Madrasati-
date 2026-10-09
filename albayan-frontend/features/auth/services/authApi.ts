@@ -57,8 +57,9 @@ export const authApi = {
 
 /**
  * رابط بدء تسجيل الدخول بجوجل — ليس طلب Fetch، بل Redirect كامل للمتصفح
+ * مسار نسبي عبر rewrites في next.config.ts (source /auth/:path* → BACKEND_URL)
+ * لتفادي مشاكل CORS وعدم تطابق المضيف/المنفذ بين localhost و 127.0.0.1
  */
 export function getGoogleLoginUrl(): string {
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
-  return `${apiUrl}/auth/google/redirect`;
+  return "/auth/google/redirect";
 }

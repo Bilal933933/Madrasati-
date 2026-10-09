@@ -21,8 +21,9 @@ use Illuminate\Support\Facades\Route;
 Route::get('/login', fn () => response()->json(['message' => 'يجب تسجيل الدخول للوصول إلى هذا المورد.'], 401))->name('login');
 
 // مسارات عامة (بدون تسجيل دخول)
-Route::post('/register', RegisterController::class);
-Route::post('/login', LoginController::class);
+// throttle:5,1 — حد أقصى 5 محاولات/دقيقة لكل IP لمنع التخمين الآلي (Brute Force).
+Route::post('/register', RegisterController::class)->middleware('throttle:5,1');
+Route::post('/login', LoginController::class)->middleware('throttle:5,1');
 Route::post('/forgot-password', [PasswordResetController::class, 'sendResetLink']);
 Route::post('/reset-password', [PasswordResetController::class, 'reset']);
 

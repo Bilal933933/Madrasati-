@@ -9,23 +9,26 @@ import { Field, FieldContent, FieldError, FieldLabel } from "@/components/ui/fie
 import { Spinner } from "@/components/ui/spinner";
 import { getErrorMessage } from "@/lib/apiErrors";
 import { useLogin } from "../hooks/useLogin";
+import { GoogleErrorAlert } from "./GoogleErrorAlert";
 import { GoogleLoginButton } from "./GoogleLoginButton";
 import { PasswordInput } from "./PasswordInput";
 
 export function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { mutate: login, isPending, error } = useLogin();
+  const { mutate: login, isPending, error, isError } = useLogin();
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
     login({ email, password });
   }
 
-  const errorMessage = getErrorMessage(error);
+  // لا تعرض أي خطأ قبل أول محاولة دخول — الـ 401 الاستباقي من probe الجلسة ليس خطأ دخول.
+  const errorMessage = isError ? getErrorMessage(error) : "";
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-5" dir="rtl">
+      <GoogleErrorAlert />
       <Field className="gap-1.5">
         <FieldLabel htmlFor="email">البريد الإلكتروني</FieldLabel>
         <FieldContent>
@@ -65,7 +68,7 @@ export function LoginForm() {
             placeholder="••••••••"
             className="h-12 rounded-full text-sm shadow-[0_8px_16px_-8px_rgba(176,139,102,0.35)] transition-all focus-visible:shadow-[0_10px_20px_-10px_rgba(176,139,102,0.5)]"
           />
-          <FieldError errors={[{ message: errorMessage }]} />
+          {errorMessage ? <FieldError errors={[{ message: errorMessage }]} /> : null}
         </FieldContent>
       </Field>
 

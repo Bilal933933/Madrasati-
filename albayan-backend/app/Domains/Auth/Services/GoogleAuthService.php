@@ -57,6 +57,8 @@ class GoogleAuthService
         }
 
         Auth::login($user, remember: true);
+        // مسار الـ callback يعمل ضمن web middleware فالجلسة موجودة دائمًا هنا.
+        request()->session()->regenerate();
 
         return $user;
     }
