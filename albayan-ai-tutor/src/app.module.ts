@@ -16,6 +16,7 @@ import { GlobalExceptionFilter } from './common/errors/global-exception.filter.j
 import { ExamModule } from './exam/exam.module.js';
 import { KnowledgeModule } from './knowledge/knowledge.module.js';
 import { PrismaModule } from './prisma/prisma.module.js';
+import { SmartAssistantModule } from './smart-assistant/smart-assistant.module.js';
 import { StudentContextModule } from './student-context/student-context.module.js';
 import { ThreadsModule } from './threads/threads.module.js';
 
@@ -37,6 +38,7 @@ import { ThreadsModule } from './threads/threads.module.js';
     ChatModule,
     ThreadsModule,
     ExamModule,
+    SmartAssistantModule,
   ],
   providers: [
     {

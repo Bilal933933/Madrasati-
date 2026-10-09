@@ -13,7 +13,7 @@ export function HowWeVerify() {
     "flex items-center justify-center gap-2 rounded-2xl border border-primary bg-primary/10 px-5 py-3 text-sm font-semibold text-primary opacity-100";
 
   return (
-    <section id="how-it-works" className="mx-auto w-full max-w-6xl scroll-mt-24 px-4 py-20 sm:px-6">
+    <section id="how-it-works" className="mx-auto w-full max-w-6xl scroll-mt-24 px-4 py-12 sm:px-6 sm:py-16">
       <ScrollReveal className="mx-auto max-w-3xl text-center">
         <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
           كيف تعرف أنك فهمت فعلًا؟

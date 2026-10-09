@@ -39,6 +39,7 @@ class AuthService
             ])->save();
 
             Auth::login($existing);
+            request()->session()->regenerate();
 
             return $existing;
         }
@@ -58,6 +59,7 @@ class AuthService
         event(new Registered($user));
 
         Auth::login($user);
+        request()->session()->regenerate();
 
         return $user;
     }
@@ -88,6 +90,7 @@ class AuthService
         }
 
         Auth::login($user, remember: true);
+        request()->session()->regenerate();
 
         return $user;
     }

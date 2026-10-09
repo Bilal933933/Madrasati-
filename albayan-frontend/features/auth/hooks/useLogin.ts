@@ -15,7 +15,7 @@ export function useLogin() {
     onSuccess: (data) => {
       toast.success(data.message ?? "تم تسجيل الدخول بنجاح.");
       setUser(data.user);
-      queryClient.invalidateQueries({ queryKey: ["auth", "current-user"] });
+      queryClient.setQueryData(["auth", "current-user"], data.user);
       router.push("/home");
     },
     onError: (error) => {

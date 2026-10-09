@@ -1,0 +1,104 @@
+2026-08-22 20:27:34 [[32minfo[39m] تم تحميل 100 ملف معرفة Markdown و4 كتابًا عامًا مفهرسًا {
+  "event": "knowledge_loaded"
+}
+2026-08-22 20:28:04 [[32minfo[39m] تخطّي 2415 مقطعًا مفهرسًا مسبقًا {
+  "event": "indexer.skip_existing",
+  "data": {
+    "skipped": 2415,
+    "remaining": 344
+  }
+}
+2026-08-22 20:29:20 [[32minfo[39m] الفهرسة: 4/344 {
+  "event": "indexer.progress",
+  "data": {
+    "upserted": 4,
+    "total": 344
+  }
+}
+2026-08-22 20:29:39 [[32minfo[39m] الفهرسة: 8/344 {
+  "event": "indexer.progress",
+  "data": {
+    "upserted": 8,
+    "total": 344
+  }
+}
+2026-08-22 20:31:06 [[32minfo[39m] الفهرسة: 12/344 {
+  "event": "indexer.progress",
+  "data": {
+    "upserted": 12,
+    "total": 344
+  }
+}
+2026-08-22 20:31:46 [[32minfo[39m] الفهرسة: 16/344 {
+  "event": "indexer.progress",
+  "data": {
+    "upserted": 16,
+    "total": 344
+  }
+}
+2026-08-22 20:32:34 [[32minfo[39m] الفهرسة: 20/344 {
+  "event": "indexer.progress",
+  "data": {
+    "upserted": 20,
+    "total": 344
+  }
+}
+2026-08-22 20:33:02 [[32minfo[39m] الفهرسة: 24/344 {
+  "event": "indexer.progress",
+  "data": {
+    "upserted": 24,
+    "total": 344
+  }
+}
+2026-08-22 20:33:15 [[32minfo[39m] الفهرسة: 28/344 {
+  "event": "indexer.progress",
+  "data": {
+    "upserted": 28,
+    "total": 344
+  }
+}
+2026-08-22 20:33:28 [[32minfo[39m] الفهرسة: 32/344 {
+  "event": "indexer.progress",
+  "data": {
+    "upserted": 32,
+    "total": 344
+  }
+}
+2026-08-22 20:33:41 [[32minfo[39m] الفهرسة: 36/344 {
+  "event": "indexer.progress",
+  "data": {
+    "upserted": 36,
+    "total": 344
+  }
+}
+2026-08-22 20:33:55 [[32minfo[39m] الفهرسة: 40/344 {
+  "event": "indexer.progress",
+  "data": {
+    "upserted": 40,
+    "total": 344
+  }
+}
+2026-08-22 20:33:58 [[33mwarn[39m] فشل دفعة embedding — إعادة محاولة {
+  "event": "embedding.retry",
+  "data": {
+    "attempt": 1,
+    "delayMs": 1000,
+    "error": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]}]}}"
+  }
+}
+2026-08-22 20:34:00 [[33mwarn[39m] فشل دفعة embedding — إعادة محاولة {
+  "event": "embedding.retry",
+  "data": {
+    "attempt": 2,
+    "delayMs": 2000,
+    "error": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]}]}}"
+  }
+}
+2026-08-22 20:34:04 [[33mwarn[39m] فشل دفعة embedding — إعادة محاولة {
+  "event": "embedding.retry",
+  "data": {
+    "attempt": 3,
+    "delayMs": 4000,
+    "error": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]}]}}"
+  }
+}

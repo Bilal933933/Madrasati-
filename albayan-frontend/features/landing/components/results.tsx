@@ -6,16 +6,18 @@ import { ScrollReveal } from "./scroll-reveal";
 import { StaggerGroup } from "./stagger-group";
 import { cn } from "@/lib/utils";
 
-const RESULTS = [
+const RESULTS: { name: string; gender: "m" | "f"; before: number; after: number; beforeText: string; afterText: string }[] = [
   {
     name: "بلال",
+    gender: "m",
     before: 45,
     after: 91,
-    beforeText: "كانت تعرف الأساسيات فقط",
-    afterText: "أصبحت تحل معظم الأسئلة بنفسك",
+    beforeText: "كان يعرف الأساسيات فقط",
+    afterText: "أصبح يحل معظم الأسئلة بنفسه",
   },
   {
     name: "سارة",
+    gender: "f",
     before: 30,
     after: 82,
     beforeText: "كانت تخلط بين المبتدأ والخبر",
@@ -23,10 +25,11 @@ const RESULTS = [
   },
   {
     name: "محمد",
+    gender: "m",
     before: 55,
     after: 93,
-    beforeText: "كانت ترتكب أخطاء شائعة",
-    afterText: "أصبحت تصحّح أخطاءك بنفسك",
+    beforeText: "كان يرتكب أخطاء شائعة",
+    afterText: "أصبح يصحّح أخطاءه بنفسه",
   },
 ];
 
@@ -38,7 +41,7 @@ const RESULTS = [
 export function Results() {
   return (
     <section className="border-y bg-muted/30">
-      <div className="mx-auto w-full max-w-6xl px-4 py-20 sm:px-6">
+      <div className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 sm:py-24">
         <ScrollReveal className="mx-auto max-w-3xl text-center">
           <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
             ماذا يحدث عندما تقيس فهمك قبل وبعد؟
@@ -85,7 +88,7 @@ export function Results() {
 
               <div className="mt-5 flex items-center justify-center gap-2 rounded-2xl bg-primary/10 py-3 text-sm font-bold text-primary">
                 <Sparkles className="size-4" />
-                لقد تحسّن {result.name} بنفسه
+                {result.gender === "f" ? "لقد تحسّنت" : "لقد تحسّن"} {result.name} {result.gender === "f" ? "بنفسها" : "بنفسه"}
               </div>
             </div>
           ))}

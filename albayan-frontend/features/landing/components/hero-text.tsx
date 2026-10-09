@@ -15,13 +15,13 @@ const TRUST_ITEMS = [
  */
 export function HeroText() {
   return (
-    <div className="flex flex-col items-start gap-5">
+    <div className="flex flex-col items-start gap-6">
       <span className="inline-flex items-center gap-1.5 rounded-full border bg-background px-3 py-1 text-xs font-medium text-muted-foreground">
         <Sparkles className="size-3.5 text-primary" />
         التعلم ليس سباقًا... بل رحلة
       </span>
 
-      <h1 className="text-4xl font-black leading-[1.15] tracking-tight sm:text-5xl lg:text-6xl">
+      <h1 className="-mt-2 text-3xl font-black leading-[1.3] tracking-tight sm:text-5xl sm:leading-[1.15] lg:text-6xl">
         كم مرة أنهيت درسًا... ثم اكتشفت في الامتحان أنك{" "}
         <span className="text-primary underline decoration-primary/20 underline-offset-8">لم تفهمه كما ظننت؟</span>
       </h1>
@@ -48,7 +48,7 @@ export function HeroText() {
             >
               <MaterialsLink>استكشف المواد</MaterialsLink>
             </Button>
-            <span className="hidden text-xs font-bold text-primary sm:block">
+            <span className="block text-xs font-bold text-primary">
               ← تعلّم الآن مجاناً
             </span>
           </div>
@@ -62,7 +62,7 @@ export function HeroText() {
         </div>
       </div>
 
-      <ul className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:gap-6">
+      <ul className="flex flex-row flex-wrap items-center gap-x-5 gap-y-2 sm:gap-6">
         {TRUST_ITEMS.map((item) => (
           <li
             key={item.label}

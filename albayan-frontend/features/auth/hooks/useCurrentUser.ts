@@ -25,10 +25,15 @@ export function useCurrentUser() {
     }
 
     if (query.isError) {
-      setUser(null);
+      // لا نمسح مستخدمًا مسجلًا بسبب فشل إعادة جلب لاحق (سباق ما بعد الدخول).
+      // التصفير فقط عندما لا يوجد مستخدم أصلًا (زائر حقيقي 401).
+      const status = (query.error as { status?: number } | null)?.status;
+      if (status === 401 && !useAuthStore.getState().user) {
+        setUser(null);
+      }
       setInitialized(true);
     }
-  }, [query.isSuccess, query.isError, query.data, setUser, setInitialized]);
+  }, [query.isSuccess, query.isError, query.data, query.error, setUser, setInitialized]);
 
   return query;
 }

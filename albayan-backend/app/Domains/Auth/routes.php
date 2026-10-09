@@ -16,6 +16,10 @@ use Illuminate\Support\Facades\Route;
 | كل هذه المسارات تمر عبر Sanctum SPA Middleware (statefulApi في bootstrap/app.php)
 */
 
+// مسار اسمي لضيوف المصادقة: يمنع انهيار Route [login] not defined
+// عندما يطلب غير-JSON موردًا محميًا (بدل رمي 500 يُرجع 401 JSON).
+Route::get('/login', fn () => response()->json(['message' => 'يجب تسجيل الدخول للوصول إلى هذا المورد.'], 401))->name('login');
+
 // مسارات عامة (بدون تسجيل دخول)
 Route::post('/register', RegisterController::class);
 Route::post('/login', LoginController::class);

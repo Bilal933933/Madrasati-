@@ -39,7 +39,22 @@
             "enabled": true,
             "command": [
                 "npx",
+                "-y",
                 "@playwright/mcp"
+            ],
+            "environment": {
+                "BROWSER": "chromium"
+            },
+            "timeout": 60000
+        },
+        "postgres": {
+            "type": "local",
+            "enabled": true,
+            "command": [
+                "npx",
+                "-y",
+                "@modelcontextprotocol/server-postgres",
+                "{env:DATABASE_URL}"
             ],
             "timeout": 60000
         }

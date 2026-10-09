@@ -47,7 +47,7 @@ export function Hero() {
         className="pointer-events-none absolute -top-40 -end-40 size-96 rounded-full bg-primary/10 blur-3xl"
       />
 
-      <div className="relative mx-auto grid w-full max-w-6xl gap-10 px-4 py-16 sm:px-6 sm:py-24 lg:grid-cols-2 lg:items-center lg:gap-12">
+      <div className="relative mx-auto grid w-full max-w-6xl gap-10 px-4 py-12 sm:px-6 sm:py-24 lg:grid-cols-2 lg:items-center lg:gap-12">
         <HeroText />
         <HeroDemo />
       </div>

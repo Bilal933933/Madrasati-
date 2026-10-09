@@ -21,7 +21,7 @@ function resolveApiBaseUrl(): string {
   if (typeof window !== "undefined") {
     return ENV_API_URL ?? "";
   }
-  return ENV_API_URL || process.env.BACKEND_URL?.trim() || "http://localhost:8000";
+  return ENV_API_URL || process.env.BACKEND_URL?.trim() || "http://127.0.0.1:8001";
 }
 
 const API_BASE_URL = resolveApiBaseUrl();
