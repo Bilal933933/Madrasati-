@@ -3,7 +3,9 @@ export interface AnalyticsCounts {
   teachers: number;
   admins: number;
   lessons: number;
+  lessons_unpublished: number;
   courses: number;
+  active_blueprints: number;
   completed_lessons: number;
   completion_rate_percent: number;
   exam_attempts: number;

@@ -6,6 +6,7 @@ use App\Domains\Achievement\Models\UserAchievement;
 use App\Domains\Auth\Models\User;
 use App\Domains\Curriculum\Models\Course;
 use App\Domains\Exam\Models\ExamAttempt;
+use App\Domains\Exam\Models\ExamBlueprint;
 use App\Domains\Lesson\Models\Lesson;
 use App\Domains\Progress\Models\LessonCompletion;
 use Carbon\CarbonImmutable;
@@ -29,6 +30,10 @@ class AnalyticsService
         $adminsCount = User::query()->where('role', 'admin')->count();
         $lessonsCount = Lesson::query()->count();
         $coursesCount = Course::query()->count();
+        $lessonsUnpublished = Lesson::query()
+            ->where(fn ($q) => $q->where('is_published', false)->orWhereNull('is_published'))
+            ->count();
+        $activeBlueprints = ExamBlueprint::query()->where('is_active', true)->count();
 
         $completedLessons = LessonCompletion::query()
             ->whereNotNull('completed_at')
@@ -56,7 +61,9 @@ class AnalyticsService
                 'teachers' => $teachersCount,
                 'admins' => $adminsCount,
                 'lessons' => $lessonsCount,
+                'lessons_unpublished' => $lessonsUnpublished,
                 'courses' => $coursesCount,
+                'active_blueprints' => $activeBlueprints,
                 'completed_lessons' => $completedLessons,
                 'completion_rate_percent' => $completionRate,
                 'exam_attempts' => $attemptsCount,

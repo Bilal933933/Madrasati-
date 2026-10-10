@@ -249,6 +249,12 @@
   /* حشوات المساحة المحجوزة لـ StudentDock (قابلة للضبط من مكان واحد) */
   --dock-inset-y: 7rem;
   --dock-inset-x: 7rem;
+  /* بطاقة المواد — أنصاف أقطار من الصورة المرجعية */
+  --subject-card-radius: 1.75rem;
+  --subject-cover-radius: 1.25rem;
+  --subject-icon-size: 3rem;
+  --subject-action-min-h: 2.75rem;
+  --subject-page-max-w: 75rem;
   --background: #F4EFEA;          /* الخلفية الرئيسية */
   --foreground: #2D2926;          /* النص الرئيسي */
   --card: #FFFFFF;                /* خلفية البطاقات */
