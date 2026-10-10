@@ -14,7 +14,9 @@ import {
   useRef,
   useState,
 } from "react";
+import { Eye, EyeOff } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useDockStore } from "../store/dockStore";
 import "./student-dock.css";
 
 type StudentDockItem = {
@@ -80,6 +82,7 @@ function DockItem({
         transformOrigin: "center",
       }}
       className={`dock-item ${className}`}
+      exit={{ opacity: 0, scale: 0.8 }}
       onMouseEnter={() => isHovered.set(1)}
       onMouseLeave={() => isHovered.set(0)}
       onFocus={() => isHovered.set(1)}
@@ -157,27 +160,53 @@ export function StudentDock({
 }: StudentDockProps) {
   const isMobile = useIsMobile();
   const orientation: DockOrientation = isMobile ? "bottom" : "side";
+  const collapsed = useDockStore((state) => state.collapsed);
+  const toggle = useDockStore((state) => state.toggle);
+  const toggleLabel = collapsed ? "إظهار شريط التنقل" : "تفعيل وضع التركيز";
 
   return (
     <div
       className={`dock-outer ${orientation === "side" ? "dock-outer--side" : ""}`}
     >
-      <div className={`dock-panel ${className}`} role="toolbar" aria-label="شريط تنقّل">
-        {items.map((item, index) => (
-          <DockItem
-            key={index}
-            onClick={item.onClick}
-            className={item.className}
-            orientation={orientation}
-            spring={spring}
-            magnification={magnification}
-            baseItemSize={baseItemSize}
-            label={item.label}
-          >
-            <DockIcon>{item.icon}</DockIcon>
-            <DockLabel>{item.label}</DockLabel>
-          </DockItem>
-        ))}
+      <div
+        id="student-dock-panel"
+        className={`dock-panel ${className}`}
+        role="toolbar"
+        aria-label="شريط تنقّل"
+      >
+        <button
+          type="button"
+          className="dock-toggle"
+          aria-expanded={!collapsed}
+          aria-controls="student-dock-panel"
+          aria-label={toggleLabel}
+          title={toggleLabel}
+          onClick={toggle}
+        >
+          {collapsed ? (
+            <Eye className="size-4" aria-hidden />
+          ) : (
+            <EyeOff className="size-4" aria-hidden />
+          )}
+        </button>
+        <AnimatePresence initial={false}>
+          {!collapsed &&
+            items.map((item, index) => (
+              <DockItem
+                key={index}
+                onClick={item.onClick}
+                className={item.className}
+                orientation={orientation}
+                spring={spring}
+                magnification={magnification}
+                baseItemSize={baseItemSize}
+                label={item.label}
+              >
+                <DockIcon>{item.icon}</DockIcon>
+                <DockLabel>{item.label}</DockLabel>
+              </DockItem>
+            ))}
+        </AnimatePresence>
       </div>
     </div>
   );

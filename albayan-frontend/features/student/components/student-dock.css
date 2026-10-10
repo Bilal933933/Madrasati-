@@ -69,6 +69,28 @@
   border-color: var(--ring);
 }
 
+/* زر طي الشريط (وضع التركيز) — بنفس لغة العناصر لكن أخف وأصغر */
+.dock-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.75rem;
+  background: transparent;
+  border: 1px dashed var(--border);
+  color: var(--muted-foreground);
+  cursor: pointer;
+  outline: none;
+}
+
+.dock-toggle:hover,
+.dock-toggle:focus-visible {
+  color: var(--primary);
+  border-color: var(--ring);
+  border-style: solid;
+}
+
 .dock-icon {
   display: flex;
   align-items: center;
