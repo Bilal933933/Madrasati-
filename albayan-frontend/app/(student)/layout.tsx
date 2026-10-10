@@ -14,8 +14,8 @@ import { LandingFooter } from "@/features/landing/components/footer";
 
 /**
  * هيكل مناطق الطالب الموحّد (بيت الطالب · نتائجي · الامتحانات · الإنجازات):
- * حارس تسجيل دخول + SiteNavbar (روابط STUDENT_LINKS) + محتوى بحشوة
- * قابلة للضبط من CSS vars (--dock-inset-*) + فوتر البوابة + StudentDock موحّد.
+ * حارس تسجيل دخول + SiteNavbar (روابط STUDENT_LINKS) + محتوى متمركز بعرض كامل
+ * (الشريط عائم فوق المحتوى بلا أي حشوة محجوزة) + فوتر البوابة + StudentDock موحّد.
  * الصفحات الغامرة (/exams/attempt و /ai-tutor) تعيش في (workspace) خارج هذا الهيكل.
  */
 export default function StudentAreaLayout({
@@ -51,7 +51,7 @@ export default function StudentAreaLayout({
     <div className="flex min-h-dvh flex-col">
       <SiteNavbar brandHref="/home" links={STUDENT_LINKS} actions={<><ThemeToggle /><UserMenu /></>} />
 
-      <main className="flex-1 pt-4 pb-[var(--dock-inset-y)] md:pt-6 md:pb-0 md:pe-[var(--dock-inset-x)]">
+      <main className="flex-1 pt-4 md:pt-6">
         {children}
       </main>
 
