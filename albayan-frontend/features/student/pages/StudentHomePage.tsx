@@ -1,5 +1,5 @@
-import { ChevronLeft, GraduationCap, Hand, TrendingUp } from "lucide-react";
 import Link from "next/link";
+import { BookOpen, ChevronLeft, GraduationCap, Hand, TrendingUp } from "lucide-react";
 import { ScrollReveal } from "@/features/landing/components/scroll-reveal";
 import { ExploreThumb } from "@/features/explore/components/ExploreThumb";
 import { AchievementsHomeCard } from "@/features/achievements/components/student/achievements-home-card";
@@ -8,9 +8,10 @@ import { ProgressBar } from "../components/progress-bar";
 import type { StudentHomeData } from "../types/student.types";
 
 /**
- * بيت الطالب — نفس نمط غلاف صفحة المادة (Hero):
- * توهّج عائم + شارة الصف/الفصل + كتلة تقدم ناعمة في العمود النصي،
- * وصورة الصف بجانبه في طبقة متلاشية. ثم فاصل متدرّج + مواد.
+ * بيت الطالب — الغلاف المسترجع (Hero) حسب المرجع 5.1:
+ * ترحيب + تقدم كلي + إنجازات + صورة الصف، ثم الدرس التالي البطل،
+ * ثم قائمة المواد بالبطاقات الجديدة.
+ * Server Component: عرض فقط، البيانات من المسار عبر studentHomeApi.
  */
 export function StudentHomePage({ data }: { data: StudentHomeData }) {
   const current =
@@ -21,8 +22,8 @@ export function StudentHomePage({ data }: { data: StudentHomeData }) {
     null;
 
   return (
-    <div className="mx-auto w-full max-w-6xl px-4 pb-32 sm:px-6">
-      {/* غلاف البيت — Hero: يمين=نص (5) | يسار=صورة الصف المتلاشية (7) */}
+    <div className="mx-auto w-full px-4 pb-32 sm:px-6" style={{ maxWidth: "var(--subject-page-max-w)" }}>
+      {/* غلاف البيت — Hero: يمين=نص | يسار=صورة الصف المتلاشية */}
       <ScrollReveal className="relative overflow-hidden">
         <div className="pointer-events-none absolute end-1/3 top-10 size-72 rounded-full bg-primary/15 opacity-40 blur-3xl" />
 
@@ -128,16 +129,26 @@ export function StudentHomePage({ data }: { data: StudentHomeData }) {
         <div className="h-px flex-1 bg-gradient-to-r from-transparent via-border/60 to-transparent" />
       </ScrollReveal>
 
+      {/* القائمة عموديًا */}
       {data.subjects.length > 0 ? (
-        <div className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-2">
-          {data.subjects.map((subject, index) => (
-            <SubjectCard key={subject.id} subject={subject} index={index} />
+        <div className="mt-6 flex flex-col gap-6">
+          {data.subjects.map((subject) => (
+            <SubjectCard key={subject.id} subject={subject} gradeName={data.grade.name} semesterName={data.semester.name} />
           ))}
         </div>
       ) : (
-        <p className="mt-14 py-16 text-center text-muted-foreground">
-          لا توجد مواد متاحة لك هذا الفصل بعد.
-        </p>
+        <div className="mt-6 rounded-3xl border border-border/60 bg-card px-6 py-16 text-center">
+          <BookOpen className="mx-auto size-10 text-muted-foreground" aria-hidden />
+          <h2 className="mt-3 text-lg font-bold text-foreground">لا توجد مواد بعد</h2>
+          <p className="mt-1 text-sm text-muted-foreground">لم تُضف مواد لصفك هذا الفصل بعد.</p>
+          <Link
+            href="/explore"
+            className="mt-5 inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-bold text-primary-foreground"
+            style={{ minHeight: "var(--subject-action-min-h)" }}
+          >
+            استكشف المواد
+          </Link>
+        </div>
       )}
     </div>
   );
