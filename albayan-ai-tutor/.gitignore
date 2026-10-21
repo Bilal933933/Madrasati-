@@ -10,6 +10,7 @@ coverage/
 # Prisma Client المولّد — يولّد من جديد عبر `npx prisma generate`
 src/generated/prisma/
 src/generated/vector/
+src/v1/generated/
 
 # مخرجات بناء prisma.config (تُبنى من المصدر)
 vector-schema/vector.config.js

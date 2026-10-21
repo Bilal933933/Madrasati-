@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from '../app.module.js';
+import { AppModule } from '../../app.module.js';
 import { IndexerService } from '../knowledge/indexer.service.js';
 
 /**

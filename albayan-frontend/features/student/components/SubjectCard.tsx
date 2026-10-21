@@ -1,15 +1,25 @@
-import { BookOpen, CheckCircle2, FileText, GraduationCap } from "lucide-react";
+import type { ReactNode } from "react";
+import Link from "next/link";
+import {
+  ArrowLeft,
+  BookOpen,
+  CheckCircle2,
+  FileQuestion,
+  GraduationCap,
+  Layers,
+  Play,
+  Sparkles,
+} from "lucide-react";
 import { EXPLORE_ICONS } from "@/features/explore/lib/exploreIcons";
 import { ExploreThumb } from "@/features/explore/components/ExploreThumb";
-import { cn } from "@/lib/utils";
 import { ProgressBar } from "./progress-bar";
-import { IconBox, PillButton, SectionTitle } from "./subject-primitives";
+import { GhostButton, PillButton } from "./subject-primitives";
 import type { ProgressStatus, StudentSubject } from "../types/student.types";
 
-const STATUS_BADGE: Record<ProgressStatus, { label: string; className: string } | null> = {
-  completed: { label: "مكتملة", className: "bg-success/10 text-success" },
-  in_progress: { label: "جارية", className: "bg-primary/10 text-primary" },
-  not_started: null,
+const STATUS_LABEL: Record<ProgressStatus, string> = {
+  completed: "مكتملة",
+  in_progress: "قيد التقدم",
+  not_started: "لم تبدأ بعد",
 };
 
 function tintStyle(color: string | null): { backgroundColor?: string; color?: string } {
@@ -19,18 +29,24 @@ function tintStyle(color: string | null): { backgroundColor?: string; color?: st
   return {};
 }
 
-function StatCell({ label, value }: { label: string; value: string }) {
+function Tile({ label, value, icon }: { label: string; value: string; icon: ReactNode }) {
   return (
-    <div className="rounded-xl border border-border/60 bg-card px-3 py-3 text-end">
-      <p className="text-xs text-muted-foreground">{label}</p>
-      <p className="mt-1 text-sm font-bold text-foreground tabular-nums">{value}</p>
+    <div className="flex items-center gap-2.5 rounded-[10px] bg-muted px-3.5 py-2.5 text-muted-foreground max-sm:flex-col max-sm:items-start max-sm:gap-1 max-sm:px-2.5">
+      <span aria-hidden className="size-[18px] shrink-0 [&>svg]:size-full">
+        {icon}
+      </span>
+      <div>
+        <b className="block text-lg font-semibold leading-tight text-foreground tabular-nums">{value}</b>
+        <span className="text-xs">{label}</span>
+      </div>
     </div>
   );
 }
 
 /**
- * بطاقة مادة بلوحتين (محتوى ثم تفاصيل) حسب التصميم المرجعي.
- * عرض فقط — بلا منطق أعمال.
+ * بطاقة المادة: غلاف جانبي (صورة + شارة حالة + تقدم مصغر) ومتن
+ * (ترويسة + بلاطات + تقدم + الدرس التالي + إجراءات).
+ * Server Component: عرض فقط — بلا منطق أعمال.
  */
 export function SubjectCard({
   subject,
@@ -44,114 +60,141 @@ export function SubjectCard({
   const Icon = EXPLORE_ICONS[subject.icon ?? ""] ?? GraduationCap;
   const tint = tintStyle(subject.color);
   const locked = subject.lessons_count === 0;
-  const badge = STATUS_BADGE[subject.status];
   const subjectHref = `/home/subject/${subject.slug}`;
+
+  const statusLabel = locked ? "سيتم الإضافة قريبًا" : STATUS_LABEL[subject.status];
+  const primaryTitle = locked
+    ? "سيتم الإضافة قريبًا"
+    : subject.status === "completed"
+      ? "راجع المادة"
+      : subject.status === "in_progress"
+        ? "تابع التعلم"
+        : "ابدأ التعلم";
 
   return (
     <article
       aria-labelledby={`subject-title-${subject.id}`}
-      className="grid grid-cols-1 overflow-hidden border border-border/60 bg-card shadow-sm lg:grid-cols-[1.15fr_1fr]"
-      style={{ borderRadius: "var(--subject-card-radius)" }}
+      className="flex flex-col overflow-hidden rounded-2xl border border-border bg-card sm:flex-row"
     >
-      {/* لوحة المحتوى — بداية السطر */}
-      <div className="flex flex-col gap-4 p-5 sm:p-6">
-        <div
-          className="relative w-full overflow-hidden bg-muted"
-          style={{ borderRadius: "var(--subject-cover-radius)", minHeight: "230px" }}
-        >
-          <ExploreThumb
-            image={subject.image}
-            fallbackImage="/images/subject-fallback.jpg"
-            className="absolute inset-0 size-full rounded-none object-cover"
-            alt={`غلاف مادة ${subject.name}`}
-            fallback={
-              <span className="absolute inset-0 flex items-center justify-center bg-primary/10" style={tint}>
-                <Icon className="size-16" aria-hidden />
-              </span>
-            }
-          />
-        </div>
-
-        <div className="flex items-start justify-between gap-3">
-          <div className="flex items-center gap-3">
-            <IconBox label={`أيقونة مادة ${subject.name}`}>
-              <Icon className="size-6" aria-hidden />
-            </IconBox>
-            <div>
-              <h2 id={`subject-title-${subject.id}`} className="text-[1.375rem] font-bold text-foreground text-balance">
-                {subject.name}
-              </h2>
-            </div>
-          </div>
-          <span className="shrink-0 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
-            مادة أساسية
-          </span>
-        </div>
-
-        <div>
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-muted-foreground">التقدم في المادة</span>
-            <span className="font-bold text-primary tabular-nums">{subject.progress}% مكتمل</span>
-          </div>
-          <div
-            role="progressbar"
-            aria-label={`التقدم في مادة ${subject.name}`}
-            aria-valuenow={subject.progress}
-            aria-valuemin={0}
-            aria-valuemax={100}
-            className="mt-2"
-          >
-            <ProgressBar value={subject.progress} className="h-[10px]" />
-          </div>
+      {/* الغلاف — بداية السطر */}
+      <div className="relative h-[150px] w-full flex-none bg-muted sm:h-auto sm:w-60">
+        <ExploreThumb
+          image={subject.image}
+          fallbackImage="/images/subject-fallback.jpg"
+          className="absolute inset-0 size-full rounded-none object-cover"
+          alt={`غلاف مادة ${subject.name}`}
+          fallback={
+            <span className="absolute inset-0 flex items-center justify-center bg-primary/10" style={tint}>
+              <Icon className="size-16" aria-hidden />
+            </span>
+          }
+        />
+        <span className="absolute start-3 top-3 rounded-full border border-border bg-background/85 px-3 py-0.5 text-xs font-medium text-foreground backdrop-blur-sm">
+          {statusLabel}
+        </span>
+        <div className="absolute inset-x-0 bottom-0 h-1 bg-black/30" aria-hidden>
+          <div className="h-full bg-primary" style={{ width: `${subject.progress}%` }} />
         </div>
       </div>
 
-      {/* لوحة التفاصيل — نهاية السطر */}
-      <div className="flex flex-col gap-4 border-t border-border/60 bg-muted/40 p-5 sm:p-6 lg:border-s lg:border-t-0">
-        <SectionTitle icon={<FileText className="size-4" aria-hidden />}>تفاصيل المادة</SectionTitle>
+      {/* المتن */}
+      <div className="flex min-w-0 flex-1 flex-col gap-4 p-4 sm:p-6">
+        <header className="flex items-center gap-3.5">
+          <span
+            aria-hidden
+            className="grid size-[46px] flex-none place-items-center rounded-xl bg-primary/10 text-primary"
+          >
+            <Icon className="size-6" aria-hidden />
+          </span>
+          <div className="min-w-0">
+            <h2 id={`subject-title-${subject.id}`} className="text-xl font-semibold leading-snug text-foreground text-balance">
+              {subject.name}
+            </h2>
+            <p className="text-[13px] text-muted-foreground">
+              {gradeName} · {semesterName}
+            </p>
+          </div>
+          <span className="ms-auto shrink-0 rounded-full border border-border bg-primary/10 px-3 py-0.5 text-xs font-medium whitespace-nowrap text-primary">
+            آخر ما درسته
+          </span>
+        </header>
 
-        <p className="text-[13px] leading-relaxed text-muted-foreground text-pretty">{subject.description}</p>
-
-        <dl className="grid grid-cols-2 gap-3">
-          <StatCell label="الفصل الدراسي" value={semesterName} />
-          <StatCell label="الصف" value={gradeName} />
-          <StatCell label="الوحدات" value={String(subject.units_count)} />
-          <StatCell label="الاختبارات" value={String(subject.lessons_count)} />
-        </dl>
-
-        <div className="mt-auto grid grid-cols-1 gap-2.5 pt-1 sm:grid-cols-2">
-          <PillButton href={subjectHref} tone="primary" ariaLabel={`ابدأ التعلم في ${subject.name}`} disabled={locked}>
-            ابدأ التعلم
-          </PillButton>
-          <PillButton href={subjectHref} tone="secondary" ariaLabel={`وحدات ${subject.name}`} disabled={locked}>
-            الوحدات
-          </PillButton>
-          <PillButton href={subjectHref} tone="info" ariaLabel={`فتح مادة ${subject.name}`} disabled={locked}>
-            فتح المادة
-          </PillButton>
-          <PillButton href="/exams" tone="warning" ariaLabel={`اختبارات ${subject.name}`} disabled={locked}>
-            الاختبارات
-          </PillButton>
+        <div className="grid grid-cols-3 gap-2.5 max-sm:gap-2">
+          <Tile label="وحدات" value={String(subject.units_count)} icon={<Layers aria-hidden />} />
+          <Tile label="درسًا" value={String(subject.lessons_count)} icon={<BookOpen aria-hidden />} />
+          <Tile label="مكتملة" value={String(subject.completed_count)} icon={<CheckCircle2 aria-hidden />} />
         </div>
 
-        <div className="flex items-center gap-2 border-t border-border/60 pt-3 text-sm">
-          <span className="font-semibold text-foreground">الحالة:</span>
-          {locked ? (
-            <span className="rounded-full bg-accent px-3 py-1 text-xs font-semibold text-accent-foreground">
-              سيتم الإضافة قريبًا
-            </span>
-          ) : badge ? (
-            <span className={cn("flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold", badge.className)}>
-              {subject.status === "completed" && <CheckCircle2 className="size-3" aria-hidden />}
-              {badge.label}
-            </span>
-          ) : (
-            <span className="flex items-center gap-1.5 rounded-full bg-muted px-3 py-1 text-xs font-semibold text-muted-foreground">
-              <BookOpen className="size-3" aria-hidden />
-              لم تبدأ بعد
-            </span>
-          )}
+        <div>
+          <div
+            role="progressbar"
+            aria-label={`التقدم في مادة ${subject.name}`}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-valuenow={subject.progress}
+          >
+            <ProgressBar value={subject.progress} className="h-1.5" />
+          </div>
+          <div className="mt-2 flex items-center justify-between text-xs text-muted-foreground">
+            <span>التقدم في المادة</span>
+            <span className="font-semibold text-foreground tabular-nums">{subject.progress}%</span>
+          </div>
         </div>
+
+        {!locked && subject.next_lesson ? (
+          <Link
+            href={`/learn/${subject.next_lesson.slug}`}
+            aria-label={`الدرس التالي في ${subject.name}: ${subject.next_lesson.title}`}
+            className="flex items-center gap-2.5 rounded-[10px] border border-border px-3.5 py-2.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
+          >
+            <Play className="size-[18px] shrink-0 text-primary" aria-hidden />
+            <span className="truncate">
+              الدرس التالي: <b className="font-medium text-foreground">{subject.next_lesson.title}</b>
+            </span>
+          </Link>
+        ) : (
+          !locked &&
+          subject.status === "completed" && (
+            <div className="flex items-center gap-2.5 rounded-[10px] border border-border px-3.5 py-2.5 text-sm text-muted-foreground">
+              <CheckCircle2 className="size-[18px] shrink-0 text-primary" aria-hidden />
+              <span>
+                أكملت جميع دروس <b className="font-medium text-foreground">{subject.name}</b>
+              </span>
+            </div>
+          )
+        )}
+
+        <footer className="mt-auto flex items-center gap-2.5 border-t border-border pt-4 max-sm:flex-wrap">
+          <GhostButton
+            href="/exams"
+            ariaLabel={`عرض اختبارات ${subject.name}`}
+            disabled={locked}
+            className="max-sm:flex-1"
+          >
+            <FileQuestion className="size-[18px]" aria-hidden />
+            الامتحانات
+          </GhostButton>
+          <GhostButton
+            href="/ai-tutor"
+            ariaLabel={`المعلم الذكي لمادة ${subject.name}`}
+            disabled={locked}
+            className="max-sm:flex-1"
+          >
+            <Sparkles className="size-[18px]" aria-hidden />
+            المعلم الذكي
+          </GhostButton>
+          <PillButton
+            href={subjectHref}
+            tone="hero"
+            size="bar"
+            ariaLabel={`${primaryTitle} في ${subject.name}`}
+            disabled={locked}
+            className="ms-auto max-sm:order-[-1] max-sm:ms-0 max-sm:flex-[1_1_100%]"
+          >
+            {primaryTitle}
+            <ArrowLeft className="size-[18px]" aria-hidden />
+          </PillButton>
+        </footer>
       </div>
     </article>
   );
@@ -163,22 +206,28 @@ export function SubjectCardSkeleton() {
     <div
       aria-busy="true"
       aria-label="جارٍ تحميل المادة"
-      className="grid grid-cols-1 overflow-hidden border border-border/60 bg-card lg:grid-cols-[1.15fr_1fr]"
-      style={{ borderRadius: "var(--subject-card-radius)" }}
+      className="flex flex-col overflow-hidden rounded-2xl border border-border bg-card sm:flex-row"
     >
-      <div className="flex animate-pulse flex-col gap-4 p-5 sm:p-6">
-        <div className="w-full bg-muted" style={{ borderRadius: "var(--subject-cover-radius)", minHeight: "230px" }} />
-        <div className="h-6 w-2/3 rounded-full bg-muted" />
-        <div className="h-2.5 w-full rounded-full bg-muted" />
-      </div>
-      <div className="flex animate-pulse flex-col gap-4 border-t border-border/60 bg-muted/40 p-5 sm:p-6 lg:border-s lg:border-t-0">
-        <div className="h-5 w-1/3 rounded-full bg-muted" />
-        <div className="h-16 w-full rounded-xl bg-muted" />
-        <div className="grid grid-cols-2 gap-3">
-          <div className="h-16 rounded-xl bg-muted" />
-          <div className="h-16 rounded-xl bg-muted" />
-          <div className="h-16 rounded-xl bg-muted" />
-          <div className="h-16 rounded-xl bg-muted" />
+      <div className="h-[150px] w-full flex-none animate-pulse bg-muted sm:h-auto sm:w-60" />
+      <div className="flex flex-1 animate-pulse flex-col gap-4 p-4 sm:p-6">
+        <div className="flex items-center gap-3.5">
+          <div className="size-[46px] flex-none rounded-xl bg-muted" />
+          <div className="flex flex-col gap-2">
+            <div className="h-6 w-40 rounded-full bg-muted" />
+            <div className="h-4 w-28 rounded-full bg-muted" />
+          </div>
+        </div>
+        <div className="grid grid-cols-3 gap-2.5">
+          <div className="h-16 rounded-[10px] bg-muted" />
+          <div className="h-16 rounded-[10px] bg-muted" />
+          <div className="h-16 rounded-[10px] bg-muted" />
+        </div>
+        <div className="h-1.5 w-full rounded-full bg-muted" />
+        <div className="h-11 w-full rounded-[10px] bg-muted" />
+        <div className="flex gap-2.5 border-t border-border pt-4">
+          <div className="h-10 flex-1 rounded-[10px] bg-muted" />
+          <div className="h-10 flex-1 rounded-[10px] bg-muted" />
+          <div className="h-10 flex-1 rounded-[10px] bg-muted" />
         </div>
       </div>
     </div>

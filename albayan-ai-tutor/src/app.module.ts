@@ -1,55 +1,23 @@
-import {
-  ExecutionContext,
-  MiddlewareConsumer,
-  Module,
-  NestModule,
-} from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
-import { APP_FILTER, APP_GUARD } from '@nestjs/core';
-import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
-import { AiModule } from './ai/ai.module.js';
-import { AuthModule } from './auth/auth.module.js';
-import { ChatModule } from './chat/chat.module.js';
-import { AppLoggerMiddleware } from './common/logger/app-logger.middleware.js';
-import { LoggerModule } from './common/logger/logger.module.js';
-import { GlobalExceptionFilter } from './common/errors/global-exception.filter.js';
-import { ExamModule } from './exam/exam.module.js';
-import { KnowledgeModule } from './knowledge/knowledge.module.js';
-import { PrismaModule } from './prisma/prisma.module.js';
-import { SmartAssistantModule } from './smart-assistant/smart-assistant.module.js';
-import { StudentContextModule } from './student-context/student-context.module.js';
-import { ThreadsModule } from './threads/threads.module.js';
+import 'dotenv/config';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { AppLoggerMiddleware } from './v1/common/logger/app-logger.middleware.js';
+import { V1Module } from './v1/v1.module.js';
+import { V2Module } from './v2/v2.module.js';
+
+/**
+ * الملف الرئيسي للمشروع — مفتاح نحيف فقط:
+ * يستورد حزمة الإصدار الذي نعمل عليه من ملف المتغيرات الواحد (.env → ACTIVE_ASSISTANT).
+ * - 'chat' أو 'v1' → حزمة v1 (المساعد الأول).
+ * - غيرها (مثل 'smart-assistant' أو 'v2') → حزمة v2 (المساعد الثاني).
+ */
+const activeAssistant = (process.env.ACTIVE_ASSISTANT ?? 'smart-assistant')
+  .trim()
+  .toLowerCase();
+const VersionModule =
+  activeAssistant === 'chat' || activeAssistant === 'v1' ? V1Module : V2Module;
 
 @Module({
-  imports: [
-    LoggerModule,
-    ConfigModule.forRoot({ isGlobal: true }),
-    ThrottlerModule.forRoot({
-      throttlers: [{ name: 'default', ttl: 60_000, limit: 100 }],
-      // ThrottlerGuard مخصص HTTP — نتخطاه للـ WebSocket حتى لا يكسر الدردشة
-      // (حارس الـ WS الحقيقي هو assertWithinLimit في ChatService).
-      skipIf: (context: ExecutionContext) => context.getType() === 'ws',
-    }),
-    PrismaModule,
-    AuthModule,
-    StudentContextModule,
-    KnowledgeModule,
-    AiModule,
-    ChatModule,
-    ThreadsModule,
-    ExamModule,
-    SmartAssistantModule,
-  ],
-  providers: [
-    {
-      provide: APP_FILTER,
-      useClass: GlobalExceptionFilter,
-    },
-    {
-      provide: APP_GUARD,
-      useClass: ThrottlerGuard,
-    },
-  ],
+  imports: [VersionModule],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer): void {

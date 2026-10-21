@@ -34,7 +34,8 @@ export default function StudentAreaLayout({
 
   useEffect(() => {
     if (isInitialized && !user) {
-      router.replace("/login");
+      // تشخيص مؤقت: تمييز طرد حارس العميل عن طرد SSR — يُزال بعد تحديد السبب
+      router.replace("/login?from=student_layout");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isInitialized, user]);

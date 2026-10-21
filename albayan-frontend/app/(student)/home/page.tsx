@@ -22,7 +22,8 @@ export default async function HomeRoute() {
   } catch (error) {
     if (isApiError(error)) {
       if (error.status === 401) {
-        redirect("/login");
+        // تشخيص مؤقت: تمييز طرد SSR عن غيره — يُزال بعد تحديد السبب
+        redirect("/login?from=home_ssr");
       }
       if (error.status === 404) {
         return <StudentSetup />;

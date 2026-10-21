@@ -28,11 +28,16 @@ export default function AuthCallbackPage() {
         queryClient.setQueryData(["auth", "current-user"], user);
         router.replace("/home");
       })
-      .catch(() => {
+      .catch((err: unknown) => {
         if (cancelled) return;
         useAuthStore.getState().setUser(null);
         useAuthStore.getState().setInitialized(true);
-        router.replace("/login?error=google_failed");
+        // تشخيص مؤقت: تمرير حالة HTTP لتمييز فشل الكوكي (401) عن عطل الشبكة — يُزال بعد تحديد السبب
+        const status =
+          typeof err === "object" && err !== null && "status" in err
+            ? String((err as { status: unknown }).status)
+            : "network";
+        router.replace(`/login?error=google_failed&cb=${status}`);
       });
 
     return () => {
